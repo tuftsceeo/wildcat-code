@@ -1,0 +1,21 @@
+.sensorGroup {
+    display: flex;
+    width: 658px;
+    height: 260px;
+    padding-left: 23px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 150px;
+}
+
+
+.sensorIcon {
+    width: 153px;
+    height: 149px;
+}
+
+.colorPalette {
+    width: 355px;
+    height: 260px;
+}

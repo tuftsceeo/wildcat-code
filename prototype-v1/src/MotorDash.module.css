@@ -1,0 +1,61 @@
+.motorGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.motorName {
+    position: absolute;
+    top: 65%;  /* Center vertically */
+    left: 25%;
+}
+.goButton {
+    border-radius: 50%;
+    border: none;
+    width: 107px;
+    height: 107px;
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.25);
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+    outline: none;
+    cursor: pointer;
+    color: #780A9F;
+    background-color: #FFFF;
+    text-align: center;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 30px;
+    font-weight: 700;
+    position: absolute;
+    top: 60%;  /* Center vertically */
+    left: 40%;
+}
+
+.goButton:active, .stopButton:active {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    transform: translate(1px, 1px);
+}
+
+.speedDial {
+    position: absolute;
+    top: 60%;  /* Center vertically */
+    left: 55%;
+}
+
+.stopButton {
+    border-radius: 50%;
+    border: none;
+    width: 107px;
+    height: 107px;
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.25);
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+    outline: none;
+    cursor: pointer;
+    color: #780A9F;
+    background-color: #FFFF;
+    text-align: center;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 30px;
+    font-weight: 700;
+    position: absolute;
+    top: 60%;  /* Center vertically */
+    left: 70%;
+}
