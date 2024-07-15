@@ -34,6 +34,25 @@ document.getElementById('check-uuid-button').addEventListener('click', () => {
     }
 });
 
+/*document.getElementById('upload-file-input').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    let arrayBuffer = await file.arrayBuffer();
+    let data = new Uint8Array(arrayBuffer);
+
+    // request device info for initial web-side parameters/ formatting
+    sendInfoRequest();
+
+    // watch for infoResponse
+    await infoResponse()
+});*/
+
+document.getElementById('send-receive').addEventListener('click', () => {
+    sendInfoRequest();
+    infoResponse();
+});
+
 async function connect() {
     try {
         device = await navigator.bluetooth.requestDevice({
@@ -88,16 +107,8 @@ async function setupCharacteristics() {
 
     console.log(`Tx Characteristic UUID: ${txCharacteristic.uuid}`);
     console.log(`Rx Characteristic UUID: ${rxCharacteristic.uuid}`);
-
-    sendInfoRequest();
-    receiveMessage();
 }
 
-function sendMessage(message) {
-    const encoder = new TextEncoder();
-    const encodedMessage = encoder.encode(message);
-    txCharacteristic.writeValue(encodedMessage);
-}
 
 function sendInfoRequest() {
     const encodedMessage = INFO_REQUEST_COMMAND;
@@ -106,6 +117,7 @@ function sendInfoRequest() {
         .catch(error => console.error('Send error:', error));
 }
 
+/* original func for recieving messages --> non-async/ limited info pulled
 function receiveMessage() {
     rxCharacteristic.startNotifications().then(() => {
         console.log('Notifications started');
@@ -117,4 +129,57 @@ function receiveMessage() {
             document.getElementById('info-response').textContent = `Info Response: ${decodedjsonMessage}`;
         });
     }).catch(error => console.error('Notification start error:', error));
+}
+    */
+
+// new message recieve func; async, set's chunk size
+async function infoResponse() {
+    let chunkSizeInitialized = false;
+    let chunkSize = 20; // Default chunk size
+
+    await rxCharacteristic.startNotifications();
+    console.log('Notifications started');
+
+    rxCharacteristic.addEventListener('characteristicvaluechanged', event => {
+        const value = event.target.value;
+        const decoder = new TextDecoder('utf-8');
+        const decodedMessage = decoder.decode(value);
+
+        if (!chunkSizeInitialized) {
+            // Extract chunk size from the decoded message
+            chunkSize = getMaxChunkSize(decodedMessage); // assume this function is implemented to extract chunk size
+            chunkSizeInitialized = true;
+            console.log(`Chunk size set to ${chunkSize}`);
+        }
+
+        console.log('Received:', decodedMessage);
+        //document.getElementById('info-response').textContent = `Info Response: ${decodedMessage}`;
+    });
+}
+
+/* orignal func for message transmission --> incorrect formatting/ non-chunk
+function sendMessage(message) {
+    const encoder = new TextEncoder();
+    const encodedMessage = encoder.encode(message);
+    txCharacteristic.writeValue(encodedMessage);
+}
+    */
+
+// new message transmission function; async, uses chunks & formatting
+async function sendMessage(data) {
+    let position = 0;
+    while (position < data.length) {
+        let chunk = data.slice(position, Math.min(position + chunkSize, data.length));
+        await txCharacteristic.writeValue(chunk);
+        position += chunkSize;
+        console.log(`Sent chunk up to position ${position}`);
+    }
+    console.log('File transfer complete');
+}
+
+function getMaxChunkSize(infoResponse) {
+    const dataView = new DataView(infoResponse);
+    const maxChunkSizeOffset = 10;// byte offset 10 because max_chunk_size is after 10 bytes of other data
+    const maxChunkSize = dataView.getUint16(maxChunkSizeOffset, true); // true for little-endian
+    return maxChunkSize;
 }
