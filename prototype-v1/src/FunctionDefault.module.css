@@ -19,7 +19,8 @@ body {
     color: #eab4fe;
     font-family: 'Space Grotesk';
     position: relative;
-    padding: 20px; /* Add padding to ensure components don't touch the screen edges */
+    padding: 20px;  
+    /* Add padding to ensure components don't touch the screen edges */
 }
 
 .actionSenseSection, .hubBottomIcon {
@@ -37,10 +38,10 @@ body {
     top: calc(10% + 328px + 20px); /* Ensure it's below the actionSenseSection with some space */
     border-radius: 25px;
     width: 1100px;
-    /* og 983 px */
     height: 340px;
     object-fit: contain;
     background-color: #BA1DF1;
+    z-index: -100;
 }
 
 .actionSenseButtonGroup {
@@ -58,16 +59,15 @@ body {
 
 .hubConnectIcon {
     position: absolute;
-    bottom: 10%; /* Adjust this value to align correctly -73px*/
-    right: 300px; /* 0*/
+    top: 100%;  /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust to account for the icon's own dimensions */
+    width: 73px;  /* Adjust width as needed */
+    height: 73px; /* Adjust height as needed */
     border-radius: 25px;
-    transform: translateY(70%); /* Center vertically */
-    max-width: 100%;
-    overflow: hidden;
-    height: 73px;
     object-fit: contain;
     background-color: #BA1DF1;
-    z-index: 100;
+    z-index: 300; /* Ensure this is on top */
 }
 
 .functionHubText {
@@ -84,12 +84,10 @@ body {
 .hubTopBackground {
     position: relative;
     top: calc(10% - 89px);
-    /* og 50% -89px px */
     left: calc(50% - 229.5px);
     border-radius: 25px;
     width: 459px;
     height: 400px;
-    /* og 253 px */
     object-fit: contain;
     background-color: #BA1DF1;
     z-index: -1;
@@ -109,6 +107,7 @@ body {
     font-size: 30px;
     color: #ba1df1;
     font-family: 'McLaren';
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .actionButton {
@@ -119,7 +118,6 @@ body {
     right: 0%;
     bottom: 52.23%;
     left: 0%;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .senseButton {
@@ -130,8 +128,9 @@ body {
     right: 0%;
     bottom: -0.01%;
     left: 0%;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
+
+
 
 
 
