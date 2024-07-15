@@ -1,0 +1,394 @@
+.function-hub {
+    background-size: 100% 100%;
+    height: 805px;
+    width: 1066px;
+  }
+  
+  .function-hub .overlap-5 {
+    height: 744px;
+    left: 40px;
+    position: relative;
+    top: 23px;
+    width: 988px;
+  }
+  
+  .function-hub .action-sense-2 {
+    height: 328px;
+    left: 526px;
+    position: absolute;
+    top: 0;
+    width: 459px;
+  }
+  
+  .function-hub .group-5 {
+    height: 45px;
+    left: 107px;
+    position: absolute;
+    top: 0;
+    width: 246px;
+  }
+  
+  .function-hub .text-wrapper-5 {
+    color: #eab3fd;
+    font-family: "Space Grotesk-Regular", Helvetica;
+    font-size: 35px;
+    font-weight: 400;
+    height: 45px;
+    left: 0;
+    letter-spacing: 2.1px;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 0;
+  }
+  
+  .function-hub .hub-top {
+    height: 258px;
+    left: -2px;
+    position: absolute;
+    top: 72px;
+    width: 464px;
+    border-radius: 25px;
+    background: #BA1DF1;
+  }
+  
+  .function-hub .hub-bottom {
+    height: 345px;
+    left: 0;
+    position: absolute;
+    top: 398px;
+    width: 988px;
+    border-radius: 25px;
+    background-color: #BA1DF1;
+    z-index: -1;
+  }
+  
+  .function-hub .hub-connect {
+    height: 100px;
+    left: 742px;
+    position: absolute;
+    top: 315px;
+    width: 27px;
+    border-radius: 25px;
+    background-color: #BA1DF1;
+  }
+  
+  .function-hub .action-sense-instance {
+    left: 550px !important;
+    position: absolute !important;
+    top: 100px !important;
+  }
+  
+  .function-hub .text-wrapper-6 {
+    color: #eab3fd;
+    font-family: "Space Grotesk-Regular", Helvetica;
+    font-size: 25px;
+    font-weight: 400;
+    height: 32px;
+    left: 27px;
+    letter-spacing: 1.5px;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 470px;
+  }
+  
+  .function-hub .motor-controls-instance {
+    left: 172px !important;
+    position: absolute !important;
+    top: 434px !important;
+  }
+  
+  .function-hub .class {
+    background-image: url(./assets/ellipse-4.svg) !important;
+  }
+  
+  .function-hub .class-2 {
+    background-image: url(./assets/ellipse-4.svg) !important;
+  }
+  
+  .function-hub .class-3 {
+    background-image: unset !important;
+  }
+  
+  .function-hub .class-4 {
+    background-image: url(./assets/ellipse-5-6.svg) !important;
+  }
+  
+  .function-hub .class-5 {
+    background-image: url(./assets/ellipse-5-7.svg) !important;
+  }
+  
+  .function-hub .class-6 {
+    background-image: url(./assets/ellipse-3-5.svg) !important;
+  }
+  
+  .function-hub .class-7 {
+    background-image: url(./assets/ellipse-3.svg) !important;
+  }
+  
+  .function-hub .speed-instance {
+    left: 553px !important;
+    position: absolute !important;
+    top: 434px !important;
+  }
+  
+  .function-hub .text-wrapper-7 {
+    color: #eab3fd;
+    font-family: "Space Grotesk-Regular", Helvetica;
+    font-size: 25px;
+    font-weight: 400;
+    height: 32px;
+    left: 27px;
+    letter-spacing: 1.5px;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 637px;
+  }
+  
+  .function-hub .instance-node {
+    left: 172px !important;
+    position: absolute !important;
+    top: 601px !important;
+  }
+  
+  .function-hub .class-8 {
+    background-image: url(./assets/ellipse-4-5.svg) !important;
+  }
+  
+  .function-hub .class-9 {
+    background-image: url(./assets/ellipse-4-4.svg) !important;
+  }
+  
+  .function-hub .class-10 {
+    background-image: url(./assets/ellipse-4-2.svg) !important;
+  }
+  
+  .function-hub .class-11 {
+    background-image: url(./assets/ellipse-5-4.svg) !important;
+  }
+  
+  .function-hub .class-12 {
+    background-image: url(./assets/ellipse-5-3.svg) !important;
+  }
+  
+  .function-hub .class-13 {
+    background-image: url(./assets/ellipse-5-5.svg) !important;
+  }
+  
+  .function-hub .class-14 {
+    font-family: "Inter-Regular", Helvetica !important;
+    font-weight: 400 !important;
+  }
+  
+  .function-hub .class-15 {
+    background-image: url(./assets/ellipse-3-2.svg) !important;
+  }
+  
+  .function-hub .class-16 {
+    background-image: url(./assets/ellipse-3-6.svg) !important;
+  }
+  
+  .function-hub .speed-2 {
+    left: 553px !important;
+    position: absolute !important;
+    top: 601px !important;
+  }
+  
+  .function-hub .back {
+    height: 48px;
+    left: 898px;
+    position: absolute;
+    top: 674px;
+    width: 64px;
+  }
+  
+  .function-hub .line {
+    height: 4px;
+    left: 27px;
+    position: absolute;
+    top: 571px;
+    width: 633px;
+  }
+  
+  .function-hub .line-2 {
+    height: 87px;
+    left: 693px;
+    position: absolute;
+    top: 446px;
+    width: 4px;
+  }
+  
+  .function-hub .line-3 {
+    height: 87px;
+    left: 693px;
+    position: absolute;
+    top: 610px;
+    width: 4px;
+  }
+  
+  .function-hub .group-6 {
+    position: absolute;
+  }
+  
+  .function-hub .div-2 {
+    color: #eab3fd;
+    font-family: "Space Grotesk-Regular", Helvetica;
+    font-size: 25px;
+    font-weight: 400;
+    height: 32px;
+    left: 0;
+    letter-spacing: 1.5px;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 0;
+  }
+  
+  .function-hub .color-palette {
+    height: 260px;
+    left: 306px;
+    position: absolute;
+    top: 0;
+    width: 355px;
+  }
+  
+  .function-hub .sensor {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0px 4px 4px #00000040;
+    height: 149px;
+    left: 23px;
+    position: absolute;
+    top: 56px;
+    width: 153px;
+  }
+  
+  .function-hub .ellipse-wrapper {
+    background-color: #d9d9d9;
+    border-radius: 49.8px/48.5px;
+    box-shadow: inset 0px 4px 4px #00000040;
+    height: 97px;
+    left: 27px;
+    position: relative;
+    top: 25px;
+    width: 100px;
+  }
+  
+  .function-hub .ellipse {
+    background-color: #8f8f8f;
+    border-radius: 43.64px/42.5px;
+    box-shadow: inset 0px 4px 4px #00000040;
+    height: 85px;
+    left: 6px;
+    position: relative;
+    top: 6px;
+    width: 87px;
+  }
+  
+  .function-hub .group-7 {
+    height: 32px;
+    left: 806px;
+    position: absolute;
+    top: 569px;
+    width: 59px;
+  }
+  
+  .function-hub .sound-instance {
+    left: 729px !important;
+    position: absolute !important;
+    top: 474px !important;
+  }
+  
+  .function-hub .wait-instance {
+    left: 776px !important;
+    position: absolute !important;
+    top: 617px !important;
+  }
+  
+  .function-hub .text-wrapper-8 {
+    color: #eab3fd;
+    font-family: "Space Grotesk-Regular", Helvetica;
+    font-size: 25px;
+    font-weight: 400;
+    height: 13px;
+    left: 108px;
+    letter-spacing: 1.5px;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 440px;
+    white-space: nowrap;
+    width: 233px;
+  }
+  
+  .function-hub .group-8 {
+    height: 32px;
+    left: 794px;
+    position: absolute;
+    top: 426px;
+    width: 84px;
+  }
+  
+  .function-hub.function-sense {
+    background-image: url(./assets/union.svg);
+  }
+  
+  .function-hub.function-default {
+    background-image: url(./assets/union.svg);
+  }
+  
+  .function-hub.function-function-6 {
+    background-image: url(./assets/union.svg);
+  }
+  
+  .function-hub.function-go-b {
+    background-image: url(./assets/union.svg);
+  }
+  
+  .function-hub.function-go-a {
+    background-image: url(./assets/union.svg);
+  }
+  
+  .function-hub.function-sense .group-6 {
+    height: 260px;
+    left: 126px;
+    top: 441px;
+    width: 661px;
+  }
+  
+  .function-hub.function-default .group-6 {
+    height: 32px;
+    left: 794px;
+    top: 426px;
+    width: 84px;
+  }
+  
+  .function-hub.function-function-6 .group-6 {
+    height: 32px;
+    left: 794px;
+    top: 426px;
+    width: 84px;
+  }
+  
+  .function-hub.function-action .group-6 {
+    height: 32px;
+    left: 27px;
+    top: 471px;
+    width: 106px;
+  }
+  
+  .function-hub.function-go-b .group-6 {
+    height: 32px;
+    left: 794px;
+    top: 426px;
+    width: 84px;
+  }
+  
+  .function-hub.function-go-a .group-6 {
+    height: 32px;
+    left: 794px;
+    top: 426px;
+    width: 84px;
+  }

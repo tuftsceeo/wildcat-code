@@ -1,0 +1,135 @@
+.action-sense {
+    height: 202px;
+    position: relative;
+    width: 411px;
+  }
+  
+  .action-sense .action-button {
+    height: 96px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 413px;
+  }
+  
+  .action-sense .overlap-group {
+    border-radius: 10px;
+    height: 96px;
+    position: relative;
+    width: 411px;
+  }
+  
+  .action-sense .text-wrapper {
+    font-family: "McLaren-Regular", Helvetica;
+    font-size: 30px;
+    font-weight: 400;
+    height: 43px;
+    left: 146px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 26px;
+  }
+  
+  .action-sense .sense-button {
+    height: 96px;
+    left: 0;
+    position: absolute;
+    top: 106px;
+    width: 413px;
+  }
+  
+  .action-sense .overlap {
+    border-radius: 10px;
+    height: 96px;
+    position: relative;
+    width: 411px;
+  }
+  
+  .action-sense .div {
+    font-family: "McLaren-Regular", Helvetica;
+    font-size: 30px;
+    font-weight: 400;
+    height: 23px;
+    left: 109px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 36px;
+    white-space: nowrap;
+    width: 195px;
+  }
+  
+  .action-sense .action {
+    box-shadow: inset 0px 4px 4px #00000040;
+  }
+  
+  .action-sense .default {
+    box-shadow: 0px 4px 4px #00000040;
+  }
+  
+  .action-sense .sense {
+    box-shadow: 0px 4px 4px #00000040;
+  }
+  
+  .action-sense .selection-1-action {
+    box-shadow: 0px 4px 4px #00000040;
+  }
+  
+  .action-sense .selection-1-default {
+    box-shadow: 0px 4px 4px #00000040;
+  }
+  
+  .action-sense .selection-1-sense {
+    box-shadow: inset 0px 4px 4px #00000040;
+  }
+  
+  .action-sense .action-button.action .overlap-group {
+    background-color: #780a9f;
+  }
+  
+  .action-sense .action-button.default .overlap-group {
+    background-color: #ffffff;
+  }
+  
+  .action-sense .action-button.sense .overlap-group {
+    background-color: #ffffff;
+  }
+  
+  .action-sense .action-button.action .text-wrapper {
+    color: #eab3fd;
+  }
+  
+  .action-sense .action-button.default .text-wrapper {
+    color: #ba1df1;
+  }
+  
+  .action-sense .action-button.sense .text-wrapper {
+    color: #ba1df1;
+  }
+  
+  .action-sense .sense-button.selection-1-action .overlap {
+    background-color: #ffffff;
+  }
+  
+  .action-sense .sense-button.selection-1-default .overlap {
+    background-color: #ffffff;
+  }
+  
+  .action-sense .sense-button.selection-1-sense .overlap {
+    background-color: #780a9f;
+  }
+  
+  .action-sense .sense-button.selection-1-action .div {
+    color: #ba1df1;
+  }
+  
+  .action-sense .sense-button.selection-1-default .div {
+    color: #ba1df1;
+  }
+  
+  .action-sense .sense-button.selection-1-sense .div {
+    color: #eab3fd;
+  }

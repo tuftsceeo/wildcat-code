@@ -1,0 +1,202 @@
+.motor-controls {
+    align-items: center;
+    display: inline-flex;
+    gap: 20px;
+    position: relative;
+  }
+  
+  .motor-controls .active-motor {
+    height: 107px;
+    position: relative;
+    width: 107px;
+  }
+  
+  .motor-controls .overlap-group-2 {
+    position: relative;
+  }
+  
+  .motor-controls .selection {
+    height: 53px;
+    position: absolute;
+    top: 0;
+    width: 75px;
+  }
+  
+  .motor-controls .text {
+    height: 92px;
+    position: absolute;
+    top: 8px;
+    width: 92px;
+  }
+  
+  .motor-controls .center {
+    border-radius: 32.92px;
+    height: 66px;
+    position: absolute;
+    top: 21px;
+    width: 66px;
+  }
+  
+  .motor-controls .polygon {
+    height: 7px;
+    position: absolute;
+    top: 25px;
+    width: 8px;
+  }
+  
+  .motor-controls .active-rotations {
+    height: 107px;
+    position: relative;
+    width: 107px;
+  }
+  
+  .motor-controls .group-wrapper {
+    background-size: 100% 100%;
+    height: 114px;
+    left: -2px;
+    position: relative;
+    top: -5px;
+    width: 120px;
+  }
+  
+  .motor-controls .group {
+    height: 36px;
+    left: 31px;
+    position: relative;
+    top: 41px;
+    width: 51px;
+  }
+  
+  .motor-controls .div-wrapper {
+    border-radius: 2px;
+    box-shadow: inset 0px 1px 4px #00000040;
+    height: 36px;
+    position: relative;
+    width: 49px;
+  }
+  
+  .motor-controls .text-wrapper-2 {
+    font-size: 30px;
+    height: 36px;
+    left: 0;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    white-space: nowrap;
+    width: 49px;
+  }
+  
+  .motor-controls .active-GO {
+    height: 107px;
+    margin-right: -2px;
+    position: relative;
+    width: 109px;
+  }
+  
+  .motor-controls .overlap-2 {
+    background-size: 100% 100%;
+    height: 115px;
+    left: -4px;
+    position: relative;
+    width: 115px;
+  }
+  
+  .motor-controls .text-wrapper-3 {
+    color: #780a9f;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 30px;
+    font-weight: 700;
+    height: 38px;
+    left: 25px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 34px;
+    width: 66px;
+  }
+  
+  .motor-controls .go {
+    background-image: url(./assets/ellipse-3.svg);
+    background-size: 100% 100%;
+    box-shadow: inset 0px 2px 1px #00000040;
+  }
+  
+  .motor-controls .choice-4-go {
+    background-image: url(./assets/ellipse-4-7.svg);
+  }
+  
+  .motor-controls .choice-7-go {
+    background-image: url(./assets/ellipse-5.svg);
+  }
+  
+  .motor-controls .active-motor.go .overlap-group-2 {
+    height: 99px;
+    left: 8px;
+    width: 92px;
+  }
+  
+  .motor-controls .active-motor.default .overlap-group-2 {
+    background-size: 100% 100%;
+    height: 115px;
+    left: -4px;
+    width: 115px;
+  }
+  
+  .motor-controls .active-motor.go .selection {
+    left: 8px;
+  }
+  
+  .motor-controls .active-motor.default .selection {
+    left: 20px;
+  }
+  
+  .motor-controls .active-motor.go .text {
+    left: 0;
+  }
+  
+  .motor-controls .active-motor.default .text {
+    left: 12px;
+  }
+  
+  .motor-controls .active-motor.go .center {
+    background-color: #9307c5;
+    box-shadow: inset 0px 2px 1px #00000040;
+    left: 13px;
+  }
+  
+  .motor-controls .active-motor.default .center {
+    background-color: #f5f5f5;
+    box-shadow: 0px 4px 4px #00000040;
+    left: 25px;
+  }
+  
+  .motor-controls .active-motor.go .polygon {
+    left: 42px;
+  }
+  
+  .motor-controls .active-motor.default .polygon {
+    left: 53px;
+  }
+  
+  .motor-controls .group-wrapper.choice-4-go .div-wrapper {
+    background-color: #ba1df1;
+  }
+  
+  .motor-controls .group-wrapper.choice-4-default .div-wrapper {
+    background-color: #ffffff;
+  }
+  
+  .motor-controls .group-wrapper.choice-4-go .text-wrapper-2 {
+    color: #9307c5;
+    font-family: "Inter-Bold", Helvetica;
+    font-weight: 700;
+  }
+  
+  .motor-controls .group-wrapper.choice-4-default .text-wrapper-2 {
+    color: #780a9f;
+    font-family: "Inter-Regular", Helvetica;
+    font-weight: 400;
+  }

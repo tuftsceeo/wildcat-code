@@ -1,0 +1,62 @@
+.wait {
+    height: 80px;
+    width: 100px;
+  }
+  
+  .wait .overlap-4 {
+    height: 79px;
+    position: relative;
+    top: 1px;
+    width: 102px;
+  }
+  
+  .wait .group-3 {
+    height: 58px;
+    left: 20px;
+    position: absolute;
+    top: 0;
+    width: 82px;
+  }
+  
+  .wait .overlap-group-4 {
+    background-color: #ffffff;
+    border-radius: 2px;
+    box-shadow: inset 0px 1px 4px #00000040;
+    height: 58px;
+    position: relative;
+    width: 80px;
+  }
+  
+  .wait .text-wrapper-4 {
+    color: #000000;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 30px;
+    font-weight: 400;
+    height: 58px;
+    left: 0;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 80px;
+  }
+  
+  .wait .wait-icon {
+    background-color: #ffffff;
+    border-radius: 2px;
+    box-shadow: 0px 4px 4px #00000040;
+    height: 39px;
+    left: 0;
+    position: absolute;
+    top: 40px;
+    width: 39px;
+  }
+  
+  .wait .group-4 {
+    height: 23px;
+    left: 13px;
+    position: absolute;
+    top: 8px;
+    width: 13px;
+  }
