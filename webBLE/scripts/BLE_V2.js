@@ -14,10 +14,10 @@ let device, server, service, txCharacteristic, rxCharacteristic;
 document.getElementById('connect-button').addEventListener('click', async () => {
     try {
         await connect();
-        await setupCharacteristics();
         document.getElementById('status').textContent = 'Connected to UART device';
         console.log('Connected to Spike');
         document.getElementById('check-uuid-button').disabled = false;
+        await setupCharacteristics();
     } catch (error) {
         console.error(error);
         document.getElementById('status').textContent = `Failed to connect: ${error.message}`;
@@ -48,9 +48,9 @@ document.getElementById('check-uuid-button').addEventListener('click', () => {
     await infoResponse()
 });*/
 
-document.getElementById('send-receive').addEventListener('click', () => {
+document.getElementById('send-receive').addEventListener('click', async () => {
     sendInfoRequest();
-    infoResponse();
+    await infoResponse();
 });
 
 async function connect() {
@@ -70,7 +70,7 @@ async function connect() {
         // Initialize service from server
         service = await server.getPrimaryService(UART_SERVICE_UUID);
 
-        // Explicitly get the TX and RX characteristics with the needed properties
+/*        // Explicitly get the TX and RX characteristics with the needed properties
         txCharacteristic = await service.getCharacteristic(WEB_TX_UUID).then(txChar => {
             if (!txChar.properties.write) {
                 throw new Error('TX Characteristic does not support write operation');
@@ -85,7 +85,7 @@ async function connect() {
             return rxChar;
         });
 
-        console.log('Characteristics setup complete');
+        console.log('Characteristics setup complete');*/
 
         // Check and log the service UUID
         if (service && service.uuid) {
@@ -102,8 +102,18 @@ async function connect() {
 }
 
 async function setupCharacteristics() {
-    txCharacteristic = await service.getCharacteristic(WEB_TX_UUID);
-    rxCharacteristic = await service.getCharacteristic(WEB_RX_UUID);
+    txCharacteristic = await service.getCharacteristic(WEB_TX_UUID).then(txChar => {
+        if (!txChar.properties.write) {
+            throw new Error('TX Characteristic does not support write operation');
+        }
+        return txChar;
+    });
+    rxCharacteristic = await service.getCharacteristic(WEB_RX_UUID).then(rxChar => {
+        if (!rxChar.properties.notify) {
+            throw new Error('RX Characteristic does not support notify operation');
+        }
+        return rxChar;
+    });
 
     console.log(`Tx Characteristic UUID: ${txCharacteristic.uuid}`);
     console.log(`Rx Characteristic UUID: ${rxCharacteristic.uuid}`);
@@ -145,12 +155,12 @@ async function infoResponse() {
         const decoder = new TextDecoder('utf-8');
         const decodedMessage = decoder.decode(value);
 
-        if (!chunkSizeInitialized) {
+        /*if (!chunkSizeInitialized) {
             // Extract chunk size from the decoded message
             chunkSize = getMaxChunkSize(decodedMessage); // assume this function is implemented to extract chunk size
             chunkSizeInitialized = true;
             console.log(`Chunk size set to ${chunkSize}`);
-        }
+        }*/
 
         console.log('Received:', decodedMessage);
         //document.getElementById('info-response').textContent = `Info Response: ${decodedMessage}`;
