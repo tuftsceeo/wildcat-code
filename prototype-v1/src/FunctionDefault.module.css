@@ -5,48 +5,67 @@
 body {
     overflow: hidden;
     margin: 0; /* Ensure no margin around the body */
-}
-
-/* FunctionDefault */
-.componentWrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    height: 100vh;
-    font-size: 35px;
-    color: #eab4fe;
     font-family: 'Space Grotesk';
-    position: relative;
-    padding: 20px;  
-    /* Add padding to ensure components don't touch the screen edges */
 }
 
-.actionSenseSection, .hubBottomIcon {
+.hubTopBackground {
     position: absolute;
-    right: 20px; /* Add margin from the right edge */
-}
-
-.actionSenseSection {
-    top: 10%;
-    width: 459px;
-    height: 328px;
-}
-
-.hubBottomIcon {
-    top: calc(10% + 328px + 20px); /* Ensure it's below the actionSenseSection with some space */
+    top: 0;
+    right: 0;
+    width: 90vh; /* Take up the right half of the screen with padding */
+    height: 95vh; /* Full height with padding */
+    margin: 20px; /* Padding to ensure it doesn't touch the edges */
     border-radius: 25px;
-    width: 1100px;
-    height: 340px;
-    object-fit: contain;
-    background-color: #BA1DF1;
-    z-index: -100;
+    background-color: #405CB0;
+    z-index: 1;
+}
+
+.outline {
+    position: absolute;
+    top: 50%;  /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-51.5%, -48%); /* Center using transform */
+    width: 95%;  /* Set width to 100% of parent */
+    height: 89%; /* Adjusted height */
+    margin: 10px; 
+    z-index: 2; /* Ensure this is on top */
+}
+
+.functionHubText {
+    position: absolute;
+    top: 3%; /* Move it up by adjusting this value */
+    left: 12%;
+    transform: translateX(50%);
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    font-size: x-large;
+    width: 344px;
+    height: 75px;
+    color: #98AEDD;
+    z-index: 3;
+}
+
+.orText {
+    position: absolute;
+    top: 3%; /* Move it up by adjusting this value */
+    left: 12%;
+    transform: translateX(39%);
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    font-size: x-large;
+    width: 344px;
+    height: 75px;
+    color: #98AEDD;
+    z-index: 3;
 }
 
 .actionSenseButtonGroup {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 125px;
     position: absolute;
-    top: 60%; /* Adjusted to lower the button group */
+    top: 23%; /* Adjusted to lower the button group */
     left: 50%;
     transform: translate(-50%, -50%);
     width: 390px;
@@ -54,43 +73,7 @@ body {
     font-size: 30px;
     color: #ba1df1;
     font-family: 'McLaren';
-    z-index: 50;
-}
-
-.hubConnectIcon {
-    position: absolute;
-    top: 100%;  /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust to account for the icon's own dimensions */
-    width: 73px;  /* Adjust width as needed */
-    height: 73px; /* Adjust height as needed */
-    border-radius: 25px;
-    object-fit: contain;
-    background-color: #BA1DF1;
-    z-index: 300; /* Ensure this is on top */
-}
-
-.functionHubText {
-    position: absolute;
-    top: -30px; /* Move it up by adjusting this value */
-    left: 50%;
-    transform: translateX(-50%);
-    letter-spacing: 0.06em;
-    font-weight: 500;
-    width: 244px;
-    height: 40px;
-}
-
-.hubTopBackground {
-    position: relative;
-    top: calc(10% - 89px);
-    left: calc(50% - 229.5px);
-    border-radius: 25px;
-    width: 459px;
-    height: 400px;
-    object-fit: contain;
-    background-color: #BA1DF1;
-    z-index: -1;
+    z-index: 4;
 }
 
 .actionButtonChild {
@@ -104,31 +87,42 @@ body {
     border-radius: 10px;
     background-color: #fff;
     border-color: #fff;
-    font-size: 30px;
-    color: #ba1df1;
+    font-size: 20px;
+    color: #405CB0;
     font-family: 'McLaren';
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    z-index: 300;
+    z-index: 6;
 }
 
 .actionButton {
-    position: absolute;
-    height: 47.77%;
+    position: relative;
+    height: 25%;
     width: 100%;
     top: 0%;
     right: 0%;
     bottom: 52.23%;
     left: 0%;
+    z-index: 5;
 }
 
 .senseButton {
-    position: absolute;
-    height: 47.77%;
+    position: relative;
+    height: 25%;
     width: 100%;
-    top: 52.23%;
+    top: 0%;
     right: 0%;
     bottom: -0.01%;
     left: 0%;
+    z-index: 5;
 }
+
+.dash {
+    z-index: 1000;
+}
+
+
+
 
 
 

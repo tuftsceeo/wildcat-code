@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Knob.css';
-import { Switch } from '@mui/material';
-import { FormGroup } from '@mui/material';
-import { FormControlLabel } from '@mui/material';
+// import { Switch } from '@mui/material';
+// import { FormGroup } from '@mui/material';
+// import { FormControlLabel } from '@mui/material';
 
 const KnobComponent = () => {
   const [angle, setAngle] = useState(0);
@@ -26,10 +26,17 @@ const KnobComponent = () => {
     const rect = knobRef.current.getBoundingClientRect();
     const newAngle = getAngle(e.clientX, e.clientY, rect);
     const angleDelta = newAngle - startAngle.current;
-    const updatedAngle = startRotation.current + angleDelta;
+    let updatedAngle = startRotation.current + angleDelta;
+
+    // Limit the angle to between 0 and 180 degrees
+    if (updatedAngle < 0) {
+      updatedAngle = 0;
+    } else if (updatedAngle > 180) {
+      updatedAngle = 180;
+    }
+
     setAngle(updatedAngle);
     angleRef.current = updatedAngle;
-    console.log("Mouse Move -> New Angle:", newAngle, "Angle Delta:", angleDelta, "Updated Angle:", updatedAngle);
   };
 
   const handleMouseUp = () => {
@@ -60,15 +67,16 @@ const KnobComponent = () => {
   };
 
   const snapAngle = (angle) => {
-    const snapPoints = [0, 90, 180, 270, 360];
+    const snapPoints = [0, 45, 90, 135];
+    /*45 and 135*/ 
     return snapPoints.reduce((prev, curr) =>
       Math.abs(curr - angle) < Math.abs(prev - angle) ? curr : prev
     );
   };
 
   return (
-    <><div className="grid-container">
-      <div className="knob-mark" />
+    <>
+      <div className="motor-bckgnd" />
       <div
         ref={knobRef}
         className="knob"
@@ -76,7 +84,7 @@ const KnobComponent = () => {
         onMouseDown={handleMouseDown}
       >
       </div>
-    </div><div> <FormGroup> <FormControlLabel control={<Switch onChange={handleFreeScrollChange} />} label="Free scroll" /> </FormGroup> </div></>
+    </>
   );
 };
 

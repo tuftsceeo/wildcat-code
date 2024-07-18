@@ -6,9 +6,7 @@ import { SensorDash } from './SensorDash.jsx'
 function App() {
   return (
     <>
-      <SensorDash />
       <FunctionDefault />
-      {/* <MotorDash /> */}
     </>
   
   );
