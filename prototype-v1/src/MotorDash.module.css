@@ -1,15 +1,35 @@
-.motorGroup {
-    display: flex;
-    flex-direction: column;
+/* MotorDash.module.css */
+  
+  .motorGroup {
+    display: grid;
+    grid-template-areas: 
+              "a a a"
+              "b c d";
     align-items: center;
-}
-
-.motorName {
+    justify-content: space-around;
+    /* position: absolute; */
+    z-index: 10; 
+    top: 15%;
+    left: 0;
+    width: 50%;
+    height: 30%;
+    row-gap: 10px;
+    column-gap: 100px;
+  }
+  
+  .motorName {
     position: absolute;
-    top: 65%;  /* Center vertically */
-    left: 25%;
-}
-.goButton {
+    text-align: center;
+    top: 65%; 
+    left: 20%;
+    color: #FFFF;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 2;
+    grid-column-end: 2;
+  }
+  
+  .goButton {
     border-radius: 50%;
     border: none;
     width: 107px;
@@ -18,29 +38,38 @@
     transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
     outline: none;
     cursor: pointer;
-    color: #780A9F;
+    color: #405CB0;;
     background-color: #FFFF;
     text-align: center;
     font-family: "Inter-Bold", Helvetica;
+    /* font-family: 'Space Grotesk', 'McLaren'; */
     font-size: 30px;
     font-weight: 700;
     position: absolute;
-    top: 60%;  /* Center vertically */
+    top: 60%;
     left: 40%;
-}
-
-.goButton:active, .stopButton:active {
+    grid-row-start: 2;
+    grid-row-end: 2;
+    grid-column-start: 1;
+    grid-column-end: 1;
+  }
+  
+  .goButton:active, .stopButton:active {
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     transform: translate(1px, 1px);
-}
-
-.speedDial {
+  }
+  
+  .speedDial {
     position: absolute;
-    top: 60%;  /* Center vertically */
-    left: 55%;
-}
-
-.stopButton {
+    top: 60%;  
+    left: 55%; 
+    grid-row-start: 2;
+    grid-row-end: 2;
+    grid-column-start: 2;
+    grid-column-end: 2;
+  }
+  
+  .stopButton {
     border-radius: 50%;
     border: none;
     width: 107px;
@@ -49,13 +78,18 @@
     transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
     outline: none;
     cursor: pointer;
-    color: #780A9F;
+    color: #405CB0;;
     background-color: #FFFF;
     text-align: center;
     font-family: "Inter-Bold", Helvetica;
+    /* font-family: 'Space Grotesk', 'McLaren'; */
     font-size: 30px;
     font-weight: 700;
     position: absolute;
-    top: 60%;  /* Center vertically */
-    left: 70%;
-}
+    top: 60%;  
+    left: 70%; 
+    grid-row-start: 2;
+    grid-row-end: 2;
+    grid-column-start: 3;
+    grid-column-end: 3;
+  }

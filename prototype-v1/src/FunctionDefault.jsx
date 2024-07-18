@@ -1,30 +1,47 @@
 import styles from './FunctionDefault.module.css';
-import { ReactComponent as HubConnectIcon } from './assets/hub-connect.svg';
+
 import { MotorDash } from './MotorDash.jsx';
 import { SensorDash } from './SensorDash.jsx'
+import React, { useState } from 'react';
+
+/* buttons freeze up after a couple uses?????? */
 
 
 export const FunctionDefault = () => {
+	const [hubState, setHubState] = useState(null);
+
+
+	const handleButtonClick = (element) => {
+		setHubState(element);
+	  };
+
   	return (
-    		 <div className={styles.componentWrapper}>
-				<div className={styles.hubBottomIcon}>
-				</div>
-				<MotorDash />
-      			<div className={styles.actionSenseSection}>
-          			<div className={styles.functionHubText}>function hub</div>
-                      <div className={styles.hubTopBackground}>
-					  	<HubConnectIcon className={styles.hubConnectIcon} />
+    		 <>
+				<div className={styles.hubTopBackground}>
+					  	<img className={styles.outline}
+						src={require('./assets/outline-function-hub.png')}/>
+						<div className={styles.functionHubText}>
+							function hub
 						</div>
-                        <div className={styles.actionSenseButtonGroup}>
+						{hubState === 'action' && <MotorDash />}
+        				{hubState === 'sense' && <SensorDash />}
+						<div className={styles.actionSenseButtonGroup}>
         				    <div className={styles.actionButton}>
-          					    <button className={styles.actionButtonChild}> ACTION </button>
+          					    <button disabled={false} className={styles.actionButtonChild} 
+								onClick={() => handleButtonClick('action')}> 
+								ACTION </button>
         				    </div>
+							<div className={styles.orText}>
+							or
+						</div>
         				    <div className={styles.senseButton}>
-          					    <button className={styles.actionButtonChild}> SENSE </button> 
+          					    <button disabled={false} className={styles.actionButtonChild} 
+								onClick={() => handleButtonClick('sense')}> 
+								SENSE </button> 
         				    </div>
                             </div>
-      				</div>
-            	</div>
+						</div>
+            	</>
             );
 };
 
