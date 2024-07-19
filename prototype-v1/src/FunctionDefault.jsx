@@ -23,7 +23,13 @@ export const FunctionDefault = () => {
 						<div className={styles.functionHubText}>
 							function hub
 						</div>
-						{hubState === 'action' && <MotorDash />}
+						{hubState === 'action' && 
+						(
+							<>
+							  <MotorDash port='A' />
+							  <MotorDash port='B' />
+							</>
+						  )}
         				{hubState === 'sense' && <SensorDash />}
 						<div className={styles.actionSenseButtonGroup}>
         				    <div className={styles.actionButton}>

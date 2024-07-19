@@ -75,8 +75,8 @@ const KnobComponent = () => {
   };
 
   return (
-    <>
-      <div className="motor-bckgnd" />
+  
+      <div className="motor-bckgnd">
       <div
         ref={knobRef}
         className="knob"
@@ -84,7 +84,8 @@ const KnobComponent = () => {
         onMouseDown={handleMouseDown}
       >
       </div>
-    </>
+      </div> 
+   
   );
 };
 

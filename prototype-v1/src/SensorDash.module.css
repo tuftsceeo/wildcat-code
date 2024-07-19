@@ -1,26 +1,56 @@
 .sensorGroup {
-    /* display: flex;
-    width: 658px;
-    height: 260px;
-    padding-left: 23px;
-    flex-direction: column;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-areas: 
+      "label"
+      "sensorIcon"
+      "colors";
     align-items: center;
-    gap: 150px; */
+    justify-items: center;
+    z-index: 10;
+    position: relative;
+    top: 27%;
+    width: 100%; 
+    row-gap: 25px; 
+  }
+  
+  .colorSensorLabel {
+    color: #FFFF;
+  }
+  
+  .sensorIcon {
+    grid-area: sensorIcon;
+    width: 100px; /* Adjust the size as needed */
+    height: 100px; /* Adjust the size as needed */
+  }
+  
+  .colorPalette {
+    margin-top: 30px;
+    grid-area: colors;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Define 4 equal columns */
+    grid-template-rows: auto; /* Auto rows to fit content */
+    justify-content: center;
+    align-items: center;
+    padding: 0 50px; /* Adjust padding to avoid overflow */
+    grid-gap: 20px;
+  }
+  
+  .noColorButton {
+    background: none;
+    padding: 0;
+    border: none;
+    width: 70px;
+    height: 70px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-}
-
-
-.sensorIcon {
-    position: absolute;
-    width: 153px;
-    height: 149px;
-}
-
-.colorPalette {
-    position: absolute;
-    width: 355px;
-    height: 260px;
-}
+    justify-content: center;
+  }
+  
+  .noColorButton img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  
+  
