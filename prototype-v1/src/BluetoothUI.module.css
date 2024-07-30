@@ -1,0 +1,19 @@
+.connectButton {
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    top: 0;
+    right: 0;
+    gap: 0px;
+    opacity: 0px;
+    background-color: #98AEDD;
+    z-index: 10;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-top: 7px;
+    border: 5px solid;
+    border-color: #405CB0;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+
+}

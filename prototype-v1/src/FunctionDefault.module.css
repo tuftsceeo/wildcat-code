@@ -93,6 +93,7 @@ body {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     z-index: 300;
     z-index: 6;
+    cursor: pointer;
 }
 
 .actionButton {
@@ -117,8 +118,16 @@ body {
     z-index: 5;
 }
 
-.dash {
-    z-index: 1000;
+.actionButtonChild:focus {
+    border-top-color: #000000; /* Darker border color for the top */
+    border-right-color: #405CB0; /* Optional: change the right border color to default */
+    border-bottom-color: #405CB0; /* Optional: change the bottom border color to default */
+    border-left-color: #000000; /* Optional: change the left border color to default */
+    transform: translateY(1px); /* Moves the button down slightly to simulate pressing */
+    box-shadow: none; /* Remove focus shadow if needed */
+    background-color: #32488A;
+    border-color: #32488A;
+    color: #fff;
 }
 
 

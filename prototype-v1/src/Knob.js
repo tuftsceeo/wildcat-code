@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import dial from './assets/dial.mp3';
 import './Knob.css';
 // import { Switch } from '@mui/material';
 // import { FormGroup } from '@mui/material';
 // import { FormControlLabel } from '@mui/material';
 
-const KnobComponent = () => {
+const KnobComponent = ({ onAngleChange }) => {
   const [angle, setAngle] = useState(0);
   const [lockScrollAngle, setLockScrollAngle] = useState(0);
   const [freeScroll, setFreeScroll] = useState(false);
@@ -12,6 +13,7 @@ const KnobComponent = () => {
   const startAngle = useRef(0);
   const startRotation = useRef(0);
   const angleRef = useRef(angle);
+  const audioRef = useRef(new Audio(dial));
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -23,6 +25,7 @@ const KnobComponent = () => {
   };
 
   const handleMouseMove = (e) => {
+    audioRef.current.play();
     const rect = knobRef.current.getBoundingClientRect();
     const newAngle = getAngle(e.clientX, e.clientY, rect);
     const angleDelta = newAngle - startAngle.current;
@@ -40,6 +43,8 @@ const KnobComponent = () => {
   };
 
   const handleMouseUp = () => {
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
     console.log("Mouse Up -> Current Angle:", angleRef.current);
     if (!freeScroll) {
       const normalizedAngle = (angleRef.current % 360 + 360) % 360; // Normalize angle to 0-360
@@ -47,6 +52,7 @@ const KnobComponent = () => {
       const snappedAngle = snapAngle(normalizedAngle);
       console.log("Mouse Up -> Snapped Angle:", snappedAngle);
       setAngle(snappedAngle);
+      onAngleChange(snappedAngle);
     }
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);

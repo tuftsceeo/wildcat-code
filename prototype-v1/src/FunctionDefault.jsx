@@ -1,11 +1,8 @@
 import styles from './FunctionDefault.module.css';
 
 import { MotorDash } from './MotorDash.jsx';
-import { SensorDash } from './SensorDash.jsx'
+import { SensorDash } from './SensorDash.jsx';
 import React, { useState } from 'react';
-
-/* buttons freeze up after a couple uses?????? */
-
 
 export const FunctionDefault = () => {
 	const [hubState, setHubState] = useState(null);

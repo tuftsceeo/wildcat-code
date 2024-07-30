@@ -3,8 +3,8 @@
 .motorGroup {
   display: grid;
   grid-template-areas:
-    "motorName motorName"
-    "speedDial buttons";
+    "motorName motorName motorName"
+    "dots speedDial buttons";
   align-items: center;
   justify-items: center;
   z-index: 10;
@@ -14,6 +14,18 @@
   /* height: 50%;  */
   row-gap: 0px; 
   grid-template-rows: 30px 150px;
+}
+
+.motorGroup::before {
+  content: '';
+  position: absolute;
+  top: 0px; /* Adjust as needed */
+  left: 25px; /* Adjust as needed */
+  right: 25px; /* Adjust as needed */
+  bottom: 10px; /* Adjust as needed */
+  background-color: #98AEDD;
+  border-radius: 25px; /* Adjust as needed */
+  z-index: -1; /* Ensure the background is behind the component content */
 }
 
 .motorName {
@@ -56,11 +68,23 @@
   font-weight: 700;
 }
 
-.goButton:active, .stopButton:active {
+.active {
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   transform: translate(1px, 1px);
+  background-color: #32488A;
+  color: #ffffff;
+
 }
 
+/* .goButton:focus, .stopButton:focus {
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  transform: translate(1px, 1px);
+} */
+
+.dragDots {
+  grid-area: dots;
+  align-self: center;
+}
 
 
 
