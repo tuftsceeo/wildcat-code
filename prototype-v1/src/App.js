@@ -5,6 +5,7 @@ import { FunctionDefault } from './FunctionDefault.jsx';
 import { RunMenu } from './RunMenu.jsx';
 import { BluetoothUI } from './BluetoothUI.jsx';
 import { CodingTrack } from './CodingTrack.jsx';
+import { CustomizationPage } from './CustomizationPage.jsx';
 
 
 
@@ -16,6 +17,7 @@ function App() {
         <CodingTrack />
         <FunctionDefault />
         <BluetoothUI />
+        {/* <CustomizationPage /> */}
       </>
       </DndProvider>
   

@@ -1,9 +1,21 @@
-.connectButton {
+.menu {
+    display: flex;
     position: absolute;
-    width: 96px;
-    height: 96px;
     top: 0;
     right: 0;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+
+
+
+
+
+.connectButton, .helpButton, .settingsButton {
+    position: relative;
+    width: 65px;
+    height: 65px;
     gap: 0px;
     opacity: 0px;
     background-color: #98AEDD;
