@@ -2,7 +2,6 @@ from __future__ import annotations
 from abc import ABC
 import struct
 
-
 class BaseMessage(ABC):
     @property
     def ID(cls) -> int:

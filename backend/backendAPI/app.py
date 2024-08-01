@@ -28,7 +28,7 @@ While the script is running, it will print information about the messages it sen
 """
 
 import sys
-from typing import cast, TypeVar
+from typing import cast, TypeVar #, Dict
 
 TMessage = TypeVar("TMessage", bound="BaseMessage")
 
@@ -62,7 +62,8 @@ EXAMPLE_SLOT = 0
 """The slot to upload the example program to"""
 
 EXAMPLE_PROGRAM = """import runloop
-from hub import light_matrix
+from hub import
+light_matrix
 print("Console message from hub.")
 async def main():
     await light_matrix.write("Hello, world!")
