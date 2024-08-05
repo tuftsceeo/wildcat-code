@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import styles from './SensorDash.module.css';
 import colorSensorDefault from './assets/color-sensor-default.svg';
@@ -25,7 +25,8 @@ const ItemType = {
 
 export const SensorDash = () => {
   const [currentSvg, setCurrentSvg] = useState(colorSensorDefault);
-  const [currentColor, setCurrentColor] = useState(null);
+  const [currentColor, setCurrentColor] = useState("none");
+  const currentColorRef = useRef(currentColor);
 
   const handleSvgChange = (newSvg, color) => {
     const audio = new Audio(highPop);
@@ -36,17 +37,22 @@ export const SensorDash = () => {
   };
 
   useEffect(() => {
-    console.log("Updated color sensor: " + currentColor);
+    currentColorRef.current = currentColor; // Update the ref whenever currentColor changes
+    // console.log("Updated color sensor: " + currentColor);
   }, [currentColor]);
 
   // Use the useDrag hook to make the sensorIcon draggable
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemType.SENSOR_ICON,
-    item: { type: ItemType.SENSOR_ICON, currentSvg },
+    item: { type: ItemType.SENSOR_ICON, currentSvg, currentColorRef },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-  }));
+  }), [currentColorRef.current]);
+
+  // useEffect(() => {
+  //   console.log('Dragging item with currentColor:', currentColorRef.current); // Log the ref value to verify
+  // }, [isDragging]);
 
   return (
     <div className={styles.sensorGroup}>

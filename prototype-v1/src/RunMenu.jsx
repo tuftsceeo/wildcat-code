@@ -1,10 +1,14 @@
 import styles from './RunMenu.module.css';
 
-export const RunMenu = () => {
+export const RunMenu = ({ pyCode, canRun }) => {
 
 
 	const handleButtonClick = (message) => {
-        console.log(message);
+        if (canRun) {
+            console.log(`Running ${message}: ${pyCode}`);
+          } else {
+            console.log("Cannot run. Not finished with task.");
+          }
 	  };
 
   	return (

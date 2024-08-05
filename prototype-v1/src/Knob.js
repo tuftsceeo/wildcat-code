@@ -45,14 +45,16 @@ const KnobComponent = ({ onAngleChange }) => {
   const handleMouseUp = () => {
     audioRef.current.pause();
     audioRef.current.currentTime = 0;
-    console.log("Mouse Up -> Current Angle:", angleRef.current);
+    // console.log("Mouse Up -> Current Angle:", angleRef.current);
     if (!freeScroll) {
       const normalizedAngle = (angleRef.current % 360 + 360) % 360; // Normalize angle to 0-360
-      console.log("Mouse Up -> Normalized Angle:", normalizedAngle);
+      // console.log("Mouse Up -> Normalized Angle:", normalizedAngle);
       const snappedAngle = snapAngle(normalizedAngle);
-      console.log("Mouse Up -> Snapped Angle:", snappedAngle);
+      // console.log("Mouse Up -> Snapped Angle:", snappedAngle);
       setAngle(snappedAngle);
-      onAngleChange(snappedAngle);
+      if (onAngleChange) {
+        onAngleChange(snappedAngle);
+      }
     }
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
