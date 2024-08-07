@@ -5,13 +5,20 @@ import bluetoothConnected from './assets/bluetooth-connected-correct.svg';
 import settings from './assets/settings.svg';
 import questionMark from './assets/question-mark.svg';
 import { CustomizationPage } from './CustomizationPage';
+import axios from 'axios';
 
 export const BluetoothUI = () => {
     const [currentSvg, setCurrentSvg] = useState(true);
     const [showCustomizationPage, setShowCustomizationPage] = useState(false);
 
-    const handleSvgChange = (newSvg) => {
-        setCurrentSvg(!currentSvg);
+    const handleSvgChange = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/ble-connect');
+            console.log(response.data);
+            setCurrentSvg(!currentSvg);
+        } catch (error) {
+            console.error('There was an error connecting to Bluetooth!', error);
+        }
     };
 
     const handleSettingsClick = () => {
@@ -30,7 +37,7 @@ export const BluetoothUI = () => {
         <>
             <div className={styles.menu}>
                 <button className={styles.connectButton} 
-                onClick={() => handleSvgChange(bluetoothConnected)}>
+                onClick={() => handleSvgChange()}>
                     <img src={currentSvg ? bluetoothDefault : bluetoothConnected} alt="Bluetooth Icon" />
                 </button>
                 <button className={styles.settingsButton} onClick={handleSettingsClick}>
