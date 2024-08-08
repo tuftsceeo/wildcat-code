@@ -62,8 +62,7 @@ EXAMPLE_SLOT = 0
 """The slot to upload the example program to"""
 
 EXAMPLE_PROGRAM = """import runloop
-from hub import
-light_matrix
+from hub import light_matrix
 print("Console message from hub.")
 async def main():
     await light_matrix.write("Hello, world!")
@@ -80,6 +79,11 @@ if answer.strip().lower().startswith("n"):
     sys.exit(0)
 
 stop_event = asyncio.Event()
+
+'''******added below section to setup user-controlled file uploading*******'''
+async def user_confirmation():
+    # This function uses asyncio to wait for user input asynchronously
+    await asyncio.get_event_loop().run_in_executor(None, input, "Press Enter to start file upload...")
 
 async def main():
 
@@ -193,7 +197,9 @@ async def main():
             print(
                 "ClearSlotRequest was not acknowledged. This could mean the slot was already empty, proceeding..."
             )
-
+        
+        '''added for user-controlled file upload'''
+        await user_confirmation()
         # start a new file upload
         program_crc = crc(EXAMPLE_PROGRAM)
         start_upload_response = await send_request(
