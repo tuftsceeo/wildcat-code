@@ -16,18 +16,25 @@ from app import main
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",  # React frontend
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],  # Allows requests from your frontend
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
 )
 
+@app.get("/")
+async def root():
+    return {"message": "Hello, World!"}
 
 @app.post("/ble-connect")
 async def ble_connect():
-    main()
+    await main()
     return {"message": "Bluetooth connected"}
 
 @app.post("/run-code")
@@ -35,4 +42,5 @@ async def run_code(request: Request):
     data = await request.json()
     py_code = data.get("pyCode")
     # Process the py_code, e.g., save to a file or execute it
+    print(py_code)
     return {"message": "Code received", "pyCode": py_code}
