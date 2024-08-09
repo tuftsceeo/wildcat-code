@@ -1,5 +1,7 @@
+## Bare bones debugging for FastAPI
+
 from fastapi import FastAPI, HTTPException
-import app
+from app import file_upload, main as spikeBLE
 
 app = FastAPI()
 
@@ -9,8 +11,8 @@ async def index():
 
 @app.get('/ble-connect')
 async def bleConnect():
-    return "connecting to BLE"
+    await spikeBLE()
 
 @app.get('/run-code')
 async def runCode():
-    return "uploading file now"
+    await file_upload()
