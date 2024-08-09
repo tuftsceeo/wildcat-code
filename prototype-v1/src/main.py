@@ -11,7 +11,7 @@ sys.path.append(tests_dir)
 
 # Now you can import your module
 import app  # replace with the actual module name
-from app import main
+from app import main, file_upload
 
 
 app = FastAPI()
@@ -42,5 +42,5 @@ async def run_code(request: Request):
     data = await request.json()
     py_code = data.get("pyCode")
     # Process the py_code, e.g., save to a file or execute it
-    print(py_code)
+    await file_upload()
     return {"message": "Code received", "pyCode": py_code}

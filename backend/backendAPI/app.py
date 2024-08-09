@@ -62,10 +62,16 @@ EXAMPLE_SLOT = 0
 """The slot to upload the example program to"""
 
 EXAMPLE_PROGRAM = """import runloop
-from hub import light_matrix
+import time
+from hub import port
+import motor
 print("Console message from hub.")
 async def main():
-    await light_matrix.write("Hello, world!")
+    while True:
+        motor.run(port.C, 1000)
+        time.sleep(1)
+        motor.stop(port.C)
+        time.sleep(1)
 runloop.run(main())""".encode(
     "utf8"
 )
@@ -197,7 +203,7 @@ async def file_upload():
         sys.exit(1)
 
 async def main():
-    global client, rx_char, tx_char
+    global client, rx_char, tx_char, info_response
     print(f"\nScanning for {SCAN_TIMEOUT} seconds, please wait...")
     device = await BleakScanner.find_device_by_filter(
         filterfunc=match_service_uuid, timeout=SCAN_TIMEOUT
@@ -223,7 +229,6 @@ async def main():
 
         await client.start_notify(tx_char, on_data)
 
-        global info_response
         info_response = await send_request(InfoRequest(), InfoResponse)
 
         notification_response = await send_request(
