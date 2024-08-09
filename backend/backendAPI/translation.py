@@ -3,6 +3,10 @@
 #from typing import List, Dict
 from collections.abc import Iterable
 
+# passable parameters for library: programDict : Dict, ports : list
+# NEXT STEPS: Create a class for 'translation' that takes the above parameters
+# which then 
+
 '''
 * getDevices() -- pulls first value (device list) of recieved program message  
 * input(s): 'track' - Iterable of a dictionary of strings
@@ -19,9 +23,14 @@ def getDevices(track : Iterable[dict[str]]) -> list[str]:
 def getTrack(track : Iterable[dict[str]]) -> list[str]:
     step_list =[]
     for currStep in track:
+       #### NEXT STEPS:
+            # nest a loop in here to examine each step's list of services
+            # call to_py_code()?????
+            # append services to step_list!!
        # print(currStep)
-       step_list.append(placeHolder[currStep])
-    return step_list
+       #step_list.append(placeHolder[currStep])
+    # return step_list
+        return
 
 def to_py_code(steps : dict[str], device_Component) -> list[str]:
     print("something")
@@ -33,35 +42,10 @@ devices = getDevices(programMessage) #device list for component mapping
 track = getTrack(programMessage) #list of services per step
 PROGRAM_EXECUTABLE = ""
 
-hubImports : list[str] = [] #imports from hub will be assigned as appropriate
+#he following lists will be assigned as appropriate
+hubImports : list[str] = [] #imports from hub will be merged into 'imports' (below list)
 imports : list[str] = [""] 
 component_services : list[str] = []
-
-'''usable method for below index is redundant'''
-'''support for indexing is now provided by check_imports()'''
-'''COMPONENT_IMPORT_MAPPING = {
-    "motor" : "motor",
-    "color_sensor" : "color_sensor\nimport color",
-    "distance_sensor" : "distance_sensor",
-    "force_sensor" : "force_sensor"
-}
-
-HUB_IMPORT_MAPPING = {
-    "light_matrix" : "light_matrix",
-    "device" : "port"
-}
-'''
-
-'''for blah in blah_blah_blah:
-            --- if (first key) -->
-            ----- for item in list:
-            ------- iteration = 0
-            ------- check for repeat component --> if value in 
-            ------- new device_Component(item, int(), port) <-- assign port from DEVICE_NOTIFICATION
-            ------- append to "devices" list
-            --- nested loop (sorting) each key & corresponding values for EACH STEP
-                        ^^see note above about lists within dictionaries^^
-'''
 
 '''CURRENT compatible hub/component device index as follows'''
 HUB_MODULES : list[str] = ["light_matrix", "port"]
@@ -88,6 +72,7 @@ print(PROGRAM_EXECUTABLE)
 #for item in COMPONENT_IMPORT_MAPPING:
 #    print(COMPONENT_IMPORT_MAPPING[item])
 
+
 ''' ** implementation of getTrack() function for recieving message from WEB UI ** '''
 '''    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ############## MAKE EACH STEP OF THE ACTIVITY INTO A {STEP : MOD+SERV[]} ITEM ###############
@@ -104,7 +89,7 @@ print(PROGRAM_EXECUTABLE)
 
 
     
-
+'''below is a general format for the overall translation script... kind of'''
 class device_Component():
     
     def __init__(self, component : str, iteration : int, port : int|str, service : str):
@@ -127,3 +112,32 @@ program_blocks: dict[str] = {"motor" : ""}
 parts = ["Hello", "World", "From", "Python"]
 PROGRAM_EXECUTABLE = "\n".join(parts)
 #print(PROGRAM_EXECUTABLE)
+
+
+
+
+'''usable method for below index is redundant'''
+'''support for indexing is now provided by check_imports()'''
+'''COMPONENT_IMPORT_MAPPING = {
+    "motor" : "motor",
+    "color_sensor" : "color_sensor\nimport color",
+    "distance_sensor" : "distance_sensor",
+    "force_sensor" : "force_sensor"
+}
+
+HUB_IMPORT_MAPPING = {
+    "light_matrix" : "light_matrix",
+    "device" : "port"
+}
+'''
+
+'''for blah in blah_blah_blah:
+            --- if (first key) -->
+            ----- for item in list:
+            ------- iteration = 0
+            ------- check for repeat component --> if value in 
+            ------- new device_Component(item, int(), port) <-- assign port from DEVICE_NOTIFICATION
+            ------- append to "devices" list
+            --- nested loop (sorting) each key & corresponding values for EACH STEP
+                        ^^see note above about lists within dictionaries^^
+'''

@@ -1,4 +1,4 @@
-## Bare bones debugging for FastAPI
+## Bare bones debugging file for FastAPI
 
 from fastapi import FastAPI, HTTPException
 from app import file_upload, main as spikeBLE
