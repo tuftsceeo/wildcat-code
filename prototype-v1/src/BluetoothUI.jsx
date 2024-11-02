@@ -13,6 +13,8 @@ export const BluetoothUI = () => {
 
     const handleSvgChange = async () => {
         try {
+            // Send a POST request to connect to Bluetooth 
+            // THIS IS WHERE THE COMMUNICATION WITH THE BACKEND OCCURS
             const response = await axios.post('http://localhost:8000/ble-connect');
             console.log(response.data);
             setCurrentSvg(!currentSvg);
