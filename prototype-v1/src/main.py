@@ -1,3 +1,8 @@
+#Might need to run with fastapi instead of python>>>> fastapi dev main.py 
+#need to install>>> pip install "fastapi[standard]"
+
+#
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import sys
@@ -22,7 +27,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows requests from your frontend
+    allow_origins=["http://localhost:3000"],  # Allows requests from your frontend
     allow_credentials=True,
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers

@@ -241,13 +241,16 @@ async def main():
 
         #await file_upload()
         await stop_event.wait()
+        print("COMPLETED APP MAIN")
 
 
-'''
+""" MAY NEED TO RUN THIS ONCE as __main__ DIRECTLY TO be prompted for Bluetooth permissions for Python"""
+"""
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Interrupted by user.")
         stop_event.set()
-'''
+
+"""
