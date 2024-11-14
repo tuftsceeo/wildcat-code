@@ -26,13 +26,11 @@
     align-items: center;
     justify-content: center;
     z-index: 3;
-
 }
 
 .codeSucker {
     transform: translateY(-11.5%);
     z-index: 2;
-
 }
 
 .codeTrack {
@@ -40,7 +38,8 @@
     z-index: 1;
 }
 
-.nextButton, .prevButton {
+.nextButton,
+.prevButton {
     background: none;
     border: none;
     padding: 0;
@@ -58,12 +57,14 @@
     z-index: 3;
 }
 
-.prevButton:disabled, .nextButton:disabled {
+.prevButton:disabled,
+.nextButton:disabled {
     cursor: not-allowed;
 }
 
-.nextButton img, .prevButton img {
+.nextButton img,
+.prevButton img {
     display: block; /* Remove any spacing below the image */
-    width: 100%;    /* Adjust as needed */
-    height: auto;   /* Maintain aspect ratio */
+    width: 100%; /* Adjust as needed */
+    height: auto; /* Maintain aspect ratio */
 }
