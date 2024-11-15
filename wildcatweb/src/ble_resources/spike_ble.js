@@ -6,7 +6,7 @@
 import * as messages from "./messages"; // Assuming you have implemented messages.js with message classes
 import { crc } from "./crc";
 import { encode as cobsEncode, decode as cobsDecode } from "./cobs";
-import { Buffer } from "buffer";
+import { Buffer } from "buffer"; // Not needed in node js
 
 const SERVICE_UUID = "0000fd02-0000-1000-8000-00805f9b34fb";
 const RX_CHAR_UUID = "0000fd02-0001-1000-8000-00805f9b34fb";
@@ -401,6 +401,7 @@ export function newSpikeBLE() {
 }
 
 // Example usage
+/*
 (async () => {
     const ble = newSpikeBLE();
     const success = await ble.ask("");
@@ -428,4 +429,4 @@ export function newSpikeBLE() {
         // Start the program in the specified slot
         await ble.startProgram(EXAMPLE_SLOT);
     }
-})();
+})();*/

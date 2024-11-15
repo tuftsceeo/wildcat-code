@@ -473,7 +473,28 @@ function deserialize(data) {
     );
 }
 
+export {
+    BaseMessage,
+    InfoRequest,
+    InfoResponse,
+    ClearSlotRequest,
+    ClearSlotResponse,
+    StartFileUploadRequest,
+    StartFileUploadResponse,
+    TransferChunkRequest,
+    TransferChunkResponse,
+    ProgramFlowRequest,
+    ProgramFlowResponse,
+    ProgramFlowNotification,
+    ConsoleNotification,
+    DeviceNotificationRequest,
+    DeviceNotificationResponse,
+    DeviceNotification,
+    deserialize,
+};
+
 // Example usage
+/*
 try {
     const request = new StartFileUploadRequest("test.txt", 1, 12345);
     const serialized = request.serialize();
@@ -487,3 +508,4 @@ try {
 } catch (e) {
     console.error(e);
 }
+*/

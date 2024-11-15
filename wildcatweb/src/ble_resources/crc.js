@@ -32,6 +32,8 @@ function crc(data, seed = 0, align = 4) {
     return crcValue >>> 0;
 }
 
+export { crc };
+
 // Example usage
 /**
 const data = new Uint8Array([0x11, 0x22, 0x33]);

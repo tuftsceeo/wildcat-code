@@ -7,7 +7,7 @@ import settings from "./assets/settings.svg"; // Settings icon
 import questionMark from "./assets/question-mark.svg"; // Help icon
 import { CustomizationPage } from "./CustomizationPage"; // Import customization settings component
 import axios from "axios"; // Import axios for making HTTP requests
-import { newBLE } from "./ble_resources/blu_library"; // Import the BLE library
+import { newSpikeBLE } from "./ble_resources/spike_ble"; // Import the BLE library
 import HelpDialog from "./HelpDialog"; // Import HelpDialog component
 
 // Define the BluetoothUI component
@@ -22,7 +22,7 @@ export const BluetoothUI = ({ currSlotNumber }) => {
     const [isConnected, setIsConnected] = useState(false);
 
     // Initialize a BLE instance
-    const ble = newBLE();
+    const ble = newSpikeBLE();
 
     // Function to handle Bluetooth connection/disconnection
     const handleBluetoothToggle = async () => {
