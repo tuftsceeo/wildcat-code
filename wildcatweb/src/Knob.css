@@ -1,0 +1,29 @@
+.knob {
+    width: 77.5px; /*77.5*/
+    height: 50px; /*50 -- 100 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute; /* Change to absolute to position relative to .motor-bckgnd */
+    cursor: pointer;
+    transform: rotate(45deg); /* Keep the rotation */
+    background-image: url("./assets/motor-widget.png");
+    top: 40%; /* Center vertically */
+    left: 10%; /* Center horizontally */
+    transform: translate(-50%, -50%) rotate(45deg);
+    transform-origin: 61% 45%;
+    z-index: 1500;
+}
+
+.motor-bckgnd {
+    width: 141.5px; /*190*/
+    height: 91.5px; /*91.5 -- 183*/
+    position: relative;
+    top: 0%; /* Center vertically */
+    left: 10%; /* Center horizontally */
+    background-image: url("./assets/motor-speed-background.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-radius: 50% 50% 0 0;
+    /* transform: translate(-50%, -50%);  */
+    z-index: 1000;
+}

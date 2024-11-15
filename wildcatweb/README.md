@@ -1,14 +1,18 @@
 # Electron Tutorial Information
 
 Fol;lowing instructions from [Building a desktop app with Electron and Create React App](https://mmazzarolo.com/blog/2021-08-12-building-an-electron-application-using-create-react-app/#electrons-preload-script) Aug 12, 2021 By Mazzarolo Matteo
+
 `npx create-react-app my-electron-app`
+
 `cd wildcatweb`
+
 `yarn add -D concurrently cross-env electron electron-builder electronmon wait-on`
 
 ## To Build
 
 `cd wildcatweb`
 run `yarn electron:start` to kickstart your development flow
+
 run `yarn electron:package:<platform>` to generate a distributable bundle --- need admin privileges
 
 # Getting Started with Create React App
