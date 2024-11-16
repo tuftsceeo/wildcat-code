@@ -141,7 +141,28 @@ class SpikeBLE {
     ===============
     */
     // Method to request and select a Bluetooth device
+    // ELECTRON ASK
     ask = async (name) => {
+        return new Promise((resolve, reject) => {
+            const { ipcRenderer } = require('electron');
+    
+            ipcRenderer.once('bluetooth-device-selected', (event, device) => {
+                if (device) {
+                    this.device = device;
+                    console.log(`Device selected: ${device.name}`);
+                    resolve(true);
+                } else {
+                    console.error("No device selected or request was canceled");
+                    reject(new Error("No device selected or request was canceled"));
+                }
+            });
+    
+            ipcRenderer.send('select-bluetooth-device', name);
+        });
+    };
+
+    //This is the not electron version of ASK
+/*     ask = async (name) => {
         try {
             let filters = [];
             // Set up filters for device selection based on name or default service UUID
@@ -161,7 +182,7 @@ class SpikeBLE {
             console.error("Error scanning for devices:", error);
             return false;
         }
-    };
+    }; */
 
     initializeBLE = async () => {
         // Connect to the GATT (Generic Attribute Profile) server on the device

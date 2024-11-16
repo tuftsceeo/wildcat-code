@@ -1,8 +1,8 @@
 // Import necessary modules and assets
 import React, { useState, useEffect, useRef } from "react";
-import { useDrop } from "react-dnd";
+//import { useDrop } from "react-dnd";
 import styles from "./CodingTrack.module.css";
-import { ReactComponent as CodeSucker } from "./assets/code-sucker.svg";
+//import { ReactComponent as CodeSucker } from "./assets/code-sucker.svg";
 import codeTrackEmpty from "./assets/code-track-empty.svg";
 import codeTrackOneMotor from "./assets/code-track-one-motor.svg";
 import codeTrackTwoMotors from "./assets/code-track-two-motors.svg";
@@ -14,12 +14,15 @@ import prevStepActive from "./assets/prev-step-active.svg";
 import oneMotor from "./assets/one-motor.svg";
 import twoMotors from "./assets/two-motors.svg";
 import oneSensor from "./assets/one-sensor.svg";
-import dndLabeled from "./assets/dnd-area.svg";
-import dndEmpty from "./assets/unlabeled-dnd-area.svg";
-import { MotorDash } from "./MotorDash.jsx";
-import { SensorDash } from "./SensorDash.jsx";
+//import dndLabeled from "./assets/dnd-area.svg";
+//import dndEmpty from "./assets/unlabeled-dnd-area.svg";
+import { MotorDash } from "./dash_panels/MotorDash.jsx";
+import { SensorDash } from "./dash_panels/SensorDash.jsx";
 import deepPop from "./assets/infographic-pop.mp3";
 import { KnobProvider, useKnobContext } from "./KnobContext.js";
+
+import { useContext } from "react";
+import { AppContext } from "./AppContext";
 
 // Define draggable item types
 const ItemType = {
@@ -28,16 +31,13 @@ const ItemType = {
 };
 
 // Define main content for CodingTrack component
-const CodingTrackContent = ({
-    setPyCode,
-    setCanRun,
-    currSlotNumber,
-    setCurrSlotNumber,
-    missionSteps,
-}) => {
+const CodingTrackContent = ({}) => {
     // State to track dropped items and drag-and-drop status
-    const [droppedItems, setDroppedItems] = useState([]);
-    const [onTrack, setOnTrack] = useState(dndLabeled);
+    const { setPyCode, currSlotNumber, setCurrSlotNumber, missionSteps } =
+        useContext(AppContext);
+
+    //const [droppedItems, setDroppedItems] = useState([]);
+    //const [onTrack, setOnTrack] = useState(dndLabeled);
     const [codeString, setCodeString] = useState([
         codeTrackEmpty,
         codeTrackEmpty,
@@ -57,7 +57,7 @@ const CodingTrackContent = ({
     // Effect to update pyCode whenever codeDictionary changes
     useEffect(() => {
         console.log(
-            "Python code dictionary update! " + codeDictionary.toString()
+            "Python code dictionary update! " + codeDictionary.toString(),
         );
         setPyCode(codeDictionary.toString());
     }, [codeDictionary, setPyCode]);
@@ -83,7 +83,7 @@ const CodingTrackContent = ({
             const newSlot = prevSlot + 1;
             setSlotImage(codeString[newSlot]);
             setCurrSlotNumber((prevSlot) =>
-                Math.min(prevSlot + 1, missionSteps)
+                Math.min(prevSlot + 1, missionSteps),
             );
             return newSlot;
         });
@@ -99,7 +99,7 @@ const CodingTrackContent = ({
     };
 
     // Set up the drop area for draggable items
-    const [{ isOver }, drop] = useDrop({
+    /*  const [{ isOver }, drop] = useDrop({
         accept: [ItemType.SENSOR_ICON, ItemType.MOTOR_DASH],
         drop: (item) => {
             const updatedCodeDictionary = [...codeDictionary];
@@ -111,7 +111,7 @@ const CodingTrackContent = ({
                     if (
                         prevItems.length > 0 &&
                         prevItems.some(
-                            (prevItem) => prevItem.type === ItemType.MOTOR_DASH
+                            (prevItem) => prevItem.type === ItemType.MOTOR_DASH,
                         )
                     ) {
                         // Case for two motors
@@ -156,7 +156,7 @@ const CodingTrackContent = ({
         collect: (monitor) => ({
             isOver: monitor.isOver(),
         }),
-    });
+    }); */
 
     // Disable navigation buttons at boundaries
     const isNextButtonDisabled = currSlot >= missionSteps;
@@ -165,13 +165,6 @@ const CodingTrackContent = ({
     // Render JSX layout for coding track
     return (
         <div className={styles.trackContainer}>
-            <img
-                ref={drop}
-                src={onTrack}
-                className={styles.dropTarget}
-                alt="code"
-            />
-            <CodeSucker className={styles.codeSucker} />
             <img
                 src={slotImage}
                 className={styles.codeTrack}

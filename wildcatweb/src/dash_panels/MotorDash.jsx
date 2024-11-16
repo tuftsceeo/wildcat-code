@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
-import { useKnobContext } from "./KnobContext.js";
+import { useKnobContext } from "../KnobContext.js";
 import styles from "./MotorDash.module.css";
 import Knob from "./Knob.js";
 import dragDots from "./assets/drag-indicator.svg";
