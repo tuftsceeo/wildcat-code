@@ -1,36 +1,16 @@
-/*
- * spike_ble.js
- * Adapted from https://github.com/LEGO/spike-prime-docs/blob/main/examples/python/
- * Adaption assisted by ChatGPT 4o
- *
- * This module provides Bluetooth communication capabilities for interacting with LEGO Spike Prime devices.
- * It handles the initialization, connection, message sending, and response receiving logic over Bluetooth.
- *
- * Key Features:
- * - Connect and interact with LEGO Spike Prime devices using Web Bluetooth API.
- * - Send requests and receive responses to/from the device.
- * - Implements the connection retry mechanism, error handling, and more.
- *
- * Dependencies:
- * - `messages.js` for message serialization/deserialization.
- * - `crc.js` for checksum calculations.
- * - `cobs.js` for encoding and decoding message frames using the COBS algorithm.
- *
- *
- * Author:  J.Cross Tufts CEEO
- */
+// Import necessary modules from messages.js, crc.js, and cobs.js
 
 // THIS IS A WORK IN PROGRESS - UNTESTED
 
 // Import necessary modules from messages.js, crc.js, and cobs.js
 import * as messages from "./messages"; // Assuming you have implemented messages.js with message classes
 import { crc } from "./crc";
-import { cobsPack, cobsUnpack } from "./cobs";
+import { cobsEncode, cobsDecode } from "./cobs";
 import { Buffer } from "buffer"; // Not needed in node js
 
 const SERVICE_UUID = "0000fd02-0000-1000-8000-00805f9b34fb";
-const RX_CHAR_UUID = "0000fd02-0001-1000-8000-00805f9b34fb"; //WRITE WITHOUT RESPONSE
-const TX_CHAR_UUID = "0000fd02-0002-1000-8000-00805f9b34fb"; //NOTIFY
+const RX_CHAR_UUID = "0000fd02-0001-1000-8000-00805f9b34fb";
+const TX_CHAR_UUID = "0000fd02-0002-1000-8000-00805f9b34fb";
 const DEVICE_NOTIFICATION_INTERVAL_MS = 5000;
 
 // Define constants for example usage
@@ -58,7 +38,7 @@ class SpikeBLE {
         this.callback = null; // Callback function to handle received data
         this.infoResponse = null; // Stores info response from the hub
         this.pendingResponses = new Map(); // Tracks multiple pending responses
-        // this.cleanupInterval = setInterval(this.cleanupPendingResponses, 10000); // Cleanup interval to clear stale promises
+        this.cleanupInterval = setInterval(this.cleanupPendingResponses, 10000); // Cleanup interval to clear stale promises
     }
 
     /*
@@ -78,7 +58,7 @@ class SpikeBLE {
     };
 
     // Method to retry an asynchronous operation
-    /*     retryOperation = async (operation, retries = 3, delay = 1000) => {
+    retryOperation = async (operation, retries = 3, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
             try {
                 return await operation();
@@ -89,7 +69,7 @@ class SpikeBLE {
             }
         }
         throw new Error(`Failed ${operation} after ${retries} attempts`);
-    }; */
+    };
 
     // Handle unexpected disconnection
     onDisconnect = async () => {
@@ -119,21 +99,21 @@ class SpikeBLE {
     };
 
     // Method to clean up stale pending responses
-    // cleanupPendingResponses = () => {
-    //     const now = Date.now();
-    //     for (const [key, value] of this.pendingResponses.entries()) {
-    //         if (now - value.timestamp > 10000) {
-    //             // 10-second threshold
-    //             console.warn(
-    //                 `Cleaning up stale pending response for message ID: ${key}`,
-    //             );
-    //             value.reject(
-    //                 new Error(`Response for message ID ${key} timed out.`),
-    //             );
-    //             this.pendingResponses.delete(key);
-    //         }
-    //     }
-    // };
+    cleanupPendingResponses = () => {
+        const now = Date.now();
+        for (const [key, value] of this.pendingResponses.entries()) {
+            if (now - value.timestamp > 10000) {
+                // 10-second threshold
+                console.warn(
+                    `Cleaning up stale pending response for message ID: ${key}`,
+                );
+                value.reject(
+                    new Error(`Response for message ID ${key} timed out.`),
+                );
+                this.pendingResponses.delete(key);
+            }
+        }
+    };
 
     /*
     ===============
@@ -220,7 +200,14 @@ class SpikeBLE {
     // Update the connect method to separate connection setup from message retries
     connect = async () => {
         try {
-            await this.initializeBLE();
+            // Establish BLE connection
+            await this.retryOperation(
+                async () => {
+                    await this.initializeBLE();
+                },
+                3,
+                1000,
+            );
 
             // After successfully establishing connection, continue with post-connection steps
 
@@ -229,10 +216,8 @@ class SpikeBLE {
 
             // Enable device notifications
             await this.enableDeviceNotifications();
-            return true;
         } catch (error) {
-            console.error("Error connecting with device:", error);
-            return false;
+            console.error("Failed to connect and initialize BLE:", error);
         }
     };
 
@@ -258,12 +243,11 @@ class SpikeBLE {
     */
 
     // Method to set a callback for received data
-    // Method to set a callback for received data
     onReceive = (event) => {
         try {
-            //console.log("onReceive: Event received", event);
+            console.log("onReceive: Event received", event);
             let dataArray = Buffer.from(event.target.value.buffer);
-            //console.log("RAW DATA RECEIVED: ", dataArray);
+
             // Check if the message ends with the delimiter (0x02)
             if (dataArray[dataArray.length - 1] !== 0x02) {
                 console.error("Received incomplete message:", dataArray);
@@ -271,21 +255,20 @@ class SpikeBLE {
             }
 
             // Decode message using COBS
-            const data = cobsUnpack(dataArray);
-            //console.log("Unpacked received data:", data);
+            const data = cobsDecode(dataArray);
+            console.log("Decoded data:", data);
 
             // Deserialize the received data
             const message = messages.deserialize(data);
-            console.log("Message:", message, " Id: ", message.id);
+            console.log("Deserialized message:", message);
 
-            if (this.pendingResponses.has(message.id)) {
-                const pending = this.pendingResponses.get(message.id);
+            if (this.pendingResponses.has(message.ID)) {
+                const pending = this.pendingResponses.get(message.ID);
                 pending.resolve(message);
-                this.pendingResponses.delete(message.id);
-                console.log("Resolved pending response :", message);
+                this.pendingResponses.delete(message.ID);
             } else {
-                console.log(
-                    `No pending response found for message ID: ${message.id}`,
+                console.warn(
+                    `No pending response found for message ID: ${message.ID}`,
                 );
             }
         } catch (error) {
@@ -307,54 +290,75 @@ class SpikeBLE {
     // Method to send data to the device through rxCharacteristic
     write = async (data) => {
         this.ensureInitialized();
-
-        const dataToSend = Buffer.from(data, "utf-8");
-        //console.log("RAW DATA SEND: ", dataToSend);
-        await this.rxCharacteristic.writeValue(dataToSend.buffer);
-        // Retry up to 3 times with a delay of 500ms between retries
+        return await this.retryOperation(
+            async () => {
+                const dataToSend = Buffer.from(data, "utf-8");
+                await this.rxCharacteristic.writeValue(dataToSend.buffer);
+            },
+            3,
+            500,
+        ); // Retry up to 3 times with a delay of 500ms between retries
     };
 
     // Serialize and send a message to the hub
     sendMessage = async (message) => {
         this.ensureInitialized();
+        return await this.retryOperation(
+            async () => {
+                console.log("Sending:", message);
+                const payload = Buffer.from(message.serialize());
+                const frame = Buffer.from(cobsEncode(payload));
 
-        console.log("Sending:", message);
-        const payload = Buffer.from(message.serialize());
+                // Use the max_packet_size from the info response if available
+                const packetSize = this.infoResponse
+                    ? this.infoResponse.max_packet_size
+                    : frame.length;
 
-        //console.log("PAYLOAD:", payload);
-        const frame = Buffer.from(cobsPack(payload));
-
-        // Use the max_packet_size from the info response if available
-        const packetSize = this.infoResponse
-            ? this.infoResponse.max_packet_size
-            : frame.length;
-
-        // Send the frame in packets of packetSize
-        for (let i = 0; i < frame.length; i += packetSize) {
-            const packet = frame.slice(i, i + packetSize);
-            //console.log("message packet: ", packet.buffer);
-            await this.rxCharacteristic.writeValue(packet.buffer);
-        }
+                // Send the frame in packets of packetSize
+                for (let i = 0; i < frame.length; i += packetSize) {
+                    const packet = frame.slice(i, i + packetSize);
+                    await this.rxCharacteristic.writeValue(packet.buffer);
+                }
+            },
+            3,
+            500,
+        ); // Retry up to 3 times with a delay of 500ms between retries
     };
 
     // Send a message and wait for the appropriate response
     sendRequest = (message, ResponseType) => {
         return new Promise((resolve, reject) => {
-            // Store the promise in the pendingResponses map
+            const timeoutId = setTimeout(() => {
+                if (this.pendingResponses.has(ResponseType.ID)) {
+                    this.pendingResponses.delete(ResponseType.ID);
+                    reject(
+                        new Error(
+                            `Timeout waiting for response type: ${ResponseType.ID}`,
+                        ),
+                    );
+                }
+            }, 300000); // Set a 5-minute timeout
+
+            console.log("Set request promise: ", ResponseType.ID);
             this.pendingResponses.set(ResponseType.ID, {
-                resolve,
-                reject,
-                timestamp: Date.now(),
+                resolve: (response) => {
+                    clearTimeout(timeoutId);
+                    resolve(response);
+                },
+                reject: (error) => {
+                    clearTimeout(timeoutId);
+                    reject(error);
+                },
             });
 
-            // Send the message
+            console.log("Sending Request");
             this.sendMessage(message).catch((error) => {
-                // Reject the promise in case of a failure to send the message
+                clearTimeout(timeoutId);
                 reject(error);
-                this.pendingResponses.delete(ResponseType.ID);
             });
         });
     };
+
     /*
     ===============
     SPIKE MESSAGES
@@ -380,6 +384,9 @@ class SpikeBLE {
             notificationRequest,
             messages.DeviceNotificationResponse,
         );
+        if (!response.success) {
+            throw new Error("Failed to enable notifications");
+        }
     };
 
     // Upload program file to the hub, start the upload, and transfer the rest in chunks

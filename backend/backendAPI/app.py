@@ -125,8 +125,9 @@ def on_data(_: BleakGATTCharacteristic, data: bytearray) -> None:
 
     data = cobs.unpack(data)
     try:
+        print("Unpacked Data Received:", data)
         message = deserialize(data)
-        print(f"Received: {message}")
+        print(f"Deserialized Data Received: {message}")
         if message.ID == pending_response[0]:
             pending_response[1].set_result(message)
         if isinstance(message, DeviceNotification):
@@ -144,6 +145,7 @@ async def send_message(message: BaseMessage) -> None:
     """Serializes and sends a message to the hub."""
     print(f"Sending: {message}")
     payload = message.serialize()
+    print("PAYLOAD:", payload)
     frame = cobs.pack(payload)
 
     # use the max_packet_size from the info response if available
@@ -153,6 +155,7 @@ async def send_message(message: BaseMessage) -> None:
     # send the frame in packets of packet_size
     for i in range(0, len(frame), packet_size):
         packet = frame[i : i + packet_size]
+        print("message packet:", packet)
         await client.write_gatt_char(rx_char, packet, response=False)
 
 async def send_request(message: BaseMessage, response_type: type[TMessage]) -> TMessage:
@@ -245,7 +248,7 @@ async def main():
 
 
 """ MAY NEED TO RUN THIS ONCE as __main__ DIRECTLY TO be prompted for Bluetooth permissions for Python"""
-"""
+
 if __name__ == "__main__":
     try:
         asyncio.run(main())
@@ -253,4 +256,3 @@ if __name__ == "__main__":
         print("Interrupted by user.")
         stop_event.set()
 
-"""

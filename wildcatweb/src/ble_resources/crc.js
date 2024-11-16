@@ -1,5 +1,19 @@
-// From https://github.com/LEGO/spike-prime-docs/blob/main/examples/python/crc.py
-// with ChatGPT 4o
+/*
+ * crc.js
+ * Adapted from https://github.com/LEGO/spike-prime-docs/blob/main/examples/python/
+ * Adaption assisted by ChatGPT 4o
+ *
+ * This module provides utility functions for calculating Cyclic Redundancy Check (CRC) checksums.
+ * It is used to ensure the integrity of messages when they are sent to and received from devices.
+ *
+ * Key Features:
+ * - `crc(data)` calculates the CRC value of the provided byte sequence.
+ *
+ * Usage:
+ * Used primarily to validate data integrity during Bluetooth communication with LEGO Spike Prime devices.
+ *
+ * Author: Author:  J.Cross Tufts CEEO
+ */
 
 // Importing the crc-32 library
 import { buf } from "crc-32";
