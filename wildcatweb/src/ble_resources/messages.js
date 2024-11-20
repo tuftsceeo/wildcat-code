@@ -294,6 +294,7 @@ class ProgramFlowNotification extends BaseMessage {
 
     constructor(stop) {
         super();
+        this.id = ProgramFlowNotification.ID;
         this.stop = stop;
     }
 
@@ -314,9 +315,11 @@ class ConsoleNotification extends BaseMessage {
         return 0x21;
     }
 
-    constructor(text) {
+    constructor(raw, text) {
         super();
         this.text = text;
+        this.raw = raw;
+        this.id = ConsoleNotification.ID;
     }
 
     static deserialize(data) {
@@ -328,7 +331,7 @@ class ConsoleNotification extends BaseMessage {
         const textBytes = Buffer.from(data.slice(1)).filter(
             (byte) => byte !== 0,
         );
-        return new ConsoleNotification(textBytes.toString("utf8"));
+        return new ConsoleNotification(textBytes, textBytes.toString("utf8"));
     }
 }
 

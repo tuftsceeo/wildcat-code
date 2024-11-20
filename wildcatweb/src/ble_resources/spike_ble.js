@@ -36,16 +36,17 @@ const DEVICE_NOTIFICATION_INTERVAL_MS = 5000;
 // Define constants for example usage
 const EXAMPLE_SLOT = 0;
 const EXAMPLE_PROGRAM_bak = Buffer.from(
-`import runloop
+    `import runloop
 from hub import light_matrix
 print("Console message from hub.")
 async def main():
     await light_matrix.write("Hello, world!")
 runloop.run(main())`,
-    "utf8");
+    "utf8",
+);
 
 const EXAMPLE_PROGRAM = Buffer.from(
-`import runloop
+    `import runloop
 import time
 from hub import port
 import motor
@@ -60,8 +61,8 @@ runloop.run(main())`,
     "utf8",
 );
 
-console.log("Example Program:", EXAMPLE_PROGRAM)
-console.log("Decoded String: ",EXAMPLE_PROGRAM.toString('utf8'));
+//console.log("Example Program:", EXAMPLE_PROGRAM);
+//console.log("Decoded String: ", EXAMPLE_PROGRAM.toString("utf8"));
 
 class SpikeBLE {
     constructor() {
@@ -294,14 +295,18 @@ class SpikeBLE {
 
             // Deserialize the received data
             const message = messages.deserialize(data);
-            console.log("Message:", message, " Id: ", message.id);
+            if (message.id === messages.ConsoleNotification.ID) {
+                console.warn("Message:", message, " Id: ", message.id);
+            } else {
+                console.log("Message:", message, " Id: ", message.id);
+            }
 
             if (this.pendingResponses.has(message.id)) {
                 const pending = this.pendingResponses.get(message.id);
                 pending.resolve(message);
                 this.pendingResponses.delete(message.id);
                 console.log("Resolved pending response :", message);
-            } 
+            }
             /*else {
                 console.log(
                     `No pending response found for message ID: ${message.id}`,
@@ -340,19 +345,19 @@ class SpikeBLE {
         console.log("Sending:", message);
         const payload = Buffer.from(message.serialize());
 
-        console.log("PAYLOAD:", payload);
+        //console.log("PAYLOAD:", payload);
         const frame = Buffer.from(cobsPack(payload));
-        
+
         // Use the max_packet_size from the info response if available
         const packetSize = this.infoResponse
             ? this.infoResponse.maxPacketSize
             : frame.length;
-        console.log("MESSAGE FRAME: ", frame);
+        //console.log("MESSAGE FRAME: ", frame);
         // Send the frame in packets of packetSize
         for (let i = 0; i < frame.length; i += packetSize) {
             const packet = frame.subarray(i, i + packetSize);
-            console.log("packet start: ", i, " end: ", i + packetSize);
-            console.log("MESSAGE PACKET: ", packet);
+            //console.log("packet start: ", i, " end: ", i + packetSize);
+            //console.log("MESSAGE PACKET: ", packet);
             await this.rxCharacteristic.writeValue(packet);
         }
     };
@@ -384,12 +389,12 @@ class SpikeBLE {
     // Request information about the device
     requestInfo = async () => {
         const infoRequest = new messages.InfoRequest();
-        console.log("Begin requestInfo");
+        //console.log("Begin requestInfo");
         this.infoResponse = await this.sendRequest(
             infoRequest,
             messages.InfoResponse,
         );
-        console.log("Info request resolution RESPONSE:", this.infoResponse  )
+        console.log("Info request resolution RESPONSE:", this.infoResponse);
     };
 
     // Enable device notifications
@@ -417,22 +422,25 @@ class SpikeBLE {
 
         // Transfer the program in chunks
         let runningCrc = 0;
-        console.log("Program to Send: ", program)
+        //console.log("Program to Send: ", program);
         for (
             let i = 0;
             i < program.length;
             i += this.infoResponse.maxChunkSize
-            
         ) {
             const chunk = program.subarray(
                 i,
-                i + this.infoResponse.maxChunkSize
-                ,
+                i + this.infoResponse.maxChunkSize,
             );
-            console.log("I is ", i," and end is ", i + this.infoResponse.maxChunkSize);
-            console.log("Chunk ", i,": ", chunk);
+            /*console.log(
+                "I is ",
+                i,
+                " and end is ",
+                i + this.infoResponse.maxChunkSize,
+            );*/
+            //console.log("Chunk ", i, ": ", chunk);
             runningCrc = crc(chunk, runningCrc);
-            console.log("running_crc", runningCrc)
+            //console.log("running_crc", runningCrc);
             const chunkResponse = await this.sendRequest(
                 new messages.TransferChunkRequest(runningCrc, chunk),
                 messages.TransferChunkResponse,
@@ -467,8 +475,6 @@ class SpikeBLE {
 
     sendTestProgram = async () => {
         if (this.device && this.device.gatt.connected) {
-            
-    
             // Clear the program in the example slot
             const clearResponse = await this.sendRequest(
                 new messages.ClearSlotRequest(EXAMPLE_SLOT),
@@ -479,20 +485,19 @@ class SpikeBLE {
                     "ClearSlotRequest was not acknowledged. Proceeding anyway...",
                 );
             }
-            
-            console.log("FILE: ", EXAMPLE_PROGRAM)
+
+            //console.log("FILE: ", EXAMPLE_PROGRAM);
             // Upload and transfer the example program
             await this.uploadProgramFile(
                 "program.py",
                 EXAMPLE_SLOT,
                 EXAMPLE_PROGRAM,
             );
-    
+
             // Start the program in the specified slot
             await this.startProgram(EXAMPLE_SLOT);
-        }
-        else{
-            console.warn("BLE device Not Ready to receive program")
+        } else {
+            console.warn("BLE device Not Ready to receive program");
         }
     };
 }
