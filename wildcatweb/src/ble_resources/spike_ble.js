@@ -35,15 +35,33 @@ const DEVICE_NOTIFICATION_INTERVAL_MS = 5000;
 
 // Define constants for example usage
 const EXAMPLE_SLOT = 0;
-const EXAMPLE_PROGRAM = Buffer.from(
-    `import runloop
+const EXAMPLE_PROGRAM_bak = Buffer.from(
+`import runloop
 from hub import light_matrix
 print("Console message from hub.")
 async def main():
     await light_matrix.write("Hello, world!")
 runloop.run(main())`,
+    "utf8");
+
+const EXAMPLE_PROGRAM = Buffer.from(
+`import runloop
+import time
+from hub import port
+import motor
+print("Console message from hub.")
+async def main():
+    while True:
+        motor.run(port.C, 1000)
+        time.sleep(1)
+        motor.stop(port.C)
+        time.sleep(1)
+runloop.run(main())`,
     "utf8",
 );
+
+console.log("Example Program:", EXAMPLE_PROGRAM)
+console.log("Decoded String: ",EXAMPLE_PROGRAM.toString('utf8'));
 
 class SpikeBLE {
     constructor() {
@@ -283,11 +301,12 @@ class SpikeBLE {
                 pending.resolve(message);
                 this.pendingResponses.delete(message.id);
                 console.log("Resolved pending response :", message);
-            } else {
+            } 
+            /*else {
                 console.log(
                     `No pending response found for message ID: ${message.id}`,
                 );
-            }
+            }*/
         } catch (error) {
             console.error("Error in onReceive:", error);
         }
@@ -321,19 +340,20 @@ class SpikeBLE {
         console.log("Sending:", message);
         const payload = Buffer.from(message.serialize());
 
-        //console.log("PAYLOAD:", payload);
+        console.log("PAYLOAD:", payload);
         const frame = Buffer.from(cobsPack(payload));
-
+        
         // Use the max_packet_size from the info response if available
         const packetSize = this.infoResponse
-            ? this.infoResponse.max_packet_size
+            ? this.infoResponse.maxPacketSize
             : frame.length;
-
+        console.log("MESSAGE FRAME: ", frame);
         // Send the frame in packets of packetSize
         for (let i = 0; i < frame.length; i += packetSize) {
-            const packet = frame.slice(i, i + packetSize);
-            //console.log("message packet: ", packet.buffer);
-            await this.rxCharacteristic.writeValue(packet.buffer);
+            const packet = frame.subarray(i, i + packetSize);
+            console.log("packet start: ", i, " end: ", i + packetSize);
+            console.log("MESSAGE PACKET: ", packet);
+            await this.rxCharacteristic.writeValue(packet);
         }
     };
 
@@ -369,6 +389,7 @@ class SpikeBLE {
             infoRequest,
             messages.InfoResponse,
         );
+        console.log("Info request resolution RESPONSE:", this.infoResponse  )
     };
 
     // Enable device notifications
@@ -396,16 +417,22 @@ class SpikeBLE {
 
         // Transfer the program in chunks
         let runningCrc = 0;
+        console.log("Program to Send: ", program)
         for (
             let i = 0;
             i < program.length;
-            i += this.infoResponse.max_chunk_size
+            i += this.infoResponse.maxChunkSize
+            
         ) {
-            const chunk = program.slice(
+            const chunk = program.subarray(
                 i,
-                i + this.infoResponse.max_chunk_size,
+                i + this.infoResponse.maxChunkSize
+                ,
             );
+            console.log("I is ", i," and end is ", i + this.infoResponse.maxChunkSize);
+            console.log("Chunk ", i,": ", chunk);
             runningCrc = crc(chunk, runningCrc);
+            console.log("running_crc", runningCrc)
             const chunkResponse = await this.sendRequest(
                 new messages.TransferChunkRequest(runningCrc, chunk),
                 messages.TransferChunkResponse,
@@ -435,6 +462,37 @@ class SpikeBLE {
         );
         if (!stopProgramResponse.success) {
             throw new Error("Failed to stop program");
+        }
+    };
+
+    sendTestProgram = async () => {
+        if (this.device && this.device.gatt.connected) {
+            
+    
+            // Clear the program in the example slot
+            const clearResponse = await this.sendRequest(
+                new messages.ClearSlotRequest(EXAMPLE_SLOT),
+                messages.ClearSlotResponse,
+            );
+            if (!clearResponse.success) {
+                console.warn(
+                    "ClearSlotRequest was not acknowledged. Proceeding anyway...",
+                );
+            }
+            
+            console.log("FILE: ", EXAMPLE_PROGRAM)
+            // Upload and transfer the example program
+            await this.uploadProgramFile(
+                "program.py",
+                EXAMPLE_SLOT,
+                EXAMPLE_PROGRAM,
+            );
+    
+            // Start the program in the specified slot
+            await this.startProgram(EXAMPLE_SLOT);
+        }
+        else{
+            console.warn("BLE device Not Ready to receive program")
         }
     };
 }

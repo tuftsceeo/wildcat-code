@@ -17,40 +17,54 @@
 
 // Importing the crc-32 library
 import { buf } from "crc-32";
+/*
+buf in crc-32
+In all cases, the relevant function takes an argument 
+representing data and an optional second argument 
+representing the starting "seed" (for rolling CRC).
+The return value is a signed 32-bit integer.
+CRC32.buf(byte array or buffer[, seed]) assumes 
+the argument is a sequence of 8-bit unsigned integers 
+(nodejs Buffer, Uint8Array or array of bytes).
+*/
+
+
+import { Buffer } from "buffer"; // Import Buffer for consistency in handling binary data
 
 /*
  * Calculate the CRC32 of data with an optional seed and alignment.
  *
-data - The data to calculate the CRC for.
-seed - The optional seed value for CRC.
-align - The alignment requirement (e.g., 4 bytes).
-returns number - The CRC-32 value of the data.
+ * data - The data to calculate the CRC for.
+ * seed - The optional seed value for CRC.
+ * align - The alignment requirement (e.g., 4 bytes).
+ * returns number - The CRC-32 value of the data.
  */
 
 function crc(data, seed = 0, align = 4) {
+    // Convert the data into a Buffer if it's not already a Buffer
+    if (!(data instanceof Buffer)) {
+        data = Buffer.from(data);
+    }
+
     // Ensure the data is aligned by adding padding if necessary
     const remainder = data.length % align;
     if (remainder !== 0) {
         const paddingLength = align - remainder;
-        const paddedData = new Uint8Array(data.length + paddingLength);
-        paddedData.set(data);
-        // The additional bytes are already initialized to 0 by default
+        const paddedData = Buffer.alloc(data.length + paddingLength);
+        data.copy(paddedData); // Copy data into the paddedData buffer at position 0
+        // The additional bytes (at the end) are already initialized to 0 by default
         data = paddedData;
     }
-
+    console.log("Padded Data: ", data)
     // Calculate the CRC32 checksum using the library
     let crcValue = buf(data, seed);
-
-    // The crc-32 library returns a signed value,
+    console.log("CRC Result: ", crcValue)
+    // The crc-32 library return value is a signed 32-bit integer.,
     // convert it to an unsigned 32-bit integer.
+    
     return crcValue >>> 0;
 }
 
 export { crc };
 
-// Example usage
-/**
-const data = new Uint8Array([0x11, 0x22, 0x33]);
-const crcValue = crc(data);
-console.log(`CRC-32 value: ${crcValue.toString(16)}`);
-**/
+

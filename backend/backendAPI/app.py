@@ -43,6 +43,7 @@ from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
 
+
 SCAN_TIMEOUT = 10.0
 """How long to scan for devices before giving up (in seconds)"""
 
@@ -76,6 +77,8 @@ runloop.run(main())""".encode(
     "utf8"
 )
 """The utf8-encoded example program to upload to the hub"""
+
+print("Example Program: ", memoryview(EXAMPLE_PROGRAM).tolist())
 
 answer = input(
     f"This example will override the program in slot {EXAMPLE_SLOT} of the first hub found. Do you want to continue? [Y/n] "
@@ -122,7 +125,7 @@ def on_data(_: BleakGATTCharacteristic, data: bytearray) -> None:
         un_xor = bytes(map(lambda x: x ^ 3, data))  # un-XOR for debugging
         print(f"Received incomplete message:\n {un_xor}")
         return
-
+    print("Packed Data Received:", memoryview(data).tolist())
     data = cobs.unpack(data)
     try:
         print("Unpacked Data Received:", data)
@@ -145,8 +148,10 @@ async def send_message(message: BaseMessage) -> None:
     """Serializes and sends a message to the hub."""
     print(f"Sending: {message}")
     payload = message.serialize()
-    print("PAYLOAD:", payload)
+    
+    print("PAYLOAD:", memoryview(payload).tolist())
     frame = cobs.pack(payload)
+
 
     # use the max_packet_size from the info response if available
     # otherwise, assume the frame is small enough to send in one packet
@@ -155,7 +160,7 @@ async def send_message(message: BaseMessage) -> None:
     # send the frame in packets of packet_size
     for i in range(0, len(frame), packet_size):
         packet = frame[i : i + packet_size]
-        print("message packet:", packet)
+        print("MESSAGE PACKET:", memoryview(packet).tolist())
         await client.write_gatt_char(rx_char, packet, response=False)
 
 async def send_request(message: BaseMessage, response_type: type[TMessage]) -> TMessage:
@@ -190,6 +195,8 @@ async def file_upload():
     for i in range(0, len(EXAMPLE_PROGRAM), info_response.max_chunk_size):
         chunk = EXAMPLE_PROGRAM[i : i + info_response.max_chunk_size]
         running_crc = crc(chunk, running_crc)
+        print("Chunk ", i,": ", memoryview(chunk).tolist())
+        print("running_crc", running_crc)
         chunk_response = await send_request(
             TransferChunkRequest(running_crc, chunk), TransferChunkResponse
         )
@@ -242,7 +249,7 @@ async def main():
             print("Error: failed to enable notifications")
             sys.exit(1)
 
-        #await file_upload()
+        await file_upload() # Test File upload
         await stop_event.wait()
         print("COMPLETED APP MAIN")
 

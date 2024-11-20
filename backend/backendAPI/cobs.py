@@ -135,6 +135,6 @@ def unpack(frame: bytes):
 
     # Step 2: XOR each byte of the unframed data to restore original data
     unframed = bytes(map(lambda x: x ^ XOR, frame[start:-1]))
-
+    print("Unframed Data Received:", memoryview(unframed).tolist())
     # Step 3: Decode the COBS-encoded data
     return bytes(decode(unframed))
