@@ -1,63 +1,39 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useDrag } from "react-dnd";
+import React, { useState, useEffect } from "react";
 import { useKnobContext } from "./KnobContext.js";
 import styles from "./MotorDash.module.css";
 import Knob from "./Knob.js";
-import dragDots from "./assets/drag-indicator.svg";
-import highPop from "./assets/bubble-sound.mp3";
 
-// Define the type of the draggable item
-const ItemType = {
-    MOTOR_DASH: "motorDash",
-};
-
-export const MotorDash = ({ port }) => {
+export const MotorDash = ({ onUpdate, configuration, port = 'A' }) => {
     const { knobAngles, setKnobAngle } = useKnobContext();
-    const [knobAngle, setKnobAngleLocal] = useState(0);
-    const [selectedButton, setSelectedButton] = useState(null); // State to track selected button
-    const selectedButtonRef = useRef(selectedButton);
+    const [selectedButton, setSelectedButton] = useState(configuration?.buttonType || null);
+    const [knobAngle, setKnobAngleLocal] = useState(configuration?.knobAngle || 0);
+
+    // Handle knob angle changes
     useEffect(() => {
         setKnobAngleLocal(knobAngles[port] || 0);
     }, [knobAngles, port]);
 
+    // Update parent only when configuration actually changes
     useEffect(() => {
-        selectedButtonRef.current = selectedButton; // Update the ref whenever currentColor changes
-        console.log("Updated color sensor: " + selectedButton);
-    }, [selectedButton]);
-
-    // Use the useDrag hook to make this component draggable
-    const [{ isDragging }, drag] = useDrag(
-        () => ({
-            type: ItemType.MOTOR_DASH,
-            item: {
-                type: ItemType.MOTOR_DASH,
+        if (selectedButton && knobAngle !== undefined) {
+            onUpdate({
                 port,
-                knobAngle: knobAngles[port] || 0,
-                selectedButtonRef,
-            },
-            collect: (monitor) => ({
-                isDragging: monitor.isDragging(),
-            }),
-        }),
-        [knobAngles, port]
-    );
+                buttonType: selectedButton,
+                knobAngle: knobAngle
+            });
+        }
+    }, [selectedButton, knobAngle, port]);
 
     const handleAngleChange = (newAngle) => {
         setKnobAngle(port, newAngle);
     };
 
     const handleButtonClick = (buttonType) => {
-        const audio = new Audio(highPop);
-        audio.play();
-        setSelectedButton(buttonType);
+        setSelectedButton(buttonType === selectedButton ? null : buttonType);
     };
 
     return (
-        <div
-            ref={drag}
-            className={styles.motorGroup}
-            style={{ opacity: isDragging ? 0.5 : 1 }} // Change the opacity while dragging
-        >
+        <div className={styles.motorGroup}>
             <div className={styles.motorName}>motor {port}</div>
             <div className={styles.speedDial}>
                 <Knob onAngleChange={handleAngleChange} />
@@ -80,11 +56,6 @@ export const MotorDash = ({ port }) => {
                     STOP
                 </button>
             </div>
-            <img
-                src={dragDots}
-                className={styles.dragDots}
-                alt="drag indicator"
-            />
         </div>
     );
 };

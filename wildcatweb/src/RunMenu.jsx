@@ -1,48 +1,56 @@
 // Import CSS styles and Axios for HTTP requests
 import styles from "./RunMenu.module.css";
-import axios from "axios";
+import { generatePythonCode } from './codeGenerator.js';
 
 // RunMenu component accepts 'pyCode' (the Python code to run) and 'canRun' (whether code can be run)
-export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps }) => {
+export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData }) => {
     // Function to handle "Run" button clicks
-    const handleRunClick = async () => {
-        // Check if code is allowed to run (canRun is true)
-        if (canRun) {
-            try {
-                // Send a POST request to the backend with the Python code
-                const response = await axios.post(
-                    "http://localhost:8000/run-code",
-                    {
-                        pyCode: pyCode, // Code sent in the request payload
-                    }
-                );
-                console.log(response.data); // Log server response
-            } catch (error) {
-                // Log any errors during the request
-                console.error("There was an error sending the code!", error);
-            }
-        }
+    const handleRunCurrentSlot = () => {
+        
+            // Create single-slot array with current slot
+            const singleSlot = [slotData[currSlotNumber]];
+            const code = generatePythonCode(singleSlot);
+            console.log("Generated Python Code for current slot:", code);
+            
+
+        
+    };
+
+    // Handle running all slots
+    const handleRunAllSlots = () => {
+        
+            const code = generatePythonCode(slotData);
+            console.log("Generated Python Code for all slots:", code);
+
     };
 
     return (
         <div className={styles.menuBackground}>
-            {/* Main menu title */}
-            <div>run</div>
-            <div className={styles.stepInfo}>
-                Step {currSlotNumber + 1} of {missionSteps + 1}
+            {/* Vertical slot indicators */}
+            <div className={styles.slotIndicators}>
+                {[...Array(missionSteps + 1)].map((_, index) => (
+                    <div
+                        key={index}
+                        className={`${styles.indicator} ${
+                            slotData?.[index]?.type ? styles.configured : ''
+                        } ${index === currSlotNumber ? styles.current : ''}`}
+                    />
+                ))}
             </div>
-            <div className={styles.buttonGroup}>
-                {/* Button to run only "This step" */}
-                <button className={styles.runButton} onClick={handleRunClick}>
-                    {" "}
-                    This step{" "}
-                </button>
 
-                {/* Button to run "All steps" */}
-                <button className={styles.runButton} onClick={handleRunClick}>
-                    {" "}
-                    All steps{" "}
-                </button>
+            <div className={styles.menuContent}>
+                <div>run</div>
+                <div className={styles.stepInfo}>
+                    Step {currSlotNumber + 1} of {missionSteps + 1}
+                </div>
+                <div className={styles.buttonGroup}>
+                    <button className={styles.runButton} onClick={handleRunCurrentSlot}>
+                        This step
+                    </button>
+                    <button className={styles.runButton} onClick={handleRunAllSlots}>
+                        All steps
+                    </button>
+                </div>
             </div>
         </div>
     );

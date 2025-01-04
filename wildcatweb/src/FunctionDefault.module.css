@@ -131,3 +131,149 @@ body {
     border-color: #32488a;
     color: #fff;
 }
+
+/* Add these new styles after the existing styles in FunctionDefault.module.css */
+
+.dashboardContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 35%;  /* Adjusted to work with existing layout */
+    z-index: 4;
+}
+
+.commitButton {
+    width: 200px;
+    height: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    color: #405CB0;
+    font-family: "McLaren";  /* Changed to match existing font */
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);  /* Matched existing shadow */
+    cursor: pointer;
+}
+
+.commitButton:hover {
+    background-color: #32488A;
+    color: #FFFFFF;
+}
+
+.subtypeSelection {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: center;
+    position: relative;
+    z-index: 4;
+}
+
+.subtypeButton {
+    padding: 10px 20px;
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    color: #405CB0;
+    font-family: "McLaren";  /* Changed to match existing font */
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.subtypeButton.active {
+    background-color: #32488A;
+    color: #FFFFFF;
+}
+
+.controlsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 4;
+    gap: 20px;  /* Space between action/input and subtype buttons */
+}
+
+/* Adjust subtypeSelection to work within controlsContainer */
+.subtypeSelection {
+    margin-top: 0;  /* Remove margin since we're using gap in container */
+}
+
+.subtypeSelection {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    position: absolute;
+    top: 35%;  /* Position below the action/input buttons */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+}
+
+.subtypeButton {
+    padding: 10px 20px;
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    color: #405CB0;
+    font-family: "McLaren";
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.subtypeButton.active {
+    background-color: #32488A;
+    color: #FFFFFF;
+}
+
+.dashboardContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 45%;  /* Position below the subtype buttons */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+}
+
+.commitButton {
+    width: 200px;
+    height: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    color: #405CB0;
+    font-family: "McLaren";
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+.commitButton:hover {
+    background-color: #32488A;
+    color: #FFFFFF;
+}
+
+.actionButtonChild.active {
+    background-color: #32488A;
+    color: #FFFFFF;
+    pointer-events: none;  /* Prevent clicking when active */
+}
+
+.subtypeButton.active {
+    background-color: #32488A;
+    color: #FFFFFF;
+    pointer-events: none;  /* Prevent clicking when active */
+}
