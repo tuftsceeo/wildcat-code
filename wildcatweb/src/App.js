@@ -5,6 +5,7 @@ import { FunctionDefault } from "./FunctionDefault.jsx";
 import { RunMenu } from "./RunMenu.jsx";
 import { BluetoothUI } from "./BluetoothUI.jsx";
 import { KnobProvider } from "./KnobContext.js";
+import { BLEProvider } from "./BLEContext.js";  // Add this import
 import CodingTrack from "./CodingTrack.jsx";
 
 // Define interface for slot data
@@ -71,6 +72,7 @@ function App() {
     };
 
     return (
+        <BLEProvider>
         <KnobProvider>
             <DndProvider backend={HTML5Backend}>
                 <>
@@ -79,7 +81,7 @@ function App() {
                         canRun={canRun}
                         currSlotNumber={currSlotNumber}
                         missionSteps={missionSteps}
-                        slotData={slotData}  // Pass slot data to track
+                        slotData={slotData}
                     />
                     <CodingTrack
                         setPyCode={setPyCode}
@@ -87,7 +89,7 @@ function App() {
                         currSlotNumber={currSlotNumber}
                         setCurrSlotNumber={setCurrSlotNumber}
                         missionSteps={missionSteps}
-                        slotData={slotData}  // Pass slot data to track
+                        slotData={slotData}
                     />
                     <FunctionDefault 
                         currSlotNumber={currSlotNumber}
@@ -101,7 +103,8 @@ function App() {
                 </>
             </DndProvider>
         </KnobProvider>
-    );
+    </BLEProvider>
+);
 }
 
 export default App;
