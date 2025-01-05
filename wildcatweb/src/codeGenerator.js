@@ -1,6 +1,4 @@
-const DEFAULT_MOTOR_SPEED = 1000;  // Default speed in degrees/sec
-
-const generatePythonCode = (slots) => {
+const generatePythonCode = (slots, portStates) => {
     // Generate imports
     let code = [
         'import runloop',
@@ -20,16 +18,38 @@ const generatePythonCode = (slots) => {
         let slotCode = [];
 
         if (slot.type === 'action' && slot.subtype === 'motor') {
-            const config = slot.configuration || {};
-            const buttonType = config.buttonType;
-            const portLetter = config.port || 'C';  // Default to port C if not specified
+            // Handle both single motor config and multiple motor configs
+            const configs = Array.isArray(slot.configuration) 
+                ? slot.configuration 
+                : [slot.configuration];
 
-            if (buttonType === 'GO') {
-                // For now, use default speed. Later will be configurable
-                slotCode.push(`${indent}motor.run(port.${portLetter}, ${DEFAULT_MOTOR_SPEED})`);
-            } else if (buttonType === 'STOP') {
-                slotCode.push(`${indent}motor.stop(port.${portLetter})`);
-            }
+            // Process each motor configuration
+            configs.forEach(config => {
+                if (!config || !config.port || !config.command) return;
+
+                const portLetter = config.port;
+                const command = config.command;
+                const speed = config.speed || 1000;
+
+                // Check if motor is currently connected
+                if (!portStates[portLetter]) {
+                    slotCode.push(`${indent}# Motor ${portLetter} is disconnected`);
+                    slotCode.push(`${indent}pass  # Skipping command for disconnected motor`);
+                    return;
+                }
+
+                switch (command) {
+                    case 'GO':
+                        slotCode.push(`${indent}motor.run(port.${portLetter}, ${speed})`);
+                        break;
+                    case 'STOP':
+                        slotCode.push(`${indent}motor.stop(port.${portLetter})`);
+                        break;
+                    case 'SET_SPEED':
+                        slotCode.push(`${indent}motor.run(port.${portLetter}, ${speed})`);
+                        break;
+                }
+            });
         } else if (slot.type === 'input' && slot.subtype === 'time') {
             const config = slot.configuration || {};
             const milliseconds = (config.seconds || 1) * 1000;  // Convert seconds to milliseconds
@@ -38,7 +58,7 @@ const generatePythonCode = (slots) => {
 
         // Add comment to indicate which slot this code belongs to
         if (slotCode.length > 0) {
-            code.push(`${indent}# Slot ${index}`);
+            code.push(`${indent}# Slot ${index + 1}`);
             code = code.concat(slotCode);
         }
     });

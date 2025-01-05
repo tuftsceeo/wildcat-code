@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './FunctionDefault.module.css';
 import { MotorDash } from './MotorDash.jsx';
 import { TimeDash } from './TimeDash.jsx';
-import highPop from './assets/bubble-sound.mp3';
+import { Check, Plus } from 'lucide-react';
 
 const CONTROL_TYPES = {
   action: {
@@ -23,50 +23,58 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
   const [selectedType, setSelectedType] = useState(null);
   const [selectedSubtype, setSelectedSubtype] = useState(null);
   const [dashboardConfig, setDashboardConfig] = useState(null);
+  const [lastSavedConfig, setLastSavedConfig] = useState(null);
 
+  // Reset state when slot number changes
   useEffect(() => {
     const currentSlotData = slotData?.[currSlotNumber];
     if (currentSlotData) {
       setSelectedType(currentSlotData.type);
       setSelectedSubtype(currentSlotData.subtype);
       setDashboardConfig(currentSlotData.configuration);
+      setLastSavedConfig(currentSlotData.configuration);
     } else {
       setDashboardConfig(null);
+      setLastSavedConfig(null);
     }
   }, [currSlotNumber, slotData]);
 
+  // Auto-save when configuration changes
+  useEffect(() => {
+    if (!dashboardConfig) return;
+    
+    // Check if the configuration has actually changed
+    if (JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)) {
+      console.log('Configuration changed, auto-saving...');
+      
+      if (selectedType && selectedSubtype) {
+        onSlotUpdate({
+          type: selectedType,
+          subtype: selectedSubtype,
+          configuration: dashboardConfig
+        });
+        setLastSavedConfig(dashboardConfig);
+      }
+    }
+  }, [dashboardConfig, lastSavedConfig, selectedType, selectedSubtype, onSlotUpdate]);
+
+  const handleDashboardUpdate = useCallback((config) => {
+    setDashboardConfig(config);
+  }, []);
+
   const handleTypeSelect = (type) => {
-    // Only switch if clicking the unselected type
     if (type !== selectedType) {
       setSelectedType(type);
       setSelectedSubtype(null);
       setDashboardConfig(null);
+      setLastSavedConfig(null);
     }
-    // Clicking already selected type does nothing
   };
 
   const handleSubtypeSelect = (subtype) => {
-    // Simply set the subtype, no toggling
     setSelectedSubtype(subtype);
     setDashboardConfig(null);
-  };
-
-  const handleDashboardUpdate = (config) => {
-    setDashboardConfig(config);
-  };
-
-  const handleCommitToSlot = () => {
-    if (selectedType && selectedSubtype && dashboardConfig) {
-      // Play sound only after confirming we have valid data to save
-      const audio = new Audio(highPop);
-      audio.play();
-      
-      onSlotUpdate({
-        type: selectedType,
-        subtype: selectedSubtype,
-        configuration: dashboardConfig
-      });
-    }
+    setLastSavedConfig(null);
   };
 
   return (
@@ -78,7 +86,6 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
       />
       <div className={styles.functionHubText}>function hub</div>
       
-      {/* Keep original button group structure */}
       <div className={styles.actionSenseButtonGroup}>
         <div className={styles.actionButton}>
           <button
@@ -99,7 +106,6 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
         </div>
       </div>
 
-      {/* Subtype selection below action/input */}
       {selectedType && (
         <div className={styles.subtypeSelection}>
           {Object.entries(CONTROL_TYPES[selectedType]).map(([key, value]) => (
@@ -114,21 +120,28 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
         </div>
       )}
 
-      {/* Dashboard display */}
       {selectedType && selectedSubtype && (
         <div className={styles.dashboardContainer}>
           {React.createElement(CONTROL_TYPES[selectedType][selectedSubtype].component, {
             onUpdate: handleDashboardUpdate,
-            configuration: dashboardConfig
+            configuration: dashboardConfig,
+            slotData: slotData
           })}
-          {dashboardConfig && (  // Only show save button if we have a configuration
-            <button 
-              className={styles.commitButton}
-              onClick={handleCommitToSlot}
-            >
-              Save to Step {currSlotNumber + 1}
-            </button>
-          )}
+          <div className={styles.saveIndicator}>
+            {dashboardConfig && (
+              JSON.stringify(dashboardConfig) === JSON.stringify(lastSavedConfig) ? (
+                <div className={styles.savedState}>
+                  <Check className={styles.checkIcon} size={24} color="#4CAF50"/>
+                  <span>Saved to Step {currSlotNumber + 1}</span>
+                </div>
+              ) : (
+                <div className={styles.unsavedState}>
+                  <Plus className={styles.plusIcon} size={24} color="#9E9E9E"/>
+                  <span>Unsaved changes</span>
+                </div>
+              )
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -461,55 +461,51 @@ class DeviceNotification {
 
     parsePayload() {
         let data = Buffer.from(this.payload);
-        let offset = 0; // Initialize offset
+        let offset = 0;
 
         while (offset < data.length) {
-            /*  console.log(
-                `Data before parsing at offset ${offset}:`,
-                data.slice(offset),
-            ); */
-
-            // Step 1: Read the current message ID
             const id = data.readUInt8(offset);
-            /*  console.log(`Message ID: ${id} at offset ${offset}`);*/
-            offset += 1; // Move past the ID byte
+            offset += 1;
 
             if (id in DEVICE_MESSAGE_MAP) {
                 const [name, structLayout] = DEVICE_MESSAGE_MAP[id];
                 const size = structLayout.span;
-                /*  console.log(
-                    `Parsing message: ${name}, Expected size: ${size}, Remaining data length: ${
-                        data.length - offset
-                    }`,
-                ); */
 
-                // Step 2: Check if there is enough data to parse the message
                 if (data.length - offset < size) {
                     console.warn(
                         `Insufficient data for message ID: ${id}, Required: ${size}, Available: ${
                             data.length - offset
-                        }`,
+                        }`
                     );
                     break;
                 }
 
-                // Step 3: Extract values using the struct layout
                 try {
                     const messageData = data.slice(offset, offset + size);
                     const values = structLayout.decode(messageData);
+                    
+                    // Add the name to the values object
+                    values.deviceName = name;
+                    
                     this.messages.push({ name, values });
                     console.log(`${name} : `, values);
+
+                    // Dispatch to event system if available
+                    if (typeof window !== 'undefined' && window.dispatchEvent) {
+                        const event = new CustomEvent('deviceMessage', { 
+                            detail: { name, values } 
+                        });
+                        window.dispatchEvent(event);
+                    }
+
                 } catch (e) {
                     console.error(`Failed to parse message ID: ${id}`, e);
                     break;
                 }
 
-                // Update offset for next message
-                offset += size; // Move past the parsed message
+                offset += size;
             } else {
-                console.warn(
-                    `Unknown message ID: ${id} at offset ${offset - 1}`,
-                );
+                console.warn(`Unknown message ID: ${id} at offset ${offset - 1}`);
                 break;
             }
         }

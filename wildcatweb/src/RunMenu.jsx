@@ -5,7 +5,29 @@ import { Buffer } from 'buffer';
 import { ClearSlotRequest, ClearSlotResponse } from './ble_resources/messages';
 
 export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData }) => {
-    const { ble, isConnected } = useBLE();
+    const { ble, isConnected, portStates } = useBLE();
+
+    // Check for disconnected motors in configurations
+    const checkDisconnectedMotors = (slots) => {
+        const disconnectedPorts = [];
+        slots.forEach((slot, index) => {
+            if (slot?.type === 'action' && slot?.subtype === 'motor') {
+                const configs = Array.isArray(slot.configuration) 
+                    ? slot.configuration 
+                    : [slot.configuration];
+                
+                configs.forEach(config => {
+                    if (config?.port && !portStates[config.port]) {
+                        disconnectedPorts.push({
+                            slot: index + 1,
+                            port: config.port
+                        });
+                    }
+                });
+            }
+        });
+        return disconnectedPorts;
+    };
 
     const handleRunCurrentSlot = async () => {
         try {
@@ -16,8 +38,13 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
 
             // Create single-slot array with current slot
             const singleSlot = [slotData[currSlotNumber]];
-            const code = generatePythonCode(singleSlot);
+            const disconnected = checkDisconnectedMotors(singleSlot);
+            const code = generatePythonCode(singleSlot, portStates);
             console.log("Generated Python Code for current slot:", code);
+
+            if (disconnected.length > 0) {
+                console.warn("Warning: Using disconnected motors:", disconnected);
+            }
 
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
@@ -47,8 +74,13 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
                 return;
             }
 
-            const code = generatePythonCode(slotData);
+            const disconnected = checkDisconnectedMotors(slotData);
+            const code = generatePythonCode(slotData, portStates);
             console.log("Generated Python Code for all slots:", code);
+
+            if (disconnected.length > 0) {
+                console.warn("Warning: Using disconnected motors:", disconnected);
+            }
 
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
@@ -71,6 +103,10 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
         }
     };
 
+    // Check for any disconnected motors in the current configuration
+    const disconnectedMotors = checkDisconnectedMotors(slotData);
+    const currentSlotDisconnected = checkDisconnectedMotors([slotData[currSlotNumber]]);
+
     return (
         <div className={styles.menuBackground}>
             <div className={styles.slotIndicators}>
@@ -79,7 +115,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
                         key={index}
                         className={`${styles.indicator} ${
                             slotData?.[index]?.type ? styles.configured : ''
-                        } ${index === currSlotNumber ? styles.current : ''}`}
+                        } ${index === currSlotNumber ? styles.current : ''} ${
+                            checkDisconnectedMotors([slotData?.[index]]).length > 0 ? styles.warning : ''
+                        }`}
                     />
                 ))}
             </div>
@@ -90,20 +128,35 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
                     Step {currSlotNumber + 1} of {missionSteps + 1}
                 </div>
                 <div className={styles.buttonGroup}>
-                    <button 
-                        className={styles.runButton} 
-                        onClick={handleRunCurrentSlot}
-                        disabled={!canRun || !isConnected}
-                    >
-                        This step
-                    </button>
-                    <button 
-                        className={styles.runButton} 
-                        onClick={handleRunAllSlots}
-                        disabled={!canRun || !isConnected}
-                    >
-                        All steps
-                    </button>
+                    <div className={styles.buttonWrapper}>
+                        <button 
+                            className={`${styles.runButton} ${currentSlotDisconnected.length > 0 ? styles.warning : ''}`}
+                            onClick={handleRunCurrentSlot}
+                            disabled={!canRun || !isConnected}
+                        >
+                            This step
+                        </button>
+                        {currentSlotDisconnected.length > 0 && (
+                            <div className={styles.warningText}>
+                                Missing motor{currentSlotDisconnected.length > 1 ? 's' : ''} on port{currentSlotDisconnected.length > 1 ? 's' : ''} {currentSlotDisconnected.map(d => d.port).join(', ')}
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className={styles.buttonWrapper}>
+                        <button 
+                            className={`${styles.runButton} ${disconnectedMotors.length > 0 ? styles.warning : ''}`}
+                            onClick={handleRunAllSlots}
+                            disabled={!canRun || !isConnected}
+                        >
+                            All steps
+                        </button>
+                        {disconnectedMotors.length > 0 && (
+                            <div className={styles.warningText}>
+                                Missing motor{disconnectedMotors.length > 1 ? 's' : ''} on port{disconnectedMotors.length > 1 ? 's' : ''} {[...new Set(disconnectedMotors.map(d => d.port))].join(', ')}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

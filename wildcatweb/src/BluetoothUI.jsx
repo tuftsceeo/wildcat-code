@@ -23,7 +23,7 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 if (connectionSuccess) {
                     setIsConnected(true);
                     setCurrentSvg(false);
-                    ble.sendTestProgram();
+                    //ble.sendTestProgram();
                 } else {
                     console.error("Failed to connect to the Bluetooth device");
                 }
