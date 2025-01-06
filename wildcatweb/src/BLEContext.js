@@ -1,7 +1,42 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { newSpikeBLE } from "./ble_resources/spike_ble";
+import { struct, u8, u16, s16, seq, s8, s32 } from "buffer-layout";
 
 const BLEContext = createContext();
+
+// Copy of DEVICE_MESSAGE_MAP for processing device states
+const DEVICE_MESSAGE_MAP = {
+    0x00: ["Battery", struct([u8("batteryLevel")])],
+    0x01: [
+        "IMU",
+        struct([
+            u8("faceUp"), // Hub Face pointing up
+            u8("yawFace"), // Hub Face configured as yaw face
+            s16("yaw"), // Yaw value
+            s16("pitch"), // Pitch value
+            s16("roll"), // Roll value
+            s16("accelX"), // Accelerometer reading in X
+            s16("accelY"), // Accelerometer reading in Y
+            s16("accelZ"), // Accelerometer reading in Z
+            s16("gyroX"), // Gyroscope reading in X
+            s16("gyroY"), // Gyroscope reading in Y
+            s16("gyroZ"), // Gyroscope reading in Z
+        ]),
+    ],
+    0x02: ["5x5", struct([seq(u8(), 25, "pixels")])],
+    0x0a: [
+        "Motor",
+        struct([
+            u8("port"), // Hub Port the motor is connected to
+            u8("deviceType"), // Motor Device Type
+            s16("absolutePos"), // Absolute position in degrees
+            s16("power"), // Power applied to the motor
+            s8("speed"), // Speed of the motor
+            s32("position"), // Position of the motor
+        ]),
+    ],
+    // Add other device types as needed
+};
 
 export const useBLE = () => {
     const context = useContext(BLEContext);
@@ -23,65 +58,60 @@ export const BLEProvider = ({ children }) => {
         'F': null
     });
 
-    // Track the current message batch
-    const [messageCount, setMessageCount] = useState(0);
-    const [currentCycleMotors, setCurrentCycleMotors] = useState({});
-
-    const handleDeviceMessage = (event) => {
-        const { name, values } = event.detail;
-        
-        // When we get a message that isn't a Motor message, increment the count
-        if (name !== 'Motor') {
-            setMessageCount(prev => prev + 1);
-            return;
-        }
-        
-        // For Motor messages, both update the motors and increment count
-        const portLetter = String.fromCharCode(65 + values.port);
-        setCurrentCycleMotors(prev => ({
-            ...prev,
-            [portLetter]: {
-                type: values.deviceType,
-                connected: true,
-                ...values
-            }
-        }));
-        setMessageCount(prev => prev + 1);
-    };
-
-    // Process complete cycles
+    // Handle device disconnections
     useEffect(() => {
-        if (messageCount >= 5) {  // We've received all messages in this cycle
-            console.log('Processing complete device cycle');
-            console.log('Connected motors:', Object.keys(currentCycleMotors));
+        const handleDisconnect = () => {
+            console.log('BLEContext: Handling unexpected disconnection');
+            setIsConnected(false);
+        };
 
-            // Reset all ports and only set the ones we currently see
-            setPortStates({
+        window.addEventListener('spikeDisconnected', handleDisconnect);
+        
+        return () => {
+            window.removeEventListener('spikeDisconnected', handleDisconnect);
+        };
+    }, []);
+
+    // Handle device notification events
+    useEffect(() => {
+        const handleDeviceNotification = (event) => {
+            const message = event.detail;
+            console.log('Processing device notification:', message);
+
+            // Reset port states for new notification
+            const newPortStates = {
                 'A': null,
                 'B': null,
                 'C': null,
                 'D': null,
                 'E': null,
-                'F': null,
-                ...currentCycleMotors
+                'F': null
+            };
+
+            // Process each message in the notification
+            message.messages.forEach(msg => {
+                if (msg.name === 'Motor') {
+                    const portLetter = String.fromCharCode(65 + msg.values.port);
+                    newPortStates[portLetter] = {
+                        type: msg.values.deviceType,
+                        connected: true,
+                        ...msg.values
+                    };
+                }
             });
 
-            // Reset for next cycle
-            setMessageCount(0);
-            setCurrentCycleMotors({});
-        }
-    }, [messageCount, currentCycleMotors]);
+            // Update port states
+            setPortStates(newPortStates);
+        };
 
-    useEffect(() => {
-        window.addEventListener('deviceMessage', handleDeviceMessage);
+        window.addEventListener('spikeDeviceNotification', handleDeviceNotification);
+        
         return () => {
-            window.removeEventListener('deviceMessage', handleDeviceMessage);
-            setMessageCount(0);
-            setCurrentCycleMotors({});
+            window.removeEventListener('spikeDeviceNotification', handleDeviceNotification);
         };
     }, []);
 
-    // Reset everything when connection is lost
+    // Reset when disconnected
     useEffect(() => {
         if (!isConnected) {
             setPortStates({
@@ -92,8 +122,6 @@ export const BLEProvider = ({ children }) => {
                 'E': null,
                 'F': null
             });
-            setMessageCount(0);
-            setCurrentCycleMotors({});
         }
     }, [isConnected]);
 

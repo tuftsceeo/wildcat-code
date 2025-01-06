@@ -123,18 +123,8 @@ class SpikeBLE {
             this.pendingResponses.delete(key);
         }
 
-        // Optionally attempt reconnection
-        /*         try {
-            await this.retryOperation(
-                async () => {
-                    await this.connect();
-                },
-                3,
-                1000,
-            );
-        } catch (error) {
-            console.error("Failed to reconnect after disconnection:", error);
-        } */
+        // Dispatch disconnection event
+        window.dispatchEvent(new CustomEvent('spikeDisconnected'));
     };
 
     // Method to clean up stale pending responses
@@ -280,9 +270,8 @@ class SpikeBLE {
     // Method to set a callback for received data
     onReceive = (event) => {
         try {
-            //console.log("onReceive: Event received", event);
             let dataArray = Buffer.from(event.target.value.buffer);
-            //console.log("RAW DATA RECEIVED: ", dataArray);
+            
             // Check if the message ends with the delimiter (0x02)
             if (dataArray[dataArray.length - 1] !== 0x02) {
                 console.error("Received incomplete message:", dataArray);
@@ -291,27 +280,55 @@ class SpikeBLE {
 
             // Decode message using COBS
             const data = cobsUnpack(dataArray);
-            //console.log("Unpacked received data:", data);
-
+            
             // Deserialize the received data
             const message = messages.deserialize(data);
+
+            // Log message
             if (message.id === messages.ConsoleNotification.ID) {
                 console.warn("Message:", message, " Id: ", message.id);
             } else {
                 console.log("Message:", message, " Id: ", message.id);
             }
 
+            // Dispatch appropriate event based on message type
+            // eslint-disable-next-line default-case
+            switch (message.id) {
+                case messages.DeviceNotification.ID:
+                    window.dispatchEvent(new CustomEvent('spikeDeviceNotification', { 
+                        detail: message 
+                    }));
+                    break;
+                case messages.InfoResponse.ID:
+                    window.dispatchEvent(new CustomEvent('spikeInfoResponse', { 
+                        detail: message 
+                    }));
+                    break;
+                case messages.ProgramFlowResponse.ID:
+                    window.dispatchEvent(new CustomEvent('spikeProgramFlowResponse', { 
+                        detail: message 
+                    }));
+                    break;
+                case messages.ProgramFlowNotification.ID:
+                    window.dispatchEvent(new CustomEvent('spikeProgramFlowNotification', { 
+                        detail: message 
+                    }));
+                    break;
+                case messages.ConsoleNotification.ID:
+                    window.dispatchEvent(new CustomEvent('spikeConsoleNotification', { 
+                        detail: message 
+                    }));
+                    break;
+                // Add other message types as needed
+            }
+
+            // Handle pending responses
             if (this.pendingResponses.has(message.id)) {
                 const pending = this.pendingResponses.get(message.id);
                 pending.resolve(message);
                 this.pendingResponses.delete(message.id);
                 console.log("Resolved pending response :", message);
             }
-            /*else {
-                console.log(
-                    `No pending response found for message ID: ${message.id}`,
-                );
-            }*/
         } catch (error) {
             console.error("Error in onReceive:", error);
         }

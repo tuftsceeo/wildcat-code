@@ -3,6 +3,7 @@ import { generatePythonCode } from './codeGenerator.js';
 import { useBLE } from "./BLEContext";
 import { Buffer } from 'buffer';
 import { ClearSlotRequest, ClearSlotResponse } from './ble_resources/messages';
+import { AlertTriangle, AlertOctagon } from 'lucide-react';
 
 export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData }) => {
     const { ble, isConnected, portStates } = useBLE();
@@ -38,13 +39,8 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
 
             // Create single-slot array with current slot
             const singleSlot = [slotData[currSlotNumber]];
-            const disconnected = checkDisconnectedMotors(singleSlot);
             const code = generatePythonCode(singleSlot, portStates);
             console.log("Generated Python Code for current slot:", code);
-
-            if (disconnected.length > 0) {
-                console.warn("Warning: Using disconnected motors:", disconnected);
-            }
 
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
@@ -74,13 +70,8 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
                 return;
             }
 
-            const disconnected = checkDisconnectedMotors(slotData);
             const code = generatePythonCode(slotData, portStates);
             console.log("Generated Python Code for all slots:", code);
-
-            if (disconnected.length > 0) {
-                console.warn("Warning: Using disconnected motors:", disconnected);
-            }
 
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
@@ -116,7 +107,7 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
                         className={`${styles.indicator} ${
                             slotData?.[index]?.type ? styles.configured : ''
                         } ${index === currSlotNumber ? styles.current : ''} ${
-                            checkDisconnectedMotors([slotData?.[index]]).length > 0 ? styles.warning : ''
+                            isConnected && checkDisconnectedMotors([slotData?.[index]]).length > 0 ? styles.warning : ''
                         }`}
                     />
                 ))}
@@ -128,35 +119,57 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
                     Step {currSlotNumber + 1} of {missionSteps + 1}
                 </div>
                 <div className={styles.buttonGroup}>
-                    <div className={styles.buttonWrapper}>
-                        <button 
-                            className={`${styles.runButton} ${currentSlotDisconnected.length > 0 ? styles.warning : ''}`}
-                            onClick={handleRunCurrentSlot}
-                            disabled={!canRun || !isConnected}
-                        >
-                            This step
-                        </button>
-                        {currentSlotDisconnected.length > 0 && (
-                            <div className={styles.warningText}>
-                                Missing motor{currentSlotDisconnected.length > 1 ? 's' : ''} on port{currentSlotDisconnected.length > 1 ? 's' : ''} {currentSlotDisconnected.map(d => d.port).join(', ')}
+                    {!isConnected ? (
+                        <div className={styles.buttonWrapper}>
+                            <AlertTriangle 
+                                className={styles.errorIcon} 
+                                size={24} 
+                                color="#EF5350"
+                            />
+                            <button 
+                                className={styles.runButton}
+                                disabled={true}
+                            >
+                                This step
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className={styles.buttonWrapper}>
+                                {currentSlotDisconnected.length > 0 && (
+                                    <AlertOctagon 
+                                        className={styles.warningIcon} 
+                                        size={20} 
+                                        color="#FFB74D"
+                                    />
+                                )}
+                                <button 
+                                    className={`${styles.runButton} ${currentSlotDisconnected.length > 0 ? styles.warning : ''}`}
+                                    onClick={handleRunCurrentSlot}
+                                    disabled={!canRun || !isConnected}
+                                >
+                                    This step
+                                </button>
                             </div>
-                        )}
-                    </div>
-                    
-                    <div className={styles.buttonWrapper}>
-                        <button 
-                            className={`${styles.runButton} ${disconnectedMotors.length > 0 ? styles.warning : ''}`}
-                            onClick={handleRunAllSlots}
-                            disabled={!canRun || !isConnected}
-                        >
-                            All steps
-                        </button>
-                        {disconnectedMotors.length > 0 && (
-                            <div className={styles.warningText}>
-                                Missing motor{disconnectedMotors.length > 1 ? 's' : ''} on port{disconnectedMotors.length > 1 ? 's' : ''} {[...new Set(disconnectedMotors.map(d => d.port))].join(', ')}
+                            
+                            <div className={styles.buttonWrapper}>
+                                {disconnectedMotors.length > 0 && (
+                                    <AlertOctagon 
+                                        className={styles.warningIcon} 
+                                        size={20} 
+                                        color="#FFB74D"
+                                    />
+                                )}
+                                <button 
+                                    className={`${styles.runButton} ${disconnectedMotors.length > 0 ? styles.warning : ''}`}
+                                    onClick={handleRunAllSlots}
+                                    disabled={!canRun || !isConnected}
+                                >
+                                    All steps
+                                </button>
                             </div>
-                        )}
-                    </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

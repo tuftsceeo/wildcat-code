@@ -12,7 +12,7 @@ import CodingTrack from "./CodingTrack.jsx";
 const createEmptySlot = () => ({
     type: null,         // 'action' or 'input'
     subtype: null,      // 'motor', 'time', etc.
-    configuration: null // Specific settings for this slot
+    configuration: []   // Array of configurations for this slot
 });
 
 function App() {

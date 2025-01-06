@@ -159,6 +159,11 @@
   cursor: pointer;
 }
 
+.speedButton.active {
+  background-color: #32488A;
+  color: #FFFFFF;
+}
+
 .speedInput {
   position: absolute;
   top: 100%;
@@ -173,4 +178,34 @@
   font-family: "Inter-Bold", Helvetica;
   font-size: 14px;
   z-index: 100;
+}
+.noConnection, .noMotors {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 18px;
+  border-radius: 10px;
+}
+
+.noConnection {
+  background-color: #FFEBEE;  /* Light red/pink background */
+  color: #EF5350;  /* Red text */
+}
+
+.noMotors {
+  background-color: #FFF3E0;  /* Light orange background */
+  color: #FFB74D;  /* Orange text */
+}
+
+.noConnection svg, .noMotors svg {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }

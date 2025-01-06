@@ -490,14 +490,6 @@ class DeviceNotification {
                     this.messages.push({ name, values });
                     console.log(`${name} : `, values);
 
-                    // Dispatch to event system if available
-                    if (typeof window !== 'undefined' && window.dispatchEvent) {
-                        const event = new CustomEvent('deviceMessage', { 
-                            detail: { name, values } 
-                        });
-                        window.dispatchEvent(event);
-                    }
-
                 } catch (e) {
                     console.error(`Failed to parse message ID: ${id}`, e);
                     break;

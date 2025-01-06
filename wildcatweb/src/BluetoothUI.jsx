@@ -22,8 +22,6 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 const connectionSuccess = await ble.connect();
                 if (connectionSuccess) {
                     setIsConnected(true);
-                    setCurrentSvg(false);
-                    //ble.sendTestProgram();
                 } else {
                     console.error("Failed to connect to the Bluetooth device");
                 }
@@ -31,15 +29,17 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         } else {
             await ble.disconnect();
             setIsConnected(false);
-            setCurrentSvg(true);
         }
     };
 
     const handleSettingsClick = () => {
+        console.log('Settings button clicked');
         setShowCustomizationPage(true);
+        console.log('showCustomizationPage state set to:', true);
     };
 
     const closeCustomizationPage = () => {
+        console.log('Closing settings page');
         setShowCustomizationPage(false);
     };
 
@@ -51,6 +51,8 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         setShowHelpDialog(false);
     };
 
+    // Render CustomizationPage and HelpDialog outside of any conditional logic
+    // Only the button states should depend on connection status
     return (
         <>
             <div className={styles.menu}>
@@ -59,7 +61,7 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                     onClick={handleBluetoothToggle}
                 >
                     <img
-                        src={currentSvg ? bluetoothDefault : bluetoothConnected}
+                        src={isConnected ? bluetoothConnected : bluetoothDefault}
                         alt="Bluetooth Icon"
                     />
                 </button>
@@ -79,8 +81,11 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 </button>
             </div>
 
+            {/* These should render regardless of connection state */}
             {showCustomizationPage && (
-                <CustomizationPage close={closeCustomizationPage} />
+                <CustomizationPage 
+                    close={closeCustomizationPage}
+                />
             )}
 
             {showHelpDialog && (

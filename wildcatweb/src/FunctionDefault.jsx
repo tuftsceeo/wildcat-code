@@ -60,7 +60,7 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
 
   const handleDashboardUpdate = useCallback((config) => {
     setDashboardConfig(config);
-  }, []);
+}, []);
 
   const handleTypeSelect = (type) => {
     if (type !== selectedType) {
@@ -132,12 +132,12 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
               JSON.stringify(dashboardConfig) === JSON.stringify(lastSavedConfig) ? (
                 <div className={styles.savedState}>
                   <Check className={styles.checkIcon} size={24} color="#4CAF50"/>
-                  <span>Saved to Step {currSlotNumber + 1}</span>
+                  <span></span>
                 </div>
               ) : (
                 <div className={styles.unsavedState}>
                   <Plus className={styles.plusIcon} size={24} color="#9E9E9E"/>
-                  <span>Unsaved changes</span>
+                  <span></span>
                 </div>
               )
             )}
