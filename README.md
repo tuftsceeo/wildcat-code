@@ -1,7 +1,42 @@
 # wildcat-code
 The prototype coding tool for wildcats in the IEP-CT project
 
-IEP-CT Prototype V1
+## Update Jan 2025:
+Merged in the web BLE experiment into the React app / JS. 
+Contributors jenncross
+`wildcatweb` is the primary prototype folder. 
+
+## Core Components
+
+### App Level
+- `App.js` - Main component structure and state management
+- `BLEContext.js` - Bluetooth connection management and device state tracking
+- `KnobContext.js` - Motor control knob state management
+
+### Main Interface Components
+- `FunctionDefault.jsx` - Main interaction dashboard for configuring steps
+- `CodingTrack.jsx` - Sequence visualization and step navigation
+- `RunMenu.jsx` - Code generation and program execution controls
+- `BluetoothUI.jsx` - Robot connection management interface
+
+### Motor Control Components
+- `MotorDash.jsx` - Motor control interface and port status tracking
+- `SingleMotorDash.jsx` - Individual motor control dashboard
+- `Knob.js` - Motor speed control interface
+
+### SPIKE Prime Communication
+- `spike_ble.js` - Bluetooth communication with SPIKE Prime
+- `messages.js` - Message protocol implementation
+- `codeGenerator.js` - Python code generation for SPIKE Prime
+
+
+
+—----------------------
+—----------------------
+
+
+
+## IEP-CT Prototype V1 August 2024
 
 Contributors: Ava Delaney & Douglas Lilly
 
