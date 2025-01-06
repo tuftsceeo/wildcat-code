@@ -1,0 +1,65 @@
+.trackContainer {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 200px;
+    align-items: center;
+    z-index: 0;
+}
+
+.codeTrack {
+    transform: translateY(-30%);
+    z-index: 1;
+}
+
+.codeSucker {
+    transform: translateY(-11.5%);
+    z-index: 2;
+}
+
+.slotDescription {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -120%);  /* Adjusted to position above the track */
+    color: #405CB0;
+    font-family: 'Space Grotesk';
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 20px;
+    z-index: 3;  /* Ensure text is on top */
+    background-color: rgba(255, 255, 255, 0.9);  /* Optional: add slight background to improve readability */
+    border-radius: 5px;  /* Optional: round the corners of the background */
+}
+
+.nextButton,
+.prevButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    z-index: 4;  /* Navigation buttons on top */
+}
+
+.nextButton {
+    transform: translateY(-283%);
+}
+
+.prevButton {
+    transform: translateY(-330%);
+}
+
+.prevButton:disabled,
+.nextButton:disabled {
+    cursor: not-allowed;
+}
+
+.nextButton img,
+.prevButton img {
+    display: block;
+    width: 100%;
+    height: auto;
+}

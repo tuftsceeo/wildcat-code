@@ -1,0 +1,211 @@
+.motorDashContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.singleMotorDash {
+  background-color: #98AEDD;
+  border-radius: 10px;
+  padding: 15px;
+  width: 100%;
+}
+
+.singleMotorDash.disconnected {
+  background-color: #EC8A8A;  /* Reddish background for disconnected */
+  opacity: 0.95;
+}
+
+.motorHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 2px 5px;
+}
+
+.portLabel {
+  color: #FFFFFF;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 16px;
+  font-weight: bold;
+  flex-grow: 1;
+}
+
+.disconnectedLabel {
+  color: #FFFFFF;
+  font-size: 14px;
+  margin-right: 10px;
+  padding: 2px 6px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.dismissButton {
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 2px 8px;
+  margin-left: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.dismissButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+.motorDashContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.noMotors {
+  color: #FFFFFF;
+  text-align: center;
+  padding: 20px;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 18px;
+  background-color: #98AEDD;
+  border-radius: 10px;
+}
+
+.singleMotorDash {
+  background-color: #98AEDD;
+  border-radius: 10px;
+  padding: 15px;
+  width: 100%;
+}
+
+.singleMotorDash.disconnected {
+  background-color: #FF8C8C;
+  opacity: 0.9;
+}
+
+.motorHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.portLabel {
+  color: #FFFFFF;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 16px;
+  font-weight: bold;
+  flex-grow: 1;
+}
+
+.disconnectedLabel {
+  color: #FFFFFF;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.dismissButton {
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controlButton {
+  background-color: #FFFFFF;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  color: #405CB0;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.controlButton.active {
+  background-color: #32488A;
+  color: #FFFFFF;
+}
+
+.speedControl {
+  position: relative;
+  flex-grow: 1;
+}
+
+.speedButton {
+  width: 100%;
+  background-color: #FFFFFF;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  color: #405CB0;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.speedButton.active {
+  background-color: #32488A;
+  color: #FFFFFF;
+}
+
+.speedInput {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+  color: #405CB0;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 14px;
+  z-index: 100;
+}
+.noConnection, .noMotors {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 18px;
+  border-radius: 10px;
+}
+
+.noConnection {
+  background-color: #FFEBEE;  /* Light red/pink background */
+  color: #EF5350;  /* Red text */
+}
+
+.noMotors {
+  background-color: #FFF3E0;  /* Light orange background */
+  color: #FFB74D;  /* Orange text */
+}
+
+.noConnection svg, .noMotors svg {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

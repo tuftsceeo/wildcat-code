@@ -1,15 +1,14 @@
 // Import necessary modules and assets
-import React, { useState } from 'react';
-import styles from './BluetoothUI.module.css'; // Import scoped CSS styles for this component
-import bluetoothDefault from './assets/bluetooth-med.svg'; // Default Bluetooth icon
-import bluetoothConnected from './assets/bluetooth-connected-correct.svg'; // Connected Bluetooth icon
-import settings from './assets/settings.svg'; // Settings icon
-import questionMark from './assets/question-mark.svg'; // Help icon
-import { CustomizationPage } from './CustomizationPage'; // Import customization settings component
-import axios from 'axios'; // Import axios for making HTTP requests
-import { newBLE } from './blu_library'; // Import the BLE library
-import HelpDialog from './HelpDialog'; // Import HelpDialog component
-
+import React, { useState } from "react";
+import styles from "./BluetoothUI.module.css"; // Import scoped CSS styles for this component
+import bluetoothDefault from "./assets/bluetooth-med.svg"; // Default Bluetooth icon
+import bluetoothConnected from "./assets/bluetooth-connected-correct.svg"; // Connected Bluetooth icon
+import settings from "./assets/settings.svg"; // Settings icon
+import questionMark from "./assets/question-mark.svg"; // Help icon
+import { CustomizationPage } from "./CustomizationPage"; // Import customization settings component
+import axios from "axios"; // Import axios for making HTTP requests
+import { newBLE } from "./blu_library"; // Import the BLE library
+import HelpDialog from "./HelpDialog"; // Import HelpDialog component
 
 // Define the BluetoothUI component
 export const BluetoothUI = ({ currSlotNumber }) => {
@@ -21,7 +20,7 @@ export const BluetoothUI = ({ currSlotNumber }) => {
     const [showHelpDialog, setShowHelpDialog] = useState(false);
     // State to track the connection status
     const [isConnected, setIsConnected] = useState(false);
-    
+
     // Initialize a BLE instance
     const ble = newBLE();
 
@@ -29,14 +28,14 @@ export const BluetoothUI = ({ currSlotNumber }) => {
     const handleBluetoothToggle = async () => {
         if (!isConnected) {
             // Attempt to connect
-            const deviceSelected = await ble.ask(''); // Empty string to search for devices
+            const deviceSelected = await ble.ask(""); // Empty string to search for devices
             if (deviceSelected) {
                 const connectionSuccess = await ble.connect();
                 if (connectionSuccess) {
                     setIsConnected(true);
                     setCurrentSvg(false); // Show connected icon
                 } else {
-                    console.error('Failed to connect to the Bluetooth device');
+                    console.error("Failed to connect to the Bluetooth device");
                 }
             }
         } else {
@@ -57,7 +56,6 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         setShowCustomizationPage(false); // Set state to hide the CustomizationPage component
     };
 
-
     // Function to handle help button click, showing the help dialog
     const handleHelpClick = () => {
         setShowHelpDialog(true); // Set state to show the HelpDialog component
@@ -74,27 +72,42 @@ export const BluetoothUI = ({ currSlotNumber }) => {
             {/* Main menu container with buttons */}
             <div className={styles.menu}>
                 {/* Bluetooth Connect/Disconnect Button - toggles icon between default and connected */}
-                <button className={styles.connectButton} 
-                    onClick={handleBluetoothToggle}>
-                    <img src={currentSvg ? bluetoothDefault : bluetoothConnected} alt="Bluetooth Icon" />
+                <button
+                    className={styles.connectButton}
+                    onClick={handleBluetoothToggle}
+                >
+                    <img
+                        src={currentSvg ? bluetoothDefault : bluetoothConnected}
+                        alt="Bluetooth Icon"
+                    />
                 </button>
-                
+
                 {/* Settings Button - shows customization page */}
-                <button className={styles.settingsButton} onClick={handleSettingsClick}>
+                <button
+                    className={styles.settingsButton}
+                    onClick={handleSettingsClick}
+                >
                     <img src={settings} alt="Settings Icon" />
                 </button>
-                
+
                 {/* Help Button - shows help dialog */}
-                   <button className={styles.helpButton} onClick={handleHelpClick}>
+                <button className={styles.helpButton} onClick={handleHelpClick}>
                     <img src={questionMark} alt="Help Icon" />
                 </button>
             </div>
-            
+
             {/* Conditionally render CustomizationPage if showCustomizationPage is true */}
-            {showCustomizationPage && <CustomizationPage close={closeCustomizationPage} />}
+            {showCustomizationPage && (
+                <CustomizationPage close={closeCustomizationPage} />
+            )}
 
             {/* Conditionally render HelpDialog if showHelpDialog is true */}
-            {showHelpDialog && <HelpDialog currSlotNumber={currSlotNumber} close={closeHelpDialog} />}
+            {showHelpDialog && (
+                <HelpDialog
+                    currSlotNumber={currSlotNumber}
+                    close={closeHelpDialog}
+                />
+            )}
         </>
     );
 };

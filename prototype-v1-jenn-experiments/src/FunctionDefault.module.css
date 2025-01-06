@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=McLaren:wght@400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=McLaren:wght@400&display=swap");
 
 /* Disable scroll */
 body {
     overflow: hidden;
     margin: 0; /* Ensure no margin around the body */
-    font-family: 'Space Grotesk';
+    font-family: "Space Grotesk";
 }
 
 .hubTopBackground {
@@ -16,18 +16,18 @@ body {
     height: 95vh; /* Full height with padding */
     margin: 20px; /* Padding to ensure it doesn't touch the edges */
     border-radius: 25px;
-    background-color: #405CB0;
+    background-color: #405cb0;
     z-index: 1;
 }
 
 .outline {
     position: absolute;
-    top: 50%;  /* Center vertically */
+    top: 50%; /* Center vertically */
     left: 50%; /* Center horizontally */
     transform: translate(-51.5%, -48%); /* Center using transform */
-    width: 95%;  /* Set width to 100% of parent */
+    width: 95%; /* Set width to 100% of parent */
     height: 89%; /* Adjusted height */
-    margin: 10px; 
+    margin: 10px;
     z-index: 2; /* Ensure this is on top */
 }
 
@@ -41,7 +41,7 @@ body {
     font-size: x-large;
     width: 344px;
     height: 75px;
-    color: #98AEDD;
+    color: #98aedd;
     z-index: 3;
 }
 
@@ -55,7 +55,7 @@ body {
     font-size: x-large;
     width: 344px;
     height: 75px;
-    color: #98AEDD;
+    color: #98aedd;
     z-index: 3;
 }
 
@@ -72,7 +72,7 @@ body {
     height: 180px;
     font-size: 30px;
     color: #ba1df1;
-    font-family: 'McLaren';
+    font-family: "McLaren";
     z-index: 4;
 }
 
@@ -88,8 +88,8 @@ body {
     background-color: #fff;
     border-color: #fff;
     font-size: 20px;
-    color: #405CB0;
-    font-family: 'McLaren';
+    color: #405cb0;
+    font-family: "McLaren";
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     z-index: 300;
     z-index: 6;
@@ -120,24 +120,14 @@ body {
 
 .actionButtonChild:focus {
     border-top-color: #000000; /* Darker border color for the top */
-    border-right-color: #405CB0; /* Optional: change the right border color to default */
-    border-bottom-color: #405CB0; /* Optional: change the bottom border color to default */
+    border-right-color: #405cb0; /* Optional: change the right border color to default */
+    border-bottom-color: #405cb0; /* Optional: change the bottom border color to default */
     border-left-color: #000000; /* Optional: change the left border color to default */
-    transform: translateY(1px); /* Moves the button down slightly to simulate pressing */
+    transform: translateY(
+        1px
+    ); /* Moves the button down slightly to simulate pressing */
     box-shadow: none; /* Remove focus shadow if needed */
-    background-color: #32488A;
-    border-color: #32488A;
+    background-color: #32488a;
+    border-color: #32488a;
     color: #fff;
 }
-
-
-
-
-
-
-
-
-
-
-
-

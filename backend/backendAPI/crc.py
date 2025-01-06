@@ -8,4 +8,7 @@ def crc(data: bytes, seed=0, align=4):
     remainder = len(data) % align
     if remainder:
         data += b"\x00" * (align - remainder)
-    return _crc32(data, seed)
+    print("Padded Data", data)
+    result = _crc32(data, seed)
+    print("CRC RESULT", result)
+    return result

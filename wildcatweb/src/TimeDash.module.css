@@ -1,0 +1,79 @@
+.timeGroup {
+    display: grid;
+    grid-template-areas:
+        "timeName"
+        "timeControl";
+    align-items: center;
+    justify-items: center;
+    z-index: 10;
+    position: relative;
+    top: 27%;
+    width: 100%;
+    row-gap: 20px;
+}
+
+.timeGroup::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 25px;
+    right: 25px;
+    bottom: 10px;
+    background-color: #98AEDD;
+    border-radius: 25px;
+    z-index: -1;
+}
+
+.timeName {
+    grid-area: timeName;
+    text-align: center;
+    color: #FFFF;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.timeControl {
+    grid-area: timeControl;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+.timeInput {
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    text-align: center;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 20px;
+    font-weight: 700;
+    color: #405CB0;
+    background-color: #FFFF;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.timeInput:focus {
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.timeUnit {
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFFF;
+}
+
+/* Remove spinner buttons from number input */
+.timeInput::-webkit-outer-spin-button,
+.timeInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.timeInput[type=number] {
+    -moz-appearance: textfield;
+}
