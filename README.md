@@ -2,9 +2,12 @@
 The prototype coding tool for wildcats in the IEP-CT project
 
 ## Update Jan 2025:
-Merged in the web BLE experiment into the React app / JS. 
-Contributors jenncross
+Merged in the web BLE experiment into the React app / JS.
+
+Contributors: jenncross
+
 `wildcatweb` is the primary prototype folder. 
+- Assistance from ChatGPT 4o and Claude 3.5 Sonnet
 
 ## Core Components
 
