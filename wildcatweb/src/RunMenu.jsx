@@ -1,27 +1,34 @@
+import React from "react";
 import styles from "./RunMenu.module.css";
-import { generatePythonCode } from './codeGenerator.js';
+import { generatePythonCode } from "./codeGenerator.js";
 import { useBLE } from "./BLEContext";
-import { Buffer } from 'buffer';
-import { ClearSlotRequest, ClearSlotResponse } from './ble_resources/messages';
-import { AlertTriangle, AlertOctagon } from 'lucide-react';
+import { Buffer } from "buffer";
+import { ClearSlotRequest, ClearSlotResponse } from "./ble_resources/messages";
+import { AlertTriangle, AlertOctagon } from "lucide-react";
 
-export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData }) => {
+export const RunMenu = ({
+    pyCode,
+    canRun,
+    currSlotNumber,
+    missionSteps,
+    slotData,
+}) => {
     const { ble, isConnected, portStates } = useBLE();
 
     // Check for disconnected motors in configurations
     const checkDisconnectedMotors = (slots) => {
         const disconnectedPorts = [];
         slots.forEach((slot, index) => {
-            if (slot?.type === 'action' && slot?.subtype === 'motor') {
-                const configs = Array.isArray(slot.configuration) 
-                    ? slot.configuration 
+            if (slot?.type === "action" && slot?.subtype === "motor") {
+                const configs = Array.isArray(slot.configuration)
+                    ? slot.configuration
                     : [slot.configuration];
-                
-                configs.forEach(config => {
+
+                configs.forEach((config) => {
                     if (config?.port && !portStates[config.port]) {
                         disconnectedPorts.push({
                             slot: index + 1,
-                            port: config.port
+                            port: config.port,
                         });
                     }
                 });
@@ -33,7 +40,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
     const handleRunCurrentSlot = async () => {
         try {
             if (!isConnected) {
-                console.warn("Robot not connected. Please connect via Bluetooth first.");
+                console.warn(
+                    "Robot not connected. Please connect via Bluetooth first.",
+                );
                 return;
             }
 
@@ -45,16 +54,20 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
                 new ClearSlotRequest(0),
-                ClearSlotResponse
+                ClearSlotResponse,
             );
-            
+
             if (!clearResponse.success) {
                 console.warn("Failed to clear program slot");
                 return;
             }
 
             // Upload and transfer the program
-            await ble.uploadProgramFile("program.py", 0, Buffer.from(code, 'utf-8'));
+            await ble.uploadProgramFile(
+                "program.py",
+                0,
+                Buffer.from(code, "utf-8"),
+            );
 
             // Start the program
             await ble.startProgram(0);
@@ -66,7 +79,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
     const handleRunAllSlots = async () => {
         try {
             if (!isConnected) {
-                console.warn("Robot not connected. Please connect via Bluetooth first.");
+                console.warn(
+                    "Robot not connected. Please connect via Bluetooth first.",
+                );
                 return;
             }
 
@@ -76,16 +91,20 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
                 new ClearSlotRequest(0),
-                ClearSlotResponse
+                ClearSlotResponse,
             );
-            
+
             if (!clearResponse.success) {
                 console.warn("Failed to clear program slot");
                 return;
             }
 
             // Upload and transfer the program
-            await ble.uploadProgramFile("program.py", 0, Buffer.from(code, 'utf-8'));
+            await ble.uploadProgramFile(
+                "program.py",
+                0,
+                Buffer.from(code, "utf-8"),
+            );
 
             // Start the program
             await ble.startProgram(0);
@@ -96,81 +115,46 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, missionSteps, slotData
 
     // Check for any disconnected motors in the current configuration
     const disconnectedMotors = checkDisconnectedMotors(slotData);
-    const currentSlotDisconnected = checkDisconnectedMotors([slotData[currSlotNumber]]);
+    const currentSlotDisconnected = checkDisconnectedMotors([
+        slotData[currSlotNumber],
+    ]);
 
     return (
         <div className={styles.menuBackground}>
-            <div className={styles.slotIndicators}>
-                {[...Array(missionSteps + 1)].map((_, index) => (
-                    <div
-                        key={index}
-                        className={`${styles.indicator} ${
-                            slotData?.[index]?.type ? styles.configured : ''
-                        } ${index === currSlotNumber ? styles.current : ''} ${
-                            isConnected && checkDisconnectedMotors([slotData?.[index]]).length > 0 ? styles.warning : ''
-                        }`}
-                    />
-                ))}
-            </div>
-
             <div className={styles.menuContent}>
-                <div>run</div>
-                <div className={styles.stepInfo}>
-                    Step {currSlotNumber + 1} of {missionSteps + 1}
+                {/* Minimal header/title as in FIGMA */}
+                <div className={styles.menuTitle}>RUN</div>
+
+                {/* Step buttons - first one green when active */}
+                <div className={styles.stepsContainer}>
+                    {[...Array(missionSteps + 1)].map((_, index) => (
+                        <button
+                            key={index}
+                            className={`${styles.stepButton} ${
+                                slotData?.[index]?.type ? styles.configured : ""
+                            } ${
+                                index === currSlotNumber ? styles.current : ""
+                            } ${
+                                isConnected &&
+                                checkDisconnectedMotors([slotData?.[index]])
+                                    .length > 0
+                                    ? styles.warning
+                                    : ""
+                            }`}
+                        >
+                            Step {index + 1}
+                        </button>
+                    ))}
                 </div>
-                <div className={styles.buttonGroup}>
-                    {!isConnected ? (
-                        <div className={styles.buttonWrapper}>
-                            <AlertTriangle 
-                                className={styles.errorIcon} 
-                                size={24} 
-                                color="#EF5350"
-                            />
-                            <button 
-                                className={styles.runButton}
-                                disabled={true}
-                            >
-                                This step
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            <div className={styles.buttonWrapper}>
-                                {currentSlotDisconnected.length > 0 && (
-                                    <AlertOctagon 
-                                        className={styles.warningIcon} 
-                                        size={20} 
-                                        color="#FFB74D"
-                                    />
-                                )}
-                                <button 
-                                    className={`${styles.runButton} ${currentSlotDisconnected.length > 0 ? styles.warning : ''}`}
-                                    onClick={handleRunCurrentSlot}
-                                    disabled={!canRun || !isConnected}
-                                >
-                                    This step
-                                </button>
-                            </div>
-                            
-                            <div className={styles.buttonWrapper}>
-                                {disconnectedMotors.length > 0 && (
-                                    <AlertOctagon 
-                                        className={styles.warningIcon} 
-                                        size={20} 
-                                        color="#FFB74D"
-                                    />
-                                )}
-                                <button 
-                                    className={`${styles.runButton} ${disconnectedMotors.length > 0 ? styles.warning : ''}`}
-                                    onClick={handleRunAllSlots}
-                                    disabled={!canRun || !isConnected}
-                                >
-                                    All steps
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </div>
+
+                {/* Blue Play button as in FIGMA */}
+                <button
+                    className={styles.playButton}
+                    onClick={handleRunCurrentSlot}
+                    disabled={!canRun || !isConnected}
+                >
+                    Play
+                </button>
             </div>
         </div>
     );

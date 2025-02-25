@@ -1,79 +1,160 @@
-.timeGroup {
-    display: grid;
-    grid-template-areas:
-        "timeName"
-        "timeControl";
-    align-items: center;
-    justify-items: center;
-    z-index: 10;
-    position: relative;
-    top: 27%;
-    width: 100%;
-    row-gap: 20px;
-}
+/* TimeDash.module.css */
+/* Using design tokens from retro-ui-tokens.css */
 
-.timeGroup::before {
-    content: '';
-    position: absolute;
-    top: 0px;
-    left: 25px;
-    right: 25px;
-    bottom: 10px;
-    background-color: #98AEDD;
-    border-radius: 25px;
-    z-index: -1;
+.timeGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    height: 100%;
 }
 
 .timeName {
-    grid-area: timeName;
-    text-align: center;
-    color: #FFFF;
-    font-family: "Inter-Bold", Helvetica;
-    font-size: 24px;
-    font-weight: 700;
+    color: var(--time-label-color);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-2);
 }
 
 .timeControl {
-    grid-area: timeControl;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 20px;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
 }
 
 .timeInput {
+    background-color: var(--time-input-bg);
+    border: var(--time-input-border);
+    border-radius: var(--radius-md);
+    color: var(--time-input-color);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-2);
     width: 80px;
-    height: 40px;
-    border-radius: 10px;
-    border: none;
     text-align: center;
-    font-family: "Inter-Bold", Helvetica;
-    font-size: 20px;
-    font-weight: 700;
-    color: #405CB0;
-    background-color: #FFFF;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .timeInput:focus {
     outline: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--glow-yellow);
 }
 
 .timeUnit {
-    font-family: "Inter-Bold", Helvetica;
-    font-size: 20px;
-    font-weight: 700;
-    color: #FFFF;
+    color: var(--time-label-color);
+    font-size: var(--font-size-base);
+    text-transform: uppercase;
 }
 
-/* Remove spinner buttons from number input */
-.timeInput::-webkit-outer-spin-button,
-.timeInput::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+/* Time visualization */
+.timerVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--spacing-4);
 }
 
-.timeInput[type=number] {
-    -moz-appearance: textfield;
+.timerValue {
+    font-size: 3rem;
+    color: var(--color-timer-main);
+    margin-bottom: var(--spacing-2);
+}
+
+.timerDisplay {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: var(--spacing-4) auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timerCircle {
+    stroke: var(--color-timer-main);
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.timerBackground {
+    stroke: rgba(255, 255, 0, 0.2);
+    fill: none;
+    stroke-width: 4;
+}
+
+.timeDigits {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--font-size-2xl);
+    color: var(--color-timer-main);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+}
+
+/* Animation for a blinking effect */
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.timeDigits.active {
+    animation: blink 1s infinite;
+}
+
+/* Additional timer UI elements */
+.timerControls {
+    display: flex;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-4);
+}
+
+.timerButton {
+    background-color: transparent;
+    border: var(--border-width-standard) solid var(--color-timer-main);
+    border-radius: var(--radius-md);
+    color: var(--color-timer-main);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.timerButton:hover {
+    box-shadow: var(--glow-yellow);
+}
+
+.timerButton.active {
+    background-color: rgba(255, 255, 0, 0.1);
+    box-shadow: var(--glow-yellow);
+}
+
+/* Progress bar style */
+.progressContainer {
+    width: 100%;
+    height: 10px;
+    background-color: rgba(255, 255, 0, 0.1);
+    border-radius: 5px;
+    margin-top: var(--spacing-4);
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background-color: var(--color-timer-main);
+    width: 0;
+    transition: width 0.3s ease;
 }

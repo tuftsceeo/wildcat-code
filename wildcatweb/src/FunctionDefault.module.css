@@ -1,279 +1,279 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=McLaren:wght@400&display=swap");
-
-/* Disable scroll */
-body {
-    overflow: hidden;
-    margin: 0; /* Ensure no margin around the body */
-    font-family: "Space Grotesk";
-}
+/* FunctionDefault.module.css - Match FIGMA design */
+/* Using design tokens from retro-ui-tokens.css */
 
 .hubTopBackground {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 90vh; /* Take up the right half of the screen with padding */
-    height: 95vh; /* Full height with padding */
-    margin: 20px; /* Padding to ensure it doesn't touch the edges */
-    border-radius: 25px;
-    background-color: #405cb0;
-    z-index: 1;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--color-blue);
+    border-radius: var(--radius-md);
+    background-color: var(--color-black);
+    padding: var(--spacing-4);
+    overflow: visible;
 }
 
 .outline {
     position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-51.5%, -48%); /* Center using transform */
-    width: 95%; /* Set width to 100% of parent */
-    height: 89%; /* Adjusted height */
-    margin: 10px;
-    z-index: 2; /* Ensure this is on top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.1;
+    pointer-events: none;
 }
 
 .functionHubText {
-    position: absolute;
-    top: 3%; /* Move it up by adjusting this value */
-    left: 12%;
-    transform: translateX(50%);
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    font-size: x-large;
-    width: 344px;
-    height: 75px;
-    color: #98aedd;
-    z-index: 3;
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-size: var(--font-size-lg);
+    color: var(--color-text-inactive);
+    position: relative;
+    z-index: 1;
 }
 
-.orText {
-    position: absolute;
-    top: 3%; /* Move it up by adjusting this value */
-    left: 12%;
-    transform: translateX(39%);
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    font-size: x-large;
-    width: 344px;
-    height: 75px;
-    color: #98aedd;
-    z-index: 3;
-}
-
+/* ACTION/SENSE buttons side by side like in FIGMA */
 .actionSenseButtonGroup {
     display: flex;
-    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
-    gap: 125px;
-    position: absolute;
-    top: 23%; /* Adjusted to lower the button group */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 390px;
-    height: 180px;
-    font-size: 30px;
-    color: #ba1df1;
-    font-family: "McLaren";
-    z-index: 4;
-}
-
-.actionButtonChild {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0%;
-    right: 0%;
-    bottom: 0%;
-    left: 0%;
-    border-radius: 10px;
-    background-color: #fff;
-    border-color: #fff;
-    font-size: 20px;
-    color: #405cb0;
-    font-family: "McLaren";
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    z-index: 300;
-    z-index: 6;
-    cursor: pointer;
-}
-
-.actionButton {
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
     position: relative;
-    height: 25%;
-    width: 100%;
-    top: 0%;
-    right: 0%;
-    bottom: 52.23%;
-    left: 0%;
-    z-index: 5;
+    z-index: 1;
 }
 
+.actionButton,
 .senseButton {
+    flex: 1;
     position: relative;
-    height: 25%;
+}
+
+/* ACTION is green, SENSE is blue in FIGMA */
+.actionButtonChild {
     width: 100%;
-    top: 0%;
-    right: 0%;
-    bottom: -0.01%;
-    left: 0%;
-    z-index: 5;
-}
-
-.actionButtonChild:focus {
-    border-top-color: #000000; /* Darker border color for the top */
-    border-right-color: #405cb0; /* Optional: change the right border color to default */
-    border-bottom-color: #405cb0; /* Optional: change the bottom border color to default */
-    border-left-color: #000000; /* Optional: change the left border color to default */
-    transform: translateY(
-        1px
-    ); /* Moves the button down slightly to simulate pressing */
-    box-shadow: none; /* Remove focus shadow if needed */
-    background-color: #32488a;
-    border-color: #32488a;
-    color: #fff;
-}
-
-/* Add these new styles after the existing styles in FunctionDefault.module.css */
-
-.dashboardContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    top: 35%;  /* Adjusted to work with existing layout */
-    z-index: 4;
-}
-
-.commitButton {
-    width: 200px;
-    height: 40px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";  /* Changed to match existing font */
-    font-size: 16px;
-    font-weight: 700;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);  /* Matched existing shadow */
+    background-color: transparent;
+    border: 2px solid var(--color-neon-green);
+    border-radius: var(--radius-md);
+    color: var(--color-neon-green);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3);
     cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
 }
 
-.commitButton:hover {
-    background-color: #32488A;
-    color: #FFFFFF;
+.senseButton .actionButtonChild {
+    border-color: var(--color-blue);
+    color: var(--color-text-inactive);
 }
 
-.subtypeSelection {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    justify-content: center;
-    position: relative;
-    z-index: 4;
-}
-
-.subtypeButton {
-    padding: 10px 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";  /* Changed to match existing font */
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.subtypeButton.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-}
-
-.controlsContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 4;
-    gap: 20px;  /* Space between action/input and subtype buttons */
-}
-
-/* Adjust subtypeSelection to work within controlsContainer */
-.subtypeSelection {
-    margin-top: 0;  /* Remove margin since we're using gap in container */
-}
-
-.subtypeSelection {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    position: absolute;
-    top: 35%;  /* Position below the action/input buttons */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-}
-
-.subtypeButton {
-    padding: 10px 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.subtypeButton.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-}
-
-.dashboardContainer {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    top: 45%;  /* Position below the subtype buttons */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-}
-
-.commitButton {
-    width: 200px;
-    height: 40px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";
-    font-size: 16px;
-    font-weight: 700;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-.commitButton:hover {
-    background-color: #32488A;
-    color: #FFFFFF;
+.actionButtonChild:hover {
+    opacity: 0.9;
 }
 
 .actionButtonChild.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-    pointer-events: none;  /* Prevent clicking when active */
+    background-color: rgba(0, 255, 0, 0.1);
+    box-shadow: var(--glow-neon-green);
+}
+
+/* Remove the "or" text shown in first image */
+.orText {
+    display: none;
+}
+
+/* Menu options with icons like in FIGMA */
+.subtypeSelection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-4);
+    position: relative;
+    z-index: 1;
+}
+
+/* SPEED, HUB, SOUND buttons like in FIGMA */
+.subtypeButton {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-2);
+    border: 2px solid var(--color-blue);
+    border-radius: var(--radius-md);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+}
+
+.subtypeButton.action {
+    border-color: var(--color-neon-green);
+    color: var(--color-neon-green);
+}
+
+.subtypeButton .icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subtypeButton:hover {
+    opacity: 0.9;
 }
 
 .subtypeButton.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-    pointer-events: none;  /* Prevent clicking when active */
+    border-color: var(--color-neon-green);
+    color: var(--color-neon-green);
+    box-shadow: var(--glow-neon-green);
+}
+
+/* Container for motor controls */
+.dashboardContainer {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    overflow: auto;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-neon-green);
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-top: var(--spacing-2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Status panel at the bottom - white with black text like FIGMA */
+.statusPanel {
+    margin-top: auto;
+    background-color: var(--color-white);
+    color: var(--color-black);
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.statusText {
+    font-size: var(--font-size-base);
+}
+
+.audioIcon {
+    color: var(--color-blue);
+    cursor: pointer;
+}
+
+/* Motor visualization at right side like in FIGMA */
+.motorVisualization {
+    position: absolute;
+    top: var(--spacing-6);
+    right: var(--spacing-4);
+    width: 180px;
+}
+
+.visualizationTitle {
+    text-align: center;
+    color: var(--color-text-inactive);
+    margin-bottom: var(--spacing-2);
+    font-size: var(--font-size-sm);
+}
+
+/* Bar graph visualization for motor */
+.barGraph {
+    display: flex;
+    align-items: flex-end;
+    height: 100px;
+    gap: 2px;
+}
+
+.bar {
+    width: 12px;
+    background-color: var(--color-yellow);
+    border-radius: 1px;
+}
+
+.bar.green {
+    background-color: var(--color-neon-green);
+}
+
+.bar.highlight {
+    position: relative;
+}
+
+.bar.highlight:after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-red);
+}
+
+.speedIcons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-1);
+}
+
+.speedIcon {
+    width: 16px;
+    height: 16px;
+}
+
+.saveIndicator {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.savedState,
+.unsavedState {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-1);
+    border-radius: var(--radius-md);
+}
+
+.checkIcon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}
+
+.plusIcon {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
 }
