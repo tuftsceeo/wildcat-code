@@ -217,7 +217,12 @@
 }
 
 .navButton:hover:not(:disabled) {
-    transform: translateX(-50%) scale(1.1);
+    transform: translateX(-50%) scale(1.2);
+}
+
+/* Active (pressed) state: scale down */
+.navButton:active:not(:disabled) {
+    transform: translateX(-50%) scale(0.95);
 }
 
 .navButton:disabled {
@@ -231,13 +236,13 @@
     display: block;
     width: 0;
     height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 15px solid var(--color-white);
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid var(--color-white);
 }
 
 .prevButton:disabled:before {
-    border-right-color: var(--color-gray-500);
+    border-bottom-color: var(--color-gray-500);
 }
 
 /* Next button triangle */
@@ -246,18 +251,13 @@
     display: block;
     width: 0;
     height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 15px solid var(--color-white);
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 20px solid var(--color-white);
 }
 
 .nextButton:disabled:before {
-    border-left-color: var(--color-gray-500);
-}
-
-/* Glow effect when hovering */
-.navButton:not(:disabled):hover:before {
-    filter: drop-shadow(0 0 3px var(--color-neon-green));
+    border-top-color: var(--color-gray-500);
 }
 
 /* Slot description (hidden/removed as requested) */
