@@ -10,34 +10,48 @@
     right: var(--spacing-4);*/
 }
 
-/* Style for all buttons using retro theme approach */
+/* Style for all buttons using the retro neon theme */
 .connectButton,
 .settingsButton,
 .helpButton {
     width: var(--bluetooth-button-size);
     height: var(--bluetooth-button-size);
     background-color: transparent;
-    /*border: var(--border-width-standard) solid var(--color-border-inactive);*/
+    border: none; /* Remove borders */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-normal);
     cursor: pointer;
     padding: 0;
 }
 
-.connectButton:hover,
-.settingsButton:hover,
-.helpButton:hover {
-    border-color: var(--color-neon-green);
-    box-shadow: var(--glow-blue);
+/* Apply smooth transitions to the icon itself */
+.connectButton img,
+.settingsButton img,
+.helpButton img {
+    transition: transform var(--transition-normal),
+        filter var(--transition-normal);
+    transform: scale(1);
+}
+
+/* Hover state: slightly scale up and add a neon drop-shadow glow */
+.connectButton:hover img,
+.settingsButton:hover img,
+.helpButton:hover img {
+    transform: scale(1.1);
+}
+
+/* Active (pressed) state: scale down a bit and reduce the glow */
+.connectButton:active img,
+.settingsButton:active img,
+.helpButton:active img {
+    transform: scale(0.95);
 }
 
 /* Connected state styling */
-.connectButton.connected {
-    border-color: var(--color-neon-green);
-    box-shadow: var(--glow-neon-green);
+.connectButton.connected img {
+    /* filter: drop-shadow(0 0 10px var(--color-neon-green)); */
 }
 
 /* Button icons - instead of importing, we can use CSS for simple ones */
