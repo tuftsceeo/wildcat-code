@@ -41,7 +41,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: var(--spacing-8);
+    margin-bottom: var(--spacing-4);
 }
 
 .motorAnimation {
@@ -104,6 +104,26 @@
     margin-top: var(--spacing-4);
 }
 
+/* Multiple motor container */
+.multiMotorContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-4);
+}
+
+/* Smaller motor visualization for multiple motors */
+.smallMotorVisualization {
+    composes: motorVisualization;
+    transform: scale(0.8);
+}
+
+.xsMotorVisualization {
+    composes: motorVisualization;
+    transform: scale(0.6);
+}
+
 /* Timer visualization */
 .timerVisualization {
     display: flex;
@@ -151,58 +171,80 @@
     cursor: pointer;
     text-transform: uppercase;
     margin-top: auto;
-    margin-bottom: var(--spacing-4);
+    width: 100px; /* Match Play button width */
 }
 
 .testButton:hover {
     opacity: 0.9;
 }
 
-/* Description box at the bottom */
-.slotDescription {
-    width: 90%;
-    padding: var(--spacing-3) var(--spacing-4);
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 2px solid var(--color-blue);
-    border-radius: var(--radius-md);
-    color: var(--color-text-inactive);
-    font-size: var(--font-size-sm);
-    text-align: center;
-    min-height: 40px;
+/* Navigation controls with CSS triangles instead of SVGs */
+.navigationControls {
+    margin-top: var(--spacing-4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-8);
+}
+
+.navButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all var(--transition-normal);
+    position: relative;
 }
 
-/* Down arrow indicator */
-.downArrow {
-    margin: var(--spacing-4) 0;
-    width: 20px;
-    height: 20px;
-    fill: var(--color-blue);
-    opacity: 0.8;
+.navButton:hover:not(:disabled) {
+    transform: scale(1.1);
 }
 
-/* Navigation buttons (hidden but functional) */
-.nextButton,
-.prevButton {
-    position: absolute;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: transform var(--transition-normal);
-    z-index: 1;
-    opacity: 0;
+.navButton:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
-.nextButton {
-    right: var(--spacing-4);
-    top: 50%;
-    transform: translateY(-50%);
+/* Previous button triangle */
+.prevButton:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 15px solid var(--color-neon-green);
 }
 
-.prevButton {
-    left: var(--spacing-4);
-    top: 50%;
-    transform: translateY(-50%);
+.prevButton:disabled:before {
+    border-right-color: var(--color-gray-500);
+}
+
+/* Next button triangle */
+.nextButton:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid var(--color-neon-green);
+}
+
+.nextButton:disabled:before {
+    border-left-color: var(--color-gray-500);
+}
+
+/* Glow effect when hovering */
+.navButton:not(:disabled):hover:before {
+    filter: drop-shadow(0 0 3px var(--color-neon-green));
+}
+
+/* Slot description (hidden/removed as requested) */
+.slotDescription {
+    display: none;
 }

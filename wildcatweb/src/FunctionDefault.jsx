@@ -239,7 +239,6 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 src={require("./assets/outline-function-hub.png")}
                 alt="Function Hub outline"
             />
-            <div className={styles.functionHubText}>FUNCTION HUB</div>
 
             {/* ACTION/SENSE buttons - ACTION is green, SENSE is blue */}
             <div className={styles.actionSenseButtonGroup}>

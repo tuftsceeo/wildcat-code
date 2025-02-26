@@ -95,6 +95,7 @@
     margin-bottom: var(--spacing-4);
     position: relative;
     z-index: 1;
+    align-items: flex-start;
 }
 
 /* SPEED, HUB, SOUND buttons like in FIGMA */
@@ -113,10 +114,10 @@
     cursor: pointer;
     transition: all var(--transition-normal);
     text-transform: uppercase;
+    width: auto;
 }
 
 .subtypeButton.action {
-    border-color: var(--color-neon-green);
     color: var(--color-neon-green);
 }
 
@@ -135,7 +136,7 @@
 .subtypeButton.active {
     border-color: var(--color-neon-green);
     color: var(--color-neon-green);
-    box-shadow: var(--glow-neon-green);
+    box-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
 }
 
 /* Container for motor controls */
@@ -145,7 +146,7 @@
     z-index: 1;
     overflow: auto;
     border-radius: var(--radius-md);
-    border: 2px solid var(--color-neon-green);
+    border: none;
     background-color: rgba(0, 0, 0, 0.2);
     margin-top: var(--spacing-2);
     display: flex;

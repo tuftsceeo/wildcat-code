@@ -1,211 +1,205 @@
+/* MotorDash.module.css - Redesigned with retro-ui-tokens.css */
+
 .motorDashContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .singleMotorDash {
-  background-color: #98AEDD;
-  border-radius: 10px;
-  padding: 15px;
-  width: 100%;
+    background-color: rgba(
+        0,
+        191,
+        255,
+        0.1
+    ); /* Slight blue tint using token color */
+    border: var(--border-width-standard) solid var(--color-blue);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    width: 100%;
+    transition: all var(--transition-normal);
 }
 
 .singleMotorDash.disconnected {
-  background-color: #EC8A8A;  /* Reddish background for disconnected */
-  opacity: 0.95;
+    background-color: rgba(
+        255,
+        0,
+        0,
+        0.1
+    ); /* Slight red tint using token color */
+    border-color: var(--color-error);
 }
 
 .motorHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  padding: 2px 5px;
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+    padding: var(--spacing-1) var(--spacing-2);
 }
 
 .portLabel {
-  color: #FFFFFF;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 16px;
-  font-weight: bold;
-  flex-grow: 1;
+    color: var(--color-neon-green);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    flex-grow: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .disconnectedLabel {
-  color: #FFFFFF;
-  font-size: 14px;
-  margin-right: 10px;
-  padding: 2px 6px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-right: var(--spacing-3);
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: rgba(255, 0, 0, 0.2);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .dismissButton {
-  background: none;
-  border: none;
-  color: #FFFFFF;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 2px 8px;
-  margin-left: 8px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
+    background: transparent;
+    border: var(--border-width-thin) solid var(--color-error);
+    color: var(--color-error);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    padding: var(--spacing-1) var(--spacing-2);
+    margin-left: var(--spacing-2);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-normal);
 }
 
 .dismissButton:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-
-.motorDashContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.noMotors {
-  color: #FFFFFF;
-  text-align: center;
-  padding: 20px;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 18px;
-  background-color: #98AEDD;
-  border-radius: 10px;
-}
-
-.singleMotorDash {
-  background-color: #98AEDD;
-  border-radius: 10px;
-  padding: 15px;
-  width: 100%;
-}
-
-.singleMotorDash.disconnected {
-  background-color: #FF8C8C;
-  opacity: 0.9;
-}
-
-.motorHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.portLabel {
-  color: #FFFFFF;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 16px;
-  font-weight: bold;
-  flex-grow: 1;
-}
-
-.disconnectedLabel {
-  color: #FFFFFF;
-  font-size: 14px;
-  margin-right: 10px;
-}
-
-.dismissButton {
-  background: none;
-  border: none;
-  color: #FFFFFF;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 2px 6px;
+    background-color: rgba(255, 0, 0, 0.2);
+    box-shadow: var(--glow-white);
 }
 
 .controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+    display: flex;
+    gap: var(--spacing-2);
+    align-items: center;
 }
 
 .controlButton {
-  background-color: #FFFFFF;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 16px;
-  color: #405CB0;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 14px;
-  cursor: pointer;
+    background-color: transparent;
+    border: var(--border-width-standard) solid var(--color-blue);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-4);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+    flex: 1;
+}
+
+.controlButton:hover {
+    border-color: var(--color-neon-green);
+    color: var(--color-neon-green);
 }
 
 .controlButton.active {
-  background-color: #32488A;
-  color: #FFFFFF;
+    border-color: var(--color-neon-green);
+    color: var(--color-neon-green);
+    box-shadow: var(--glow-neon-green);
+    background-color: rgba(0, 255, 0, 0.1);
 }
 
 .speedControl {
-  position: relative;
-  flex-grow: 1;
+    position: relative;
+    flex-grow: 1;
 }
 
 .speedButton {
-  width: 100%;
-  background-color: #FFFFFF;
-  border: none;
-  border-radius: 5px;
-  padding: 8px;
-  color: #405CB0;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 14px;
-  cursor: pointer;
+    width: 100%;
+    background-color: transparent;
+    border: var(--border-width-standard) solid var(--color-blue);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-4);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+}
+
+.speedButton:hover {
+    border-color: var(--color-neon-green);
+    color: var(--color-neon-green);
 }
 
 .speedButton.active {
-  background-color: #32488A;
-  color: #FFFFFF;
+    border-color: var(--color-neon-green);
+    color: var(--color-neon-green);
+    box-shadow: var(--glow-neon-green);
+    background-color: rgba(0, 255, 0, 0.1);
 }
 
 .speedInput {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: none;
-  border-radius: 5px;
-  background-color: #FFFFFF;
-  color: #405CB0;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 14px;
-  z-index: 100;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: var(--spacing-2);
+    margin-top: var(--spacing-2);
+    border: var(--border-width-standard) solid var(--color-neon-green);
+    border-radius: var(--radius-md);
+    background-color: var(--color-black);
+    color: var(--color-neon-green);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    z-index: var(--z-index-dropdown);
 }
-.noConnection, .noMotors {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-  padding: 20px;
-  font-family: "Inter-Bold", Helvetica;
-  font-size: 18px;
-  border-radius: 10px;
+
+.speedInput:focus {
+    outline: none;
+    box-shadow: var(--glow-neon-green);
+}
+
+.noConnection,
+.noMotors {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    justify-content: center;
+    padding: var(--spacing-4);
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-lg);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .noConnection {
-  background-color: #FFEBEE;  /* Light red/pink background */
-  color: #EF5350;  /* Red text */
+    background-color: rgba(255, 0, 0, 0.1);
+    color: var(--color-error);
+    border: var(--border-width-standard) solid var(--color-error);
 }
 
 .noMotors {
-  background-color: #FFF3E0;  /* Light orange background */
-  color: #FFB74D;  /* Orange text */
+    background-color: rgba(255, 165, 0, 0.1);
+    color: var(--color-warning);
+    border: var(--border-width-standard) solid var(--color-warning);
 }
 
-.noConnection svg, .noMotors svg {
-  animation: pulse 2s infinite;
+.noConnection svg,
+.noMotors svg {
+    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }

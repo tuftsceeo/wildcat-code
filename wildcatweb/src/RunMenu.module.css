@@ -18,23 +18,21 @@
     flex-direction: column;
     height: 100%;
     position: relative;
+    align-items: center; /* Center steps */
+    justify-content: center; /* Center content vertically */
 }
 
-/* This title is minimal in FIGMA, so making it less prominent */
+/* Hide title as requested */
 .menuTitle {
-    text-align: left;
-    font-size: var(--font-size-base);
-    margin-bottom: var(--spacing-4);
-    color: var(--color-text-inactive);
-    opacity: 0.8;
+    display: none;
 }
 
 .stepsContainer {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
-    flex-grow: 1;
-    margin-bottom: auto;
+    width: 100%; /* Full width for proper centering */
+    margin: auto 0; /* Center vertically */
 }
 
 /* Step buttons styled to match FIGMA with active state in green */
@@ -49,6 +47,7 @@
     text-align: center;
     cursor: pointer;
     transition: all var(--transition-normal);
+    width: 100%; /* Full width for proper centering */
 }
 
 .stepButton.active,
@@ -79,11 +78,13 @@
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
     padding: var(--spacing-2) var(--spacing-4);
-    width: 100%;
+    width: 100px; /* Match Test button width */
     cursor: pointer;
     margin-top: auto;
+    margin-bottom: var(--spacing-2);
     transition: all var(--transition-normal);
     text-transform: uppercase;
+    align-self: center; /* Center the button */
 }
 
 .playButton:hover:not(:disabled) {

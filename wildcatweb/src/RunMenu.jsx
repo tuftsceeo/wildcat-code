@@ -10,6 +10,7 @@ export const RunMenu = ({
     pyCode,
     canRun,
     currSlotNumber,
+    setCurrSlotNumber,
     missionSteps,
     slotData,
 }) => {
@@ -113,6 +114,11 @@ export const RunMenu = ({
         }
     };
 
+    // New handler for clicking on steps
+    const handleStepClick = (stepIndex) => {
+        setCurrSlotNumber(stepIndex);
+    };
+
     // Check for any disconnected motors in the current configuration
     const disconnectedMotors = checkDisconnectedMotors(slotData);
     const currentSlotDisconnected = checkDisconnectedMotors([
@@ -122,10 +128,10 @@ export const RunMenu = ({
     return (
         <div className={styles.menuBackground}>
             <div className={styles.menuContent}>
-                {/* Minimal header/title as in FIGMA */}
+                {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>RUN</div>
 
-                {/* Step buttons - first one green when active */}
+                {/* Step buttons - first one green when active, all clickable */}
                 <div className={styles.stepsContainer}>
                     {[...Array(missionSteps + 1)].map((_, index) => (
                         <button
@@ -141,6 +147,7 @@ export const RunMenu = ({
                                     ? styles.warning
                                     : ""
                             }`}
+                            onClick={() => handleStepClick(index)}
                         >
                             Step {index + 1}
                         </button>

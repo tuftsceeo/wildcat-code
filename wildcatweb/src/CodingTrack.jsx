@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./CodingTrack.module.css";
-//import { ReactComponent as CodeSucker } from "./assets/code-sucker.svg";
+
 import nextStepActive from "./assets/next-step-active.svg";
 import prevStepActive from "./assets/prev-step-active.svg";
 import nextStepInactive from "./assets/next-step-inactive.svg";
@@ -11,6 +11,7 @@ const MotorAnimation = ({
     direction = "forward",
     speed = "fast",
     active = true,
+    port = "A",
 }) => {
     // Calculate animation duration based on speed
     const getDuration = () => {
@@ -90,7 +91,31 @@ const MotorAnimation = ({
                     />
                 </svg>
             </div>
-            <div className={styles.motorLabel}>MOTOR A</div>
+            <div className={styles.motorLabel}>MOTOR {port}</div>
+        </div>
+    );
+};
+
+const NavigationControls = ({
+    isPrevButtonDisabled,
+    isNextButtonDisabled,
+    handleBack,
+    handleForward,
+}) => {
+    return (
+        <div className={styles.navigationControls}>
+            <button
+                className={`${styles.navButton} ${styles.prevButton}`}
+                disabled={isPrevButtonDisabled}
+                onClick={handleBack}
+                aria-label="Previous step"
+            />
+            <button
+                className={`${styles.navButton} ${styles.nextButton}`}
+                disabled={isNextButtonDisabled}
+                onClick={handleForward}
+                aria-label="Next step"
+            />
         </div>
     );
 };
@@ -115,6 +140,50 @@ const CodingTrackContent = ({
     missionSteps,
     slotData,
 }) => {
+    // Function to handle multiple motors if present
+    const renderMotors = (configs) => {
+        if (!Array.isArray(configs) || configs.length <= 0) return null;
+
+        // If there's just one motor, render it normally
+        if (configs.length === 1) {
+            const config = configs[0];
+            return (
+                <MotorAnimation
+                    direction={config.direction || "forward"}
+                    speed={getSpeedCategory(config.speed || 5000)}
+                    active={true}
+                    port={config.port || "A"}
+                />
+            );
+        }
+
+        // Determine the appropriate class based on the number of motors
+        const getMotorClass = () => {
+            if (configs.length <= 2) return styles.motorVisualization;
+            if (configs.length <= 3) return styles.smallMotorVisualization;
+            return styles.xsMotorVisualization;
+        };
+
+        // Render multiple motors
+        return (
+            <div className={styles.multiMotorContainer}>
+                {configs.map((config, index) => (
+                    <div
+                        key={index}
+                        className={getMotorClass()}
+                    >
+                        <MotorAnimation
+                            direction={config.direction || "forward"}
+                            speed={getSpeedCategory(config.speed || 5000)}
+                            active={true}
+                            port={config.port || "A"}
+                        />
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     // Get descriptive text for slot based on its configuration
     const getSlotDescription = (slot) => {
         if (!slot || !slot.type) return "Empty Slot";
@@ -167,15 +236,10 @@ const CodingTrackContent = ({
     const isTimeInput =
         currentSlot?.type === "input" && currentSlot?.subtype === "time";
 
-    // Get configuration details
-    const motorDirection = isMotorAction
-        ? currentSlot?.configuration?.direction || "forward"
-        : "forward";
+    // Get configuration details for motor
+    const motorConfig = isMotorAction ? currentSlot?.configuration : null;
 
-    const motorSpeed = isMotorAction
-        ? getSpeedCategory(currentSlot?.configuration?.speed || 5000)
-        : "fast";
-
+    // Get configuration details for timer
     const waitSeconds = isTimeInput
         ? currentSlot?.configuration?.seconds || 3
         : 3;
@@ -196,30 +260,30 @@ const CodingTrackContent = ({
     return (
         <div className={styles.trackContainer}>
             <div className={styles.slotDisplay}>
-                {/* Show motor animation for motor actions */}
-                {isMotorAction && (
-                    <MotorAnimation
-                        direction={motorDirection}
-                        speed={motorSpeed}
-                        active={true}
-                    />
-                )}
-
-                {/* Show timer visualization for time inputs */}
-                {isTimeInput && (
-                    <TimeVisualization
-                        seconds={waitSeconds}
-                        active={true}
-                    />
-                )}
-
-                {/* Down arrow indicator */}
-                <svg
-                    className={styles.downArrow}
-                    viewBox="0 0 24 24"
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexGrow: 1,
+                    }}
                 >
-                    <path d="M7 10L12 15L17 10H7Z" />
-                </svg>
+                    {/* Show motor animation for motor actions */}
+                    {isMotorAction &&
+                        renderMotors(
+                            Array.isArray(motorConfig)
+                                ? motorConfig
+                                : [motorConfig],
+                        )}
+
+                    {/* Show timer visualization for time inputs */}
+                    {isTimeInput && (
+                        <TimeVisualization
+                            seconds={waitSeconds}
+                            active={true}
+                        />
+                    )}
+                </div>
 
                 {/* Test button as shown in FIGMA */}
                 <button
@@ -229,37 +293,27 @@ const CodingTrackContent = ({
                     Test
                 </button>
 
-                {/* Description at bottom */}
+                {/* Navigation controls positioned at top and bottom */}
+                <div className={styles.navigationControls}>
+                    <button
+                        className={`${styles.navButton} ${styles.prevButton}`}
+                        disabled={isPrevButtonDisabled}
+                        onClick={handleBack}
+                        aria-label="Previous step"
+                    />
+                    <button
+                        className={`${styles.navButton} ${styles.nextButton}`}
+                        disabled={isNextButtonDisabled}
+                        onClick={handleForward}
+                        aria-label="Next step"
+                    />
+                </div>
+
+                {/* Hidden slot description (keeping it in the DOM for future reference) */}
                 <div className={styles.slotDescription}>
                     {currentSlotDescription}
                 </div>
             </div>
-
-            {/* Hidden navigation buttons (not in FIGMA) but keeping for functionality */}
-            <button
-                className={styles.nextButton}
-                disabled={isNextButtonDisabled}
-                onClick={handleForward}
-            >
-                <img
-                    src={
-                        isNextButtonDisabled ? nextStepInactive : nextStepActive
-                    }
-                    alt="next"
-                />
-            </button>
-            <button
-                className={styles.prevButton}
-                disabled={isPrevButtonDisabled}
-                onClick={handleBack}
-            >
-                <img
-                    src={
-                        isPrevButtonDisabled ? prevStepInactive : prevStepActive
-                    }
-                    alt="prev"
-                />
-            </button>
         </div>
     );
 };
