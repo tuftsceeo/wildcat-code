@@ -7,24 +7,9 @@ import { Check, Plus, Volume2, Zap, Lightbulb, Volume } from "lucide-react";
 
 // Icons for action buttons (using correct icons from lucide-react)
 const ActionIcons = {
-    speed: (
-        <Zap
-            size={20}
-            color="#00FF00"
-        />
-    ), // Changed from Running to Zap
-    hub: (
-        <Lightbulb
-            size={20}
-            color="#00BFFF"
-        />
-    ),
-    sound: (
-        <Volume
-            size={20}
-            color="#00BFFF"
-        />
-    ),
+    speed: <Zap size={20} />,
+    hub: <Lightbulb size={20} />,
+    sound: <Volume size={20} />,
 };
 
 const CONTROL_TYPES = {
@@ -240,7 +225,7 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 alt="Function Hub outline"
             />
 
-            {/* ACTION/SENSE buttons - ACTION is green, SENSE is blue */}
+            {/* ACTION/SENSE buttons - selected one shows green, not selected shows blue */}
             <div className={styles.actionSenseButtonGroup}>
                 <div className={styles.actionButton}>
                     <button
@@ -275,11 +260,10 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                                 onClick={() => handleSubtypeSelect(key)}
                                 className={`${styles.subtypeButton} ${
                                     selectedSubtype === key ? styles.active : ""
-                                } ${
-                                    selectedType === "action"
-                                        ? styles.action
-                                        : ""
                                 }`}
+                                style={{
+                                    width: "90%", // 90% width of parent
+                                }}
                             >
                                 {/* Show icon for action buttons like in FIGMA */}
                                 {value.icon && (
@@ -294,7 +278,7 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 </div>
             )}
 
-            {/* Dashboard container with green border for action */}
+            {/* Dashboard container with no border */}
             {selectedType && selectedSubtype && (
                 <div
                     className={styles.dashboardContainer}

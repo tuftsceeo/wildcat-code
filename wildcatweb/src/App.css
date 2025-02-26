@@ -50,14 +50,16 @@ body {
     flex: 1 1 auto;
     height: 100%;
     min-width: var(--panel-width-control);
+    position: relative;
 }
 
 /* Bluetooth menu positioning */
 .bluetooth-menu {
-    position: absolute;
-    top: var(--spacing-4);
+    position: relative;
+    margin-bottom: var(--spacing-4);
+    /*top: var(--spacing-4);
     right: var(--spacing-4);
-    z-index: var(--z-index-above);
+    z-index: var(--z-index-above);*/
 }
 
 /* Panel styling to match FIGMA */

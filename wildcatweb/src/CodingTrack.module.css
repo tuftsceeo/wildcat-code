@@ -170,8 +170,12 @@
     padding: var(--spacing-2) var(--spacing-6);
     cursor: pointer;
     text-transform: uppercase;
-    margin-top: auto;
+    position: absolute; /* Position it absolutely */
+    bottom: calc(
+        var(--spacing-4) + 40px
+    ); /* Position it above the next button with some gap */
     width: 100px; /* Match Play button width */
+    z-index: 2; /* Ensure it's above other elements */
 }
 
 .testButton:hover {
@@ -180,11 +184,10 @@
 
 /* Navigation controls with CSS triangles instead of SVGs */
 .navigationControls {
-    margin-top: var(--spacing-4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-8);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through to underlying elements */
 }
 
 .navButton {
@@ -197,11 +200,24 @@
     align-items: center;
     justify-content: center;
     transition: all var(--transition-normal);
-    position: relative;
+    position: absolute;
+    pointer-events: auto; /* Re-enable clicks on the buttons */
+}
+
+.prevButton {
+    top: var(--spacing-4);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nextButton {
+    bottom: var(--spacing-4);
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .navButton:hover:not(:disabled) {
-    transform: scale(1.1);
+    transform: translateX(-50%) scale(1.1);
 }
 
 .navButton:disabled {
@@ -217,7 +233,7 @@
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-right: 15px solid var(--color-neon-green);
+    border-right: 15px solid var(--color-white);
 }
 
 .prevButton:disabled:before {
@@ -232,7 +248,7 @@
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 15px solid var(--color-neon-green);
+    border-left: 15px solid var(--color-white);
 }
 
 .nextButton:disabled:before {

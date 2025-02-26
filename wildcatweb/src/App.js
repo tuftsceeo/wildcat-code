@@ -103,20 +103,20 @@ function App() {
                             />
                         </div>
 
-                        {/* Right column - FunctionDefault */}
+                        {/* Right column - Function Default & Bluetooth UI */}
                         <div className="control-column">
+                            {/* Bluetooth UI positioned at top right of control column */}
+                            <div className="bluetooth-menu">
+                                <BluetoothUI
+                                    currSlotNumber={currSlotNumber}
+                                    missionSteps={missionSteps}
+                                />
+                            </div>
+
                             <FunctionDefault
                                 currSlotNumber={currSlotNumber}
                                 onSlotUpdate={handleSlotUpdate}
                                 slotData={slotData}
-                            />
-                        </div>
-
-                        {/* Bluetooth UI positioned at top right */}
-                        <div className="bluetooth-menu">
-                            <BluetoothUI
-                                currSlotNumber={currSlotNumber}
-                                missionSteps={missionSteps}
                             />
                         </div>
                     </div>

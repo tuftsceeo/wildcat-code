@@ -157,7 +157,7 @@ export const RunMenu = ({
                 {/* Blue Play button as in FIGMA */}
                 <button
                     className={styles.playButton}
-                    onClick={handleRunCurrentSlot}
+                    onClick={handleRunAllSlots}
                     disabled={!canRun || !isConnected}
                 >
                     Play
