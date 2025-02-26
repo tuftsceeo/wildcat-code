@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { FunctionDefault } from "./FunctionDefault.jsx";
+import { CommandPanel } from "./CommandPanel.jsx";
 import { RunMenu } from "./RunMenu.jsx";
 import { BluetoothUI } from "./BluetoothUI.jsx";
 import { KnobProvider } from "./KnobContext.js";
@@ -114,7 +114,7 @@ function App() {
                                 />
                             </div>
 
-                            <FunctionDefault
+                            <CommandPanel
                                 currSlotNumber={currSlotNumber}
                                 onSlotUpdate={handleSlotUpdate}
                                 slotData={slotData}
