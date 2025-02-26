@@ -6,7 +6,7 @@ import { RunMenu } from "./RunMenu.jsx";
 import { BluetoothUI } from "./BluetoothUI.jsx";
 import { KnobProvider } from "./KnobContext.js";
 import { BLEProvider } from "./BLEContext.js";
-import CodingTrack from "./CodingTrack.jsx";
+import CodeTrack from "./CodeTrack.jsx";
 import "./App.css"; // Import the updated CSS
 
 // Define interface for slot data
@@ -94,7 +94,7 @@ function App() {
 
                         {/* Middle column - CodingTrack */}
                         <div className="center-column">
-                            <CodingTrack
+                            <CodeTrack
                                 setPyCode={setPyCode}
                                 setCanRun={setCanRun}
                                 currSlotNumber={currSlotNumber}

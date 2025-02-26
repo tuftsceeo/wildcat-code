@@ -264,3 +264,45 @@
 .slotDescription {
     display: none;
 }
+
+/* Add these styles to CodingTrack.module.css */
+
+.instructionBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.emptyInstruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-gray-400);
+}
+
+.emptyText {
+    font-size: var(--font-size-lg);
+    text-align: center;
+}
+
+.unknownInstruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-warning);
+}
+
+.unknownText {
+    font-size: var(--font-size-base);
+    text-align: center;
+    padding: var(--spacing-4);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-md);
+}
