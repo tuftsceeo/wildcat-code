@@ -50,7 +50,7 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
     // Reset state when slot number changes
     useEffect(() => {
         const currentSlotData = slotData?.[currSlotNumber];
-        if (currentSlotData) {
+        if (currentSlotData && currentSlotData.type) {
             setSelectedType(currentSlotData.type);
             setSelectedSubtype(currentSlotData.subtype);
             setDashboardConfig(currentSlotData.configuration);
@@ -59,6 +59,9 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             // Update status text based on configuration
             updateStatusText(currentSlotData);
         } else {
+            // Reset everything when there's no valid slot data
+            setSelectedType(null);
+            setSelectedSubtype(null);
             setDashboardConfig(null);
             setLastSavedConfig(null);
             setStatusText("Select an action or sensor...");
@@ -217,6 +220,81 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
         );
     };
 
+    // Render the subtype selection buttons
+    const renderSubtypeSelection = () => {
+        return (
+            <div className={styles.subtypeSelection}>
+                {Object.entries(CONTROL_TYPES[selectedType]).map(
+                    ([key, value]) => (
+                        <button
+                            key={key}
+                            onClick={() => handleSubtypeSelect(key)}
+                            className={`${styles.subtypeButton} ${
+                                selectedSubtype === key ? styles.active : ""
+                            }`}
+                        >
+                            {/* Show icon for action buttons like in FIGMA */}
+                            {value.icon && (
+                                <span className={styles.icon}>
+                                    {value.icon}
+                                </span>
+                            )}
+                            {value.name}
+                        </button>
+                    ),
+                )}
+            </div>
+        );
+    };
+
+    // Render the dashboard based on selected subtype
+    const renderDashboard = () => {
+        if (!selectedSubtype) {
+            return <div className={styles.dashboardPlaceholder}></div>;
+        }
+
+        return (
+            <div
+                className={styles.dashboardContainer}
+                data-control-type={selectedSubtype || "default"}
+            >
+                {CONTROL_TYPES[selectedType][selectedSubtype].component &&
+                    React.createElement(
+                        CONTROL_TYPES[selectedType][selectedSubtype].component,
+                        {
+                            onUpdate: handleDashboardUpdate,
+                            configuration: dashboardConfig,
+                            slotData: slotData,
+                        },
+                    )}
+                <div className={styles.saveIndicator}>
+                    {dashboardConfig &&
+                        (JSON.stringify(dashboardConfig) ===
+                        JSON.stringify(lastSavedConfig) ? (
+                            <div className={styles.savedState}>
+                                <Check
+                                    className={styles.checkIcon}
+                                    size={24}
+                                    color="var(--color-neon-green)"
+                                />
+                            </div>
+                        ) : (
+                            <div className={styles.unsavedState}>
+                                <Plus
+                                    className={styles.plusIcon}
+                                    size={24}
+                                    color="var(--color-gray-400)"
+                                />
+                            </div>
+                        ))}
+                </div>
+
+                {/* Motor visualization bars like in FIGMA */}
+                {renderMotorVisualization()}
+            </div>
+        );
+    };
+
     return (
         <div className={styles.hubTopBackground}>
             <img
@@ -237,7 +315,6 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                         ACTION
                     </button>
                 </div>
-                {/* No "or" text in FIGMA */}
                 <div className={styles.senseButton}>
                     <button
                         className={`${styles.actionButtonChild} ${
@@ -250,74 +327,22 @@ export const FunctionDefault = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 </div>
             </div>
 
-            {/* Show options when a type is selected */}
+            {/* Content area with two-column layout */}
             {selectedType && (
-                <div className={styles.subtypeSelection}>
-                    {Object.entries(CONTROL_TYPES[selectedType]).map(
-                        ([key, value]) => (
-                            <button
-                                key={key}
-                                onClick={() => handleSubtypeSelect(key)}
-                                className={`${styles.subtypeButton} ${
-                                    selectedSubtype === key ? styles.active : ""
-                                }`}
-                                style={{
-                                    width: "90%", // 90% width of parent
-                                }}
-                            >
-                                {/* Show icon for action buttons like in FIGMA */}
-                                {value.icon && (
-                                    <span className={styles.icon}>
-                                        {value.icon}
-                                    </span>
-                                )}
-                                {value.name}
-                            </button>
-                        ),
-                    )}
-                </div>
-            )}
-
-            {/* Dashboard container with no border */}
-            {selectedType && selectedSubtype && (
-                <div
-                    className={styles.dashboardContainer}
-                    data-control-type={selectedSubtype || "default"}
-                >
-                    {CONTROL_TYPES[selectedType][selectedSubtype].component &&
-                        React.createElement(
-                            CONTROL_TYPES[selectedType][selectedSubtype]
-                                .component,
-                            {
-                                onUpdate: handleDashboardUpdate,
-                                configuration: dashboardConfig,
-                                slotData: slotData,
-                            },
-                        )}
-                    <div className={styles.saveIndicator}>
-                        {dashboardConfig &&
-                            (JSON.stringify(dashboardConfig) ===
-                            JSON.stringify(lastSavedConfig) ? (
-                                <div className={styles.savedState}>
-                                    <Check
-                                        className={styles.checkIcon}
-                                        size={24}
-                                        color="var(--color-neon-green)"
-                                    />
-                                </div>
-                            ) : (
-                                <div className={styles.unsavedState}>
-                                    <Plus
-                                        className={styles.plusIcon}
-                                        size={24}
-                                        color="var(--color-gray-400)"
-                                    />
-                                </div>
-                            ))}
+                <div className={styles.contentContainer}>
+                    {/* Left column - ACTION subtype or SENSE dashboard */}
+                    <div className={styles.leftColumn}>
+                        {selectedType === "action"
+                            ? renderSubtypeSelection()
+                            : renderDashboard()}
                     </div>
 
-                    {/* Motor visualization bars like in FIGMA */}
-                    {renderMotorVisualization()}
+                    {/* Right column - ACTION dashboard or SENSE subtype */}
+                    <div className={styles.rightColumn}>
+                        {selectedType === "action"
+                            ? renderDashboard()
+                            : renderSubtypeSelection()}
+                    </div>
                 </div>
             )}
 

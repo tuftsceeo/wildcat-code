@@ -86,6 +86,7 @@ function App() {
                                 pyCode={pyCode}
                                 canRun={canRun}
                                 currSlotNumber={currSlotNumber}
+                                setCurrSlotNumber={setCurrSlotNumber} // Add this line
                                 missionSteps={missionSteps}
                                 slotData={slotData}
                             />
