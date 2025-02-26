@@ -1,3 +1,11 @@
+/**
+ * @file MotorInstructionBlock.jsx
+ * @description Block for visualizing motor instructions in the code track,
+ * supporting both single and multiple motor configurations.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // MotorInstructionBlock.jsx
 import React from "react";
 import BaseInstructionBlock from "./BaseInstructionBlock";

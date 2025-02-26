@@ -1,3 +1,11 @@
+/**
+ * @file TypeSelector.jsx
+ * @description Component for selecting between ACTION and SENSE modes,
+ * the primary mode selection for the command panel.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // TypeSelector.jsx
 import React from "react";
 import styles from "./FunctionDefault.module.css"; // We'll use the same CSS initially

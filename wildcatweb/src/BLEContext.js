@@ -1,3 +1,11 @@
+/**
+ * @file BLEContext.js
+ * @description Context provider for Bluetooth Low Energy functionality, managing
+ * connection state and port data for connected devices.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { newSpikeBLE } from "./ble_resources/spike_ble";
 import { struct, u8, u16, s16, seq, s8, s32 } from "buffer-layout";

@@ -1,3 +1,11 @@
+/**
+ * @file StatusPanel.jsx
+ * @description Component that displays current status with audio feedback option,
+ * providing user feedback on the current action.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // StatusPanel.jsx
 import React from "react";
 import { Volume2 } from "lucide-react";

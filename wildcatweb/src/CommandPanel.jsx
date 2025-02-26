@@ -1,3 +1,11 @@
+/**
+ * @file CommandPanel.jsx
+ * @description Primary interface for creating and configuring code actions, 
+ * providing action type selection and parameter configuration.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // CommandPanel.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./FunctionDefault.module.css"; // Reusing the CSS initially

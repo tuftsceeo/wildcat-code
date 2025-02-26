@@ -1,3 +1,10 @@
+/**
+ * @file NavigationControls.jsx
+ * @description Navigation controls for moving between slots in the coding track.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // NavigationControls.jsx
 import React from "react";
 import styles from "./CodingTrack.module.css"; // Still using the original CSS

@@ -1,3 +1,11 @@
+/**
+ * @file codeGenerator.js
+ * @description Utility for generating Python code from slot configurations
+ * that will be executed on the robot.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 const generatePythonCode = (slots, portStates) => {
     // Generate imports
     let code = [

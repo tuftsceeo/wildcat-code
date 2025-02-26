@@ -1,3 +1,11 @@
+/**
+ * @file InstructionDescriptionGenerator.js
+ * @description Utility functions for generating human-readable descriptions of
+ * instructions and managing animation properties.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // InstructionDescriptionGenerator.js
 
 /**

@@ -1,3 +1,11 @@
+/**
+ * @file TimeDash.jsx
+ * @description Dashboard interface for configuring time wait actions,
+ * with visual time selection controls.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { useState, useEffect } from "react";
 import styles from "./TimeDash.module.css";
 

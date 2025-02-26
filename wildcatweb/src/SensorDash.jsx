@@ -1,3 +1,10 @@
+/**
+ * @file SensorDash.jsx
+ * @description Dashboard interface for color sensor configuration and visualization.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 import styles from "./SensorDash.module.css";

@@ -1,3 +1,11 @@
+/**
+ * @file MotorDash.jsx
+ * @description Dashboard interface for configuring motor actions with support for
+ * multiple motors and disconnected state handling.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { useState, useEffect, useCallback, memo } from "react";
 import { useBLE } from "./BLEContext";
 import styles from "./MotorDash.module.css";

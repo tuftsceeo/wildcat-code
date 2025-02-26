@@ -1,3 +1,11 @@
+/**
+ * @file InstructionVisualizer.jsx
+ * @description Component that determines and renders the appropriate instruction block
+ * based on the type and configuration of the instruction.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // InstructionVisualizer.jsx
 import React from "react";
 import styles from "./CodingTrack.module.css"; // Still using the original CSS

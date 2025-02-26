@@ -1,3 +1,11 @@
+/**
+ * @file ColorSensorButtons.jsx
+ * @description Reusable color button component for the color sensor interface,
+ * allowing selection of different colors.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React from "react";
 import styles from "./SensorDash.module.css";
 

@@ -1,3 +1,10 @@
+/**
+ * @file TimerAnimation.jsx
+ * @description Visualization for a timer instruction with configurable duration.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // TimerAnimation.jsx
 import React from "react";
 import styles from "./CodingTrack.module.css"; // Still using the original CSS

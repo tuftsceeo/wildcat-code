@@ -1,3 +1,11 @@
+/**
+ * @file App.js
+ * @description Main application component that orchestrates the entire robot programming interface,
+ * including step navigation, code generation, and bluetooth connectivity.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";

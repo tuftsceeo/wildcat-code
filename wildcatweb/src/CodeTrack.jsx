@@ -1,3 +1,11 @@
+/**
+ * @file CodeTrack.jsx
+ * @description Main component for displaying the coding track with instructions,
+ * including navigation controls and instruction visualization.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // CodeTrack.jsx
 import React from "react";
 import styles from "./CodingTrack.module.css"; // Still using the original CSS

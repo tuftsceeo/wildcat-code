@@ -1,3 +1,11 @@
+/**
+ * @file BluetoothUI.jsx
+ * @description User interface component for Bluetooth connection management,
+ * settings access, and help documentation.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { useState } from "react";
 import styles from "./BluetoothUI.module.css";
 import bluetoothDefault from "./assets/bluetooth-med.svg";

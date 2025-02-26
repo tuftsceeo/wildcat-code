@@ -1,3 +1,10 @@
+/**
+ * @file MotorAnimation.jsx
+ * @description Animated visualization of a motor with configurable direction, speed, and port.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // MotorAnimation.jsx
 import React from "react";
 import styles from "./CodingTrack.module.css"; // Still using the original CSS

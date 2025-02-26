@@ -1,3 +1,11 @@
+/**
+ * @file RunMenu.jsx
+ * @description Side panel for navigating and executing code, with support for
+ * running individual slots or the complete program.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React from "react";
 import styles from "./RunMenu.module.css";
 import { generatePythonCode } from "./codeGenerator.js";

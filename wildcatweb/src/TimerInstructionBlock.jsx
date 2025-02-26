@@ -1,3 +1,10 @@
+/**
+ * @file TimerInstructionBlock.jsx
+ * @description Block for visualizing timer instructions in the code track.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // TimerInstructionBlock.jsx
 import React from "react";
 import BaseInstructionBlock from "./BaseInstructionBlock";

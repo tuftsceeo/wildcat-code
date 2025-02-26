@@ -1,3 +1,11 @@
+/**
+ * @file MotorVisualization.jsx
+ * @description Visual representation of motor speed using animated bars,
+ * providing feedback on motor configuration.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // MotorVisualization.jsx
 import React from "react";
 import styles from "./FunctionDefault.module.css"; // Reusing the same CSS initially

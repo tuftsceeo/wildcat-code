@@ -1,3 +1,11 @@
+/**
+ * @file HelpDialog.jsx
+ * @description Modal dialog component that displays context-sensitive help
+ * information based on the current slot.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // HelpDialog.jsx
 import React from "react";
 import styles from "./HelpDialog.module.css";

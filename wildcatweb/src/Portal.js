@@ -1,3 +1,11 @@
+/**
+ * @file Portal.js
+ * @description Utility component for rendering content in a portal outside the normal
+ * DOM hierarchy, used for modals and dialogs.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 

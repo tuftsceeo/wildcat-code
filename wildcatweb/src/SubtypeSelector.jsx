@@ -1,3 +1,11 @@
+/**
+ * @file SubtypeSelector.jsx
+ * @description Component for selecting specific subtypes based on the main type (action/input),
+ * allowing users to choose between different control options.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // SubtypeSelector.jsx
 import React from "react";
 import styles from "./FunctionDefault.module.css"; // Reusing the same CSS initially

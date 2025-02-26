@@ -1,3 +1,11 @@
+/**
+ * @file CustomizationPage.jsx
+ * @description Settings and customization modal for adjusting app preferences,
+ * including profiles, reading levels, accessibility options, and more.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 // Import necessary modules and assets
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./CustomizationPage.module.css";
