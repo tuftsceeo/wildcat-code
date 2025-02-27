@@ -2,7 +2,6 @@
  * @file ReadingLevelSettings.jsx
  * @description Component for adjusting reading complexity levels with visual previews
  * of how content will appear at different levels.
- * @author Claude
  */
 
 import React, { useState } from "react";

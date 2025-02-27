@@ -2,7 +2,6 @@
  * @file SettingsCarousel.jsx
  * @description A carousel-style navigation component for settings tabs
  * with smooth transitions between different setting categories.
- * @author Claude
  */
 
 import React from "react";

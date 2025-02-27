@@ -99,7 +99,7 @@
 
 /* Left column container */
 .leftColumn {
-    width: 48%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -107,7 +107,7 @@
 
 /* Right column container */
 .rightColumn {
-    width: 48%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
