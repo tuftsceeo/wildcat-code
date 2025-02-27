@@ -1,622 +1,117 @@
 /**
  * @file CustomizationPage.jsx
- * @description Settings and customization modal for adjusting app preferences,
- * including themes, reading levels, accessibility options, and more.
- * @author Jennifer Cross, Claude
+ * @description Enhanced customization page with carousel navigation for settings
+ * based on the improved design from improved-settings-carousel.tsx.
+ * @author Jennifer Cross with support from Claude
  * @created February 2025
  */
 
-import React, { useState, useEffect, useRef } from "react";
-import Portal from "./Portal.js";
-import { XCircle, ChevronLeft } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import {
+    XCircle,
+    X,
+    Type,
+    Palette,
+    Volume2,
+    Layers,
+    Globe,
+    Accessibility,
+    UserRound,
+    Users,
+    Check,
+    RotateCcw,
+} from "lucide-react";
 import styles from "./CustomizationPage.module.css";
-
-// Import icons
-import accessibilityIcon from "./assets/accessibility-icon.svg";
-import bookIcon from "./assets/book.svg";
-import groupsIcon from "./assets/group-mode.svg";
-import profilesIcon from "./assets/profiles.svg";
-import soundsIcon from "./assets/sounds.svg";
-import stepsIcon from "./assets/steps.svg";
-import lineIcon from "./assets/settings-line.svg";
+import Portal from "./Portal";
+import { useCustomization } from "./CustomizationContext";
 
 /**
- * Priority levels for visual distinction:
- * - HIGH: Feature under active development, coming soon
- * - MEDIUM: Planned feature with partial implementation
- * - LOW: Future feature placeholders
+ * Enhanced customization page with carousel navigation for settings
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.close - Function to close the customization panel
+ * @returns {JSX.Element} Customization settings interface
  */
-const PRIORITY = {
-    HIGH: "high",
-    MEDIUM: "medium",
-    LOW: "low",
-};
+const CustomizationPage = ({ close }) => {
+    // State for the active tab index
+    const [activeTab, setActiveTab] = useState(0);
 
-/**
- * Settings categories with their configurations
- */
-const SETTINGS = [
-    {
-        id: "reading",
-        title: "Reading Level",
-        description: "Control reading difficulty and non-reader version",
-        icon: bookIcon,
-        priority: PRIORITY.HIGH,
-        content: "Adjust text complexity from icon-only to text-only",
-        infoLink: "reading-complexity",
-        hasDemo: true,
-    },
-    {
-        id: "themes",
-        title: "Visual Theme",
-        description: "Choose your preferred visual style",
-        icon: null, // We'll use a different approach for this icon (color swatches)
-        priority: PRIORITY.HIGH,
-        content: "Select from retro, pastel, and clean themes",
-        infoLink: "themes",
-        hasDemo: true,
-    },
-    {
-        id: "voice",
-        title: "Robot Voice",
-        description: "Select voice style for audio feedback",
-        icon: soundsIcon,
-        priority: PRIORITY.HIGH,
-        content: "Choose from ROBBY, Z-BOT, TINCAN, and BIT-8",
-        infoLink: "voice-options",
-        hasDemo: true,
-    },
-    {
-        id: "steps",
-        title: "Step Count",
-        description: "Set difficulty level by adjusting step count",
-        icon: stepsIcon,
-        priority: PRIORITY.HIGH,
-        content: "Customize the number of steps in your coding journey",
-        infoLink: "step-count",
-        hasDemo: false,
-    },
-    {
-        id: "language",
-        title: "Language",
-        description: "Change the interface language",
-        icon: null, // Will use a language icon/globe
-        priority: PRIORITY.MEDIUM,
-        content: "English, Spanish, Haitian Creole (coming soon)",
-        infoLink: "languages",
-        hasDemo: false,
-    },
-    {
-        id: "accessibility",
-        title: "Accessibility",
-        description: "Adjust for different abilities and needs",
-        icon: accessibilityIcon,
-        priority: PRIORITY.MEDIUM,
-        content: "Font size, color contrast, screen reader support",
-        infoLink: "accessibility",
-        hasDemo: false,
-    },
-    {
-        id: "profiles",
-        title: "Profiles",
-        description: "Save and track student profiles and progress",
-        icon: profilesIcon,
-        priority: PRIORITY.LOW,
-        content: "Student and teacher profiles (coming in future update)",
-        infoLink: "profiles",
-        hasDemo: false,
-    },
-    {
-        id: "groupMode",
-        title: "Group Mode",
-        description: "Connect student devices to the teacher panel",
-        icon: groupsIcon,
-        priority: PRIORITY.LOW,
-        content: "Classroom collaboration features (future release)",
-        infoLink: "group-mode",
-        hasDemo: false,
-    },
-    {
-        id: "motorControls",
-        title: "Motor Controls",
-        description: "Customize motor speed and feedback",
-        icon: null, // Would need a motor icon
-        priority: PRIORITY.LOW,
-        content: "Adjust default settings and visualizations",
-        infoLink: "motor-controls",
-        hasDemo: false,
-    },
-];
+    // Create a ref for the panel to detect outside clicks
+    const panelRef = useRef(null);
 
-/**
- * Reading Level Options component displayed in the Reading detail view
- * @returns {JSX.Element} Reading level options UI
- */
-const ReadingLevelOptions = () => {
-    const [selectedLevel, setSelectedLevel] = useState("intermediate");
-
-    const levels = [
+    // Define all settings tabs with their properties
+    const tabs = [
         {
-            id: "icon_only",
-            name: "Icon Only",
-            description: "Minimal text with maximum icons",
+            id: "reading",
+            icon: <Type size={32} />,
+            name: "Reading",
+            color: "#00ff00",
+            available: true,
+            priority: "high",
         },
         {
-            id: "beginner",
-            name: "Beginner",
-            description: "Simple words with large icons",
+            id: "themes",
+            icon: <Palette size={32} />,
+            name: "Theme",
+            color: "#ff00ff",
+            available: true,
+            priority: "high",
         },
         {
-            id: "intermediate",
-            name: "Intermediate",
-            description: "Complete sentences with icons",
+            id: "voice",
+            icon: <Volume2 size={32} />,
+            name: "Voice",
+            color: "#ff7700",
+            available: false,
+            priority: "high",
         },
         {
-            id: "advanced",
-            name: "Advanced",
-            description: "Detailed text with small icons",
+            id: "steps",
+            icon: <Layers size={32} />,
+            name: "Steps",
+            color: "#00ddff",
+            available: false,
+            priority: "high",
         },
         {
-            id: "text_only",
-            name: "Text Only",
-            description: "Full text without icons",
+            id: "language",
+            icon: <Globe size={32} />,
+            name: "Language",
+            color: "#0088ff",
+            available: false,
+            priority: "medium",
+        },
+        {
+            id: "access",
+            icon: <Accessibility size={32} />,
+            name: "Help",
+            color: "#ffdd00",
+            available: false,
+            priority: "medium",
+        },
+        {
+            id: "profiles",
+            icon: <UserRound size={32} />,
+            name: "Profiles",
+            color: "#888888",
+            available: false,
+            priority: "low",
+        },
+        {
+            id: "groups",
+            icon: <Users size={32} />,
+            name: "Groups",
+            color: "#888888",
+            available: false,
+            priority: "low",
         },
     ];
 
-    return (
-        <div className={styles.readingLevelContainer}>
-            <h3 className={styles.sectionTitle}>Text Complexity</h3>
-            <div className={styles.levelOptions}>
-                {levels.map((level) => (
-                    <button
-                        key={level.id}
-                        className={`${styles.levelButton} ${
-                            selectedLevel === level.id ? styles.active : ""
-                        }`}
-                        onClick={() => setSelectedLevel(level.id)}
-                    >
-                        {level.name}
-                    </button>
-                ))}
-            </div>
-            <p className={styles.levelDescription}>
-                {levels.find((l) => l.id === selectedLevel)?.description}
-            </p>
-
-            <div className={styles.previewContainer}>
-                <h3 className={styles.sectionTitle}>Preview</h3>
-                <div className={styles.levelPreview}>
-                    {selectedLevel === "icon_only" && (
-                        <div className={styles.iconPreview}>
-                            <span className={styles.previewIcon}>→</span>
-                            <span className={styles.previewIcon}>⚡</span>
-                            <span className={styles.previewIcon}>🔄</span>
-                        </div>
-                    )}
-                    {selectedLevel === "beginner" && (
-                        <div className={styles.beginnerPreview}>
-                            <span
-                                className={`${styles.previewIcon} ${styles.small}`}
-                            >
-                                →
-                            </span>
-                            <span>Motor Forward Fast</span>
-                        </div>
-                    )}
-                    {selectedLevel === "intermediate" && (
-                        <div className={styles.intermediatePreview}>
-                            <span
-                                className={`${styles.previewIcon} ${styles.small}`}
-                            >
-                                →
-                            </span>
-                            <span>Motor A spins forward fast.</span>
-                        </div>
-                    )}
-                    {selectedLevel === "advanced" && (
-                        <div className={styles.advancedPreview}>
-                            <span
-                                className={`${styles.previewIcon} ${styles.tiny}`}
-                            >
-                                →
-                            </span>
-                            <span>
-                                Motor A will rotate in the forward direction at
-                                fast speed.
-                            </span>
-                        </div>
-                    )}
-                    {selectedLevel === "text_only" && (
-                        <div className={styles.textPreview}>
-                            <span>
-                                The Motor A motor will rotate in the forward
-                                direction at fast speed. This will move the
-                                robot accordingly.
-                            </span>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-/**
- * Theme Options component displayed in the Themes detail view
- * @returns {JSX.Element} Theme selection UI
- */
-const ThemeOptions = () => {
-    const [selectedTheme, setSelectedTheme] = useState("retro");
-    const [useDyslexiaFont, setUseDyslexiaFont] = useState(false);
-
-    const themes = [
-        {
-            id: "retro",
-            name: "RETRO",
-            description: "Neon arcade style with vibrant animations",
-            colors: ["#00FF00", "#0088FF", "#FF00FF"],
-        },
-        {
-            id: "pastel",
-            name: "PASTEL",
-            description: "Soft colors with gentle contrast",
-            colors: ["#78C2AD", "#6CC3D5", "#F3969A"],
-        },
-        {
-            id: "clean",
-            name: "CLEAN",
-            description: "High contrast with clean layout",
-            colors: ["#00AA55", "#0066CC", "#FF6600"],
-        },
-    ];
-
-    return (
-        <div className={styles.themeOptionsContainer}>
-            <h3 className={styles.sectionTitle}>Visual Theme</h3>
-            <div className={styles.themeButtons}>
-                {themes.map((theme) => (
-                    <button
-                        key={theme.id}
-                        className={`${styles.themeButton} ${
-                            selectedTheme === theme.id ? styles.active : ""
-                        }`}
-                        onClick={() => setSelectedTheme(theme.id)}
-                    >
-                        <div className={styles.themeColorPreview}>
-                            {theme.colors.map((color, index) => (
-                                <div
-                                    key={index}
-                                    className={styles.colorSwatch}
-                                    style={{ backgroundColor: color }}
-                                ></div>
-                            ))}
-                        </div>
-                        <span className={styles.themeName}>{theme.name}</span>
-                    </button>
-                ))}
-            </div>
-            <p className={styles.themeDescription}>
-                {themes.find((t) => t.id === selectedTheme)?.description}
-            </p>
-
-            <div className={styles.fontOptions}>
-                <h3 className={styles.sectionTitle}>Reading Support</h3>
-                <button
-                    className={`${styles.dyslexiaToggle} ${
-                        useDyslexiaFont ? styles.active : ""
-                    }`}
-                    onClick={() => setUseDyslexiaFont(!useDyslexiaFont)}
-                >
-                    <span>Dyslexia-Friendly Font</span>
-                    <div className={styles.toggleSwitch}>
-                        <div
-                            className={styles.toggleHandle}
-                            style={{
-                                transform: useDyslexiaFont
-                                    ? "translateX(20px)"
-                                    : "translateX(0)",
-                            }}
-                        ></div>
-                    </div>
-                </button>
-                <p className={styles.fontDescription}>
-                    {useDyslexiaFont
-                        ? "Using OpenDyslexic font to improve readability"
-                        : "Using standard font"}
-                </p>
-            </div>
-        </div>
-    );
-};
-
-/**
- * Voice Options component displayed in the Voice detail view
- * @returns {JSX.Element} Voice selection UI
- */
-const VoiceOptions = () => {
-    const [selectedVoice, setSelectedVoice] = useState("robot1");
-    const [testText, setTestText] = useState("Motor A spins forward fast.");
-
-    const voices = [
-        {
-            id: "robot1",
-            name: "ROBBY",
-            icon: "🤖",
-            color: "#00AAFF",
-            characteristics: { speed: "Normal", pitch: "Low", style: "Choppy" },
-        },
-        {
-            id: "robot2",
-            name: "Z-BOT",
-            icon: "⚡",
-            color: "#FFAA00",
-            characteristics: { speed: "Fast", pitch: "Low", style: "Smooth" },
-        },
-        {
-            id: "robot3",
-            name: "TINCAN",
-            icon: "🔊",
-            color: "#FF5500",
-            characteristics: { speed: "Slow", pitch: "High", style: "Choppy" },
-        },
-        {
-            id: "robot4",
-            name: "BIT-8",
-            icon: "👾",
-            color: "#55FF55",
-            characteristics: {
-                speed: "Slow",
-                pitch: "Medium",
-                style: "Choppy",
-            },
-        },
-    ];
-
-    const handlePlayVoice = () => {
-        // In a real implementation, this would use the Speech Synthesis API
-        console.log(`Playing voice sample with ${selectedVoice}`);
-    };
-
-    return (
-        <div className={styles.voiceOptionsContainer}>
-            <h3 className={styles.sectionTitle}>Robot Voice</h3>
-            <div className={styles.voiceGrid}>
-                {voices.map((voice) => (
-                    <button
-                        key={voice.id}
-                        className={`${styles.voiceButton} ${
-                            selectedVoice === voice.id ? styles.active : ""
-                        }`}
-                        onClick={() => setSelectedVoice(voice.id)}
-                        style={{ borderColor: voice.color }}
-                    >
-                        <div
-                            className={styles.voiceIcon}
-                            style={{ backgroundColor: voice.color }}
-                        >
-                            {voice.icon}
-                        </div>
-                        <span className={styles.voiceName}>{voice.name}</span>
-                    </button>
-                ))}
-            </div>
-
-            <div className={styles.voicePreview}>
-                <div className={styles.voiceTest}>
-                    <div className={styles.testBox}>
-                        <p>{testText}</p>
-                        <button
-                            className={styles.playButton}
-                            onClick={handlePlayVoice}
-                            style={{
-                                backgroundColor: voices.find(
-                                    (v) => v.id === selectedVoice,
-                                )?.color,
-                            }}
-                        >
-                            <span>
-                                {
-                                    voices.find((v) => v.id === selectedVoice)
-                                        ?.icon
-                                }
-                            </span>
-                            <span>PLAY</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.voiceCharacteristics}>
-                    <h3 className={styles.sectionTitle}>
-                        {voices.find((v) => v.id === selectedVoice)?.icon}{" "}
-                        {voices.find((v) => v.id === selectedVoice)?.name}{" "}
-                        CHARACTERISTICS
-                    </h3>
-                    <div className={styles.characteristicsGrid}>
-                        {Object.entries(
-                            voices.find((v) => v.id === selectedVoice)
-                                ?.characteristics || {},
-                        ).map(([key, value]) => (
-                            <div
-                                key={key}
-                                className={styles.characteristic}
-                            >
-                                <span className={styles.characteristicLabel}>
-                                    {key}:
-                                </span>
-                                <span className={styles.characteristicValue}>
-                                    {value}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-/**
- * Steps Configuration component displayed in the Steps detail view
- * @returns {JSX.Element} Step count configuration UI
- */
-const StepsConfiguration = () => {
-    const [stepCount, setStepCount] = useState(3);
-
-    const handleStepCountChange = (count) => {
-        setStepCount(Math.max(1, Math.min(10, count)));
-    };
-
-    return (
-        <div className={styles.stepsContainer}>
-            <h3 className={styles.sectionTitle}>Step Count Configuration</h3>
-            <p className={styles.stepsDescription}>
-                Control the number of steps in each coding journey to match
-                learning needs.
-            </p>
-
-            <div className={styles.stepCountControl}>
-                <button
-                    className={styles.stepButton}
-                    onClick={() => handleStepCountChange(stepCount - 1)}
-                    disabled={stepCount <= 1}
-                >
-                    -
-                </button>
-                <div className={styles.stepCount}>{stepCount}</div>
-                <button
-                    className={styles.stepButton}
-                    onClick={() => handleStepCountChange(stepCount + 1)}
-                    disabled={stepCount >= 10}
-                >
-                    +
-                </button>
-            </div>
-
-            <div className={styles.stepPreview}>
-                <h3 className={styles.sectionTitle}>Preview</h3>
-                <div className={styles.stepDots}>
-                    {[...Array(stepCount)].map((_, i) => (
-                        <div
-                            key={i}
-                            className={styles.stepDot}
-                        ></div>
-                    ))}
-                </div>
-                <p className={styles.stepExplanation}>
-                    Each dot represents one step in the coding sequence.
-                    {stepCount < 3 && " Fewer steps are good for beginners."}
-                    {stepCount >= 3 &&
-                        stepCount <= 5 &&
-                        " This is a balanced difficulty."}
-                    {stepCount > 5 &&
-                        " More steps provide advanced challenges."}
-                </p>
-            </div>
-        </div>
-    );
-};
-
-/**
- * Language Options component displayed in the Language detail view
- * @returns {JSX.Element} Language selection UI
- */
-const LanguageOptions = () => {
-    const [selectedLanguage, setSelectedLanguage] = useState("english");
-
-    const languages = [
-        { id: "english", name: "English", available: true },
-        { id: "spanish", name: "Español", available: true },
-        { id: "creole", name: "Kreyòl Ayisyen", available: false },
-    ];
-
-    return (
-        <div className={styles.languageOptionsContainer}>
-            <h3 className={styles.sectionTitle}>Select Language</h3>
-            <div className={styles.languageButtons}>
-                {languages.map((language) => (
-                    <button
-                        key={language.id}
-                        className={`${styles.languageButton} ${
-                            selectedLanguage === language.id
-                                ? styles.active
-                                : ""
-                        } ${!language.available ? styles.disabled : ""}`}
-                        onClick={() =>
-                            language.available &&
-                            setSelectedLanguage(language.id)
-                        }
-                        disabled={!language.available}
-                    >
-                        {language.name}
-                        {!language.available && (
-                            <span className={styles.comingSoon}>
-                                Coming Soon
-                            </span>
-                        )}
-                    </button>
-                ))}
-            </div>
-
-            <p className={styles.languageDescription}>
-                {selectedLanguage === "english" &&
-                    "All interface elements and robot commands will be displayed in English."}
-                {selectedLanguage === "spanish" &&
-                    "Todos los elementos de la interfaz y los comandos del robot se mostrarán en español."}
-            </p>
-        </div>
-    );
-};
-
-/**
- * Default placeholder content for low-priority or unimplemented features
- * @param {Object} props Component props
- * @param {Object} props.setting The setting configuration object
- * @returns {JSX.Element} Placeholder content UI
- */
-const PlaceholderContent = ({ setting }) => {
-    return (
-        <div className={styles.placeholderContainer}>
-            <div className={styles.placeholderIcon}>
-                <img
-                    src={setting.icon}
-                    alt={setting.title}
-                />
-            </div>
-            <h3 className={styles.sectionTitle}>{setting.title}</h3>
-            <p className={styles.placeholderDescription}>
-                {setting.description}
-            </p>
-            <div className={styles.featureStatus}>
-                {setting.priority === PRIORITY.LOW ? (
-                    <div className={`${styles.statusBadge} ${styles.low}`}>
-                        Coming in Future Update
-                    </div>
-                ) : (
-                    <div className={`${styles.statusBadge} ${styles.medium}`}>
-                        In Development
-                    </div>
-                )}
-            </div>
-            <p className={styles.placeholderContent}>{setting.content}</p>
-        </div>
-    );
-};
-
-/**
- * CustomizationPage component - Main settings modal
- * @param {Object} props Component props
- * @param {Function} props.close Callback to close the settings modal
- * @returns {JSX.Element} Settings modal UI
- */
-export const CustomizationPage = ({ close }) => {
-    console.log("CustomizationPage rendering", { close });
-    const [currentView, setCurrentView] = useState("main");
-    const popupRef = useRef(null);
-
-    // Handle clicks outside to close
+    // Handle clicks outside the panel to close it
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
+            if (panelRef.current && !panelRef.current.contains(event.target)) {
                 close();
             }
         };
@@ -627,169 +122,453 @@ export const CustomizationPage = ({ close }) => {
         };
     }, [close]);
 
-    // Return to main view
-    const handleBack = () => {
-        setCurrentView("main");
+    // Handle tab navigation
+    const handlePrevTab = () => {
+        setActiveTab((prev) => (prev > 0 ? prev - 1 : tabs.length - 1));
     };
 
-    // Render specific content based on current view
-    const renderContent = () => {
-        // If not on main view, show the detail view for the selected setting
-        if (currentView !== "main") {
-            const setting = SETTINGS.find((s) => s.id === currentView);
+    const handleNextTab = () => {
+        setActiveTab((prev) => (prev < tabs.length - 1 ? prev + 1 : 0));
+    };
 
-            if (!setting) return null;
-
-            return (
-                <div className={styles.settingDetailView}>
-                    <button
-                        className={styles.backButton}
-                        onClick={handleBack}
-                    >
-                        <ChevronLeft size={24} />
-                    </button>
-
-                    <h2 className={styles.detailTitle}>{setting.title}</h2>
-
-                    {/* Render specific content based on setting ID */}
-                    {currentView === "reading" && <ReadingLevelOptions />}
-                    {currentView === "themes" && <ThemeOptions />}
-                    {currentView === "voice" && <VoiceOptions />}
-                    {currentView === "steps" && <StepsConfiguration />}
-                    {currentView === "language" && <LanguageOptions />}
-                    {![
-                        "reading",
-                        "themes",
-                        "voice",
-                        "steps",
-                        "language",
-                    ].includes(currentView) && (
-                        <PlaceholderContent setting={setting} />
-                    )}
-                </div>
-            );
-        }
-
-        // Main settings grid view
+    /**
+     * Settings Carousel component
+     */
+    /**
+     * Settings Carousel component for tab navigation
+     * This internal component provides the carousel navigation UI
+     */
+    const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
         return (
-            <div className={styles.settingsMainView}>
-                <div className={styles.settingsHeader}>
-                    <h1 className={styles.settingsTitle}>SETTINGS</h1>
-                    <button
-                        className={styles.closeButton}
-                        onClick={close}
-                    >
-                        <XCircle size={28} />
-                    </button>
+            <div className={styles.carouselContainer}>
+                <button
+                    className={`${styles.navButton} ${styles.prevButton}`}
+                    onClick={handlePrevTab}
+                    aria-label="Previous tab"
+                >
+                    <div className={styles.navButtonIcon}>&lt;</div>
+                </button>
+
+                <div className={styles.tabsContainer}>
+                    {tabs.map((tab, index) => {
+                        // Calculate position relative to active tab for carousel effect
+                        const position = index - activeTab;
+                        const isDisabled = !tab.available;
+
+                        return (
+                            <button
+                                key={tab.id}
+                                className={`${styles.tabButton} 
+                           ${
+                               index === activeTab
+                                   ? styles.tabActive
+                                   : styles.tabInactive
+                           }
+                           ${isDisabled ? styles.tabDisabled : ""}`}
+                                onClick={() =>
+                                    !isDisabled && setActiveTab(index)
+                                }
+                                disabled={isDisabled}
+                                style={{
+                                    borderColor:
+                                        index === activeTab
+                                            ? tab.color
+                                            : "transparent",
+                                }}
+                                aria-label={`${tab.name} settings tab${
+                                    isDisabled ? " (coming soon)" : ""
+                                }`}
+                                aria-selected={index === activeTab}
+                                role="tab"
+                            >
+                                <div
+                                    className={styles.tabIcon}
+                                    style={{ color: tab.color }}
+                                >
+                                    {tab.icon}
+                                </div>
+                                <span className={styles.tabLabel}>
+                                    {tab.name}
+                                </span>
+
+                                {isDisabled && (
+                                    <span className={styles.disabledBadge}>
+                                        Coming Soon
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
 
-                <img
-                    src={lineIcon}
-                    alt="Divider"
-                    className={styles.divider}
-                />
+                <button
+                    className={`${styles.navButton} ${styles.nextButton}`}
+                    onClick={handleNextTab}
+                    aria-label="Next tab"
+                >
+                    <div className={styles.navButtonIcon}>&gt;</div>
+                </button>
+            </div>
+        );
+    };
 
-                <div className={styles.settingsGrid}>
-                    {SETTINGS.map((setting) => (
+    /**
+     * Reading Level Settings Panel
+     */
+    const ReadingLevelSettings = () => {
+        // Default to intermediate level for most users
+        const [selectedLevel, setSelectedLevel] = useState("intermediate");
+
+        // Define reading complexity levels
+        const levels = [
+            {
+                id: "icon_only",
+                icon: "🖼️",
+                name: "Pictures",
+            },
+            {
+                id: "beginner",
+                icon: "🔤",
+                name: "Simple",
+            },
+            {
+                id: "intermediate",
+                icon: "📝",
+                name: "Medium",
+            },
+            {
+                id: "advanced",
+                icon: "📚",
+                name: "Full Text",
+            },
+        ];
+
+        // Get current level description
+        const currentDescription = "";
+
+        // Define preview content for each level
+        const renderPreview = () => {
+            switch (selectedLevel) {
+                case "icon_only":
+                    return (
+                        <div className={styles.iconOnlyPreview}>
+                            <span>🤖</span>
+                            <span>➡️</span>
+                            <span>💨</span>
+                        </div>
+                    );
+                case "beginner":
+                    return (
+                        <div className={styles.beginnerPreview}>
+                            <span className={styles.beginnerIcon}>➡️</span>
+                            <span className={styles.beginnerText}>
+                                Robot Move Fast
+                            </span>
+                        </div>
+                    );
+                case "intermediate":
+                    return (
+                        <span className={styles.intermediatePreview}>
+                            The robot moves forward at high speed.
+                        </span>
+                    );
+                case "advanced":
+                    return (
+                        <div className={styles.advancedPreview}>
+                            The robot will activate its motors to move forward
+                            at maximum speed in a straight line.
+                        </div>
+                    );
+                default:
+                    return null;
+            }
+        };
+
+        return (
+            <div className={styles.settingsPanel}>
+                <div
+                    className={styles.panelTitle}
+                    style={{ color: "#00ff00" }}
+                >
+                    Reading Level
+                </div>
+
+                <div className={styles.optionsContainer}>
+                    {levels.map((level) => (
                         <button
-                            key={setting.id}
-                            className={`${styles.settingBox} ${
-                                styles[
-                                    `priority${
-                                        setting.priority
-                                            .charAt(0)
-                                            .toUpperCase() +
-                                        setting.priority.slice(1)
-                                    }`
-                                ]
+                            key={level.id}
+                            className={`${styles.optionButton} ${
+                                selectedLevel === level.id
+                                    ? styles.activeOption
+                                    : ""
                             }`}
-                            onClick={() => setCurrentView(setting.id)}
+                            onClick={() => setSelectedLevel(level.id)}
+                            aria-pressed={selectedLevel === level.id}
+                            style={{
+                                borderColor:
+                                    selectedLevel === level.id
+                                        ? "#00ff00"
+                                        : "transparent",
+                            }}
                         >
-                            <div className={styles.settingContent}>
-                                {/* Icon display */}
-                                {setting.id === "themes" ? (
-                                    <div className={styles.themeSwatches}>
-                                        <div
-                                            className={styles.swatch}
-                                            style={{
-                                                backgroundColor: "#00FF00",
-                                            }}
-                                        ></div>
-                                        <div
-                                            className={styles.swatch}
-                                            style={{
-                                                backgroundColor: "#0088FF",
-                                            }}
-                                        ></div>
-                                        <div
-                                            className={styles.swatch}
-                                            style={{
-                                                backgroundColor: "#FF00FF",
-                                            }}
-                                        ></div>
-                                    </div>
-                                ) : setting.id === "language" ? (
-                                    <div className={styles.languageIcon}>
-                                        <span>En</span>
-                                        <span>Es</span>
-                                    </div>
-                                ) : setting.id === "motorControls" ? (
-                                    <div className={styles.motorIcon}>⚙️</div>
-                                ) : (
-                                    <img
-                                        src={setting.icon}
-                                        alt={setting.title}
-                                        className={styles.settingIcon}
-                                    />
-                                )}
-
-                                {/* Setting text */}
-                                <div className={styles.settingText}>
-                                    <h3 className={styles.settingTitle}>
-                                        {setting.title}
-                                    </h3>
-                                    <p className={styles.settingDescription}>
-                                        {setting.description}
-                                    </p>
-                                </div>
+                            <div className={styles.optionIcon}>
+                                {level.icon}
                             </div>
-
-                            {/* Status badges for different priorities */}
-                            {setting.priority === PRIORITY.HIGH &&
-                                setting.hasDemo && (
-                                    <div
-                                        className={`${styles.statusBadge} ${styles.high}`}
-                                    >
-                                        Demo Available
-                                    </div>
-                                )}
-                            {setting.priority === PRIORITY.HIGH &&
-                                !setting.hasDemo && (
-                                    <div
-                                        className={`${styles.statusBadge} ${styles.high}`}
-                                    >
-                                        Coming Soon
-                                    </div>
-                                )}
-                            {setting.priority === PRIORITY.MEDIUM && (
-                                <div
-                                    className={`${styles.statusBadge} ${styles.medium}`}
-                                >
-                                    In Development
-                                </div>
-                            )}
-                            {setting.priority === PRIORITY.LOW && (
-                                <div
-                                    className={`${styles.statusBadge} ${styles.low}`}
-                                >
-                                    Future Feature
-                                </div>
-                            )}
+                            <span className={styles.optionLabel}>
+                                {level.name}
+                            </span>
                         </button>
                     ))}
                 </div>
+
+                <div className={styles.description}>{currentDescription}</div>
+
+                <div className={styles.previewContainer}>
+                    <div
+                        className={styles.previewTitle}
+                        style={{ color: "#00ff00" }}
+                    >
+                        Preview:
+                    </div>
+                    <div className={styles.previewContent}>
+                        {renderPreview()}
+                    </div>
+                    <div className={styles.previewNote}>
+                        This is how instructions will appear in the app
+                    </div>
+                </div>
             </div>
         );
+    };
+
+    /**
+     * Theme Settings Panel
+     */
+    const ThemeSettings = () => {
+        // Use context to get and set theme settings (once context is set up)
+        // If not using context yet, use local state
+        const [selectedTheme, setSelectedTheme] = useState("retro");
+        const [fontSetting, setFontSetting] = useState(false);
+
+        // Define available themes
+        const themes = [
+            {
+                id: "retro",
+                name: "Neon",
+                colors: ["#00ff00", "#00aaff", "#ff00ff"],
+                preview: {
+                    bg: "#000000",
+                    text: "#00ff00",
+                    buttonBg: "#00aaff",
+                    buttonText: "#000000",
+                },
+            },
+            {
+                id: "themes",
+                name: "Theme",
+                colors: [
+                    {
+                        id: "retro",
+                        name: "Neon",
+                        colors: ["#00ff00", "#00aaff", "#ff00ff"],
+                    },
+                    {
+                        id: "pastel",
+                        name: "Pastel",
+                        colors: ["#78C2AD", "#6CC3D5", "#F3969A"],
+                    },
+                    {
+                        id: "clean",
+                        name: "Clean",
+                        colors: ["#00AA55", "#0066CC", "#FF6600"],
+                    },
+                ],
+            },
+        ];
+
+        // Get current theme preview colors
+        const currentTheme =
+            themes.find((t) => t.id === selectedTheme) || themes[0];
+
+        return (
+            <div className={styles.settingsPanel}>
+                <div
+                    className={styles.panelTitle}
+                    style={{ color: "#ff00ff" }}
+                >
+                    Choose Theme
+                </div>
+
+                <div className={styles.themesContainer}>
+                    {themes.map((themeOption) => (
+                        <button
+                            key={themeOption.id}
+                            className={`${styles.themeButton} ${
+                                selectedTheme === themeOption.id
+                                    ? styles.activeTheme
+                                    : ""
+                            }`}
+                            onClick={() => setSelectedTheme(themeOption.id)}
+                            aria-pressed={selectedTheme === themeOption.id}
+                            style={{
+                                borderColor:
+                                    selectedTheme === themeOption.id
+                                        ? "#ff00ff"
+                                        : "transparent",
+                            }}
+                        >
+                            <div className={styles.themeSwatches}>
+                                {themeOption.colors.map((color, i) => (
+                                    <div
+                                        key={i}
+                                        className={styles.colorSwatch}
+                                        style={{ backgroundColor: color }}
+                                    />
+                                ))}
+                            </div>
+                            <span className={styles.themeName}>
+                                {themeOption.name}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Live theme preview */}
+                <div className={styles.previewContainer}>
+                    <div
+                        className={styles.previewTitle}
+                        style={{ color: "#ff00ff" }}
+                    >
+                        Preview:
+                    </div>
+                    <div
+                        className={styles.previewContent}
+                        style={{
+                            backgroundColor: currentTheme.preview.bg,
+                            fontFamily: fontSetting
+                                ? "'OpenDyslexic', sans-serif"
+                                : "'Kode Mono', monospace",
+                        }}
+                    >
+                        <div
+                            className={styles.previewHeader}
+                            style={{ color: currentTheme.preview.text }}
+                        >
+                            Robot Controls
+                        </div>
+                        <button
+                            className={styles.previewButton}
+                            style={{
+                                backgroundColor: currentTheme.preview.buttonBg,
+                                color: currentTheme.preview.buttonText,
+                            }}
+                        >
+                            Forward
+                        </button>
+                    </div>
+                </div>
+
+                {/* Font options */}
+                <div className={styles.fontOptions}>
+                    <h3
+                        className={styles.fontOptionsHeader}
+                        style={{ color: "#ff00ff" }}
+                    >
+                        Reading Support
+                    </h3>
+
+                    <div className={styles.fontToggle}>
+                        <span className={styles.toggleLabel}>
+                            Easy-to-Read Font
+                        </span>
+                        <button
+                            className={`${styles.toggleSwitch} ${
+                                fontSetting ? styles.toggleSwitchActive : ""
+                            }`}
+                            onClick={() => setFontSetting(!fontSetting)}
+                            aria-pressed={fontSetting}
+                            role="switch"
+                            aria-checked={fontSetting}
+                            style={{
+                                backgroundColor: fontSetting
+                                    ? "#c026d3"
+                                    : "var(--color-gray-600)",
+                            }}
+                        >
+                            <div
+                                className={`${styles.toggleHandle} ${
+                                    fontSetting ? styles.toggleHandleActive : ""
+                                }`}
+                            ></div>
+                        </button>
+                    </div>
+
+                    <p className={styles.fontDescription}>
+                        {fontSetting
+                            ? "Using OpenDyslexic font to improve readability"
+                            : "Using standard font"}
+                    </p>
+                </div>
+            </div>
+        );
+    };
+
+    /**
+     * Placeholder for features under development
+     */
+    const PlaceholderSettings = ({ feature }) => {
+        // Messages based on priority
+        const getMessage = () => {
+            switch (feature.priority) {
+                case "high":
+                    return "This feature is almost ready and will be available soon!";
+                case "medium":
+                    return "This feature is currently under development and will be available in a future update.";
+                case "low":
+                default:
+                    return "This feature is planned for a future release of the application.";
+            }
+        };
+
+        return (
+            <div className={styles.placeholderContainer}>
+                <div
+                    className={styles.placeholderIcon}
+                    style={{ color: feature.color }}
+                >
+                    {feature.icon}
+                </div>
+
+                <h3 className={styles.placeholderTitle}>{feature.name}</h3>
+
+                <p className={styles.placeholderMessage}>{getMessage()}</p>
+
+                <div className={styles.comingSoonBadge}>
+                    <RotateCcw size={16} />
+                    <span>Coming Soon</span>
+                </div>
+            </div>
+        );
+    };
+
+    // Render current tab content based on activeTab
+    const renderTabContent = () => {
+        const currentTab = tabs[activeTab];
+
+        // If feature is not available, show placeholder
+        if (!currentTab.available) {
+            return <PlaceholderSettings feature={currentTab} />;
+        }
+
+        // Otherwise, render the appropriate settings panel
+        switch (currentTab.id) {
+            case "reading":
+                return <ReadingLevelSettings />;
+            case "themes":
+                return <ThemeSettings />;
+            default:
+                return <PlaceholderSettings feature={currentTab} />;
+        }
     };
 
     return (
@@ -797,9 +576,31 @@ export const CustomizationPage = ({ close }) => {
             <div className={styles.customizationOverlay}>
                 <div
                     className={styles.customizationPanel}
-                    ref={popupRef}
+                    ref={panelRef}
                 >
-                    {renderContent()}
+                    {/* Header with title and close button */}
+                    <div className={styles.settingsHeader}>
+                        <button
+                            className={styles.closeButton}
+                            onClick={close}
+                            aria-label="Close settings"
+                        >
+                            <X size={24} />
+                        </button>
+                        <h1 className={styles.settingsTitle}>SETTINGS</h1>
+                    </div>
+
+                    {/* Settings tabs carousel navigation */}
+                    <SettingsCarousel
+                        tabs={tabs}
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                    />
+
+                    {/* Content area for the active tab */}
+                    <div className={styles.settingsContent}>
+                        {renderTabContent()}
+                    </div>
                 </div>
             </div>
         </Portal>

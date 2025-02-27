@@ -1,0 +1,105 @@
+/* SettingsCarousel.module.css - Styling for the settings carousel navigation */
+
+.carouselContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-4) var(--spacing-12);
+    border-bottom: 2px solid var(--color-gray-800);
+    margin-bottom: var(--spacing-6);
+}
+
+.tabsContainer {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    overflow: hidden;
+    gap: var(--spacing-2);
+}
+
+.tabButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-width: 100px;
+}
+
+.tabButton:hover:not(.disabled) {
+    background-color: var(--color-gray-800);
+}
+
+.tabActive {
+    background-color: var(--color-gray-800);
+    transform: scale(1);
+}
+
+.tabInactive {
+    transform: scale(0.85);
+    opacity: 0.7;
+}
+
+.tabDisabled {
+    opacity: 0.4;
+    filter: grayscale(100%);
+    cursor: default;
+}
+
+.tabIcon {
+    margin-bottom: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+
+.tabLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.navButton {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    color: var(--color-text-inactive);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.navButton:hover {
+    background-color: var(--color-gray-800);
+    color: var(--color-white);
+}
+
+.prevButton {
+    left: var(--spacing-4);
+}
+
+.nextButton {
+    right: var(--spacing-4);
+}
+
+.disabledBadge {
+    margin-top: var(--spacing-1);
+    font-size: var(--font-size-xs);
+    background-color: var(--color-gray-700);
+    color: var(--color-gray-400);
+    padding: 2px var(--spacing-2);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+}

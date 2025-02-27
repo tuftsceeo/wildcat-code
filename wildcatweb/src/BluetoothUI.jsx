@@ -1,9 +1,7 @@
 /**
  * @file BluetoothUI.jsx
- * @description User interface component for Bluetooth connection management,
- * settings access, and help documentation.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * @description Updated BluetoothUI component with settings button integration
+ * @author Claude based on Jennifer Cross's initial implementation
  */
 
 import React, { useState, useEffect } from "react";
@@ -15,21 +13,13 @@ import questionMark from "./assets/question-mark.svg";
 import CustomizationPage from "./CustomizationPage";
 import HelpDialog from "./HelpDialog";
 import { useBLE } from "./BLEContext";
+import { Settings2 } from "lucide-react";
 
 export const BluetoothUI = ({ currSlotNumber }) => {
-    const [currentSvg, setCurrentSvg] = useState(true);
     const [showCustomizationPage, setShowCustomizationPage] = useState(false);
     const [showHelpDialog, setShowHelpDialog] = useState(false);
 
     const { ble, isConnected, setIsConnected } = useBLE();
-
-    // Testing useEffect - this will log when showCustomizationPage changes
-    useEffect(() => {
-        console.log(
-            "showCustomizationPage state changed to:",
-            showCustomizationPage,
-        );
-    }, [showCustomizationPage]);
 
     const handleBluetoothToggle = async () => {
         if (!isConnected) {
@@ -48,14 +38,12 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         }
     };
 
+    // Add settings button handler to open CustomizationPage
     const handleSettingsClick = () => {
-        console.log("Settings button clicked");
         setShowCustomizationPage(true);
-        console.log("showCustomizationPage state set to:", true);
     };
 
     const closeCustomizationPage = () => {
-        console.log("Closing settings page");
         setShowCustomizationPage(false);
     };
 
@@ -66,12 +54,6 @@ export const BluetoothUI = ({ currSlotNumber }) => {
     const closeHelpDialog = () => {
         setShowHelpDialog(false);
     };
-
-    // For debugging - directly inject the CustomizationPage into the DOM
-    // this confirms if the issue is with the Portal or with the component itself
-    if (showCustomizationPage) {
-        console.log("Rendering CustomizationPage directly");
-    }
 
     return (
         <>
@@ -109,21 +91,9 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 </button>
             </div>
 
-            {/* Only render when showCustomizationPage is true */}
+            {/* Render CustomizationPage when settings button is clicked */}
             {showCustomizationPage && (
-                <div
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        zIndex: 9999,
-                        pointerEvents: "auto",
-                    }}
-                >
-                    <CustomizationPage close={closeCustomizationPage} />
-                </div>
+                <CustomizationPage close={closeCustomizationPage} />
             )}
 
             {showHelpDialog && (
