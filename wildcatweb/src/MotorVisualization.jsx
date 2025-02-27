@@ -1,54 +1,268 @@
 /**
  * @file MotorVisualization.jsx
- * @description Visual representation of motor speed using animated bars,
- * providing feedback on motor configuration.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * @description Visual representation of motor speed using vertical bars and animal icons,
+ * designed for students with varied learning needs including those with autism.
  */
 
-// MotorVisualization.jsx
 import React from "react";
-import styles from "./FunctionDefault.module.css"; // Reusing the same CSS initially
+import styles from "./MotorVisualization.module.css";
+import { validateSpeed, getSpeedDescription } from "./motorSpeedUtils";
+import {
+    Rabbit,
+    Turtle,
+    Octagon,
+    ArrowLeft,
+    ArrowRight,
+    MoveLeft,
+    MoveRight,
+} from "lucide-react";
 
 /**
- * Visual representation of motor speed using bars
+ * Motor visualization component with vertical bars and animal icons
  *
  * @component
  * @param {Object} props - Component props
- * @param {Object} props.configuration - Motor configuration data
- * @param {number} [props.configuration.speed=5000] - Speed value (0-10000)
- * @returns {JSX.Element} Visual bars representing motor speed
+ * @param {Object|Array} props.configuration - Motor configuration
+ * @param {boolean} props.showLabels - Whether to show text labels (for accessibility)
+ * @returns {JSX.Element} Visual representation of motor speed/direction
  */
-const MotorVisualization = ({ configuration }) => {
-    // Only show for valid motor configuration
+const MotorVisualization = ({ configuration, showLabels = true }) => {
+    // Handle empty configuration case
     if (!configuration) {
         return null;
     }
 
-    // Create array of bar heights for visualization
-    const bars = [70, 85, 60, 40, 20, 35, 50, 75, 90];
-    const currentSpeed = configuration.speed || 5000;
-    const speedPercentage = Math.min(currentSpeed / 10000, 1);
-    const highlightIndex = Math.floor(speedPercentage * (bars.length - 1));
+    // Handle different configuration formats
+    const configs = Array.isArray(configuration)
+        ? configuration
+        : [configuration];
+
+    // Only show for valid motor configuration
+    if (configs.length === 0 || !configs.some((c) => c && c.port)) {
+        return null;
+    }
+
+    return (
+        <div className={styles.motorVisualizationContainer}>
+            {configs.map((config, index) =>
+                config && config.port ? (
+                    <SingleMotorVisualization
+                        key={`motor-${config.port || index}`}
+                        config={config}
+                        showLabels={showLabels}
+                    />
+                ) : null,
+            )}
+        </div>
+    );
+};
+
+/**
+ * Single motor visualization component
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.config - Motor configuration
+ * @param {boolean} props.showLabels - Whether to show text labels
+ * @returns {JSX.Element} Single motor visualization
+ */
+const SingleMotorVisualization = ({ config, showLabels }) => {
+    if (!config || !config.port) {
+        return null;
+    }
+
+    // Extract relevant information from configuration
+    const { port = "A" } = config;
+    const speed = validateSpeed(config.speed || 0);
+
+    // Get speed information
+    const { level, direction } = getSpeedDescription(speed);
+
+    // Calculate which bars should be active and their colors
+    const getBarStatus = () => {
+        const barStatus = [];
+
+        // We'll have 8 bars total (4 for each direction)
+        for (let i = 0; i < 8; i++) {
+            // Bars 0-3 are backward (yellow), bars 4-7 are forward (green)
+            const isForward = i >= 4;
+            const intensityLevel = isForward ? i - 4 : 3 - i;
+
+            // Determine if this bar should be active based on speed and direction
+            let isActive = false;
+
+            if (speed === 0) {
+                // When stopped, only middle bars are slightly active
+                isActive = i === 3 || i === 4;
+            } else if (direction === "forward" && isForward) {
+                // Forward motion - light up appropriate green bars
+                if (level === "slow" && intensityLevel <= 0) isActive = true;
+                else if (level === "medium" && intensityLevel <= 1)
+                    isActive = true;
+                else if (level === "fast" && intensityLevel <= 2)
+                    isActive = true;
+            } else if (direction === "backward" && !isForward) {
+                // Backward motion - light up appropriate yellow bars
+                if (level === "slow" && intensityLevel <= 0) isActive = true;
+                else if (level === "medium" && intensityLevel <= 1)
+                    isActive = true;
+                else if (level === "fast" && intensityLevel <= 2)
+                    isActive = true;
+            }
+
+            // Add this bar's status to our array
+            barStatus.push({
+                isActive,
+                isForward,
+                intensityLevel,
+                className: isForward ? styles.forwardBar : styles.backwardBar,
+            });
+        }
+
+        return barStatus;
+    };
+
+    // Calculate slider position (0-100%)
+    const getSliderPosition = () => {
+        if (speed === 0) return 50; // Center
+        if (direction === "backward") {
+            return speed === -330 ? 30 : speed === -660 ? 20 : 10; // Slow, Medium, Fast backward
+        } else {
+            return speed === 330 ? 70 : speed === 660 ? 80 : 90; // Slow, Medium, Fast forward
+        }
+    };
+
+    // Get all bar statuses
+    const bars = getBarStatus();
+    const sliderPosition = getSliderPosition();
 
     return (
         <div className={styles.motorVisualization}>
-            <div className={styles.visualizationTitle}>MOTOR A</div>
+            {/* Motor title */}
+            <div className={styles.motorTitle}>MOTOR {port}</div>
+
+            {/* Bar graph visualization */}
             <div className={styles.barGraph}>
-                {bars.map((height, index) => (
+                {bars.map((bar, index) => (
                     <div
                         key={index}
-                        className={`${styles.bar} ${
-                            index > 5 ? styles.green : ""
-                        } ${index === highlightIndex ? styles.highlight : ""}`}
-                        style={{ height: `${height}%` }}
-                    ></div>
+                        className={`${styles.bar} ${bar.className} ${
+                            bar.isActive ? styles.active : ""
+                        }`}
+                        style={{
+                            /* Height varies by intensity level */
+                            height: `${55 + bar.intensityLevel * 15}%`,
+                            /* More intense bars are slightly wider */
+                            width: `${10 + bar.intensityLevel * 2}px`,
+                            /* Opacity based on activity and level */
+                            opacity: bar.isActive
+                                ? 0.7 + bar.intensityLevel * 0.1
+                                : 0.2,
+                        }}
+                    />
                 ))}
             </div>
-            <div className={styles.speedIcons}>
-                <span className={styles.speedIcon}>🐢</span>
-                <span className={styles.speedIcon}>🐇</span>
+
+            {/* Slider indicator */}
+            <div className={styles.sliderContainer}>
+                <div className={styles.sliderTrack}>
+                    <div
+                        className={styles.sliderThumb}
+                        style={{ left: `${sliderPosition}%` }}
+                    />
+                </div>
             </div>
+
+            {/* Animal icons for direction and speed */}
+            <div className={styles.animalIcons}>
+                {/* Fast Backward (Rabbit) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        direction === "backward" && level === "fast"
+                            ? styles.active
+                            : ""
+                    }`}
+                >
+                    <Rabbit
+                        className={styles.flippedHorizontally}
+                        size={24}
+                    />
+                </div>
+
+                {/* Medium Backward (Arrow) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        direction === "backward" && level === "medium"
+                            ? styles.active
+                            : ""
+                    }`}
+                >
+                    <MoveLeft size={24} />
+                </div>
+
+                {/* Slow Backward (Turtle) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        direction === "backward" && level === "slow"
+                            ? styles.active
+                            : ""
+                    }`}
+                >
+                    <Turtle
+                        className={styles.flippedHorizontally}
+                        size={24}
+                    />
+                </div>
+
+                {/* Stop (Octagon) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        speed === 0 ? styles.active : ""
+                    }`}
+                >
+                    <Octagon size={20} />
+                </div>
+
+                {/* Slow Forward (Turtle) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        direction === "forward" && level === "slow"
+                            ? styles.active
+                            : ""
+                    }`}
+                >
+                    <Turtle size={24} />
+                </div>
+
+                {/* Medium Forward (Arrow) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        direction === "forward" && level === "medium"
+                            ? styles.active
+                            : ""
+                    }`}
+                >
+                    <MoveRight size={24} />
+                </div>
+
+                {/* Fast Forward (Rabbit) */}
+                <div
+                    className={`${styles.animalIcon} ${
+                        direction === "forward" && level === "fast"
+                            ? styles.active
+                            : ""
+                    }`}
+                >
+                    <Rabbit size={24} />
+                </div>
+            </div>
+
+            {/* Speed and direction text (only shown when labels are enabled) */}
+            {showLabels && (
+                <div className={styles.speedLabel}>
+                    {speed === 0 ? "Stop" : `${level} ${direction}`}
+                </div>
+            )}
         </div>
     );
 };

@@ -1,22 +1,18 @@
 /**
  * @file CommandPanel.jsx
- * @description Primary interface for creating and configuring code actions, 
+ * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
  */
 
-// CommandPanel.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./FunctionDefault.module.css"; // Reusing the CSS initially
 import { MotorDash } from "./MotorDash.jsx";
 import { TimeDash } from "./TimeDash.jsx";
 import { Check, Plus, Zap, Lightbulb, Volume } from "lucide-react";
 
-// Import our new components
+// Import our components
 import TypeSelector from "./TypeSelector";
 import StatusPanel from "./StatusPanel";
-import MotorVisualization from "./MotorVisualization";
 import SubtypeSelector from "./SubtypeSelector";
 
 // Define the control types and their configurations (moved from FunctionDefault)
@@ -103,33 +99,39 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             if (Array.isArray(config) && config.length > 0) {
                 const motorConfig = config[0];
                 const port = motorConfig.port || "A";
+                const speed = motorConfig.speed || 0;
                 const direction =
-                    motorConfig.direction === "backward"
-                        ? "backward"
-                        : "forward";
-                const speed = getSpeedText(motorConfig.speed);
+                    speed < 0 ? "backward" : speed > 0 ? "forward" : "stopped";
+                const speedText =
+                    speed === 0
+                        ? "stopped"
+                        : Math.abs(speed) <= 330
+                        ? "slow"
+                        : Math.abs(speed) <= 660
+                        ? "medium"
+                        : "fast";
 
-                setStatusText(`Motor ${port} spins ${direction} ${speed}.`);
+                setStatusText(`Motor ${port} ${speedText} ${direction}`);
             } else if (config.port) {
                 const port = config.port;
+                const speed = config.speed || 0;
                 const direction =
-                    config.direction === "backward" ? "backward" : "forward";
-                const speed = getSpeedText(config.speed);
+                    speed < 0 ? "backward" : speed > 0 ? "forward" : "stopped";
+                const speedText =
+                    speed === 0
+                        ? "stopped"
+                        : Math.abs(speed) <= 330
+                        ? "slow"
+                        : Math.abs(speed) <= 660
+                        ? "medium"
+                        : "fast";
 
-                setStatusText(`Motor ${port} spins ${direction} ${speed}.`);
+                setStatusText(`Motor ${port} ${speedText} ${direction}`);
             }
         } else if (slotData.type === "input" && slotData.subtype === "time") {
             const seconds = slotData.configuration?.seconds || 0;
             setStatusText(`Wait ${seconds} seconds.`);
         }
-    };
-
-    // Helper to convert speed value to text
-    const getSpeedText = (speed) => {
-        if (!speed) return "medium";
-        if (speed < 3000) return "slow";
-        if (speed > 7000) return "fast";
-        return "medium";
     };
 
     // Auto-save when configuration changes
@@ -289,13 +291,6 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                     </div>
                 </div>
             )}
-
-            {/* Motor visualization when appropriate */}
-            {selectedType === "action" &&
-                selectedSubtype === "motor" &&
-                dashboardConfig && (
-                    <MotorVisualization configuration={dashboardConfig} />
-                )}
 
             {/* Status panel at bottom */}
             <StatusPanel

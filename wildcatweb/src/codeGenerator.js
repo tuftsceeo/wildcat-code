@@ -1,66 +1,75 @@
 /**
  * @file codeGenerator.js
  * @description Utility for generating Python code from slot configurations
- * that will be executed on the robot.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * that will be executed on the robot, updated for the new motor speed model.
  */
 
-const generatePythonCode = (slots, portStates) => {
+import { validateSpeed, getMotorDescription } from "./motorSpeedUtils";
+
+/**
+ * Generates Python code from slot configurations
+ *
+ * @param {Array} slots - Array of slot configurations
+ * @param {Object} portStates - Current port connection states
+ * @returns {string} Generated Python code
+ */
+const generatePythonCode = (slots, portStates = {}) => {
     // Generate imports
     let code = [
-        'import runloop',
-        'import time',
-        'from hub import port',
-        'import motor',
-        '',
-        'async def main():',
+        "import runloop",
+        "import time",
+        "from hub import port",
+        "import motor",
+        "",
+        "async def main():",
     ];
 
     // Generate code for each slot
     slots.forEach((slot, index) => {
-        if (!slot || !slot.type) return;  // Skip empty slots
+        if (!slot || !slot.type) return; // Skip empty slots
 
         // Add indentation for the main function
-        const indent = '    ';
+        const indent = "    ";
         let slotCode = [];
 
-        if (slot.type === 'action' && slot.subtype === 'motor') {
+        if (slot.type === "action" && slot.subtype === "motor") {
             // Handle both single motor config and multiple motor configs
-            const configs = Array.isArray(slot.configuration) 
-                ? slot.configuration 
+            const configs = Array.isArray(slot.configuration)
+                ? slot.configuration
                 : [slot.configuration];
 
             // Process each motor configuration
-            configs.forEach(config => {
-                if (!config || !config.port || !config.command) return;
+            configs.forEach((config) => {
+                if (!config || !config.port) return;
 
                 const portLetter = config.port;
-                const command = config.command;
-                const speed = config.speed || 1000;
+                const speed = validateSpeed(config.speed);
 
                 // Check if motor is currently connected
-                if (!portStates[portLetter]) {
-                    slotCode.push(`${indent}# Motor ${portLetter} is disconnected`);
-                    slotCode.push(`${indent}pass  # Skipping command for disconnected motor`);
+                if (portStates && !portStates[portLetter]) {
+                    slotCode.push(
+                        `${indent}# Motor ${portLetter} is disconnected`,
+                    );
+                    slotCode.push(
+                        `${indent}pass  # Skipping command for disconnected motor`,
+                    );
                     return;
                 }
 
-                switch (command) {
-                    case 'GO':
-                        slotCode.push(`${indent}motor.run(port.${portLetter}, ${speed})`);
-                        break;
-                    case 'STOP':
-                        slotCode.push(`${indent}motor.stop(port.${portLetter})`);
-                        break;
-                    case 'SET_SPEED':
-                        slotCode.push(`${indent}motor.run(port.${portLetter}, ${speed})`);
-                        break;
+                // Generate code based on speed value
+                if (speed === 0) {
+                    // Stop the motor
+                    slotCode.push(`${indent}motor.stop(port.${portLetter})`);
+                } else {
+                    // Run the motor at the specified speed
+                    slotCode.push(
+                        `${indent}motor.run(port.${portLetter}, ${speed})`,
+                    );
                 }
             });
-        } else if (slot.type === 'input' && slot.subtype === 'time') {
+        } else if (slot.type === "input" && slot.subtype === "time") {
             const config = slot.configuration || {};
-            const milliseconds = (config.seconds || 1) * 1000;  // Convert seconds to milliseconds
+            const milliseconds = Math.max(0, (config.seconds || 1) * 1000); // Convert seconds to milliseconds, ensure non-negative
             slotCode.push(`${indent}await runloop.sleep_ms(${milliseconds})`);
         }
 
@@ -72,10 +81,22 @@ const generatePythonCode = (slots, portStates) => {
     });
 
     // Add the runloop execution
-    code.push('');
-    code.push('runloop.run(main())');
+    code.push("");
+    code.push("runloop.run(main())");
 
-    return code.join('\n');
+    return code.join("\n");
 };
 
-export { generatePythonCode };
+/**
+ * Generates Python code for a single slot
+ * Useful for testing individual instructions
+ *
+ * @param {Object} slot - Slot configuration
+ * @param {Object} portStates - Current port connection states
+ * @returns {string} Generated Python code
+ */
+const generateSlotCode = (slot, portStates = {}) => {
+    return generatePythonCode([slot], portStates);
+};
+
+export { generatePythonCode, generateSlotCode };

@@ -1,12 +1,10 @@
 /**
  * @file InstructionDescriptionGenerator.js
  * @description Utility functions for generating human-readable descriptions of
- * instructions and managing animation properties.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * instructions and managing animation properties, updated for the new motor speed model.
  */
 
-// InstructionDescriptionGenerator.js
+import { getSpeedDescription } from "./motorSpeedUtils";
 
 /**
  * Generates a human-readable description of an instruction
@@ -26,20 +24,15 @@ export const generateDescription = (instruction) => {
         const config = instruction.configuration || {};
 
         if (Array.isArray(config) && config.length > 0) {
-            const motorConfig = config[0];
-            const port = motorConfig.port || "A";
-            const direction =
-                motorConfig.direction === "backward" ? "backward" : "forward";
-            const speed = getSpeedText(motorConfig.speed);
-
-            return `Motor ${port} spins ${direction} at ${speed} speed`;
+            // Multiple motors
+            if (config.length === 1) {
+                return getMotorDescription(config[0]);
+            } else {
+                return `${config.length} motors configured`;
+            }
         } else if (config.port) {
-            const port = config.port || "A";
-            const direction =
-                config.direction === "backward" ? "backward" : "forward";
-            const speed = getSpeedText(config.speed);
-
-            return `Motor ${port} spins ${direction} at ${speed} speed`;
+            // Single motor
+            return getMotorDescription(config);
         }
 
         return "Motor action (unconfigured)";
@@ -57,46 +50,51 @@ export const generateDescription = (instruction) => {
 };
 
 /**
- * Helper function to convert speed value to descriptive text
+ * Generate a description for a single motor configuration
  *
- * @param {number} speed - Speed value (0-10000)
- * @returns {string} Speed description (slow, medium, fast)
+ * @param {Object} config - Motor configuration
+ * @returns {string} Human-readable description
  */
-const getSpeedText = (speed) => {
-    if (!speed) return "medium";
-    if (speed < 3000) return "slow";
-    if (speed > 7000) return "fast";
-    return "medium";
+const getMotorDescription = (config) => {
+    if (!config || !config.port) return "Motor action (unconfigured)";
+
+    const port = config.port;
+    const speed = config.speed || 0;
+
+    if (speed === 0) {
+        return `Motor ${port} stopped`;
+    }
+
+    const { level, direction } = getSpeedDescription(speed);
+    return `Motor ${port} spins ${direction} at ${level} speed`;
 };
 
 /**
- * Returns the appropriate CSS class for a given speed
+ * Determines animation duration based on speed value
  *
- * @param {number} speed - Speed value (0-10000)
- * @returns {string} CSS class name
- */
-export const getSpeedClass = (speed) => {
-    if (!speed) return "medium";
-    if (speed < 3000) return "slow";
-    if (speed > 7000) return "fast";
-    return "medium";
-};
-
-/**
- * Determines animation duration based on speed setting
- *
- * @param {string} speed - Speed setting (slow, medium, fast)
- * @returns {string} CSS animation duration value
+ * @param {number} speed - Speed value (-1000 to 1000)
+ * @returns {string} CSS animation duration
  */
 export const getAnimationDuration = (speed) => {
-    switch (speed) {
-        case "slow":
-            return "3s";
-        case "medium":
-            return "2s";
-        case "fast":
-            return "1s";
-        default:
-            return "2s";
-    }
+    const absSpeed = Math.abs(speed);
+
+    if (absSpeed === 0) return "0s"; // No animation when stopped
+    if (absSpeed <= 330) return "3s"; // Slow
+    if (absSpeed <= 660) return "2s"; // Medium
+    return "1s"; // Fast
+};
+
+/**
+ * Get speed class based on numeric value
+ *
+ * @param {number} speed - Speed value (-1000 to 1000)
+ * @returns {string} Speed class (slow, medium, fast)
+ */
+export const getSpeedClass = (speed) => {
+    const absSpeed = Math.abs(speed);
+
+    if (absSpeed === 0) return "stop";
+    if (absSpeed <= 330) return "slow";
+    if (absSpeed <= 660) return "medium";
+    return "fast";
 };

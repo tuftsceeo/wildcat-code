@@ -1,47 +1,37 @@
-/* MotorDash.module.css - Redesigned with retro-ui-tokens.css */
+/* MotorDash.module.css - Adjusted for full-width bar graph */
 
 .motorDashContainer {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3);
+    gap: 8px; /* Tightened gap between motors */
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
 }
 
 .singleMotorDash {
-    background-color: rgba(
-        0,
-        191,
-        255,
-        0.1
-    ); /* Slight blue tint using token color */
-    border: var(--border-width-standard) solid var(--color-blue);
+    background-color: var(--color-black);
+    border: 2px solid var(--color-blue);
     border-radius: var(--radius-md);
-    padding: var(--spacing-4);
+    padding: 10px; /* Reduced padding to make more compact */
     width: 100%;
     transition: all var(--transition-normal);
 }
 
 .singleMotorDash.disconnected {
-    background-color: rgba(
-        255,
-        0,
-        0,
-        0.1
-    ); /* Slight red tint using token color */
+    background-color: rgba(255, 0, 0, 0.1);
     border-color: var(--color-error);
 }
 
 .motorHeader {
     display: flex;
     align-items: center;
-    margin-bottom: var(--spacing-3);
-    padding: var(--spacing-1) var(--spacing-2);
+    margin-bottom: 5px; /* Reduced margin */
+    padding: 0; /* Removed padding */
 }
 
 .portLabel {
-    color: var(--color-neon-green);
+    color: var(--color-white); /* Changed to white as requested */
     font-family: var(--font-family-primary);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
@@ -53,8 +43,8 @@
 .disconnectedLabel {
     color: var(--color-error);
     font-size: var(--font-size-sm);
-    margin-right: var(--spacing-3);
-    padding: var(--spacing-1) var(--spacing-2);
+    margin-right: 8px;
+    padding: 2px 5px;
     background-color: rgba(255, 0, 0, 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
@@ -62,105 +52,204 @@
 
 .dismissButton {
     background: transparent;
-    border: var(--border-width-thin) solid var(--color-error);
+    border: 1px solid var(--color-error);
     color: var(--color-error);
     font-size: var(--font-size-base);
     cursor: pointer;
-    padding: var(--spacing-1) var(--spacing-2);
-    margin-left: var(--spacing-2);
+    padding: 2px 5px;
+    margin-left: 5px;
     border-radius: var(--radius-sm);
     transition: all var(--transition-normal);
 }
 
 .dismissButton:hover {
     background-color: rgba(255, 0, 0, 0.2);
-    box-shadow: var(--glow-white);
 }
 
-.controls {
+/* Container for motor controls to ensure proper alignment */
+.motorControlContainer {
     display: flex;
-    gap: var(--spacing-2);
-    align-items: center;
+    flex-direction: column;
+    gap: 4px; /* Minimal gap between elements */
 }
 
-.controlButton {
-    background-color: transparent;
-    border: var(--border-width-standard) solid var(--color-blue);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    text-transform: uppercase;
+/* Bar visualization styles */
+.barVisualization {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 60px; /* Reduced height */
+    width: 100%;
+    margin-bottom: 4px; /* Minimal margin before slider */
+    padding: 0 2px; /* Small padding to align with slider */
+}
+
+.bar {
     flex: 1;
-}
-
-.controlButton:hover {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
-}
-
-.controlButton.active {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
-    box-shadow: var(--glow-neon-green);
-    background-color: rgba(0, 255, 0, 0.1);
-}
-
-.speedControl {
-    position: relative;
-    flex-grow: 1;
-}
-
-.speedButton {
-    width: 100%;
-    background-color: transparent;
-    border: var(--border-width-standard) solid var(--color-blue);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
+    margin: 0 2px;
+    border-radius: 2px 2px 0 0;
+    background-color: var(--color-gray-700);
     cursor: pointer;
-    transition: all var(--transition-normal);
+    border: none;
+    transition: all 0.2s ease; /* Faster transition */
+    padding: 0;
+}
+
+.bar:hover:not(:disabled) {
+    transform: scaleY(1.05);
+}
+
+.bar:focus-visible {
+    outline: 2px solid var(--color-blue);
+}
+
+.forwardBar {
+    background-color: var(--color-gray-700);
+}
+
+.forwardBar.active {
+    background-color: var(--color-neon-green);
+    box-shadow: 0 0 6px var(--color-neon-green);
+}
+
+.backwardBar {
+    background-color: var(--color-gray-700);
+}
+
+.backwardBar.active {
+    background-color: #ffff00; /* Yellow for backward */
+    box-shadow: 0 0 6px #ffff00;
+}
+
+/* Slider control styles */
+.sliderControl {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Reduced gap */
+}
+
+/* Container for slider and labels */
+.sliderWithLabels {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Direction labels */
+.backwardLabel,
+.forwardLabel {
+    font-size: 10px; /* Smaller text */
+    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
-.speedButton:hover {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
+.backwardLabel {
+    color: #ffff00; /* Yellow for backward */
 }
 
-.speedButton.active {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
-    box-shadow: var(--glow-neon-green);
-    background-color: rgba(0, 255, 0, 0.1);
+.forwardLabel {
+    color: var(--color-neon-green); /* Green for forward */
 }
 
-.speedInput {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    padding: var(--spacing-2);
-    margin-top: var(--spacing-2);
-    border: var(--border-width-standard) solid var(--color-neon-green);
-    border-radius: var(--radius-md);
-    background-color: var(--color-black);
-    color: var(--color-neon-green);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
-    z-index: var(--z-index-dropdown);
-}
-
-.speedInput:focus {
+/* Slider track */
+.sliderTrack {
+    flex: 1;
+    position: relative;
+    height: 16px; /* Slightly smaller height */
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(
+        to right,
+        #ffff00 0%,
+        /* Yellow */ #ffff00 33%,
+        /* Yellow */ var(--color-gray-700) 33%,
+        var(--color-gray-700) 67%,
+        var(--color-neon-green) 67%,
+        /* Green */ var(--color-neon-green) 100% /* Green */
+    );
+    border: 1px solid var(--color-gray-600);
     outline: none;
-    box-shadow: var(--glow-neon-green);
 }
 
+.sliderTrack:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-blue);
+}
+
+/* Slider thumb */
+.sliderThumb {
+    position: absolute;
+    width: 22px; /* Slightly smaller */
+    height: 22px; /* Slightly smaller */
+    border-radius: 50%;
+    background-color: var(--color-white);
+    border: 2px solid var(--color-black);
+    transform: translateX(-50%);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    z-index: 2;
+    transition: left 0.2s ease; /* Faster transition */
+    top: -3px;
+    cursor: grab;
+}
+
+.sliderThumb:active {
+    cursor: grabbing;
+    transform: translateX(-50%) scale(0.95);
+}
+
+/* Position icons below the slider */
+.positionIcons {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.positionIcon {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s ease; /* Faster transition */
+    padding: 3px;
+    color: var(--color-text-inactive);
+    width: 30px; /* Slightly smaller */
+    height: 30px; /* Slightly smaller */
+}
+
+.positionIcon:hover:not(:disabled) {
+    opacity: 1;
+    color: var(--color-white);
+}
+
+.positionIcon:focus-visible {
+    outline: 2px solid var(--color-blue);
+    border-radius: var(--radius-sm);
+}
+
+.positionIcon.active {
+    opacity: 1;
+    transform: scale(1.1);
+    color: var(--color-white);
+}
+
+/* For icons that need to be flipped horizontally */
+.flippedHorizontally {
+    transform: scaleX(-1);
+}
+
+/* Styling for disabled/disconnected state */
+.disconnected .bar,
+.disconnected .sliderTrack,
+.disconnected .sliderThumb,
+.disconnected .positionIcon {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* No connection/No motors messages */
 .noConnection,
 .noMotors {
     display: flex;
