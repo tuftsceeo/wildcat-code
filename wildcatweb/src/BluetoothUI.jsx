@@ -6,13 +6,13 @@
  * @created February 2025
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./BluetoothUI.module.css";
 import bluetoothDefault from "./assets/bluetooth-med.svg";
 import bluetoothConnected from "./assets/bluetooth-connected-correct.svg";
 import settings from "./assets/settings.svg";
 import questionMark from "./assets/question-mark.svg";
-import { CustomizationPage } from "./CustomizationPage";
+import CustomizationPage from "./CustomizationPage";
 import HelpDialog from "./HelpDialog";
 import { useBLE } from "./BLEContext";
 
@@ -20,8 +20,16 @@ export const BluetoothUI = ({ currSlotNumber }) => {
     const [currentSvg, setCurrentSvg] = useState(true);
     const [showCustomizationPage, setShowCustomizationPage] = useState(false);
     const [showHelpDialog, setShowHelpDialog] = useState(false);
-    
+
     const { ble, isConnected, setIsConnected } = useBLE();
+
+    // Testing useEffect - this will log when showCustomizationPage changes
+    useEffect(() => {
+        console.log(
+            "showCustomizationPage state changed to:",
+            showCustomizationPage,
+        );
+    }, [showCustomizationPage]);
 
     const handleBluetoothToggle = async () => {
         if (!isConnected) {
@@ -41,13 +49,13 @@ export const BluetoothUI = ({ currSlotNumber }) => {
     };
 
     const handleSettingsClick = () => {
-        console.log('Settings button clicked');
+        console.log("Settings button clicked");
         setShowCustomizationPage(true);
-        console.log('showCustomizationPage state set to:', true);
+        console.log("showCustomizationPage state set to:", true);
     };
 
     const closeCustomizationPage = () => {
-        console.log('Closing settings page');
+        console.log("Closing settings page");
         setShowCustomizationPage(false);
     };
 
@@ -59,8 +67,12 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         setShowHelpDialog(false);
     };
 
-    // Render CustomizationPage and HelpDialog outside of any conditional logic
-    // Only the button states should depend on connection status
+    // For debugging - directly inject the CustomizationPage into the DOM
+    // this confirms if the issue is with the Portal or with the component itself
+    if (showCustomizationPage) {
+        console.log("Rendering CustomizationPage directly");
+    }
+
     return (
         <>
             <div className={styles.menu}>
@@ -69,7 +81,9 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                     onClick={handleBluetoothToggle}
                 >
                     <img
-                        src={isConnected ? bluetoothConnected : bluetoothDefault}
+                        src={
+                            isConnected ? bluetoothConnected : bluetoothDefault
+                        }
                         alt="Bluetooth Icon"
                     />
                 </button>
@@ -78,22 +92,38 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                     className={styles.settingsButton}
                     onClick={handleSettingsClick}
                 >
-                    <img src={settings} alt="Settings Icon" />
+                    <img
+                        src={settings}
+                        alt="Settings Icon"
+                    />
                 </button>
 
                 <button
                     className={styles.helpButton}
                     onClick={handleHelpClick}
                 >
-                    <img src={questionMark} alt="Help Icon" />
+                    <img
+                        src={questionMark}
+                        alt="Help Icon"
+                    />
                 </button>
             </div>
 
-            {/* These should render regardless of connection state */}
+            {/* Only render when showCustomizationPage is true */}
             {showCustomizationPage && (
-                <CustomizationPage 
-                    close={closeCustomizationPage}
-                />
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 9999,
+                        pointerEvents: "auto",
+                    }}
+                >
+                    <CustomizationPage close={closeCustomizationPage} />
+                </div>
             )}
 
             {showHelpDialog && (
