@@ -4,7 +4,7 @@
  * CustomizationPage into the main application.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Settings2 } from "lucide-react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -38,7 +38,17 @@ function App() {
             .fill(null)
             .map(() => createEmptySlot()),
     );
+    // Update Python code whenever slot data changes
+    useEffect(() => {
+        const newPyCode = generatePythonCode(slotData);
+        setPyCode(newPyCode);
 
+        // Enable run if all slots have configurations
+        const isComplete = slotData.every(
+            (slot) => slot.type && slot.subtype && slot.configuration,
+        );
+        setCanRun(isComplete);
+    }, [slotData]);
     // Handle updates to slot configuration
     const handleSlotUpdate = (slotConfig) => {
         setSlotData((prevData) => {
@@ -49,6 +59,28 @@ function App() {
             };
             return newData;
         });
+    };
+
+    // Generate Python code from slot configurations
+    const generatePythonCode = (slots) => {
+        let code = [];
+        slots.forEach((slot, index) => {
+            if (slot.type === "action" && slot.subtype === "motor") {
+                const { buttonType, knobAngle, port } =
+                    slot.configuration || {};
+                if (buttonType === "GO") {
+                    code.push(`motor.run(port.${port}, ${knobAngle})`);
+                } else if (buttonType === "STOP") {
+                    code.push(`motor.stop(port.${port})`);
+                }
+            } else if (slot.type === "input" && slot.subtype === "time") {
+                const { seconds } = slot.configuration || {};
+                if (seconds) {
+                    code.push(`time.sleep(${seconds})`);
+                }
+            }
+        });
+        return code.join("\n");
     };
 
     return (
