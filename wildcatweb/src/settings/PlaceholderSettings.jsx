@@ -1,29 +1,60 @@
 /**
  * @file PlaceholderSettings.jsx
  * @description Placeholder component for settings panels that are under development
- * or planned for future releases.
  */
 
 import React from "react";
 import { RotateCcw } from "lucide-react";
-import styles from "./CustomizationPage.module.css";
+
+// Using inline styles to avoid CSS module dependencies
+const styles = {
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "300px",
+        textAlign: "center",
+        color: "var(--color-gray-400)",
+        animation: "fadeIn 0.3s ease",
+    },
+    icon: {
+        fontSize: "4rem",
+        marginBottom: "16px",
+        opacity: 0.7,
+    },
+    title: {
+        fontSize: "24px",
+        marginBottom: "8px",
+        color: "var(--color-gray-300)",
+    },
+    message: {
+        maxWidth: "60%",
+        fontSize: "16px",
+    },
+    badge: {
+        marginTop: "16px",
+        backgroundColor: "var(--color-gray-700)",
+        color: "var(--color-gray-300)",
+        fontSize: "14px",
+        padding: "4px 12px",
+        borderRadius: "16px",
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+    },
+};
 
 /**
  * Placeholder component for future or in-development features
  *
- * @component
- * @param {Object} props - Component props
- * @param {Object} props.feature - Feature information object
- * @param {string} props.feature.name - Name of the feature
- * @param {React.ReactNode} props.feature.icon - Icon for the feature
- * @param {string} props.feature.color - Accent color for the feature
- * @param {string} props.feature.priority - Priority level ('low', 'medium', 'high')
- * @returns {JSX.Element} Placeholder for settings panel
+ * @param {Object} props Component props
+ * @param {Object} props.feature Feature information object
  */
 const PlaceholderSettings = ({ feature }) => {
     // Messages based on priority
     const getMessage = () => {
-        switch (feature.priority) {
+        switch (feature?.priority) {
             case "high":
                 return "This feature is almost ready and will be available soon!";
             case "medium":
@@ -35,19 +66,21 @@ const PlaceholderSettings = ({ feature }) => {
     };
 
     return (
-        <div className={styles.placeholderContainer}>
+        <div style={styles.container}>
             <div
-                className={styles.placeholderIcon}
-                style={{ color: feature.color }}
+                style={{
+                    ...styles.icon,
+                    color: feature?.color || "var(--color-gray-500)",
+                }}
             >
-                {feature.icon}
+                {feature?.icon || <RotateCcw size={48} />}
             </div>
 
-            <h3 className={styles.placeholderTitle}>{feature.name}</h3>
+            <h3 style={styles.title}>{feature?.name || "Coming Soon"}</h3>
 
-            <p className={styles.placeholderMessage}>{getMessage()}</p>
+            <p style={styles.message}>{getMessage()}</p>
 
-            <div className={styles.comingSoonBadge}>
+            <div style={styles.badge}>
                 <RotateCcw size={16} />
                 <span>Coming Soon</span>
             </div>

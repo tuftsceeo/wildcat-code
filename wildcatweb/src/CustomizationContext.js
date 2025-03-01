@@ -2,7 +2,6 @@
  * @file CustomizationContext.js
  * @description Context provider for managing and persisting user customization settings
  * across the application.
- * @author Claude
  */
 
 import React, { createContext, useState, useContext, useEffect } from "react";
@@ -103,6 +102,33 @@ export const CustomizationProvider = ({ children }) => {
         largeText,
     ]);
 
+    // Apply theme and accessibility settings to document
+    useEffect(() => {
+        // Set theme data attribute on body
+        document.body.dataset.theme = theme;
+
+        // Apply dyslexia font class
+        if (useDyslexiaFont) {
+            document.body.classList.add("dyslexia-font");
+        } else {
+            document.body.classList.remove("dyslexia-font");
+        }
+
+        // Apply high contrast class
+        if (highContrast) {
+            document.body.classList.add("high-contrast");
+        } else {
+            document.body.classList.remove("high-contrast");
+        }
+
+        // Apply large text class
+        if (largeText) {
+            document.body.classList.add("large-text");
+        } else {
+            document.body.classList.remove("large-text");
+        }
+    }, [theme, useDyslexiaFont, highContrast, largeText]);
+
     // Reset all settings to defaults
     const resetSettings = () => {
         setReadingLevel("intermediate");
@@ -115,34 +141,6 @@ export const CustomizationProvider = ({ children }) => {
         setHighContrast(false);
         setLargeText(false);
     };
-
-    // Apply theme to document based on settings
-    useEffect(() => {
-        // Apply font family
-        document.documentElement.style.setProperty(
-            "--font-family-active",
-            useDyslexiaFont
-                ? "var(--font-family-dyslexic)"
-                : "var(--font-family-primary)",
-        );
-
-        // Apply high contrast if enabled
-        if (highContrast) {
-            document.body.classList.add("high-contrast");
-        } else {
-            document.body.classList.remove("high-contrast");
-        }
-
-        // Apply large text if enabled
-        if (largeText) {
-            document.body.classList.add("large-text");
-        } else {
-            document.body.classList.remove("large-text");
-        }
-
-        // Apply selected theme
-        document.body.dataset.theme = theme;
-    }, [theme, useDyslexiaFont, highContrast, largeText]);
 
     // Context value with all settings and setters
     const contextValue = {

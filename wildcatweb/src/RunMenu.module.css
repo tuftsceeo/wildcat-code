@@ -1,15 +1,14 @@
-/* RunMenu.module.css - Match FIGMA design */
-/* Uses design tokens from retro-ui-tokens.css */
+/* RunMenu.module.css - With theme variables */
 
 .menuBackground {
     height: 100%;
     display: flex;
     flex-direction: column;
-    border: 2px solid var(--color-blue);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
-    background-color: var(--color-black);
+    background-color: var(--color-panel-background);
     color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     padding: var(--spacing-4);
 }
 
@@ -18,8 +17,8 @@
     flex-direction: column;
     height: 100%;
     position: relative;
-    align-items: center; /* Center steps */
-    justify-content: center; /* Center content vertically */
+    align-items: center;
+    justify-content: center;
 }
 
 /* Hide title as requested */
@@ -31,35 +30,35 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
-    width: 100%; /* Full width for proper centering */
-    margin: auto 0; /* Center vertically */
+    width: 100%;
+    margin: auto 0;
 }
 
-/* Step buttons styled to match FIGMA with active state in green */
+/* Step buttons styled to match FIGMA with active state in theme primary color */
 .stepButton {
-    background-color: transparent;
-    border: 2px solid var(--color-blue);
+    background-color: var(--color-button-default);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
     color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     padding: var(--spacing-3);
     text-align: center;
     cursor: pointer;
     transition: all var(--transition-normal);
-    width: 100%; /* Full width for proper centering */
+    width: 100%;
 }
 
 .stepButton.active,
 .stepButton.current {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
     background-color: rgba(0, 255, 0, 0.1);
 }
 
-/* Inactive steps are blue in FIGMA */
+/* Inactive steps */
 .stepButton.configured:not(.current) {
-    border-color: var(--color-blue);
+    border-color: var(--color-border-inactive);
     color: var(--color-text-inactive);
 }
 
@@ -70,21 +69,21 @@
 
 /* FIGMA shows a blue Play button */
 .playButton {
-    background-color: #00bfff; /* Light blue in FIGMA */
+    background-color: var(--color-action-secondary);
     border: none;
     border-radius: var(--radius-md);
-    color: black; /* Text is black on blue button */
-    font-family: var(--font-family-primary);
+    color: var(--color-button-active-text);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
     padding: var(--spacing-2) var(--spacing-4);
-    width: 100px; /* Match Test button width */
+    width: 100px;
     cursor: pointer;
     margin-top: auto;
     margin-bottom: var(--spacing-2);
     transition: all var(--transition-normal);
     text-transform: uppercase;
-    align-self: center; /* Center the button */
+    align-self: center;
 }
 
 .playButton:hover:not(:disabled) {
@@ -92,7 +91,7 @@
 }
 
 .playButton:disabled {
-    background-color: var(--color-gray-600);
+    background-color: var(--color-disabled);
     cursor: not-allowed;
     opacity: 0.6;
 }

@@ -1,57 +1,104 @@
-/* SettingsCarousel.module.css - Styling for the settings carousel navigation */
+/* SettingsCarousel.css - Improved carousel with proper centering and theme support */
 
-.carouselContainer {
-    position: relative;
+.settings-carousel {
     display: flex;
     align-items: center;
-    padding: var(--spacing-4) var(--spacing-12);
+    position: relative;
+    width: 100%;
+    padding: var(--spacing-2) 0;
+    background-color: var(--color-panel-background);
     border-bottom: 2px solid var(--color-gray-800);
-    margin-bottom: var(--spacing-6);
+    height: 150px;
 }
 
-.tabsContainer {
-    display: flex;
+/* Container with horizontal scroll */
+.carousel-container {
     flex: 1;
-    justify-content: center;
-    overflow: hidden;
-    gap: var(--spacing-2);
+    overflow-x: hidden;
+    position: relative;
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+    );
+    padding: 0 var(--spacing-4);
 }
 
-.tabButton {
+/* Track with tabs */
+.carousel-track {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-4);
+    justify-content: center;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+    min-width: 100%;
+}
+
+/* Individual tab button */
+.carousel-tab {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-3);
-    border-radius: var(--radius-md);
-    background-color: transparent;
     border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: var(--color-gray-800);
+    padding: var(--spacing-3);
+    margin: 0 var(--spacing-2);
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all var(--transition-normal);
-    min-width: 100px;
+    min-width: 120px;
+    height: 120px;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: visible;
 }
 
-.tabButton:hover:not(.disabled) {
-    background-color: var(--color-gray-800);
+/* Active tab styling */
+.carousel-tab.active {
+    transform: scale(1.05);
+    background-color: color-mix(
+        in srgb,
+        var(--color-gray-800) 90%,
+        var(--color-gray-700)
+    );
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 2;
 }
 
-.tabActive {
-    background-color: var(--color-gray-800);
-    transform: scale(1);
+/* Fallback for color-mix */
+body[data-theme="retro"] .carousel-tab.active {
+    background-color: rgba(51, 51, 51, 0.9);
 }
 
-.tabInactive {
-    transform: scale(0.85);
-    opacity: 0.7;
+body[data-theme="pastel"] .carousel-tab.active {
+    background-color: rgba(225, 235, 245, 0.9);
 }
 
-.tabDisabled {
-    opacity: 0.4;
-    filter: grayscale(100%);
+body[data-theme="clean"] .carousel-tab.active {
+    background-color: rgba(240, 240, 240, 0.9);
+}
+
+/* Disabled tab styling */
+.carousel-tab.disabled {
+    opacity: 0.5;
     cursor: default;
+    filter: grayscale(70%);
 }
 
-.tabIcon {
+/* Icon container */
+.tab-icon {
+    font-size: 32px;
     margin-bottom: var(--spacing-2);
     display: flex;
     align-items: center;
@@ -59,47 +106,80 @@
     height: 40px;
 }
 
-.tabLabel {
+/* Tab name */
+.tab-name {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    text-align: center;
 }
 
-.navButton {
+/* Coming soon badge */
+.coming-soon-badge {
     position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-gray-700);
+    color: var(--color-gray-300);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Navigation buttons */
+.carousel-nav {
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
     background-color: transparent;
     border: none;
-    border-radius: var(--radius-full);
     color: var(--color-text-inactive);
     cursor: pointer;
-    transition: all var(--transition-normal);
+    z-index: 3;
+    position: relative;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 }
 
-.navButton:hover {
+.carousel-nav:hover {
     background-color: var(--color-gray-800);
-    color: var(--color-white);
+    color: var(--color-text-active);
 }
 
-.prevButton {
-    left: var(--spacing-4);
+.carousel-prev {
+    left: var(--spacing-2);
 }
 
-.nextButton {
-    right: var(--spacing-4);
+.carousel-next {
+    right: var(--spacing-2);
 }
 
-.disabledBadge {
-    margin-top: var(--spacing-1);
-    font-size: var(--font-size-xs);
-    background-color: var(--color-gray-700);
-    color: var(--color-gray-400);
-    padding: 2px var(--spacing-2);
-    border-radius: var(--radius-md);
-    text-transform: uppercase;
+/* Animation when dragging */
+.carousel-track.dragging {
+    transition: none;
+    cursor: grabbing;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .carousel-tab {
+        min-width: 100px;
+        height: 110px;
+        padding: var(--spacing-2);
+    }
+
+    .tab-icon {
+        font-size: 24px;
+        height: 30px;
+    }
+
+    .tab-name {
+        font-size: 11px;
+    }
 }

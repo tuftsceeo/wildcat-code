@@ -247,12 +247,6 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
 
     return (
         <div className={styles.hubTopBackground}>
-            <img
-                className={styles.outline}
-                src={require("./assets/outline-function-hub.png")}
-                alt="Function Hub outline"
-            />
-
             {/* Type Selector (ACTION/SENSE) */}
             <TypeSelector
                 selectedType={selectedType}

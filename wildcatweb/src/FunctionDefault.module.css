@@ -1,14 +1,13 @@
-/* FunctionDefault.module.css - Match FIGMA design */
-/* Using design tokens from retro-ui-tokens.css */
+/* FunctionDefault.module.css - With theme variables and browser compatibility fixes */
 
 .hubTopBackground {
     position: relative;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    border: 2px solid var(--color-blue);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
-    background-color: var(--color-black);
+    background-color: var(--color-panel-background);
     padding: var(--spacing-4);
     overflow: visible;
 }
@@ -53,14 +52,14 @@
     position: relative;
 }
 
-/* Base button style - blue by default */
+/* Base button style */
 .actionButtonChild {
     width: 100%;
-    background-color: transparent;
-    border: 2px solid var(--color-blue);
+    background-color: var(--color-button-default);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
     color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     padding: var(--spacing-3);
     cursor: pointer;
@@ -70,10 +69,21 @@
 
 /* Active state for buttons */
 .actionButtonChild.active {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
-    background-color: rgba(0, 255, 0, 0.1);
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+    background-color: rgba(0, 255, 0, 0.1); /* Fallback */
     box-shadow: var(--glow-neon-green);
+}
+
+/* Theme specific active backgrounds */
+body[data-theme="retro"] .actionButtonChild.active {
+    background-color: rgba(0, 255, 0, 0.1);
+}
+body[data-theme="pastel"] .actionButtonChild.active {
+    background-color: rgba(120, 194, 173, 0.1);
+}
+body[data-theme="clean"] .actionButtonChild.active {
+    background-color: rgba(0, 170, 85, 0.1);
 }
 
 .actionButtonChild:hover {
@@ -85,7 +95,7 @@
     display: none;
 }
 
-/* ------- NEW LAYOUT STRUCTURE ------- */
+/* ------- LAYOUT STRUCTURE ------- */
 
 /* Main container for content area */
 .contentContainer {
@@ -119,7 +129,7 @@
     flex-direction: column;
     gap: var(--spacing-2);
     width: 100%;
-    flex: 0 0 auto; /* Don't grow or shrink */
+    flex: 0 0 auto;
 }
 
 /* Action subtype buttons are left-aligned */
@@ -134,14 +144,14 @@
 
 /* Subtype button styling */
 .subtypeButton {
-    background-color: transparent;
+    background-color: var(--color-button-default);
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
-    border: 2px solid var(--color-blue);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
     color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     padding: var(--spacing-2) var(--spacing-4);
     cursor: pointer;
@@ -173,9 +183,9 @@
 }
 
 .subtypeButton.active {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
-    box-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+    box-shadow: var(--glow-neon-green);
 }
 
 /* Dashboard container */
@@ -186,11 +196,22 @@
     overflow: auto;
     border-radius: var(--radius-md);
     border: none;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.8); /* Fallback */
     margin-top: var(--spacing-2);
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+
+/* Theme-specific dashboard backgrounds */
+body[data-theme="retro"] .dashboardContainer {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+body[data-theme="pastel"] .dashboardContainer {
+    background-color: rgba(248, 249, 250, 0.8);
+}
+body[data-theme="clean"] .dashboardContainer {
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 /* Placeholder for dashboard */
@@ -217,7 +238,7 @@
 }
 
 .audioIcon {
-    color: var(--color-blue);
+    color: var(--color-action-secondary);
     cursor: pointer;
 }
 

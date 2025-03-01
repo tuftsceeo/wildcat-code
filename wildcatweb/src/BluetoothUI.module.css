@@ -1,23 +1,19 @@
-/* BluetoothUI.module.css - Updated with retro-ui-tokens.css */
+/* BluetoothUI.module.css - With theme variables */
 
 .menu {
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-2);
-    /*z-index: var(--z-index-above);
-    position: absolute;
-    top: var(--spacing-4);
-    right: var(--spacing-4);*/
 }
 
-/* Style for all buttons using the retro neon theme */
+/* Style for all buttons using the theme */
 .connectButton,
 .settingsButton,
 .helpButton {
     width: var(--bluetooth-button-size);
     height: var(--bluetooth-button-size);
     background-color: transparent;
-    border: none; /* Remove borders */
+    border: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -35,7 +31,7 @@
     transform: scale(1);
 }
 
-/* Hover state: slightly scale up and add a neon drop-shadow glow */
+/* Hover state: slightly scale up and add a glow */
 .connectButton:hover img,
 .settingsButton:hover img,
 .helpButton:hover img {
@@ -51,10 +47,10 @@
 
 /* Connected state styling */
 .connectButton.connected img {
-    /* filter: drop-shadow(0 0 10px var(--color-neon-green)); */
+    filter: drop-shadow(0 0 5px var(--color-text-active));
 }
 
-/* Button icons - instead of importing, we can use CSS for simple ones */
+/* Button icons - using theme colors */
 .iconWrapper {
     width: var(--bluetooth-icon-size);
     height: var(--bluetooth-icon-size);
@@ -62,19 +58,32 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    color: var(--color-white);
+    color: var(--color-text-inactive);
     transition: all var(--transition-normal);
 }
 
 .connected .iconWrapper {
-    color: var(--color-neon-green);
+    color: var(--color-text-active);
 }
 
-/* Ensure all button icons are white */
+/* Ensure all button icons use theme colors */
 .connectButton img,
 .settingsButton img,
 .helpButton img {
-    filter: brightness(0) invert(1); /* Convert to white */
+    filter: brightness(0) invert(1);
+}
+
+/* Theme-aware filter for clean theme (dark icons on light background) */
+body[data-theme="clean"] .connectButton img,
+body[data-theme="clean"] .settingsButton img,
+body[data-theme="clean"] .helpButton img {
+    filter: brightness(0);
+}
+
+body[data-theme="pastel"] .connectButton img,
+body[data-theme="pastel"] .settingsButton img,
+body[data-theme="pastel"] .helpButton img {
+    filter: brightness(0);
 }
 
 /* Status indicator for connection */
@@ -90,7 +99,7 @@
 }
 
 .statusIndicator.connected {
-    background-color: var(--color-neon-green);
+    background-color: var(--color-text-active);
     animation: pulse 2s infinite;
 }
 
@@ -107,51 +116,4 @@
         opacity: 0.7;
         transform: scale(1);
     }
-}
-
-/* Custom Bluetooth icon using CSS only if needed */
-.bluetoothIcon {
-    position: relative;
-    width: 16px;
-    height: 20px;
-}
-
-.bluetoothIcon:before,
-.bluetoothIcon:after {
-    content: "";
-    position: absolute;
-    width: 2px;
-    background-color: currentColor;
-}
-
-.settingsIcon {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-}
-
-.settingsIcon:before {
-    content: "";
-    position: absolute;
-    width: 2px;
-    height: 6px;
-    background-color: currentColor;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.helpIcon {
-    position: relative;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
 }

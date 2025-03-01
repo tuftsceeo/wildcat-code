@@ -1,38 +1,49 @@
-/* MotorDash.module.css - Adjusted for full-width bar graph */
+/* MotorDash.module.css - With theme variables and browser compatibility fixes */
 
 .motorDashContainer {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Tightened gap between motors */
+    gap: 8px;
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
 }
 
 .singleMotorDash {
-    background-color: var(--color-black);
-    border: 2px solid var(--color-blue);
+    background-color: var(--color-panel-background);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
-    padding: 10px; /* Reduced padding to make more compact */
+    padding: 10px;
     width: 100%;
     transition: all var(--transition-normal);
 }
 
 .singleMotorDash.disconnected {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(255, 0, 0, 0.1); /* Fallback for color-mix */
     border-color: var(--color-error);
+}
+
+/* Theme-specific disconnected states */
+body[data-theme="retro"] .singleMotorDash.disconnected {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+body[data-theme="pastel"] .singleMotorDash.disconnected {
+    background-color: rgba(243, 150, 154, 0.1);
+}
+body[data-theme="clean"] .singleMotorDash.disconnected {
+    background-color: rgba(221, 0, 0, 0.1);
 }
 
 .motorHeader {
     display: flex;
     align-items: center;
-    margin-bottom: 5px; /* Reduced margin */
-    padding: 0; /* Removed padding */
+    margin-bottom: 5px;
+    padding: 0;
 }
 
 .portLabel {
-    color: var(--color-white); /* Changed to white as requested */
-    font-family: var(--font-family-primary);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     flex-grow: 1;
@@ -45,9 +56,20 @@
     font-size: var(--font-size-sm);
     margin-right: 8px;
     padding: 2px 5px;
-    background-color: rgba(255, 0, 0, 0.2);
+    background-color: rgba(255, 0, 0, 0.2); /* Fallback for color-mix */
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Theme-specific disconnected label */
+body[data-theme="retro"] .disconnectedLabel {
+    background-color: rgba(255, 0, 0, 0.2);
+}
+body[data-theme="pastel"] .disconnectedLabel {
+    background-color: rgba(243, 150, 154, 0.2);
+}
+body[data-theme="clean"] .disconnectedLabel {
+    background-color: rgba(221, 0, 0, 0.2);
 }
 
 .dismissButton {
@@ -63,14 +85,25 @@
 }
 
 .dismissButton:hover {
+    background-color: rgba(255, 0, 0, 0.2); /* Fallback for color-mix */
+}
+
+/* Theme-specific dismiss button hover */
+body[data-theme="retro"] .dismissButton:hover {
     background-color: rgba(255, 0, 0, 0.2);
+}
+body[data-theme="pastel"] .dismissButton:hover {
+    background-color: rgba(243, 150, 154, 0.2);
+}
+body[data-theme="clean"] .dismissButton:hover {
+    background-color: rgba(221, 0, 0, 0.2);
 }
 
 /* Container for motor controls to ensure proper alignment */
 .motorControlContainer {
     display: flex;
     flex-direction: column;
-    gap: 4px; /* Minimal gap between elements */
+    gap: 4px;
 }
 
 /* Bar visualization styles */
@@ -78,10 +111,10 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    height: 60px; /* Reduced height */
+    height: 60px;
     width: 100%;
-    margin-bottom: 4px; /* Minimal margin before slider */
-    padding: 0 2px; /* Small padding to align with slider */
+    margin-bottom: 4px;
+    padding: 0 2px;
 }
 
 .bar {
@@ -91,7 +124,7 @@
     background-color: var(--color-gray-700);
     cursor: pointer;
     border: none;
-    transition: all 0.2s ease; /* Faster transition */
+    transition: all 0.2s ease;
     padding: 0;
 }
 
@@ -100,7 +133,7 @@
 }
 
 .bar:focus-visible {
-    outline: 2px solid var(--color-blue);
+    outline: 2px solid var(--color-border-inactive);
 }
 
 .forwardBar {
@@ -108,8 +141,8 @@
 }
 
 .forwardBar.active {
-    background-color: var(--color-neon-green);
-    box-shadow: 0 0 6px var(--color-neon-green);
+    background-color: var(--color-motor-main);
+    box-shadow: 0 0 6px var(--color-motor-main);
 }
 
 .backwardBar {
@@ -117,15 +150,15 @@
 }
 
 .backwardBar.active {
-    background-color: #ffff00; /* Yellow for backward */
-    box-shadow: 0 0 6px #ffff00;
+    background-color: var(--color-timer-main);
+    box-shadow: 0 0 6px var(--color-timer-main);
 }
 
 /* Slider control styles */
 .sliderControl {
     display: flex;
     flex-direction: column;
-    gap: 4px; /* Reduced gap */
+    gap: 4px;
 }
 
 /* Container for slider and labels */
@@ -138,56 +171,56 @@
 /* Direction labels */
 .backwardLabel,
 .forwardLabel {
-    font-size: 10px; /* Smaller text */
+    font-size: 10px;
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     white-space: nowrap;
 }
 
 .backwardLabel {
-    color: #ffff00; /* Yellow for backward */
+    color: var(--color-timer-main);
 }
 
 .forwardLabel {
-    color: var(--color-neon-green); /* Green for forward */
+    color: var(--color-motor-main);
 }
 
 /* Slider track */
 .sliderTrack {
     flex: 1;
     position: relative;
-    height: 16px; /* Slightly smaller height */
+    height: 16px;
     border-radius: 8px;
     cursor: pointer;
     background: linear-gradient(
         to right,
-        #ffff00 0%,
-        /* Yellow */ #ffff00 33%,
-        /* Yellow */ var(--color-gray-700) 33%,
+        var(--color-timer-main) 0%,
+        var(--color-timer-main) 33%,
+        var(--color-gray-700) 33%,
         var(--color-gray-700) 67%,
-        var(--color-neon-green) 67%,
-        /* Green */ var(--color-neon-green) 100% /* Green */
+        var(--color-motor-main) 67%,
+        var(--color-motor-main) 100%
     );
     border: 1px solid var(--color-gray-600);
     outline: none;
 }
 
 .sliderTrack:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-blue);
+    box-shadow: 0 0 0 2px var(--color-border-inactive);
 }
 
 /* Slider thumb */
 .sliderThumb {
     position: absolute;
-    width: 22px; /* Slightly smaller */
-    height: 22px; /* Slightly smaller */
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background-color: var(--color-white);
     border: 2px solid var(--color-black);
     transform: translateX(-50%);
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
     z-index: 2;
-    transition: left 0.2s ease; /* Faster transition */
+    transition: left 0.2s ease;
     top: -3px;
     cursor: grab;
 }
@@ -212,27 +245,27 @@
     justify-content: center;
     cursor: pointer;
     opacity: 0.7;
-    transition: all 0.2s ease; /* Faster transition */
+    transition: all 0.2s ease;
     padding: 3px;
     color: var(--color-text-inactive);
-    width: 30px; /* Slightly smaller */
-    height: 30px; /* Slightly smaller */
+    width: 30px;
+    height: 30px;
 }
 
 .positionIcon:hover:not(:disabled) {
     opacity: 1;
-    color: var(--color-white);
+    color: var(--color-text-active);
 }
 
 .positionIcon:focus-visible {
-    outline: 2px solid var(--color-blue);
+    outline: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-sm);
 }
 
 .positionIcon.active {
     opacity: 1;
     transform: scale(1.1);
-    color: var(--color-white);
+    color: var(--color-text-active);
 }
 
 /* For icons that need to be flipped horizontally */
@@ -257,7 +290,7 @@
     gap: var(--spacing-3);
     justify-content: center;
     padding: var(--spacing-4);
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     border-radius: var(--radius-md);
     text-transform: uppercase;
@@ -265,15 +298,36 @@
 }
 
 .noConnection {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(255, 0, 0, 0.1); /* Fallback */
     color: var(--color-error);
     border: var(--border-width-standard) solid var(--color-error);
 }
 
 .noMotors {
-    background-color: rgba(255, 165, 0, 0.1);
+    background-color: rgba(255, 165, 0, 0.1); /* Fallback */
     color: var(--color-warning);
     border: var(--border-width-standard) solid var(--color-warning);
+}
+
+/* Theme-specific message backgrounds */
+body[data-theme="retro"] .noConnection {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+body[data-theme="pastel"] .noConnection {
+    background-color: rgba(243, 150, 154, 0.1);
+}
+body[data-theme="clean"] .noConnection {
+    background-color: rgba(221, 0, 0, 0.1);
+}
+
+body[data-theme="retro"] .noMotors {
+    background-color: rgba(255, 165, 0, 0.1);
+}
+body[data-theme="pastel"] .noMotors {
+    background-color: rgba(255, 187, 137, 0.1);
+}
+body[data-theme="clean"] .noMotors {
+    background-color: rgba(255, 102, 0, 0.1);
 }
 
 .noConnection svg,

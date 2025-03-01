@@ -1,93 +1,143 @@
 /**
  * @file SettingsCarousel.jsx
- * @description A carousel-style navigation component for settings tabs
- * with smooth transitions between different setting categories.
+ * @description Improved carousel for settings tabs with animation and proper centering
  */
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import styles from "./SettingsCarousel.module.css";
+import "./SettingsCarousel.module.css";
 
 /**
- * SettingsCarousel component for tabbed navigation with a carousel effect
+ * Settings tab carousel with proper centering and animations
  *
- * @component
- * @param {Object} props - Component props
- * @param {Array} props.tabs - Array of tab objects with id, icon, name, color, and available properties
- * @param {number} props.activeTab - Index of the currently active tab
- * @param {Function} props.setActiveTab - Function to update the active tab index
- * @returns {JSX.Element} Carousel navigation for settings
+ * @param {Object} props Component props
+ * @param {Array} props.tabs Array of tab objects
+ * @param {number} props.activeTab Currently active tab index
+ * @param {Function} props.setActiveTab Function to set active tab
  */
 const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
-    const handlePrevTab = () => {
-        setActiveTab((prev) => (prev > 0 ? prev - 1 : tabs.length - 1));
-    };
+    const containerRef = useRef(null);
+    const [containerWidth, setContainerWidth] = useState(0);
+    const tabRefs = useRef([]);
+    const [initialLoad, setInitialLoad] = useState(true);
 
-    const handleNextTab = () => {
-        setActiveTab((prev) => (prev < tabs.length - 1 ? prev + 1 : 0));
-    };
+    // Setup tab refs array
+    useEffect(() => {
+        tabRefs.current = tabRefs.current.slice(0, tabs.length);
+    }, [tabs]);
+
+    // Measure container width for positioning calculations
+    useEffect(() => {
+        if (containerRef.current) {
+            const resizeObserver = new ResizeObserver((entries) => {
+                for (let entry of entries) {
+                    setContainerWidth(entry.contentRect.width);
+                }
+            });
+
+            resizeObserver.observe(containerRef.current);
+            return () => resizeObserver.disconnect();
+        }
+    }, []);
+
+    // Center the active tab when it changes
+    useEffect(() => {
+        if (!containerRef.current || !tabRefs.current[activeTab]) return;
+
+        // Skip animation on initial load
+        if (initialLoad) {
+            setInitialLoad(false);
+            return;
+        }
+
+        const container = containerRef.current;
+        const tab = tabRefs.current[activeTab];
+
+        // Calculate target scroll position to center the active tab
+        const tabRect = tab.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        const targetScroll =
+            tab.offsetLeft - containerWidth / 2 + tabRect.width / 2;
+
+        // Animate scroll
+        container.style.scrollBehavior = "smooth";
+        container.scrollLeft = targetScroll;
+
+        // Reset scroll behavior after animation
+        setTimeout(() => {
+            container.style.scrollBehavior = "auto";
+        }, 300);
+    }, [activeTab, containerWidth, initialLoad]);
 
     return (
-        <div className={styles.carouselContainer}>
+        <div className="settings-carousel">
             <button
-                className={`${styles.navButton} ${styles.prevButton}`}
-                onClick={handlePrevTab}
+                className="carousel-nav carousel-prev"
+                onClick={() => setActiveTab(Math.max(0, activeTab - 1))}
                 aria-label="Previous tab"
             >
                 <ChevronLeft size={24} />
             </button>
 
-            <div className={styles.tabsContainer}>
-                {tabs.map((tab, index) => {
-                    // Calculate position relative to active tab for carousel effect
-                    const position = index - activeTab;
-                    const isDisabled = !tab.available;
+            <div
+                className="carousel-container"
+                ref={containerRef}
+            >
+                <div className="carousel-track">
+                    {tabs.map((tab, index) => {
+                        const isActive = index === activeTab;
+                        const isDisabled = !tab.available;
 
-                    return (
-                        <button
-                            key={tab.id}
-                            className={`${styles.tabButton} 
-                         ${
-                             index === activeTab
-                                 ? styles.tabActive
-                                 : styles.tabInactive
-                         }
-                         ${isDisabled ? styles.tabDisabled : ""}`}
-                            onClick={() => !isDisabled && setActiveTab(index)}
-                            disabled={isDisabled}
-                            style={{
-                                borderColor:
-                                    index === activeTab
+                        return (
+                            <button
+                                key={tab.id}
+                                ref={(el) => (tabRefs.current[index] = el)}
+                                className={`carousel-tab ${
+                                    isActive ? "active" : ""
+                                } ${isDisabled ? "disabled" : ""}`}
+                                onClick={() =>
+                                    !isDisabled && setActiveTab(index)
+                                }
+                                disabled={isDisabled}
+                                style={{
+                                    borderColor: isActive
                                         ? tab.color
                                         : "transparent",
-                            }}
-                            aria-label={`${tab.name} settings tab${
-                                isDisabled ? " (coming soon)" : ""
-                            }`}
-                            aria-selected={index === activeTab}
-                            role="tab"
-                        >
-                            <div
-                                className={styles.tabIcon}
-                                style={{ color: tab.color }}
+                                    color: isActive
+                                        ? tab.color
+                                        : "var(--color-text-inactive)",
+                                }}
+                                aria-label={`${tab.name} settings tab${
+                                    isDisabled ? " (coming soon)" : ""
+                                }`}
+                                aria-selected={isActive}
+                                role="tab"
                             >
-                                {tab.icon}
-                            </div>
-                            <span className={styles.tabLabel}>{tab.name}</span>
+                                <div
+                                    className="tab-icon"
+                                    style={{ color: tab.color }}
+                                >
+                                    {tab.icon}
+                                </div>
+                                <span className="tab-name">{tab.name}</span>
 
-                            {isDisabled && (
-                                <span className={styles.disabledBadge}>
-                                    Coming Soon
-                                </span>
-                            )}
-                        </button>
-                    );
-                })}
+                                {isDisabled && (
+                                    <span className="coming-soon-badge">
+                                        Coming Soon
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             <button
-                className={`${styles.navButton} ${styles.nextButton}`}
-                onClick={handleNextTab}
+                className="carousel-nav carousel-next"
+                onClick={() =>
+                    setActiveTab(Math.min(tabs.length - 1, activeTab + 1))
+                }
                 aria-label="Next tab"
             >
                 <ChevronRight size={24} />

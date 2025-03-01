@@ -1,5 +1,4 @@
-/* CodingTrack.module.css - With Motor Animation */
-/* Using design tokens from retro-ui-tokens.css */
+/* CodingTrack.module.css - With theme variables */
 
 .trackContainer {
     position: relative;
@@ -9,9 +8,9 @@
     justify-content: center;
     height: 100%;
     width: 100%;
-    border: 2px solid var(--color-blue);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
-    background-color: var(--color-black);
+    background-color: var(--color-panel-background);
     padding: var(--spacing-4);
 }
 
@@ -19,7 +18,7 @@
     position: absolute;
     top: var(--spacing-4);
     left: var(--spacing-4);
-    color: var(--color-blue);
+    color: var(--color-border-inactive);
     width: 48px;
     height: 48px;
     opacity: 0.6;
@@ -97,7 +96,7 @@
 }
 
 .motorLabel {
-    color: var(--color-neon-green);
+    color: var(--color-motor-main);
     text-align: center;
     text-transform: uppercase;
     font-size: var(--font-size-lg);
@@ -135,12 +134,12 @@
 
 .timerIcon {
     font-size: 48px;
-    color: var(--color-blue);
+    color: var(--color-action-secondary);
     margin-bottom: var(--spacing-2);
 }
 
 .timerLabel {
-    color: var(--color-blue);
+    color: var(--color-action-secondary);
     text-transform: uppercase;
     font-size: var(--font-size-lg);
     margin-top: var(--spacing-2);
@@ -148,34 +147,32 @@
 
 .timerValue {
     font-size: 48px;
-    color: var(--color-yellow);
+    color: var(--color-timer-main);
     margin: var(--spacing-2) 0;
 }
 
 .timerUnit {
     font-size: var(--font-size-sm);
-    color: var(--color-yellow);
+    color: var(--color-timer-main);
     text-transform: uppercase;
 }
 
 /* Test button at bottom as in FIGMA */
 .testButton {
-    background-color: #00bfff;
+    background-color: var(--color-action-secondary);
     border: none;
     border-radius: var(--radius-md);
-    color: black;
-    font-family: var(--font-family-primary);
+    color: var(--color-button-active-text);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
     padding: var(--spacing-2) var(--spacing-6);
     cursor: pointer;
     text-transform: uppercase;
-    position: absolute; /* Position it absolutely */
-    bottom: calc(
-        var(--spacing-4) + 40px
-    ); /* Position it above the next button with some gap */
-    width: 100px; /* Match Play button width */
-    z-index: 2; /* Ensure it's above other elements */
+    position: absolute;
+    bottom: calc(var(--spacing-4) + 40px);
+    width: 100px;
+    z-index: 2;
 }
 
 .testButton:hover {
@@ -187,7 +184,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Allow clicks to pass through to underlying elements */
+    pointer-events: none;
 }
 
 .navButton {
@@ -201,7 +198,7 @@
     justify-content: center;
     transition: all var(--transition-normal);
     position: absolute;
-    pointer-events: auto; /* Re-enable clicks on the buttons */
+    pointer-events: auto;
 }
 
 .prevButton {
@@ -238,11 +235,11 @@
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-bottom: 20px solid var(--color-white);
+    border-bottom: 20px solid var(--color-text-inactive);
 }
 
 .prevButton:disabled:before {
-    border-bottom-color: var(--color-gray-500);
+    border-bottom-color: var(--color-disabled);
 }
 
 /* Next button triangle */
@@ -253,11 +250,11 @@
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 20px solid var(--color-white);
+    border-top: 20px solid var(--color-text-inactive);
 }
 
 .nextButton:disabled:before {
-    border-top-color: var(--color-gray-500);
+    border-top-color: var(--color-disabled);
 }
 
 /* Slot description (hidden/removed as requested) */
@@ -265,8 +262,7 @@
     display: none;
 }
 
-/* Add these styles to CodingTrack.module.css */
-
+/* Instruction block styles */
 .instructionBlock {
     display: flex;
     flex-direction: column;

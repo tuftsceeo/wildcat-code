@@ -1,41 +1,47 @@
 /**
  * @file ThemeSettings.jsx
- * @description Component for selecting visual themes and accessibility font options
- * with live preview of how the UI will appear with the selected options.
- * @author Claude
+ * @description Component for selecting visual themes with debugging
  */
 
-import React, { useState } from "react";
-import styles from "./ThemeSettings.module.css";
-import { useCustomization } from "./CustomizationContext";
+import React from "react";
+import { useCustomization } from "../CustomizationContext";
 
 /**
- * Theme settings component with live preview
- *
- * @component
- * @returns {JSX.Element} Theme settings panel
+ * Theme settings component with error handling
  */
 const ThemeSettings = () => {
-    // Get theme settings from context
+    console.log("ThemeSettings rendering...");
+
+    // Get theme settings from context - add a default in case context is missing
+    const contextValue = useCustomization() || {
+        theme: "retro",
+        setTheme: () => {},
+        useDyslexiaFont: false,
+        setUseDyslexiaFont: () => {},
+    };
     const { theme, setTheme, useDyslexiaFont, setUseDyslexiaFont } =
-        useCustomization();
+        contextValue;
+
+    console.log("Current theme from context:", theme);
 
     // Define available themes
     const themes = [
         {
             id: "retro",
-            name: "Neon",
-            colors: ["#00ff00", "#00aaff", "#ff00ff"],
+            name: "RETRO",
+            description: "Neon arcade style with vibrant animations",
+            colors: ["#00ff00", "#00bfff", "#ff00ff"],
             preview: {
                 bg: "#000000",
                 text: "#00ff00",
-                buttonBg: "#00aaff",
+                buttonBg: "#00bfff",
                 buttonText: "#000000",
             },
         },
         {
             id: "pastel",
-            name: "Pastel",
+            name: "PASTEL",
+            description: "Soft colors with gentle contrast",
             colors: ["#78C2AD", "#6CC3D5", "#F3969A"],
             preview: {
                 bg: "#F8F9FA",
@@ -46,7 +52,8 @@ const ThemeSettings = () => {
         },
         {
             id: "clean",
-            name: "Clean",
+            name: "CLEAN",
+            description: "High contrast with clean layout",
             colors: ["#00AA55", "#0066CC", "#FF6600"],
             preview: {
                 bg: "#FFFFFF",
@@ -57,62 +64,123 @@ const ThemeSettings = () => {
         },
     ];
 
-    // Get current theme preview colors
-    const currentTheme = themes.find((t) => t.id === theme) || themes[0];
+    // Get current theme preview colors with fallback for safety
+    const currentTheme = themes.find((t) => t.id === theme);
+    console.log("Found matching theme object:", currentTheme);
+
+    // Default fallback theme if nothing matches (shouldn't happen, but prevents errors)
+    const fallbackTheme = {
+        preview: {
+            bg: "#000000",
+            text: "#FFFFFF",
+            buttonBg: "#0088FF",
+            buttonText: "#FFFFFF",
+        },
+    };
+
+    // Use a safe theme object that won't cause errors
+    const safeTheme = currentTheme || fallbackTheme;
+    console.log("Using theme for rendering:", safeTheme);
 
     return (
-        <div className={styles.container}>
-            <div className={styles.title}>Choose Theme</div>
+        <div className="theme-settings-container">
+            <div className="theme-title">Choose Theme</div>
 
-            <div className={styles.themesContainer}>
+            <div className="themes-container">
                 {themes.map((themeOption) => (
                     <button
                         key={themeOption.id}
-                        className={`${styles.themeButton} ${
-                            theme === themeOption.id ? styles.activeTheme : ""
+                        className={`theme-button ${
+                            theme === themeOption.id ? "active-theme" : ""
                         }`}
-                        onClick={() => setTheme(themeOption.id)}
+                        onClick={() => {
+                            console.log("Setting theme to:", themeOption.id);
+                            setTheme(themeOption.id);
+                        }}
                         aria-pressed={theme === themeOption.id}
+                        style={{
+                            border: `2px solid ${
+                                theme === themeOption.id
+                                    ? "#ff00ff"
+                                    : "transparent"
+                            }`,
+                            backgroundColor: "#333",
+                            padding: "12px",
+                            margin: "8px",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                        }}
                     >
-                        <div className={styles.themeSwatches}>
+                        <div style={{ display: "flex", marginBottom: "8px" }}>
                             {themeOption.colors.map((color, i) => (
                                 <div
                                     key={i}
-                                    className={styles.colorSwatch}
-                                    style={{ backgroundColor: color }}
+                                    style={{
+                                        backgroundColor: color,
+                                        width: "25px",
+                                        height: "50px",
+                                        marginRight: "4px",
+                                        borderRadius: "4px",
+                                    }}
                                 />
                             ))}
                         </div>
-                        <span className={styles.themeName}>
+                        <span style={{ color: "white" }}>
                             {themeOption.name}
                         </span>
                     </button>
                 ))}
             </div>
 
-            {/* Live theme preview */}
-            <div className={styles.previewContainer}>
-                <div className={styles.previewTitle}>Preview:</div>
+            {/* Live theme preview using inline styles for safety */}
+            <div style={{ marginTop: "20px" }}>
                 <div
-                    className={styles.previewContent}
                     style={{
-                        backgroundColor: currentTheme.preview.bg,
+                        color: "#ff00ff",
+                        marginBottom: "8px",
+                        fontSize: "18px",
+                    }}
+                >
+                    Preview:
+                </div>
+                <div
+                    style={{
+                        backgroundColor: safeTheme.preview.bg,
+                        color: safeTheme.preview.text,
+                        padding: "16px",
+                        borderRadius: "8px",
                         fontFamily: useDyslexiaFont
                             ? "'OpenDyslexic', sans-serif"
-                            : "'Kode Mono', monospace",
+                            : theme === "retro"
+                            ? "'Kode Mono', monospace"
+                            : theme === "pastel"
+                            ? "'Georgia', serif"
+                            : "'Arial', sans-serif",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        minHeight: "120px",
                     }}
                 >
                     <div
-                        className={styles.previewHeader}
-                        style={{ color: currentTheme.preview.text }}
+                        style={{
+                            color: safeTheme.preview.text,
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                            marginBottom: "16px",
+                        }}
                     >
                         Robot Controls
                     </div>
                     <button
-                        className={styles.previewButton}
                         style={{
-                            backgroundColor: currentTheme.preview.buttonBg,
-                            color: currentTheme.preview.buttonText,
+                            backgroundColor: safeTheme.preview.buttonBg,
+                            color: safeTheme.preview.buttonText,
+                            border: "none",
+                            padding: "8px 16px",
+                            borderRadius: "4px",
+                            cursor: "pointer",
                         }}
                     >
                         Forward
@@ -121,31 +189,68 @@ const ThemeSettings = () => {
             </div>
 
             {/* Font options */}
-            <div className={styles.fontOptions}>
-                <h3 className={styles.fontOptionsHeader}>Reading Support</h3>
+            <div
+                style={{
+                    marginTop: "20px",
+                    backgroundColor: "#333",
+                    padding: "16px",
+                    borderRadius: "8px",
+                }}
+            >
+                <h3 style={{ color: "#ff00ff", marginBottom: "16px" }}>
+                    Reading Support
+                </h3>
 
-                <div className={styles.fontToggle}>
-                    <span className={styles.toggleLabel}>
-                        Easy-to-Read Font
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                    }}
+                >
+                    <span style={{ color: "white" }}>
+                        Dyslexia-Friendly Font
                     </span>
                     <button
-                        className={`${styles.toggleSwitch} ${
-                            useDyslexiaFont ? styles.toggleSwitchActive : ""
-                        }`}
-                        onClick={() => setUseDyslexiaFont(!useDyslexiaFont)}
-                        aria-pressed={useDyslexiaFont}
+                        onClick={() => {
+                            console.log(
+                                "Toggling dyslexia font:",
+                                !useDyslexiaFont,
+                            );
+                            setUseDyslexiaFont(!useDyslexiaFont);
+                        }}
+                        // aria-pressed={useDyslexiaFont}
                         role="switch"
                         aria-checked={useDyslexiaFont}
+                        style={{
+                            position: "relative",
+                            width: "48px",
+                            height: "24px",
+                            borderRadius: "12px",
+                            backgroundColor: useDyslexiaFont
+                                ? "#c026d3"
+                                : "#666",
+                            border: "none",
+                            cursor: "pointer",
+                        }}
                     >
                         <div
-                            className={`${styles.toggleHandle} ${
-                                useDyslexiaFont ? styles.toggleHandleActive : ""
-                            }`}
+                            style={{
+                                position: "absolute",
+                                top: "2px",
+                                left: useDyslexiaFont ? "26px" : "2px",
+                                width: "20px",
+                                height: "20px",
+                                borderRadius: "50%",
+                                backgroundColor: "white",
+                                transition: "all 0.25s ease",
+                            }}
                         ></div>
                     </button>
                 </div>
 
-                <p className={styles.fontDescription}>
+                <p style={{ color: "#999", fontSize: "14px" }}>
                     {useDyslexiaFont
                         ? "Using OpenDyslexic font to improve readability"
                         : "Using standard font"}

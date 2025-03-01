@@ -1,57 +1,49 @@
-/* retro-ui-tokens.css - Comprehensive design tokens for robot control app */
+/* retro-ui-tokens.css - Comprehensive design tokens with theme support */
 @import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Georgia&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Arial&display=swap");
 
+/* Base root variables - will be overridden by theme-specific variables */
 :root {
-    /* ===== COLOR TOKENS ===== */
+    /* ===== SHARED TOKENS (unchanged across themes) ===== */
 
-    /* Base Colors */
-    --color-neon-green: #00ff00;
-    --color-blue: #00bfff;
-    --color-light-blue: #87cefa;
-    --color-yellow: #ffff00;
-    --color-black: #000000;
-    --color-dark-gray: #121212;
-    --color-gray-800: #333333;
-    --color-gray-700: #444444;
-    --color-gray-600: #666666;
-    --color-gray-500: #777777;
-    --color-gray-400: #999999;
-    --color-gray-300: #aaaaaa;
-    --color-gray-200: #cccccc;
-    --color-gray-100: #eeeeee;
-    --color-white: #ffffff;
-    --color-red: #ff0000;
-    --color-orange: #ffa500;
+    /* Spacing */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem; /* 8px */
+    --spacing-3: 0.75rem; /* 12px */
+    --spacing-4: 1rem; /* 16px */
+    --spacing-5: 1.25rem; /* 20px */
+    --spacing-6: 1.5rem; /* 24px */
+    --spacing-8: 2rem; /* 32px */
+    --spacing-10: 2.5rem; /* 40px */
+    --spacing-12: 3rem; /* 48px */
+    --spacing-16: 4rem; /* 64px */
+    --spacing-20: 5rem; /* 80px */
 
-    /* Semantic Color Tokens - Theme: Retro */
-    --color-background: var(--color-black);
-    --color-border-inactive: var(--color-blue);
-    --color-border-active: var(--color-neon-green);
-    --color-text-inactive: var(--color-white);
-    --color-text-active: var(--color-neon-green);
-    --color-text-secondary: var(--color-light-blue);
-    --color-action-primary: var(--color-neon-green);
-    --color-action-secondary: var(--color-light-blue);
-    --color-action-tertiary: var(--color-yellow);
-    --color-button-default: transparent;
-    --color-button-default-text: var(--color-white);
-    --color-button-active: var(--color-neon-green);
-    --color-button-active-text: var(--color-black);
-    --color-panel-background: var(--color-black);
-    --color-panel-border: var(--color-blue);
-    --color-error: var(--color-red);
-    --color-warning: var(--color-orange);
-    --color-disabled: var(--color-gray-600);
-    --color-motor-main: var(--color-neon-green);
-    --color-timer-main: var(--color-yellow);
-    --color-sensor-main: var(--color-light-blue);
+    /* Border Radius */
+    --radius-none: 0;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
 
-    /* ===== TYPOGRAPHY TOKENS ===== */
+    /* Border Width */
+    --border-width-none: 0;
+    --border-width-thin: 1px;
+    --border-width-standard: 2px;
+    --border-width-thick: 3px;
+    --border-width-extra: 4px;
 
-    /* Font Family */
-    --font-family-primary: "Kode Mono", monospace;
-    --font-family-fallback: "Courier New", monospace;
-    --font-family-dyslexic: "OpenDyslexic", "Comic Sans MS", sans-serif;
+    /* Z-Index Layers */
+    --z-index-below: -1;
+    --z-index-base: 0;
+    --z-index-above: 1;
+    --z-index-dropdown: 10;
+    --z-index-popover: 20;
+    --z-index-modal: 30;
+    --z-index-overlay: 40;
+    --z-index-toast: 50;
 
     /* Font Sizes */
     --font-size-xs: 0.75rem; /* 12px */
@@ -80,61 +72,7 @@
     --letter-spacing-wider: 0.05em;
     --letter-spacing-widest: 0.1em;
 
-    /* ===== SPACING TOKENS ===== */
-
-    --spacing-1: 0.25rem; /* 4px */
-    --spacing-2: 0.5rem; /* 8px */
-    --spacing-3: 0.75rem; /* 12px */
-    --spacing-4: 1rem; /* 16px */
-    --spacing-5: 1.25rem; /* 20px */
-    --spacing-6: 1.5rem; /* 24px */
-    --spacing-8: 2rem; /* 32px */
-    --spacing-10: 2.5rem; /* 40px */
-    --spacing-12: 3rem; /* 48px */
-    --spacing-16: 4rem; /* 64px */
-    --spacing-20: 5rem; /* 80px */
-
-    /* ===== BORDER TOKENS ===== */
-
-    /* Border Radius */
-    --radius-none: 0;
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-full: 9999px;
-
-    /* Border Width */
-    --border-width-none: 0;
-    --border-width-thin: 1px;
-    --border-width-standard: 2px;
-    --border-width-thick: 3px;
-    --border-width-extra: 4px;
-
-    /* ===== EFFECT TOKENS ===== */
-
-    /* Box Shadows */
-    --shadow-none: none;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-
-    /* Glow Effects */
-    --glow-neon-green: 0 0 4px rgba(0, 255, 0, 0.5);
-    --glow-blue: 0 0 4px rgba(0, 191, 255, 0.5);
-    --glow-yellow: 0 0 4px rgba(255, 255, 0, 0.5);
-    --glow-white: 0 0 4px rgba(255, 255, 255, 0.5);
-
-    /* Opacity */
-    --opacity-0: 0;
-    --opacity-25: 0.25;
-    --opacity-50: 0.5;
-    --opacity-75: 0.75;
-    --opacity-100: 1;
-
-    /* ===== ANIMATION TOKENS ===== */
-
-    /* Duration */
+    /* Transition Durations */
     --transition-instant: 50ms;
     --transition-fast: 150ms;
     --transition-normal: 250ms;
@@ -147,242 +85,216 @@
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* ===== LAYOUT TOKENS ===== */
+    /* Base grays (shared) */
+    --color-gray-900: #121212;
+    --color-gray-800: #333333;
+    --color-gray-700: #444444;
+    --color-gray-600: #666666;
+    --color-gray-500: #777777;
+    --color-gray-400: #999999;
+    --color-gray-300: #aaaaaa;
+    --color-gray-200: #cccccc;
+    --color-gray-100: #eeeeee;
 
-    /* Panel Dimensions */
+    /* Component dimensions */
     --panel-width-step: 220px;
     --panel-width-control: 280px;
     --panel-width-settings: 320px;
     --panel-spacing: var(--spacing-4);
     --header-height: 60px;
-
-    /* Z-Index Layers */
-    --z-index-below: -1;
-    --z-index-base: 0;
-    --z-index-above: 1;
-    --z-index-dropdown: 10;
-    --z-index-popover: 20;
-    --z-index-modal: 30;
-    --z-index-overlay: 40;
-    --z-index-toast: 50;
-
-    /* ===== COMPONENT-SPECIFIC TOKENS ===== */
-
-    /* RunMenu (step-panel) */
-    --step-panel-border-width: var(--border-width-standard);
-    --step-panel-border-color: var(--color-border-inactive);
-    --step-panel-border-radius: var(--radius-md);
-    --step-button-inactive-bg: transparent;
-    --step-button-inactive-text: var(--color-text-inactive);
-    --step-button-active-bg: transparent;
-    --step-button-active-text: var(--color-text-active);
-    --step-button-active-border: var(--color-border-active);
-    --step-button-active-glow: var(--glow-neon-green);
-    --play-button-bg: var(--color-action-primary);
-    --play-button-text: var(--color-black);
-
-    /* CodingTrack (center-panel) */
-    --center-panel-border-width: var(--border-width-standard);
-    --center-panel-border-color: var(--color-border-inactive);
-    --center-panel-border-radius: var(--radius-md);
-    --visualization-transition: opacity var(--transition-slow);
-    --visualization-icon-size: 48px;
-    --visualization-icon-color-motor: var(--color-neon-green);
-    --visualization-icon-color-distance: var(--color-light-blue);
-    --visualization-label-size: var(--font-size-lg);
-    --visualization-label-color-motor: var(--color-neon-green);
-    --visualization-label-color-distance: var(--color-light-blue);
-
-    /* FunctionDefault (control-panel) */
-    --control-panel-border-width: var(--border-width-standard);
-    --control-panel-border-color: var(--color-border-inactive);
-    --control-panel-border-radius: var(--radius-md);
-    --action-button-border: var(--border-width-standard) solid
-        var(--color-neon-green);
-    --action-button-color: var(--color-neon-green);
-    --sense-button-border: var(--border-width-standard) solid var(--color-blue);
-    --sense-button-color: var(--color-white);
-    --menu-item-border: var(--border-width-standard) solid var(--color-blue);
-    --menu-item-color: var(--color-text-inactive);
-    --menu-item-active-border: var(--border-width-standard) solid
-        var(--color-neon-green);
-    --menu-item-active-color: var(--color-neon-green);
-    --dropdown-transition: max-height var(--transition-normal) ease-in-out;
-    --motor-controls-bg: rgba(0, 255, 0, 0.05);
-    --motor-controls-border: var(--border-width-standard) solid
-        var(--color-neon-green);
-    --motor-header-color: var(--color-neon-green);
-    --distance-controls-bg: rgba(0, 191, 255, 0.05);
-    --distance-controls-border: var(--border-width-standard) solid
-        var(--color-blue);
-    --distance-header-color: var(--color-light-blue);
-    --slider-height: 10px;
-    --slider-bg: var(--color-gray-800);
-    --slider-thumb-size: 20px;
-    --slider-thumb-color-motor: var(--color-neon-green);
-    --slider-thumb-color-distance: var(--color-light-blue);
-
-    /* BluetoothUI */
     --bluetooth-button-size: 40px;
     --bluetooth-icon-size: 24px;
-    --bluetooth-icon-color: var(--color-blue);
-    --bluetooth-icon-connected-color: var(--color-neon-green);
     --bluetooth-status-indicator-size: 10px;
-
-    /* TimeDash */
-    --time-input-bg: transparent;
-    --time-input-border: var(--border-width-standard) solid var(--color-yellow);
-    --time-input-color: var(--color-yellow);
-    --time-label-color: var(--color-yellow);
-
-    /* MotorDash */
-    --motor-button-inactive-bg: transparent;
-    --motor-button-inactive-border: var(--border-width-standard) solid
-        var(--color-blue);
-    --motor-button-inactive-text: var(--color-text-inactive);
-    --motor-button-active-bg: transparent;
-    --motor-button-active-border: var(--border-width-standard) solid
-        var(--color-neon-green);
-    --motor-button-active-text: var(--color-neon-green);
-    --motor-button-active-glow: var(--glow-neon-green);
-    --motor-disconnected-indicator: var(--color-red);
-    --motor-port-label-color: var(--color-neon-green);
-    --motor-speed-indicator-size: 4px;
-    --motor-animation-speed-fast: 1s;
-    --motor-animation-speed-medium: 2s;
-    --motor-animation-speed-slow: 3s;
-
-    /* CustomizationPage */
-    --settings-modal-bg: rgba(0, 0, 0, 0.9);
-    --settings-panel-bg: var(--color-dark-gray);
-    --settings-panel-border: var(--border-width-standard) solid
-        var(--color-blue);
-    --settings-panel-radius: var(--radius-md);
-    --settings-option-inactive-bg: transparent;
-    --settings-option-inactive-border: var(--border-width-standard) solid
-        var(--color-gray-600);
-    --settings-option-active-bg: rgba(0, 255, 0, 0.1);
-    --settings-option-active-border: var(--border-width-standard) solid
-        var(--color-neon-green);
-    --settings-close-button-size: 30px;
-
-    /* Text Complexity Feature Placeholders */
-    --text-complexity-level-bg: transparent;
-    --text-complexity-level-active-bg: var(--color-action-primary);
-    --text-complexity-level-inactive-bg: var(--color-gray-800);
-    --text-complexity-option-spacing: var(--spacing-2);
-
-    /* Theme Selector Feature Placeholders */
-    --theme-option-size: 60px;
-    --theme-option-border-width: var(--border-width-standard);
-    --theme-option-spacing: var(--spacing-2);
-    --theme-option-radius: var(--radius-md);
-    --theme-color-preview-height: 6px;
-
-    /* Voice Feature Placeholders */
-    --voice-option-bg: transparent;
-    --voice-option-border: var(--border-width-standard) solid var(--color-blue);
-    --voice-option-active-border: var(--border-width-standard) solid
-        var(--color-neon-green);
-    --voice-icon-size: 24px;
-    --voice-options-grid-columns: 2;
 }
 
-/* Basic utility classes for the retro theme */
-.retro-panel {
-    background-color: var(--color-background);
-    border: var(--border-width-standard) solid var(--color-border-inactive);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-4);
-    color: var(--color-text-inactive);
+/* RETRO Theme (default) */
+:root,
+body[data-theme="retro"] {
+    /* Font Family */
+    --font-family-primary: "Kode Mono", monospace;
+    --font-family-fallback: "Courier New", monospace;
+    --font-family-dyslexic: "OpenDyslexic", "Comic Sans MS", sans-serif;
+    --font-family-active: var(--font-family-primary);
+
+    /* Base Colors */
+    --color-neon-green: #00ff00;
+    --color-blue: #00bfff;
+    --color-light-blue: #87cefa;
+    --color-yellow: #ffff00;
+    --color-red: #ff0000;
+    --color-orange: #ffa500;
+    --color-fuchsia: #ff00ff;
+    --color-black: #000000;
+    --color-white: #ffffff;
+
+    /* Semantic Color Tokens - Theme: Retro */
+    --color-background: var(--color-black);
+    --color-border-inactive: var(--color-blue);
+    --color-border-active: var(--color-neon-green);
+    --color-text-inactive: var(--color-white);
+    --color-text-active: var(--color-neon-green);
+    --color-text-secondary: var(--color-light-blue);
+    --color-action-primary: var(--color-neon-green);
+    --color-action-secondary: var(--color-light-blue);
+    --color-action-tertiary: var(--color-yellow);
+    --color-button-default: transparent;
+    --color-button-default-text: var(--color-white);
+    --color-button-active: var(--color-neon-green);
+    --color-button-active-text: var(--color-black);
+    --color-panel-background: var(--color-black);
+    --color-panel-border: var(--color-blue);
+    --color-error: var(--color-red);
+    --color-warning: var(--color-orange);
+    --color-disabled: var(--color-gray-600);
+    --color-motor-main: var(--color-neon-green);
+    --color-timer-main: var(--color-yellow);
+    --color-sensor-main: var(--color-light-blue);
+
+    /* Glow Effects */
+    --glow-neon-green: 0 0 8px rgba(0, 255, 0, 0.7);
+    --glow-blue: 0 0 8px rgba(0, 191, 255, 0.7);
+    --glow-yellow: 0 0 8px rgba(255, 255, 0, 0.7);
+    --glow-white: 0 0 8px rgba(255, 255, 255, 0.7);
+
+    /* Animation duration factors */
+    --animation-speed-multiplier: 1.3;
 }
 
-.retro-heading {
-    color: var(--color-text-active);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
+/* PASTEL Theme */
+body[data-theme="pastel"] {
+    /* Font Family */
+    --font-family-primary: "Georgia", "Times New Roman", serif;
+    --font-family-fallback: "Times New Roman", serif;
+    --font-family-active: var(--font-family-primary);
+
+    /* Base Colors */
+    --color-neon-green: #78c2ad; /* Replace with pastel teal-green */
+    --color-blue: #6cc3d5; /* Replace with pastel cornflower blue */
+    --color-light-blue: #a5d8e6; /* Lighter blue */
+    --color-yellow: #f3dc6d; /* Soft yellow */
+    --color-red: #f3969a; /* Soft pink instead of red */
+    --color-orange: #ffbb89; /* Soft orange */
+    --color-fuchsia: #e8a2e8; /* Soft pink/purple */
+    --color-black: #3e4551; /* Slate instead of black */
+    --color-white: #f8f9fa; /* Very light gray background */
+
+    /* Semantic Color Tokens - Theme: Pastel */
+    --color-background: var(--color-white);
+    --color-border-inactive: var(--color-blue);
+    --color-border-active: var(--color-neon-green);
+    --color-text-inactive: var(--color-black);
+    --color-text-active: var(--color-neon-green);
+    --color-text-secondary: var(--color-blue);
+    --color-action-primary: var(--color-neon-green);
+    --color-action-secondary: var(--color-blue);
+    --color-action-tertiary: var(--color-yellow);
+    --color-button-default: transparent;
+    --color-button-default-text: var(--color-black);
+    --color-button-active: var(--color-neon-green);
+    --color-button-active-text: var(--color-white);
+    --color-panel-background: var(--color-white);
+    --color-panel-border: var(--color-blue);
+    --color-error: var(--color-red);
+    --color-warning: var(--color-orange);
+    --color-disabled: var(--color-gray-400);
+    --color-motor-main: var(--color-neon-green);
+    --color-timer-main: var(--color-yellow);
+    --color-sensor-main: var(--color-blue);
+
+    /* Glow Effects - more subtle for pastel theme */
+    --glow-neon-green: 0 0 8px rgba(120, 194, 173, 0.4);
+    --glow-blue: 0 0 8px rgba(108, 195, 213, 0.4);
+    --glow-yellow: 0 0 8px rgba(243, 220, 109, 0.4);
+    --glow-white: 0 0 8px rgba(248, 249, 250, 0.4);
+
+    /* Animation duration factors */
+    --animation-speed-multiplier: 1;
 }
 
-.retro-button {
-    background-color: transparent;
-    border: var(--border-width-standard) solid var(--color-blue);
-    border-radius: var(--radius-md);
-    color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
-    padding: var(--spacing-2) var(--spacing-4);
-    cursor: pointer;
-    transition: all var(--transition-normal);
+/* CLEAN Theme */
+body[data-theme="clean"] {
+    /* Font Family */
+    --font-family-primary: "Arial", sans-serif;
+    --font-family-fallback: "Helvetica", sans-serif;
+    --font-family-active: var(--font-family-primary);
+
+    /* Base Colors */
+    --color-neon-green: #00aa55; /* Deep green */
+    --color-blue: #0066cc; /* Navy blue */
+    --color-light-blue: #4488cc; /* Lighter blue */
+    --color-yellow: #ffcc00; /* Normal yellow */
+    --color-red: #dd0000; /* Standard red */
+    --color-orange: #ff6600; /* Standard orange */
+    --color-fuchsia: #cc33aa; /* Deep pink/purple */
+    --color-black: #000000; /* True black */
+    --color-white: #ffffff; /* True white */
+
+    /* Semantic Color Tokens - Theme: Clean */
+    --color-background: var(--color-white);
+    --color-border-inactive: var(--color-gray-300);
+    --color-border-active: var(--color-neon-green);
+    --color-text-inactive: var(--color-black);
+    --color-text-active: var(--color-neon-green);
+    --color-text-secondary: var(--color-blue);
+    --color-action-primary: var(--color-neon-green);
+    --color-action-secondary: var(--color-blue);
+    --color-action-tertiary: var(--color-yellow);
+    --color-button-default: var(--color-gray-100);
+    --color-button-default-text: var(--color-black);
+    --color-button-active: var(--color-neon-green);
+    --color-button-active-text: var(--color-white);
+    --color-panel-background: var(--color-white);
+    --color-panel-border: var(--color-gray-300);
+    --color-error: var(--color-red);
+    --color-warning: var(--color-orange);
+    --color-disabled: var(--color-gray-400);
+    --color-motor-main: var(--color-neon-green);
+    --color-timer-main: var(--color-yellow);
+    --color-sensor-main: var(--color-blue);
+
+    /* Glow Effects - minimal for clean theme */
+    --glow-neon-green: 0 2px 4px rgba(0, 170, 85, 0.3);
+    --glow-blue: 0 2px 4px rgba(0, 102, 204, 0.3);
+    --glow-yellow: 0 2px 4px rgba(255, 204, 0, 0.3);
+    --glow-white: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    /* Animation duration factors */
+    --animation-speed-multiplier: 0.8;
 }
 
-.retro-button:hover {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
+/* Apply dyslexia font when enabled */
+body.dyslexia-font {
+    --font-family-active: var(--font-family-dyslexic);
 }
 
-.retro-button.active {
-    border-color: var(--color-neon-green);
-    color: var(--color-neon-green);
-    box-shadow: var(--glow-neon-green);
+/* Apply high contrast when enabled */
+body.high-contrast {
+    --color-text-inactive: var(--color-white);
+    --color-background: var(--color-black);
+    --color-panel-background: var(--color-black);
+    --color-border-inactive: var(--color-white);
+    --color-button-default-text: var(--color-white);
 }
 
-.retro-input {
-    background-color: transparent;
-    border: var(--border-width-standard) solid var(--color-blue);
-    border-radius: var(--radius-md);
-    color: var(--color-text-inactive);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
-    padding: var(--spacing-2);
+/* Larger text when enabled */
+body.large-text {
+    --font-size-base: 1.25rem;
+    --font-size-lg: 1.5rem;
+    --font-size-xl: 1.75rem;
+    --font-size-2xl: 2.25rem;
+    --font-size-3xl: 2.75rem;
 }
 
-.retro-input:focus {
-    border-color: var(--color-neon-green);
-    outline: none;
-    box-shadow: var(--glow-neon-green);
+/* Placeholders for OpenDyslexic font for accessibility */
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.woff")
+        format("woff");
+    font-weight: normal;
+    font-style: normal;
 }
 
-.retro-slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: var(--slider-height);
-    background: var(--slider-bg);
-    border-radius: calc(var(--slider-height) / 2);
-    outline: none;
-}
-
-.retro-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: var(--slider-thumb-size);
-    height: var(--slider-thumb-size);
-    background: var(--color-neon-green);
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.retro-slider::-moz-range-thumb {
-    width: var(--slider-thumb-size);
-    height: var(--slider-thumb-size);
-    background: var(--color-neon-green);
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* Animations */
-@keyframes glow {
-    0% {
-        box-shadow: 0 0 5px var(--color-neon-green);
-    }
-    50% {
-        box-shadow: 0 0 15px var(--color-neon-green);
-    }
-    100% {
-        box-shadow: 0 0 5px var(--color-neon-green);
-    }
-}
-
+/* Animations with speed adjustment based on theme */
 @keyframes clockwise {
     from {
         transform: rotate(0deg);
@@ -401,11 +313,98 @@
     }
 }
 
-/* Placeholders for OpenDyslexic font for accessibility */
-@font-face {
-    font-family: "OpenDyslexic";
-    src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.woff")
-        format("woff");
-    font-weight: normal;
-    font-style: normal;
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--color-neon-green);
+    }
+    50% {
+        box-shadow: 0 0 15px var(--color-neon-green);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--color-neon-green);
+    }
+}
+
+/* Basic utility classes for themes */
+.retro-panel {
+    background-color: var(--color-background);
+    border: var(--border-width-standard) solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+}
+
+.retro-heading {
+    color: var(--color-text-active);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    font-family: var(--font-family-active);
+}
+
+.retro-button {
+    background-color: var(--color-button-default);
+    border: var(--border-width-standard) solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.retro-button:hover {
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+}
+
+.retro-button.active {
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+    box-shadow: var(--glow-neon-green);
+}
+
+.retro-input {
+    background-color: var(--color-button-default);
+    border: var(--border-width-standard) solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2);
+}
+
+.retro-input:focus {
+    border-color: var(--color-border-active);
+    outline: none;
+    box-shadow: var(--glow-neon-green);
+}
+
+.retro-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: var(--slider-height, 10px);
+    background: var(--color-gray-800);
+    border-radius: calc(var(--slider-height, 10px) / 2);
+    outline: none;
+}
+
+.retro-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: var(--slider-thumb-size, 20px);
+    height: var(--slider-thumb-size, 20px);
+    background: var(--color-action-primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.retro-slider::-moz-range-thumb {
+    width: var(--slider-thumb-size, 20px);
+    height: var(--slider-thumb-size, 20px);
+    background: var(--color-action-primary);
+    border-radius: 50%;
+    cursor: pointer;
 }

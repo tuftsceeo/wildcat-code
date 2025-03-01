@@ -1,14 +1,10 @@
 /**
  * @file CustomizationPage.jsx
- * @description Enhanced customization page with carousel navigation for settings
- * based on the improved design from improved-settings-carousel.tsx.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * @description Enhanced customization page with debugging
  */
 
 import React, { useState, useRef, useEffect } from "react";
 import {
-    XCircle,
     X,
     Type,
     Palette,
@@ -18,24 +14,96 @@ import {
     Accessibility,
     UserRound,
     Users,
-    Check,
     RotateCcw,
 } from "lucide-react";
-import styles from "./CustomizationPage.module.css";
 import Portal from "./Portal";
 import { useCustomization } from "./CustomizationContext";
+// Import the updated ThemeSettings component
+import ThemeSettings from "./settings/ThemeSettings";
+// Import ReadingLevelSettings
+import ReadingLevelSettings from "./settings/ReadingLevelSettings";
+
+console.log("CustomizationPage module loaded");
 
 /**
- * Enhanced customization page with carousel navigation for settings
- *
- * @component
- * @param {Object} props - Component props
- * @param {Function} props.close - Function to close the customization panel
- * @returns {JSX.Element} Customization settings interface
+ * Placeholder for features under development
+ */
+const PlaceholderSettings = ({ feature }) => {
+    console.log("Rendering placeholder for feature:", feature?.id);
+    // Messages based on priority
+    const getMessage = () => {
+        switch (feature?.priority) {
+            case "high":
+                return "This feature is almost ready and will be available soon!";
+            case "medium":
+                return "This feature is currently under development and will be available in a future update.";
+            case "low":
+            default:
+                return "This feature is planned for a future release of the application.";
+        }
+    };
+
+    return (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "300px",
+                textAlign: "center",
+                color: "#999",
+            }}
+        >
+            <div
+                style={{
+                    color: feature?.color || "#ccc",
+                    fontSize: "48px",
+                    marginBottom: "16px",
+                }}
+            >
+                {feature?.icon || <RotateCcw />}
+            </div>
+
+            <h3
+                style={{
+                    fontSize: "24px",
+                    marginBottom: "8px",
+                    color: "#ddd",
+                }}
+            >
+                {feature?.name || "Coming Soon"}
+            </h3>
+
+            <p style={{ maxWidth: "60%" }}>{getMessage()}</p>
+
+            <div
+                style={{
+                    marginTop: "16px",
+                    backgroundColor: "#444",
+                    color: "#ddd",
+                    padding: "4px 12px",
+                    borderRadius: "16px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                }}
+            >
+                <RotateCcw size={16} />
+                <span>Coming Soon</span>
+            </div>
+        </div>
+    );
+};
+
+/**
+ * Enhanced customization page with debugging
  */
 const CustomizationPage = ({ close }) => {
+    console.log("CustomizationPage rendering");
     // State for the active tab index
     const [activeTab, setActiveTab] = useState(0);
+    console.log("Active tab:", activeTab);
 
     // Create a ref for the panel to detect outside clicks
     const panelRef = useRef(null);
@@ -132,49 +200,90 @@ const CustomizationPage = ({ close }) => {
     };
 
     /**
-     * Settings Carousel component
-     */
-    /**
-     * Settings Carousel component for tab navigation
-     * This internal component provides the carousel navigation UI
+     * Settings Carousel for tab navigation
      */
     const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
+        console.log("SettingsCarousel rendering, active tab:", activeTab);
         return (
-            <div className={styles.carouselContainer}>
+            <div
+                style={{
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "20px 48px",
+                    borderBottom: "2px solid #333",
+                    marginBottom: "0",
+                }}
+            >
                 <button
-                    className={`${styles.navButton} ${styles.prevButton}`}
+                    style={{
+                        position: "absolute",
+                        left: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor: "transparent",
+                        border: "none",
+                        borderRadius: "50%",
+                        color: "#ddd",
+                        cursor: "pointer",
+                    }}
                     onClick={handlePrevTab}
                     aria-label="Previous tab"
                 >
-                    <div className={styles.navButtonIcon}>&lt;</div>
+                    &lt;
                 </button>
 
-                <div className={styles.tabsContainer}>
+                <div
+                    style={{
+                        display: "flex",
+                        flex: 1,
+                        justifyContent: "center",
+                        overflow: "hidden",
+                        gap: "4px",
+                    }}
+                >
                     {tabs.map((tab, index) => {
-                        // Calculate position relative to active tab for carousel effect
-                        const position = index - activeTab;
                         const isDisabled = !tab.available;
 
                         return (
                             <button
                                 key={tab.id}
-                                className={`${styles.tabButton} 
-                           ${
-                               index === activeTab
-                                   ? styles.tabActive
-                                   : styles.tabInactive
-                           }
-                           ${isDisabled ? styles.tabDisabled : ""}`}
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    backgroundColor:
+                                        index === activeTab
+                                            ? "#333"
+                                            : "transparent",
+                                    border: `2px solid ${
+                                        index === activeTab
+                                            ? tab.color
+                                            : "transparent"
+                                    }`,
+                                    cursor: isDisabled ? "default" : "pointer",
+                                    transform:
+                                        index === activeTab
+                                            ? "scale(1)"
+                                            : "scale(0.85)",
+                                    opacity: isDisabled
+                                        ? 0.4
+                                        : index === activeTab
+                                        ? 1
+                                        : 0.5,
+                                    minWidth: "120px",
+                                    height: "100px",
+                                }}
                                 onClick={() =>
                                     !isDisabled && setActiveTab(index)
                                 }
                                 disabled={isDisabled}
-                                style={{
-                                    borderColor:
-                                        index === activeTab
-                                            ? tab.color
-                                            : "transparent",
-                                }}
                                 aria-label={`${tab.name} settings tab${
                                     isDisabled ? " (coming soon)" : ""
                                 }`}
@@ -182,17 +291,42 @@ const CustomizationPage = ({ close }) => {
                                 role="tab"
                             >
                                 <div
-                                    className={styles.tabIcon}
-                                    style={{ color: tab.color }}
+                                    style={{
+                                        color: tab.color,
+                                        marginBottom: "8px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "40px",
+                                        fontSize: "32px",
+                                    }}
                                 >
                                     {tab.icon}
                                 </div>
-                                <span className={styles.tabLabel}>
+                                <span
+                                    style={{
+                                        fontSize: "14px",
+                                        fontWeight: 500,
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.05em",
+                                        marginTop: "8px",
+                                    }}
+                                >
                                     {tab.name}
                                 </span>
 
                                 {isDisabled && (
-                                    <span className={styles.disabledBadge}>
+                                    <span
+                                        style={{
+                                            marginTop: "4px",
+                                            fontSize: "12px",
+                                            backgroundColor: "#444",
+                                            color: "#999",
+                                            padding: "2px 8px",
+                                            borderRadius: "8px",
+                                            textTransform: "uppercase",
+                                        }}
+                                    >
                                         Coming Soon
                                     </span>
                                 )}
@@ -202,358 +336,34 @@ const CustomizationPage = ({ close }) => {
                 </div>
 
                 <button
-                    className={`${styles.navButton} ${styles.nextButton}`}
+                    style={{
+                        position: "absolute",
+                        right: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor: "transparent",
+                        border: "none",
+                        borderRadius: "50%",
+                        color: "#ddd",
+                        cursor: "pointer",
+                    }}
                     onClick={handleNextTab}
                     aria-label="Next tab"
                 >
-                    <div className={styles.navButtonIcon}>&gt;</div>
+                    &gt;
                 </button>
-            </div>
-        );
-    };
-
-    /**
-     * Reading Level Settings Panel
-     */
-    const ReadingLevelSettings = () => {
-        // Default to intermediate level for most users
-        const [selectedLevel, setSelectedLevel] = useState("intermediate");
-
-        // Define reading complexity levels
-        const levels = [
-            {
-                id: "icon_only",
-                icon: "🖼️",
-                name: "Pictures",
-            },
-            {
-                id: "beginner",
-                icon: "🔤",
-                name: "Simple",
-            },
-            {
-                id: "intermediate",
-                icon: "📝",
-                name: "Medium",
-            },
-            {
-                id: "advanced",
-                icon: "📚",
-                name: "Full Text",
-            },
-        ];
-
-        // Get current level description
-        const currentDescription = "";
-
-        // Define preview content for each level
-        const renderPreview = () => {
-            switch (selectedLevel) {
-                case "icon_only":
-                    return (
-                        <div className={styles.iconOnlyPreview}>
-                            <span>🤖</span>
-                            <span>➡️</span>
-                            <span>💨</span>
-                        </div>
-                    );
-                case "beginner":
-                    return (
-                        <div className={styles.beginnerPreview}>
-                            <span className={styles.beginnerIcon}>➡️</span>
-                            <span className={styles.beginnerText}>
-                                Robot Move Fast
-                            </span>
-                        </div>
-                    );
-                case "intermediate":
-                    return (
-                        <span className={styles.intermediatePreview}>
-                            The robot moves forward at high speed.
-                        </span>
-                    );
-                case "advanced":
-                    return (
-                        <div className={styles.advancedPreview}>
-                            The robot will activate its motors to move forward
-                            at maximum speed in a straight line.
-                        </div>
-                    );
-                default:
-                    return null;
-            }
-        };
-
-        return (
-            <div className={styles.settingsPanel}>
-                <div
-                    className={styles.panelTitle}
-                    style={{ color: "#00ff00" }}
-                >
-                    Reading Level
-                </div>
-
-                <div className={styles.optionsContainer}>
-                    {levels.map((level) => (
-                        <button
-                            key={level.id}
-                            className={`${styles.optionButton} ${
-                                selectedLevel === level.id
-                                    ? styles.activeOption
-                                    : ""
-                            }`}
-                            onClick={() => setSelectedLevel(level.id)}
-                            aria-pressed={selectedLevel === level.id}
-                            style={{
-                                borderColor:
-                                    selectedLevel === level.id
-                                        ? "#00ff00"
-                                        : "transparent",
-                            }}
-                        >
-                            <div className={styles.optionIcon}>
-                                {level.icon}
-                            </div>
-                            <span className={styles.optionLabel}>
-                                {level.name}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                <div className={styles.description}>{currentDescription}</div>
-
-                <div className={styles.previewContainer}>
-                    <div
-                        className={styles.previewTitle}
-                        style={{ color: "#00ff00" }}
-                    >
-                        Preview:
-                    </div>
-                    <div className={styles.previewContent}>
-                        {renderPreview()}
-                    </div>
-                    <div className={styles.previewNote}>
-                        This is how instructions will appear in the app
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    /**
-     * Theme Settings Panel
-     */
-    const ThemeSettings = () => {
-        // Use context to get and set theme settings (once context is set up)
-        // If not using context yet, use local state
-        const [selectedTheme, setSelectedTheme] = useState("retro");
-        const [fontSetting, setFontSetting] = useState(false);
-
-        // Define available themes
-        const themes = [
-            {
-                id: "retro",
-                name: "Neon",
-                colors: ["#00ff00", "#00aaff", "#ff00ff"],
-                preview: {
-                    bg: "#000000",
-                    text: "#00ff00",
-                    buttonBg: "#00aaff",
-                    buttonText: "#000000",
-                },
-            },
-            {
-                id: "themes",
-                name: "Theme",
-                colors: [
-                    {
-                        id: "retro",
-                        name: "Neon",
-                        colors: ["#00ff00", "#00aaff", "#ff00ff"],
-                    },
-                    {
-                        id: "pastel",
-                        name: "Pastel",
-                        colors: ["#78C2AD", "#6CC3D5", "#F3969A"],
-                    },
-                    {
-                        id: "clean",
-                        name: "Clean",
-                        colors: ["#00AA55", "#0066CC", "#FF6600"],
-                    },
-                ],
-            },
-        ];
-
-        // Get current theme preview colors
-        const currentTheme =
-            themes.find((t) => t.id === selectedTheme) || themes[0];
-
-        return (
-            <div className={styles.settingsPanel}>
-                <div
-                    className={styles.panelTitle}
-                    style={{ color: "#ff00ff" }}
-                >
-                    Choose Theme
-                </div>
-
-                <div className={styles.themesContainer}>
-                    {themes.map((themeOption) => (
-                        <button
-                            key={themeOption.id}
-                            className={`${styles.themeButton} ${
-                                selectedTheme === themeOption.id
-                                    ? styles.activeTheme
-                                    : ""
-                            }`}
-                            onClick={() => setSelectedTheme(themeOption.id)}
-                            aria-pressed={selectedTheme === themeOption.id}
-                            style={{
-                                borderColor:
-                                    selectedTheme === themeOption.id
-                                        ? "#ff00ff"
-                                        : "transparent",
-                            }}
-                        >
-                            <div className={styles.themeSwatches}>
-                                {themeOption.colors.map((color, i) => (
-                                    <div
-                                        key={i}
-                                        className={styles.colorSwatch}
-                                        style={{ backgroundColor: color }}
-                                    />
-                                ))}
-                            </div>
-                            <span className={styles.themeName}>
-                                {themeOption.name}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Live theme preview */}
-                <div className={styles.previewContainer}>
-                    <div
-                        className={styles.previewTitle}
-                        style={{ color: "#ff00ff" }}
-                    >
-                        Preview:
-                    </div>
-                    <div
-                        className={styles.previewContent}
-                        style={{
-                            backgroundColor: currentTheme.preview.bg,
-                            fontFamily: fontSetting
-                                ? "'OpenDyslexic', sans-serif"
-                                : "'Kode Mono', monospace",
-                        }}
-                    >
-                        <div
-                            className={styles.previewHeader}
-                            style={{ color: currentTheme.preview.text }}
-                        >
-                            Robot Controls
-                        </div>
-                        <button
-                            className={styles.previewButton}
-                            style={{
-                                backgroundColor: currentTheme.preview.buttonBg,
-                                color: currentTheme.preview.buttonText,
-                            }}
-                        >
-                            Forward
-                        </button>
-                    </div>
-                </div>
-
-                {/* Font options */}
-                <div className={styles.fontOptions}>
-                    <h3
-                        className={styles.fontOptionsHeader}
-                        style={{ color: "#ff00ff" }}
-                    >
-                        Reading Support
-                    </h3>
-
-                    <div className={styles.fontToggle}>
-                        <span className={styles.toggleLabel}>
-                            Easy-to-Read Font
-                        </span>
-                        <button
-                            className={`${styles.toggleSwitch} ${
-                                fontSetting ? styles.toggleSwitchActive : ""
-                            }`}
-                            onClick={() => setFontSetting(!fontSetting)}
-                            aria-pressed={fontSetting}
-                            role="switch"
-                            aria-checked={fontSetting}
-                            style={{
-                                backgroundColor: fontSetting
-                                    ? "#c026d3"
-                                    : "var(--color-gray-600)",
-                            }}
-                        >
-                            <div
-                                className={`${styles.toggleHandle} ${
-                                    fontSetting ? styles.toggleHandleActive : ""
-                                }`}
-                            ></div>
-                        </button>
-                    </div>
-
-                    <p className={styles.fontDescription}>
-                        {fontSetting
-                            ? "Using OpenDyslexic font to improve readability"
-                            : "Using standard font"}
-                    </p>
-                </div>
-            </div>
-        );
-    };
-
-    /**
-     * Placeholder for features under development
-     */
-    const PlaceholderSettings = ({ feature }) => {
-        // Messages based on priority
-        const getMessage = () => {
-            switch (feature.priority) {
-                case "high":
-                    return "This feature is almost ready and will be available soon!";
-                case "medium":
-                    return "This feature is currently under development and will be available in a future update.";
-                case "low":
-                default:
-                    return "This feature is planned for a future release of the application.";
-            }
-        };
-
-        return (
-            <div className={styles.placeholderContainer}>
-                <div
-                    className={styles.placeholderIcon}
-                    style={{ color: feature.color }}
-                >
-                    {feature.icon}
-                </div>
-
-                <h3 className={styles.placeholderTitle}>{feature.name}</h3>
-
-                <p className={styles.placeholderMessage}>{getMessage()}</p>
-
-                <div className={styles.comingSoonBadge}>
-                    <RotateCcw size={16} />
-                    <span>Coming Soon</span>
-                </div>
             </div>
         );
     };
 
     // Render current tab content based on activeTab
     const renderTabContent = () => {
+        console.log("Rendering tab content for tab:", activeTab);
         const currentTab = tabs[activeTab];
+        console.log("Current tab:", currentTab);
 
         // If feature is not available, show placeholder
         if (!currentTab.available) {
@@ -563,31 +373,107 @@ const CustomizationPage = ({ close }) => {
         // Otherwise, render the appropriate settings panel
         switch (currentTab.id) {
             case "reading":
+                console.log("Rendering ReadingLevelSettings");
                 return <ReadingLevelSettings />;
             case "themes":
-                return <ThemeSettings />;
+                console.log("Rendering ThemeSettings");
+                try {
+                    return <ThemeSettings />;
+                } catch (error) {
+                    console.error("Error rendering ThemeSettings:", error);
+                    return (
+                        <div style={{ color: "red", padding: "20px" }}>
+                            <h3>Error Rendering Theme Settings</h3>
+                            <pre>{error.toString()}</pre>
+                            <p>Check console for details</p>
+                        </div>
+                    );
+                }
             default:
+                console.log(
+                    "Rendering placeholder for unknown tab:",
+                    currentTab.id,
+                );
                 return <PlaceholderSettings feature={currentTab} />;
         }
     };
 
     return (
         <Portal>
-            <div className={styles.customizationOverlay}>
+            <div
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999,
+                }}
+            >
                 <div
-                    className={styles.customizationPanel}
                     ref={panelRef}
+                    style={{
+                        position: "relative",
+                        width: "900px",
+                        height: "650px",
+                        backgroundColor: "#000",
+                        border: "2px solid #00bfff",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        color: "#fff",
+                        boxShadow: "0 0 10px rgba(0, 191, 255, 0.7)",
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
                 >
                     {/* Header with title and close button */}
-                    <div className={styles.settingsHeader}>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "relative",
+                            padding: "16px",
+                            borderBottom: "1px solid #333",
+                        }}
+                    >
                         <button
-                            className={styles.closeButton}
+                            style={{
+                                position: "absolute",
+                                left: "16px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                background: "none",
+                                border: "none",
+                                color: "#999",
+                                cursor: "pointer",
+                                padding: "8px",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
                             onClick={close}
                             aria-label="Close settings"
                         >
                             <X size={24} />
                         </button>
-                        <h1 className={styles.settingsTitle}>SETTINGS</h1>
+                        <h1
+                            style={{
+                                textAlign: "center",
+                                fontSize: "32px",
+                                fontWeight: "bold",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.1em",
+                                color: "#fff",
+                            }}
+                        >
+                            SETTINGS
+                        </h1>
                     </div>
 
                     {/* Settings tabs carousel navigation */}
@@ -598,7 +484,14 @@ const CustomizationPage = ({ close }) => {
                     />
 
                     {/* Content area for the active tab */}
-                    <div className={styles.settingsContent}>
+                    <div
+                        style={{
+                            flex: 1,
+                            overflowY: "auto",
+                            padding: "24px",
+                            height: "450px",
+                        }}
+                    >
                         {renderTabContent()}
                     </div>
                 </div>
