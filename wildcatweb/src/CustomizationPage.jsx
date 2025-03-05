@@ -1,6 +1,6 @@
 /**
  * @file CustomizationPage.jsx
- * @description Enhanced customization page with debugging
+ * @description Main settings page component with theme support
  */
 
 import React, { useState, useRef, useEffect } from "react";
@@ -14,96 +14,29 @@ import {
     Accessibility,
     UserRound,
     Users,
-    RotateCcw,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 import Portal from "./Portal";
 import { useCustomization } from "./CustomizationContext";
-// Import the updated ThemeSettings component
 import ThemeSettings from "./settings/ThemeSettings";
-// Import ReadingLevelSettings
 import ReadingLevelSettings from "./settings/ReadingLevelSettings";
-
-console.log("CustomizationPage module loaded");
-
-/**
- * Placeholder for features under development
- */
-const PlaceholderSettings = ({ feature }) => {
-    console.log("Rendering placeholder for feature:", feature?.id);
-    // Messages based on priority
-    const getMessage = () => {
-        switch (feature?.priority) {
-            case "high":
-                return "This feature is almost ready and will be available soon!";
-            case "medium":
-                return "This feature is currently under development and will be available in a future update.";
-            case "low":
-            default:
-                return "This feature is planned for a future release of the application.";
-        }
-    };
-
-    return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "300px",
-                textAlign: "center",
-                color: "#999",
-            }}
-        >
-            <div
-                style={{
-                    color: feature?.color || "#ccc",
-                    fontSize: "48px",
-                    marginBottom: "16px",
-                }}
-            >
-                {feature?.icon || <RotateCcw />}
-            </div>
-
-            <h3
-                style={{
-                    fontSize: "24px",
-                    marginBottom: "8px",
-                    color: "#ddd",
-                }}
-            >
-                {feature?.name || "Coming Soon"}
-            </h3>
-
-            <p style={{ maxWidth: "60%" }}>{getMessage()}</p>
-
-            <div
-                style={{
-                    marginTop: "16px",
-                    backgroundColor: "#444",
-                    color: "#ddd",
-                    padding: "4px 12px",
-                    borderRadius: "16px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                }}
-            >
-                <RotateCcw size={16} />
-                <span>Coming Soon</span>
-            </div>
-        </div>
-    );
-};
+import PlaceholderSettings from "./settings/PlaceholderSettings";
+import styles from "./CustomizationPage.module.css";
 
 /**
- * Enhanced customization page with debugging
+ * Enhanced customization page with theme support
+ *
+ * @param {Object} props Component props
+ * @param {Function} props.close Function to close the settings panel
+ * @returns {JSX.Element} Complete settings panel UI
  */
 const CustomizationPage = ({ close }) => {
-    console.log("CustomizationPage rendering");
     // State for the active tab index
     const [activeTab, setActiveTab] = useState(0);
-    console.log("Active tab:", activeTab);
+
+    // Access theme context
+    const { theme } = useCustomization();
 
     // Create a ref for the panel to detect outside clicks
     const panelRef = useRef(null);
@@ -201,52 +134,33 @@ const CustomizationPage = ({ close }) => {
 
     /**
      * Settings Carousel for tab navigation
+     * With smaller tabs to fit without scrolling
      */
     const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
-        console.log("SettingsCarousel rendering, active tab:", activeTab);
         return (
             <div
                 style={{
                     position: "relative",
                     display: "flex",
-                    alignItems: "center",
-                    padding: "20px 48px",
-                    borderBottom: "2px solid #333",
-                    marginBottom: "0",
+                    borderBottom: "2px solid var(--color-gray-800)",
+                    backgroundColor: "var(--color-panel-background)",
+                    padding: "var(--spacing-4) 0",
                 }}
             >
-                <button
-                    style={{
-                        position: "absolute",
-                        left: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "40px",
-                        height: "40px",
-                        backgroundColor: "transparent",
-                        border: "none",
-                        borderRadius: "50%",
-                        color: "#ddd",
-                        cursor: "pointer",
-                    }}
-                    onClick={handlePrevTab}
-                    aria-label="Previous tab"
-                >
-                    &lt;
-                </button>
-
+                {/* Tab container with all tabs visible */}
                 <div
                     style={{
                         display: "flex",
-                        flex: 1,
+                        width: "100%",
                         justifyContent: "center",
-                        overflow: "hidden",
-                        gap: "4px",
+                        alignItems: "center",
+                        gap: "8px", // Smaller gap between tabs
+                        padding: "0 var(--spacing-4)",
                     }}
                 >
                     {tabs.map((tab, index) => {
                         const isDisabled = !tab.available;
+                        const isActive = index === activeTab;
 
                         return (
                             <button
@@ -256,29 +170,29 @@ const CustomizationPage = ({ close }) => {
                                     flexDirection: "column",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    padding: "12px",
-                                    borderRadius: "8px",
-                                    backgroundColor:
-                                        index === activeTab
-                                            ? "#333"
-                                            : "transparent",
-                                    border: `2px solid ${
-                                        index === activeTab
-                                            ? tab.color
-                                            : "transparent"
-                                    }`,
+                                    padding: "8px", // Smaller padding
+                                    borderRadius: "var(--radius-md)",
+                                    backgroundColor: isActive
+                                        ? "var(--color-button-selected-bg, var(--color-gray-800))"
+                                        : "transparent",
+                                    border: isActive
+                                        ? `2px solid var(--color-border-active)`
+                                        : "2px solid transparent",
                                     cursor: isDisabled ? "default" : "pointer",
-                                    transform:
-                                        index === activeTab
-                                            ? "scale(1)"
-                                            : "scale(0.85)",
                                     opacity: isDisabled
                                         ? 0.4
-                                        : index === activeTab
+                                        : isActive
                                         ? 1
-                                        : 0.5,
-                                    minWidth: "120px",
-                                    height: "100px",
+                                        : 0.7,
+                                    width: "85px", // Fixed smaller width
+                                    height: "90px", // Fixed smaller height
+                                    color: isActive
+                                        ? "var(--color-text-active)"
+                                        : "var(--color-text-inactive)",
+                                    transition: "all var(--transition-normal)",
+                                    boxShadow: isActive
+                                        ? "var(--glow-neon-green)"
+                                        : "none",
                                 }}
                                 onClick={() =>
                                     !isDisabled && setActiveTab(index)
@@ -287,29 +201,31 @@ const CustomizationPage = ({ close }) => {
                                 aria-label={`${tab.name} settings tab${
                                     isDisabled ? " (coming soon)" : ""
                                 }`}
-                                aria-selected={index === activeTab}
+                                aria-selected={isActive}
                                 role="tab"
                             >
                                 <div
                                     style={{
-                                        color: tab.color,
-                                        marginBottom: "8px",
+                                        color: isActive
+                                            ? "var(--color-text-active)"
+                                            : tab.color,
+                                        marginBottom: "6px", // Smaller margin
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        height: "40px",
-                                        fontSize: "32px",
+                                        height: "32px", // Smaller icon container
                                     }}
                                 >
-                                    {tab.icon}
+                                    {React.cloneElement(tab.icon, { size: 24 })}{" "}
+                                    {/* Smaller icon size */}
                                 </div>
                                 <span
                                     style={{
-                                        fontSize: "14px",
-                                        fontWeight: 500,
+                                        fontSize: "10px", // Smaller font size
+                                        textAlign: "center",
                                         textTransform: "uppercase",
-                                        letterSpacing: "0.05em",
-                                        marginTop: "8px",
+                                        letterSpacing: "0.05em", // Slightly tighter letter spacing
+                                        lineHeight: 1.2, // Tighter line height
                                     }}
                                 >
                                     {tab.name}
@@ -319,51 +235,29 @@ const CustomizationPage = ({ close }) => {
                                     <span
                                         style={{
                                             marginTop: "4px",
-                                            fontSize: "12px",
-                                            backgroundColor: "#444",
-                                            color: "#999",
-                                            padding: "2px 8px",
-                                            borderRadius: "8px",
+                                            fontSize: "8px", // Smaller badge font
+                                            backgroundColor:
+                                                "var(--color-gray-700)",
+                                            color: "var(--color-gray-400)",
+                                            padding: "1px 4px",
+                                            borderRadius: "var(--radius-sm)",
                                             textTransform: "uppercase",
                                         }}
                                     >
-                                        Coming Soon
+                                        Soon
                                     </span>
                                 )}
                             </button>
                         );
                     })}
                 </div>
-
-                <button
-                    style={{
-                        position: "absolute",
-                        right: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "40px",
-                        height: "40px",
-                        backgroundColor: "transparent",
-                        border: "none",
-                        borderRadius: "50%",
-                        color: "#ddd",
-                        cursor: "pointer",
-                    }}
-                    onClick={handleNextTab}
-                    aria-label="Next tab"
-                >
-                    &gt;
-                </button>
             </div>
         );
     };
 
     // Render current tab content based on activeTab
     const renderTabContent = () => {
-        console.log("Rendering tab content for tab:", activeTab);
         const currentTab = tabs[activeTab];
-        console.log("Current tab:", currentTab);
 
         // If feature is not available, show placeholder
         if (!currentTab.available) {
@@ -373,107 +267,31 @@ const CustomizationPage = ({ close }) => {
         // Otherwise, render the appropriate settings panel
         switch (currentTab.id) {
             case "reading":
-                console.log("Rendering ReadingLevelSettings");
                 return <ReadingLevelSettings />;
             case "themes":
-                console.log("Rendering ThemeSettings");
-                try {
-                    return <ThemeSettings />;
-                } catch (error) {
-                    console.error("Error rendering ThemeSettings:", error);
-                    return (
-                        <div style={{ color: "red", padding: "20px" }}>
-                            <h3>Error Rendering Theme Settings</h3>
-                            <pre>{error.toString()}</pre>
-                            <p>Check console for details</p>
-                        </div>
-                    );
-                }
+                return <ThemeSettings />;
             default:
-                console.log(
-                    "Rendering placeholder for unknown tab:",
-                    currentTab.id,
-                );
                 return <PlaceholderSettings feature={currentTab} />;
         }
     };
 
     return (
         <Portal>
-            <div
-                style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100vw",
-                    height: "100vh",
-                    backgroundColor: "rgba(0, 0, 0, 0.85)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 9999,
-                }}
-            >
+            <div className={styles.customizationOverlay}>
                 <div
                     ref={panelRef}
-                    style={{
-                        position: "relative",
-                        width: "900px",
-                        height: "650px",
-                        backgroundColor: "#000",
-                        border: "2px solid #00bfff",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        color: "#fff",
-                        boxShadow: "0 0 10px rgba(0, 191, 255, 0.7)",
-                        display: "flex",
-                        flexDirection: "column",
-                    }}
+                    className={styles.customizationPanel}
                 >
                     {/* Header with title and close button */}
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            position: "relative",
-                            padding: "16px",
-                            borderBottom: "1px solid #333",
-                        }}
-                    >
+                    <div className={styles.settingsHeader}>
                         <button
-                            style={{
-                                position: "absolute",
-                                left: "16px",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                background: "none",
-                                border: "none",
-                                color: "#999",
-                                cursor: "pointer",
-                                padding: "8px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
+                            className={styles.closeButton}
                             onClick={close}
                             aria-label="Close settings"
                         >
                             <X size={24} />
                         </button>
-                        <h1
-                            style={{
-                                textAlign: "center",
-                                fontSize: "32px",
-                                fontWeight: "bold",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.1em",
-                                color: "#fff",
-                            }}
-                        >
-                            SETTINGS
-                        </h1>
+                        <h1 className={styles.settingsTitle}>SETTINGS</h1>
                     </div>
 
                     {/* Settings tabs carousel navigation */}
@@ -484,14 +302,7 @@ const CustomizationPage = ({ close }) => {
                     />
 
                     {/* Content area for the active tab */}
-                    <div
-                        style={{
-                            flex: 1,
-                            overflowY: "auto",
-                            padding: "24px",
-                            height: "450px",
-                        }}
-                    >
+                    <div className={styles.settingsContent}>
                         {renderTabContent()}
                     </div>
                 </div>

@@ -1,6 +1,6 @@
-/* SettingsCarousel.css - Improved carousel with proper centering and theme support */
+/* SettingsCarousel.module.css */
 
-.settings-carousel {
+.settingsCarousel {
     display: flex;
     align-items: center;
     position: relative;
@@ -12,7 +12,7 @@
 }
 
 /* Container with horizontal scroll */
-.carousel-container {
+.carouselContainer {
     flex: 1;
     overflow-x: hidden;
     position: relative;
@@ -34,7 +34,7 @@
 }
 
 /* Track with tabs */
-.carousel-track {
+.carouselTrack {
     display: flex;
     align-items: center;
     padding: 0 var(--spacing-4);
@@ -45,7 +45,7 @@
 }
 
 /* Individual tab button */
-.carousel-tab {
+.carouselTab {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -55,49 +55,34 @@
     background-color: var(--color-gray-800);
     padding: var(--spacing-3);
     margin: 0 var(--spacing-2);
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     cursor: pointer;
     min-width: 120px;
     height: 120px;
     flex: 0 0 auto;
     position: relative;
     overflow: visible;
+    color: var(--color-text-inactive);
 }
 
 /* Active tab styling */
-.carousel-tab.active {
+.carouselTab.active {
     transform: scale(1.05);
-    background-color: color-mix(
-        in srgb,
-        var(--color-gray-800) 90%,
-        var(--color-gray-700)
-    );
+    background-color: var(--color-gray-700);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     z-index: 2;
-}
-
-/* Fallback for color-mix */
-body[data-theme="retro"] .carousel-tab.active {
-    background-color: rgba(51, 51, 51, 0.9);
-}
-
-body[data-theme="pastel"] .carousel-tab.active {
-    background-color: rgba(225, 235, 245, 0.9);
-}
-
-body[data-theme="clean"] .carousel-tab.active {
-    background-color: rgba(240, 240, 240, 0.9);
+    color: var(--color-text-active);
 }
 
 /* Disabled tab styling */
-.carousel-tab.disabled {
+.carouselTab.disabled {
     opacity: 0.5;
     cursor: default;
     filter: grayscale(70%);
 }
 
 /* Icon container */
-.tab-icon {
+.tabIcon {
     font-size: 32px;
     margin-bottom: var(--spacing-2);
     display: flex;
@@ -107,7 +92,7 @@ body[data-theme="clean"] .carousel-tab.active {
 }
 
 /* Tab name */
-.tab-name {
+.tabName {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
@@ -116,7 +101,7 @@ body[data-theme="clean"] .carousel-tab.active {
 }
 
 /* Coming soon badge */
-.coming-soon-badge {
+.comingSoonBadge {
     position: absolute;
     bottom: -8px;
     left: 50%;
@@ -131,7 +116,7 @@ body[data-theme="clean"] .carousel-tab.active {
 }
 
 /* Navigation buttons */
-.carousel-nav {
+.carouselNav {
     width: 40px;
     height: 40px;
     display: flex;
@@ -144,42 +129,42 @@ body[data-theme="clean"] .carousel-tab.active {
     z-index: 3;
     position: relative;
     border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
-.carousel-nav:hover {
+.carouselNav:hover {
     background-color: var(--color-gray-800);
     color: var(--color-text-active);
 }
 
-.carousel-prev {
+.carouselPrev {
     left: var(--spacing-2);
 }
 
-.carousel-next {
+.carouselNext {
     right: var(--spacing-2);
 }
 
 /* Animation when dragging */
-.carousel-track.dragging {
+.carouselTrack.dragging {
     transition: none;
     cursor: grabbing;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .carousel-tab {
+    .carouselTab {
         min-width: 100px;
         height: 110px;
         padding: var(--spacing-2);
     }
 
-    .tab-icon {
+    .tabIcon {
         font-size: 24px;
         height: 30px;
     }
 
-    .tab-name {
+    .tabName {
         font-size: 11px;
     }
 }

@@ -1,4 +1,4 @@
-/* ThemeSettings.module.css - Styles for the theme selection panel */
+/* ThemeSettings.module.css */
 
 .container {
     display: flex;
@@ -9,7 +9,7 @@
 
 .title {
     font-size: var(--font-size-xl);
-    color: var(--color-fuchsia-400, #ff00ff);
+    color: var(--color-text-secondary);
     text-align: center;
     margin-bottom: var(--spacing-8);
     font-weight: var(--font-weight-bold);
@@ -32,7 +32,7 @@
     flex-direction: column;
     align-items: center;
     padding: var(--spacing-4);
-    background-color: var(--color-gray-800);
+    background-color: var(--color-button-selected-bg);
     border: 2px solid var(--color-gray-700);
     border-radius: var(--radius-md);
     transition: all var(--transition-normal);
@@ -45,8 +45,8 @@
 }
 
 .activeTheme {
-    border-color: var(--color-fuchsia-400, #ff00ff);
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+    border-color: var(--color-border-active);
+    box-shadow: var(--glow-neon-green);
 }
 
 .themeSwatches {
@@ -66,6 +66,7 @@
 .themeName {
     font-size: var(--font-size-sm);
     text-align: center;
+    color: var(--color-text-inactive);
 }
 
 .previewContainer {
@@ -76,7 +77,7 @@
 
 .previewTitle {
     font-size: var(--font-size-lg);
-    color: var(--color-fuchsia-400, #ff00ff);
+    color: var(--color-text-secondary);
     margin-bottom: var(--spacing-2);
 }
 
@@ -96,6 +97,7 @@
     font-weight: var(--font-weight-bold);
     margin-bottom: var(--spacing-4);
     transition: all var(--transition-normal);
+    color: inherit;
 }
 
 .previewButton {
@@ -104,19 +106,20 @@
     transition: all var(--transition-normal);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-medium);
+    border: none;
 }
 
 .fontOptions {
     width: 100%;
     max-width: 500px;
-    background-color: var(--color-gray-800);
+    background-color: var(--color-button-selected-bg);
     border-radius: var(--radius-md);
     padding: var(--spacing-4);
     margin-top: var(--spacing-4);
 }
 
 .fontOptionsHeader {
-    color: var(--color-fuchsia-400, #ff00ff);
+    color: var(--color-text-secondary);
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-4);
 }
@@ -130,6 +133,7 @@
 
 .toggleLabel {
     font-size: var(--font-size-base);
+    color: var(--color-text-inactive);
 }
 
 .toggleSwitch {
@@ -140,10 +144,11 @@
     background-color: var(--color-gray-600);
     transition: all var(--transition-normal);
     cursor: pointer;
+    border: none;
 }
 
 .toggleSwitchActive {
-    background-color: var(--color-fuchsia-600, #c026d3);
+    background-color: var(--color-action-secondary);
 }
 
 .toggleHandle {

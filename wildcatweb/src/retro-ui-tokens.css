@@ -141,6 +141,7 @@ body[data-theme="retro"] {
     --color-button-default-text: var(--color-white);
     --color-button-active: var(--color-neon-green);
     --color-button-active-text: var(--color-black);
+    --color-button-selected-bg: var(--color-gray-800); /* #333333 */
     --color-panel-background: var(--color-black);
     --color-panel-border: var(--color-blue);
     --color-error: var(--color-red);
@@ -176,7 +177,7 @@ body[data-theme="pastel"] {
     --color-orange: #ffbb89; /* Soft orange */
     --color-fuchsia: #e8a2e8; /* Soft pink/purple */
     --color-black: #3e4551; /* Slate instead of black */
-    --color-white: #f8f9fa; /* Very light gray background */
+    --color-white: #fffaf0; /* Very parchment background */
 
     /* Semantic Color Tokens - Theme: Pastel */
     --color-background: var(--color-white);
@@ -192,6 +193,12 @@ body[data-theme="pastel"] {
     --color-button-default-text: var(--color-black);
     --color-button-active: var(--color-neon-green);
     --color-button-active-text: var(--color-white);
+    --color-button-selected-bg: rgba(
+        235,
+        245,
+        250,
+        0.3
+    ); /* Light blue-gray with transparency */
     --color-panel-background: var(--color-white);
     --color-panel-border: var(--color-blue);
     --color-error: var(--color-red);
@@ -243,6 +250,7 @@ body[data-theme="clean"] {
     --color-button-default-text: var(--color-black);
     --color-button-active: var(--color-neon-green);
     --color-button-active-text: var(--color-white);
+    --color-button-selected-bg: rgba(235, 245, 250, 0.3);
     --color-panel-background: var(--color-white);
     --color-panel-border: var(--color-gray-300);
     --color-error: var(--color-red);

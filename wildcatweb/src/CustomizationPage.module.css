@@ -1,4 +1,4 @@
-/* CustomizationPage.module.css - Updated with integrated carousel design */
+/* CustomizationPage.module.css - Updated with theme variables */
 
 .customizationOverlay {
     position: fixed;
@@ -10,7 +10,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: var(--z-index-modal);
     animation: fadeIn 0.3s ease;
     pointer-events: auto !important;
 }
@@ -19,13 +19,13 @@
     position: relative;
     width: 900px;
     height: 650px;
-    background-color: var(--color-black);
-    border: 2px solid var(--color-blue);
+    background-color: var(--color-panel-background);
+    border: 2px solid var(--color-border-inactive);
     border-radius: var(--radius-md);
     overflow: hidden;
     animation: slideIn 0.3s ease;
-    color: var(--color-white);
-    font-family: var(--font-family-primary);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
     box-shadow: var(--glow-blue);
     display: flex;
     flex-direction: column;
@@ -47,7 +47,7 @@
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
-    color: var(--color-white);
+    color: var(--color-text-inactive);
 }
 
 .closeButton {
@@ -68,124 +68,8 @@
 }
 
 .closeButton:hover {
-    color: var(--color-white);
+    color: var(--color-text-active);
     background-color: var(--color-gray-800);
-}
-
-/* Carousel Navigation */
-.carouselContainer {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-6) var(--spacing-12);
-    border-bottom: 2px solid var(--color-gray-800);
-    margin-bottom: 0;
-    background-color: var(--color-black);
-}
-
-.tabsContainer {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    overflow: hidden;
-    gap: var(--spacing-1);
-}
-
-.tabButton {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-3);
-    border-radius: var(--radius-md);
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    min-width: 120px;
-    height: 100px;
-}
-
-.tabButton:hover:not(.tabDisabled) {
-    background-color: var(--color-gray-800);
-}
-
-.tabActive {
-    background-color: var(--color-gray-800);
-    transform: scale(1);
-    border-width: 2px;
-    border-style: solid;
-}
-
-.tabInactive {
-    transform: scale(0.85);
-    opacity: 0.5;
-}
-
-.tabDisabled {
-    opacity: 0.4;
-    filter: grayscale(100%);
-    cursor: default;
-}
-
-.tabIcon {
-    margin-bottom: var(--spacing-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    font-size: 32px;
-}
-
-.tabLabel {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-wider);
-    margin-top: var(--spacing-2);
-}
-
-.navButton {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: transparent;
-    border: none;
-    border-radius: var(--radius-full);
-    color: var(--color-text-inactive);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-}
-
-.navButton:hover {
-    background-color: var(--color-gray-800);
-    color: var(--color-white);
-}
-
-.navButtonIcon {
-    font-size: var(--font-size-xl);
-    line-height: 1;
-}
-
-.prevButton {
-    left: var(--spacing-2);
-}
-
-.nextButton {
-    right: var(--spacing-2);
-}
-
-.disabledBadge {
-    margin-top: var(--spacing-1);
-    font-size: var(--font-size-xs);
-    background-color: var(--color-gray-700);
-    color: var(--color-gray-400);
-    padding: 2px var(--spacing-2);
-    border-radius: var(--radius-md);
-    text-transform: uppercase;
 }
 
 /* Content Area */
@@ -194,283 +78,6 @@
     overflow-y: auto;
     padding: var(--spacing-6);
     height: 450px;
-}
-
-/* Settings Panel - Common */
-.settingsPanel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeIn 0.3s ease;
-}
-
-.panelTitle {
-    font-size: var(--font-size-xl);
-    text-align: center;
-    margin-bottom: var(--spacing-6);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-wider);
-}
-
-/* Common Options Container */
-.optionsContainer {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-6);
-    margin-bottom: var(--spacing-8);
-    width: 100%;
-    max-width: 760px;
-}
-
-/* Option and Theme Buttons */
-.optionButton,
-.themeButton {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-4);
-    background-color: var(--color-gray-800);
-    border: 2px solid var(--color-gray-700);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-normal);
-    cursor: pointer;
-    width: 110px;
-    height: 110px;
-}
-
-.optionButton:hover:not(.activeOption),
-.themeButton:hover:not(.activeTheme) {
-    background-color: var(--color-gray-700);
-}
-
-.activeOption,
-.activeTheme {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.optionIcon {
-    font-size: 2.5rem;
-    margin-bottom: var(--spacing-2);
-}
-
-.optionLabel,
-.themeName {
-    font-size: var(--font-size-sm);
-    text-align: center;
-}
-
-/* Description Text */
-.description {
-    display: none;
-}
-
-/* Preview Containers */
-.previewContainer {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    margin-bottom: var(--spacing-6);
-}
-
-.previewTitle {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-2);
-}
-
-.previewContent {
-    padding: var(--spacing-6);
-    background-color: var(--color-gray-800);
-    border-radius: var(--radius-md);
-    min-height: 100px;
-    height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--spacing-2);
-}
-
-.previewNote {
-    font-size: var(--font-size-sm);
-    color: var(--color-gray-400);
-    text-align: center;
-}
-
-/* Reading Level Preview Styles */
-.iconOnlyPreview {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-4);
-    font-size: 2rem;
-}
-
-.beginnerPreview {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
-}
-
-.beginnerIcon {
-    font-size: 1.5rem;
-}
-
-.beginnerText {
-    font-size: var(--font-size-lg);
-}
-
-.intermediatePreview {
-    font-size: var(--font-size-lg);
-}
-
-.advancedPreview,
-.textOnlyPreview {
-    text-align: center;
-    max-width: 90%;
-}
-
-/* Theme Selection Styles */
-.themesContainer {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-6);
-    margin-bottom: var(--spacing-10);
-    width: 100%;
-    max-width: 760px;
-}
-
-.themeSwatches {
-    display: flex;
-    margin-bottom: var(--spacing-4);
-    width: 100%;
-    justify-content: center;
-    gap: 4px;
-}
-
-.colorSwatch {
-    width: 25px;
-    height: 50px;
-    border-radius: var(--radius-sm);
-}
-
-.previewHeader {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-4);
-    transition: all var(--transition-normal);
-}
-
-.previewButton {
-    padding: var(--spacing-2) var(--spacing-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-normal);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    border: none;
-}
-
-/* Font Options */
-.fontOptions {
-    width: 100%;
-    max-width: 500px;
-    background-color: var(--color-gray-800);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-4);
-    margin-top: var(--spacing-4);
-}
-
-.fontOptionsHeader {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-4);
-}
-
-.fontToggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--spacing-2);
-}
-
-.toggleLabel {
-    font-size: var(--font-size-base);
-}
-
-.toggleSwitch {
-    position: relative;
-    width: 48px;
-    height: 24px;
-    border-radius: 12px;
-    background-color: var(--color-gray-600);
-    transition: all var(--transition-normal);
-    cursor: pointer;
-    border: none;
-}
-
-.toggleSwitchActive {
-    background-color: var(--color-fuchsia-600, #c026d3);
-}
-
-.toggleHandle {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: var(--color-white);
-    transition: all var(--transition-normal);
-}
-
-.toggleHandleActive {
-    left: 26px;
-}
-
-.fontDescription {
-    font-size: var(--font-size-sm);
-    color: var(--color-gray-400);
-    margin-top: var(--spacing-2);
-}
-
-/* Placeholder Content */
-.placeholderContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 300px;
-    text-align: center;
-    color: var(--color-gray-400);
-    animation: fadeIn 0.3s ease;
-}
-
-.placeholderIcon {
-    font-size: 4rem;
-    margin-bottom: var(--spacing-4);
-    opacity: 0.7;
-}
-
-.placeholderTitle {
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-2);
-    color: var(--color-gray-300);
-}
-
-.placeholderMessage {
-    max-width: 60%;
-    font-size: var(--font-size-base);
-}
-
-.comingSoonBadge {
-    margin-top: var(--spacing-4);
-    background-color: var(--color-gray-700);
-    color: var(--color-gray-300);
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-1) var(--spacing-3);
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
 }
 
 /* Animations */
@@ -509,22 +116,5 @@
 
     .settingsTitle {
         font-size: var(--font-size-xl);
-    }
-
-    .carouselContainer {
-        padding: var(--spacing-3) var(--spacing-8);
-    }
-
-    .optionsContainer,
-    .themesContainer {
-        flex-direction: column;
-        align-items: center;
-        gap: var(--spacing-3);
-    }
-
-    .optionButton,
-    .themeButton {
-        width: 80%;
-        max-width: 250px;
     }
 }

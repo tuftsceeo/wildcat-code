@@ -1,55 +1,19 @@
 /**
  * @file PlaceholderSettings.jsx
  * @description Placeholder component for settings panels that are under development
+ * that properly uses theme variables
  */
 
 import React from "react";
 import { RotateCcw } from "lucide-react";
-
-// Using inline styles to avoid CSS module dependencies
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "300px",
-        textAlign: "center",
-        color: "var(--color-gray-400)",
-        animation: "fadeIn 0.3s ease",
-    },
-    icon: {
-        fontSize: "4rem",
-        marginBottom: "16px",
-        opacity: 0.7,
-    },
-    title: {
-        fontSize: "24px",
-        marginBottom: "8px",
-        color: "var(--color-gray-300)",
-    },
-    message: {
-        maxWidth: "60%",
-        fontSize: "16px",
-    },
-    badge: {
-        marginTop: "16px",
-        backgroundColor: "var(--color-gray-700)",
-        color: "var(--color-gray-300)",
-        fontSize: "14px",
-        padding: "4px 12px",
-        borderRadius: "16px",
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-    },
-};
+import styles from "./PlaceholderSettings.module.css";
 
 /**
  * Placeholder component for future or in-development features
  *
  * @param {Object} props Component props
  * @param {Object} props.feature Feature information object
+ * @returns {JSX.Element} Placeholder with coming soon messaging
  */
 const PlaceholderSettings = ({ feature }) => {
     // Messages based on priority
@@ -66,21 +30,19 @@ const PlaceholderSettings = ({ feature }) => {
     };
 
     return (
-        <div style={styles.container}>
+        <div className={styles.container}>
             <div
-                style={{
-                    ...styles.icon,
-                    color: feature?.color || "var(--color-gray-500)",
-                }}
+                className={styles.icon}
+                style={{ color: feature?.color || "var(--color-gray-500)" }}
             >
                 {feature?.icon || <RotateCcw size={48} />}
             </div>
 
-            <h3 style={styles.title}>{feature?.name || "Coming Soon"}</h3>
+            <h3 className={styles.title}>{feature?.name || "Coming Soon"}</h3>
 
-            <p style={styles.message}>{getMessage()}</p>
+            <p className={styles.message}>{getMessage()}</p>
 
-            <div style={styles.badge}>
+            <div className={styles.badge}>
                 <RotateCcw size={16} />
                 <span>Coming Soon</span>
             </div>
