@@ -1,0 +1,136 @@
+/* InstructionDescriptionPanel.module.css */
+
+.panel {
+    background-color: var(--color-white);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3);
+    margin-top: auto;
+    color: var(--color-black);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all var(--transition-normal);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.descriptionText {
+    flex: 1;
+    line-height: var(--line-height-relaxed);
+    font-size: var(--font-size-base);
+    color: var(--color-black);
+    padding-right: var(--spacing-4);
+}
+
+/* Reading level classes - directly applied to text */
+.iconOnlyText {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.beginnerText {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.3;
+}
+
+.intermediateText {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+}
+
+.advancedText {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+}
+
+.textOnlyText {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+}
+
+/* Per-reading level panel styling */
+.panel[data-reading-level="icon_only"] {
+    background-color: #f0f8ff; /* Light blue background for icon only */
+    border-left: 4px solid #00aaff;
+}
+
+.panel[data-reading-level="beginner"] {
+    background-color: #f0fff0; /* Light green background for beginner */
+    border-left: 4px solid #00cc00;
+}
+
+.panel[data-reading-level="intermediate"] {
+    /* Default styling */
+}
+
+.panel[data-reading-level="advanced"] {
+    background-color: #fff8f0; /* Light orange background for advanced */
+    border-left: 4px solid #ffaa00;
+}
+
+.panel[data-reading-level="text_only"] {
+    background-color: #fff0f8; /* Light pink background for text only */
+    border-left: 4px solid #ff00aa;
+}
+
+.audioButton {
+    background: none;
+    border: none;
+    color: var(--color-action-secondary);
+    cursor: pointer;
+    padding: var(--spacing-1);
+    margin-left: var(--spacing-2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    flex-shrink: 0;
+}
+
+.audioButton:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.audioButton:active {
+    transform: scale(0.95);
+}
+
+/* Reading level indicator for debugging */
+.levelIndicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+/* Theme-specific adjustments */
+body[data-theme="retro"] .panel {
+    border: 2px solid var(--color-blue);
+}
+
+body[data-theme="pastel"] .panel {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-blue);
+}
+
+body[data-theme="clean"] .panel {
+    background-color: var(--color-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

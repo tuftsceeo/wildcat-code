@@ -1,0 +1,74 @@
+{
+    "ui": {
+        "motor": "Motor",
+        "motorA": "Motor A",
+        "motorB": "Motor B",
+        "motorC": "Motor C",
+        "motorD": "Motor D",
+        "motorE": "Motor E",
+        "motorF": "Motor F",
+
+        "direction": "Dirección",
+        "forward": "adelante",
+        "backward": "atrás",
+        "stopped": "parado",
+
+        "speed": "velocidad",
+        "slow": "lento",
+        "medium": "medio",
+        "fast": "rápido",
+
+        "wait": "Esperar",
+        "seconds": "segundos",
+
+        "turns": "gira",
+        "stops": "para",
+
+        "apply": "Aplicar",
+        "cancel": "Cancelar",
+        "next": "Siguiente",
+        "play": "Ejecutar"
+    },
+
+    "complexity": {
+        "icon_only": {
+            "templates": {
+                "motor_action": "{port} {direction} {speed}",
+                "motor_stop": "{port} para",
+                "wait_action": "Esperar {seconds}"
+            }
+        },
+
+        "beginner": {
+            "templates": {
+                "motor_action": "{port} gira {direction} {speed}",
+                "motor_stop": "{port} para",
+                "wait_action": "Esperar {seconds} segundos"
+            }
+        },
+
+        "intermediate": {
+            "templates": {
+                "motor_action": "{port} gira hacia {direction} {speed}.",
+                "motor_stop": "{port} deja de girar.",
+                "wait_action": "Robot espera {seconds} segundos."
+            }
+        },
+
+        "advanced": {
+            "templates": {
+                "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
+                "motor_stop": "{port} para de girar.",
+                "wait_action": "El robot espera {seconds} segundos."
+            }
+        },
+
+        "text_only": {
+            "templates": {
+                "motor_action": "Después, {port} gira hacia {direction} a {speed} velocidad.",
+                "motor_stop": "Luego, {port} para de girar.",
+                "wait_action": "Después, el robot espera {seconds} segundos."
+            }
+        }
+    }
+}

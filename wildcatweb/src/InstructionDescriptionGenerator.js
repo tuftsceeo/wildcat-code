@@ -1,21 +1,30 @@
 /**
  * @file InstructionDescriptionGenerator.js
  * @description Utility functions for generating human-readable descriptions of
- * instructions and managing animation properties, updated for the new motor speed model.
+ * instructions using simplified translations from JSON files.
  */
 
 import { getSpeedDescription } from "./motorSpeedUtils";
+import { getTranslatedText, getUIText } from "./translations/loader";
 
 /**
  * Generates a human-readable description of an instruction
  *
  * @param {Object} instruction - The instruction configuration
- * @param {string} instruction.type - Instruction type ('action' or 'input')
- * @param {string} instruction.subtype - Specific subtype ('motor', 'time', etc.)
- * @param {Object} instruction.configuration - Configuration details
+ * @param {string} language - Language code (defaults to 'en')
+ * @param {string} complexityLevel - Text complexity level (defaults to 'intermediate')
  * @returns {string} Human-readable description
  */
-export const generateDescription = (instruction) => {
+export const generateDescription = (
+    instruction,
+    language = "en",
+    complexityLevel = "intermediate",
+) => {
+    // Log for debugging
+    console.log(
+        `Generating description with language: ${language}, complexity: ${complexityLevel}`,
+    );
+
     if (!instruction || !instruction.type) {
         return "Empty slot";
     }
@@ -26,21 +35,39 @@ export const generateDescription = (instruction) => {
         if (Array.isArray(config) && config.length > 0) {
             // Multiple motors
             if (config.length === 1) {
-                return getMotorDescription(config[0]);
+                return generateMotorDescription(
+                    config[0],
+                    language,
+                    complexityLevel,
+                );
             } else {
-                return `${config.length} motors configured`;
+                // For multiple motors, use a simpler format
+                const count = config.length;
+                return language === "es"
+                    ? `${count} motores configurados`
+                    : `${count} motors set up`;
             }
         } else if (config.port) {
             // Single motor
-            return getMotorDescription(config);
+            return generateMotorDescription(config, language, complexityLevel);
         }
 
-        return "Motor action (unconfigured)";
+        return "Motor action (not set up)";
     }
 
     if (instruction.type === "input" && instruction.subtype === "time") {
-        const seconds = instruction.configuration?.seconds || 0;
-        return `Wait for ${seconds} second${seconds !== 1 ? "s" : ""}`;
+        const { seconds = 0 } = instruction.configuration || {};
+
+        // Get translated text from the appropriate template
+        const translatedText = getTranslatedText(
+            "wait_action",
+            language,
+            complexityLevel,
+            { seconds },
+        );
+
+        console.log("Generated wait text:", translatedText);
+        return translatedText;
     }
 
     // Default for unknown instruction types
@@ -50,24 +77,50 @@ export const generateDescription = (instruction) => {
 };
 
 /**
- * Generate a description for a single motor configuration
+ * Generate a description for a motor instruction
  *
  * @param {Object} config - Motor configuration
+ * @param {string} language - Language code
+ * @param {string} complexityLevel - Complexity level ID
  * @returns {string} Human-readable description
  */
-const getMotorDescription = (config) => {
-    if (!config || !config.port) return "Motor action (unconfigured)";
+function generateMotorDescription(config, language, complexityLevel) {
+    if (!config || !config.port) return "Motor action (not set up)";
 
     const port = config.port;
+    const portText = getUIText(`motor${port}`, language);
     const speed = config.speed || 0;
 
     if (speed === 0) {
-        return `Motor ${port} stopped`;
+        // Get stop text from the appropriate template
+        const translatedText = getTranslatedText(
+            "motor_stop",
+            language,
+            complexityLevel,
+            { port: portText },
+        );
+
+        console.log("Generated motor stop text:", translatedText);
+        return translatedText;
     }
 
     const { level, direction } = getSpeedDescription(speed);
-    return `Motor ${port} spins ${direction} at ${level} speed`;
-};
+
+    // Get motor action text from the appropriate template
+    const translatedText = getTranslatedText(
+        "motor_action",
+        language,
+        complexityLevel,
+        {
+            port: portText,
+            direction,
+            speed: level,
+        },
+    );
+
+    console.log("Generated motor action text:", translatedText);
+    return translatedText;
+}
 
 /**
  * Determines animation duration based on speed value

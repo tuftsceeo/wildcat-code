@@ -1,26 +1,33 @@
 /**
  * @file BluetoothUI.jsx
- * @description Updated BluetoothUI component with settings button integration
- * @author Claude based on Jennifer Cross's initial implementation
+ * @description Bluetooth connection interface with settings button
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./BluetoothUI.module.css";
 import bluetoothDefault from "./assets/bluetooth-med.svg";
 import bluetoothConnected from "./assets/bluetooth-connected-correct.svg";
 import settings from "./assets/settings.svg";
 import questionMark from "./assets/question-mark.svg";
-import CustomizationPage from "./CustomizationPage";
 import HelpDialog from "./HelpDialog";
 import { useBLE } from "./BLEContext";
-import { Settings2 } from "lucide-react";
 
-export const BluetoothUI = ({ currSlotNumber }) => {
-    const [showCustomizationPage, setShowCustomizationPage] = useState(false);
+/**
+ * Interface for Bluetooth connection and settings access
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {number} props.currSlotNumber - Current slot number
+ * @param {Function} props.openSettings - Callback to open settings panel
+ * @returns {JSX.Element} Bluetooth UI component
+ */
+export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
     const [showHelpDialog, setShowHelpDialog] = useState(false);
-
     const { ble, isConnected, setIsConnected } = useBLE();
 
+    /**
+     * Handle Bluetooth connection toggle
+     */
     const handleBluetoothToggle = async () => {
         if (!isConnected) {
             const deviceSelected = await ble.ask("");
@@ -38,19 +45,25 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         }
     };
 
-    // Add settings button handler to open CustomizationPage
+    /**
+     * Handle settings button click
+     */
     const handleSettingsClick = () => {
-        setShowCustomizationPage(true);
+        if (openSettings) {
+            openSettings();
+        }
     };
 
-    const closeCustomizationPage = () => {
-        setShowCustomizationPage(false);
-    };
-
+    /**
+     * Handle help button click
+     */
     const handleHelpClick = () => {
         setShowHelpDialog(true);
     };
 
+    /**
+     * Handle closing the help dialog
+     */
     const closeHelpDialog = () => {
         setShowHelpDialog(false);
     };
@@ -61,6 +74,11 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 <button
                     className={styles.connectButton}
                     onClick={handleBluetoothToggle}
+                    aria-label={
+                        isConnected
+                            ? "Disconnect Bluetooth"
+                            : "Connect Bluetooth"
+                    }
                 >
                     <img
                         src={
@@ -73,6 +91,7 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 <button
                     className={styles.settingsButton}
                     onClick={handleSettingsClick}
+                    aria-label="Open Settings"
                 >
                     <img
                         src={settings}
@@ -83,6 +102,7 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                 <button
                     className={styles.helpButton}
                     onClick={handleHelpClick}
+                    aria-label="Help"
                 >
                     <img
                         src={questionMark}
@@ -90,18 +110,6 @@ export const BluetoothUI = ({ currSlotNumber }) => {
                     />
                 </button>
             </div>
-
-            {/* Render CustomizationPage when settings button is clicked */}
-            {showCustomizationPage && (
-                <CustomizationPage
-                    close={closeCustomizationPage}
-                    slotData={[]}
-                    updateMissionSteps={() => {
-                        // We cannot update mission steps from here
-                        // This instance is used without the needed context
-                    }}
-                />
-            )}
 
             {showHelpDialog && (
                 <HelpDialog
@@ -112,3 +120,5 @@ export const BluetoothUI = ({ currSlotNumber }) => {
         </>
     );
 };
+
+export default BluetoothUI;

@@ -1,11 +1,9 @@
 /**
- * @file App.js - FIXED
- * @description Example of how to integrate the CustomizationProvider and
- * CustomizationPage into the main application.
+ * @file App.js
+ * @description Main application component with support for reading level.
  */
 
 import React, { useState, useEffect } from "react";
-import { Settings2 } from "lucide-react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { CommandPanel } from "./CommandPanel.jsx";
@@ -13,12 +11,36 @@ import { RunMenu } from "./RunMenu.jsx";
 import { BluetoothUI } from "./BluetoothUI.jsx";
 import { KnobProvider } from "./KnobContext.js";
 import { BLEProvider } from "./BLEContext.js";
-import { CustomizationProvider } from "./CustomizationContext";
+import {
+    CustomizationProvider,
+    useCustomization,
+} from "./CustomizationContext";
 import CustomizationPage from "./CustomizationPage.jsx";
 import CodeTrack from "./CodeTrack.jsx";
 import "./App.css";
 
-function App() {
+/**
+ * Main application wrapper that provides context providers and applies settings
+ *
+ * @returns {JSX.Element} Main application component
+ */
+function AppWithCustomizationContext() {
+    // Get customization settings
+    const { readingLevel, language } = useCustomization();
+
+    // Apply reading level to body data attribute
+    useEffect(() => {
+        document.body.dataset.readingLevel = readingLevel;
+        document.body.dataset.language = language;
+    }, [readingLevel, language]);
+
+    return <AppContent />;
+}
+
+/**
+ * Main application content
+ */
+function AppContent() {
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [currSlotNumber, setCurrSlotNumber] = useState(0);
@@ -124,68 +146,75 @@ function App() {
     };
 
     return (
+        <div className="app-container">
+            {/* Left column - RunMenu */}
+            <div className="step-column">
+                <RunMenu
+                    pyCode={pyCode}
+                    canRun={canRun}
+                    currSlotNumber={currSlotNumber}
+                    setCurrSlotNumber={setCurrSlotNumber}
+                    missionSteps={missionSteps}
+                    slotData={slotData}
+                />
+            </div>
+
+            {/* Middle column - CodingTrack */}
+            <div className="center-column">
+                <CodeTrack
+                    setPyCode={setPyCode}
+                    setCanRun={setCanRun}
+                    currSlotNumber={currSlotNumber}
+                    setCurrSlotNumber={setCurrSlotNumber}
+                    missionSteps={missionSteps}
+                    slotData={slotData}
+                />
+            </div>
+
+            {/* Right column - Function Default & Bluetooth UI */}
+            <div className="control-column">
+                <div className="bluetooth-menu">
+                    <BluetoothUI
+                        currSlotNumber={currSlotNumber}
+                        missionSteps={missionSteps}
+                        openSettings={() => setIsSettingsOpen(true)}
+                    />
+                </div>
+
+                <CommandPanel
+                    currSlotNumber={currSlotNumber}
+                    onSlotUpdate={handleSlotUpdate}
+                    slotData={slotData}
+                />
+            </div>
+
+            {/* Settings Modal */}
+            {isSettingsOpen && (
+                <CustomizationPage
+                    close={() => setIsSettingsOpen(false)}
+                    slotData={slotData}
+                    updateMissionSteps={setStepCount}
+                />
+            )}
+        </div>
+    );
+}
+
+/**
+ * Top-level App component with all providers
+ */
+function App() {
+    return (
         <CustomizationProvider
             onStepCountChange={(newStepCount) => {
                 console.log("App: onStepCountChange called with", newStepCount);
-                setStepCount(newStepCount);
+                // This is handled in AppContent
             }}
         >
             <BLEProvider>
                 <KnobProvider>
                     <DndProvider backend={HTML5Backend}>
-                        <div className="app-container">
-                            {/* Left column - RunMenu */}
-                            <div className="step-column">
-                                <RunMenu
-                                    pyCode={pyCode}
-                                    canRun={canRun}
-                                    currSlotNumber={currSlotNumber}
-                                    setCurrSlotNumber={setCurrSlotNumber}
-                                    missionSteps={missionSteps}
-                                    slotData={slotData}
-                                />
-                            </div>
-
-                            {/* Middle column - CodingTrack */}
-                            <div className="center-column">
-                                <CodeTrack
-                                    setPyCode={setPyCode}
-                                    setCanRun={setCanRun}
-                                    currSlotNumber={currSlotNumber}
-                                    setCurrSlotNumber={setCurrSlotNumber}
-                                    missionSteps={missionSteps}
-                                    slotData={slotData}
-                                />
-                            </div>
-
-                            {/* Right column - Function Default & Bluetooth UI */}
-                            <div className="control-column">
-                                <div className="bluetooth-menu">
-                                    <BluetoothUI
-                                        currSlotNumber={currSlotNumber}
-                                        missionSteps={missionSteps}
-                                    />
-
-                                    {/* We'll use the existing settings button in BluetoothUI to open the settings panel */}
-                                </div>
-
-                                <CommandPanel
-                                    currSlotNumber={currSlotNumber}
-                                    onSlotUpdate={handleSlotUpdate}
-                                    slotData={slotData}
-                                />
-                            </div>
-
-                            {/* Settings Modal */}
-                            {isSettingsOpen && (
-                                <CustomizationPage
-                                    close={() => setIsSettingsOpen(false)}
-                                    slotData={slotData}
-                                    // This prop is now unused as we're using context directly
-                                    updateMissionSteps={() => {}}
-                                />
-                            )}
-                        </div>
+                        <AppWithCustomizationContext />
                     </DndProvider>
                 </KnobProvider>
             </BLEProvider>

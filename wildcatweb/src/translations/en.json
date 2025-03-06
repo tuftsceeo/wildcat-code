@@ -1,0 +1,74 @@
+{
+    "ui": {
+        "motor": "Motor",
+        "motorA": "Motor A",
+        "motorB": "Motor B",
+        "motorC": "Motor C",
+        "motorD": "Motor D",
+        "motorE": "Motor E",
+        "motorF": "Motor F",
+
+        "direction": "Direction",
+        "forward": "forward",
+        "backward": "backward",
+        "stopped": "stopped",
+
+        "speed": "speed",
+        "slow": "slow",
+        "medium": "medium",
+        "fast": "fast",
+
+        "wait": "Wait",
+        "seconds": "seconds",
+
+        "turns": "turns",
+        "stops": "stops",
+
+        "apply": "Apply",
+        "cancel": "Cancel",
+        "next": "Next",
+        "play": "Play"
+    },
+
+    "complexity": {
+        "icon_only": {
+            "templates": {
+                "motor_action": "{port} {direction} {speed}",
+                "motor_stop": "{port} stops",
+                "wait_action": "Wait {seconds}"
+            }
+        },
+
+        "beginner": {
+            "templates": {
+                "motor_action": "{port} turns {direction} {speed}",
+                "motor_stop": "{port} stops",
+                "wait_action": "Wait {seconds} seconds"
+            }
+        },
+
+        "intermediate": {
+            "templates": {
+                "motor_action": "{port} turns {direction} at {speed} speed.",
+                "motor_stop": "{port} stops turning.",
+                "wait_action": "Robot waits {seconds} seconds."
+            }
+        },
+
+        "advanced": {
+            "templates": {
+                "motor_action": "{port} rotates {direction} at {speed} speed.",
+                "motor_stop": "{port} stops rotating.",
+                "wait_action": "The robot waits for {seconds} seconds."
+            }
+        },
+
+        "text_only": {
+            "templates": {
+                "motor_action": "Next, {port} rotates {direction} at {speed} speed.",
+                "motor_stop": "Then, {port} stops rotating.",
+                "wait_action": "Next, the robot waits for {seconds} seconds."
+            }
+        }
+    }
+}

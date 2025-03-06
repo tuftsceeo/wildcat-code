@@ -2,6 +2,7 @@
  * @file CommandPanel.jsx
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
+ * Updated to use the InstructionDescriptionPanel for multilingual support.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -12,10 +13,11 @@ import { Check, Plus, Zap, Lightbulb, Volume } from "lucide-react";
 
 // Import our components
 import TypeSelector from "./TypeSelector";
-import StatusPanel from "./StatusPanel";
+import InstructionDescriptionPanel from "./InstructionDescriptionPanel"; // New component
 import SubtypeSelector from "./SubtypeSelector";
+import { useCustomization } from "./CustomizationContext"; // Get language and complexity
 
-// Define the control types and their configurations (moved from FunctionDefault)
+// Define the control types and their configurations
 const CONTROL_TYPES = {
     action: {
         motor: {
@@ -57,9 +59,9 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
     const [selectedSubtype, setSelectedSubtype] = useState(null);
     const [dashboardConfig, setDashboardConfig] = useState(null);
     const [lastSavedConfig, setLastSavedConfig] = useState(null);
-    const [statusText, setStatusText] = useState(
-        "Select an action or sensor...",
-    );
+
+    // Current instruction for the description panel
+    const [currentInstruction, setCurrentInstruction] = useState(null);
 
     // Reset state when slot number changes
     useEffect(() => {
@@ -70,69 +72,17 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             setDashboardConfig(currentSlotData.configuration);
             setLastSavedConfig(currentSlotData.configuration);
 
-            // Update status text based on configuration
-            updateStatusText(currentSlotData);
+            // Set current instruction for description
+            setCurrentInstruction(currentSlotData);
         } else {
             // Reset everything when there's no valid slot data
             setSelectedType(null);
             setSelectedSubtype(null);
             setDashboardConfig(null);
             setLastSavedConfig(null);
-            setStatusText("Select an action or sensor...");
+            setCurrentInstruction(null);
         }
     }, [currSlotNumber, slotData]);
-
-    // Update status text based on configuration
-    const updateStatusText = (slotData) => {
-        if (!slotData || !slotData.type) {
-            setStatusText("Select an action or sensor...");
-            return;
-        }
-
-        if (slotData.type === "action" && slotData.subtype === "motor") {
-            const config = slotData.configuration;
-            if (!config) {
-                setStatusText("Configure motor action...");
-                return;
-            }
-
-            if (Array.isArray(config) && config.length > 0) {
-                const motorConfig = config[0];
-                const port = motorConfig.port || "A";
-                const speed = motorConfig.speed || 0;
-                const direction =
-                    speed < 0 ? "backward" : speed > 0 ? "forward" : "stopped";
-                const speedText =
-                    speed === 0
-                        ? "stopped"
-                        : Math.abs(speed) <= 330
-                        ? "slow"
-                        : Math.abs(speed) <= 660
-                        ? "medium"
-                        : "fast";
-
-                setStatusText(`Motor ${port} ${speedText} ${direction}`);
-            } else if (config.port) {
-                const port = config.port;
-                const speed = config.speed || 0;
-                const direction =
-                    speed < 0 ? "backward" : speed > 0 ? "forward" : "stopped";
-                const speedText =
-                    speed === 0
-                        ? "stopped"
-                        : Math.abs(speed) <= 330
-                        ? "slow"
-                        : Math.abs(speed) <= 660
-                        ? "medium"
-                        : "fast";
-
-                setStatusText(`Motor ${port} ${speedText} ${direction}`);
-            }
-        } else if (slotData.type === "input" && slotData.subtype === "time") {
-            const seconds = slotData.configuration?.seconds || 0;
-            setStatusText(`Wait ${seconds} seconds.`);
-        }
-    };
 
     // Auto-save when configuration changes
     useEffect(() => {
@@ -145,19 +95,17 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             console.log("Configuration changed, auto-saving...");
 
             if (selectedType && selectedSubtype) {
-                onSlotUpdate({
+                // Create the instruction
+                const instruction = {
                     type: selectedType,
                     subtype: selectedSubtype,
                     configuration: dashboardConfig,
-                });
-                setLastSavedConfig(dashboardConfig);
+                };
 
-                // Update status text
-                updateStatusText({
-                    type: selectedType,
-                    subtype: selectedSubtype,
-                    configuration: dashboardConfig,
-                });
+                // Update slot and set current instruction
+                onSlotUpdate(instruction);
+                setLastSavedConfig(dashboardConfig);
+                setCurrentInstruction(instruction);
             }
         }
     }, [
@@ -180,6 +128,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             setSelectedSubtype(null);
             setDashboardConfig(null);
             setLastSavedConfig(null);
+            setCurrentInstruction(null);
         }
     };
 
@@ -188,13 +137,14 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
         setSelectedSubtype(subtype);
         setDashboardConfig(null);
         setLastSavedConfig(null);
+        setCurrentInstruction(null);
     };
 
     // Play the audio description
-    const handlePlayAudio = () => {
+    const handlePlayAudio = (text) => {
         // Use browser's speech synthesis
         if ("speechSynthesis" in window) {
-            const utterance = new SpeechSynthesisUtterance(statusText);
+            const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 0.9; // Slightly slower for clarity
             window.speechSynthesis.speak(utterance);
         }
@@ -286,11 +236,13 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 </div>
             )}
 
-            {/* Status panel at bottom */}
-            <StatusPanel
-                statusText={statusText}
+            {/* Instruction Description Panel at bottom */}
+            <InstructionDescriptionPanel
+                instruction={currentInstruction}
                 onPlayAudio={handlePlayAudio}
             />
         </div>
     );
 };
+
+export default CommandPanel;

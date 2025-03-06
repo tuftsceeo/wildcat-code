@@ -1,10 +1,13 @@
 /**
  * @file ReadingLevelSettings.jsx
  * @description Component for adjusting reading complexity levels with visual previews
- * of how content will appear at different levels.
+ * showing how content will appear at different levels.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useCustomization } from "../CustomizationContext";
+import { COMPLEXITY_LEVELS } from "../translations/loader";
+import { generateDescription } from "../InstructionDescriptionGenerator";
 import styles from "./ReadingLevelSettings.module.css";
 
 /**
@@ -14,124 +17,93 @@ import styles from "./ReadingLevelSettings.module.css";
  * @returns {JSX.Element} Reading level settings panel
  */
 const ReadingLevelSettings = () => {
-    // Default to intermediate level for most users
-    const [selectedLevel, setSelectedLevel] = useState("intermediate");
+    // Get current settings from context
+    const { readingLevel, setReadingLevel, language } = useCustomization();
 
-    // Define reading complexity levels
-    const levels = [
-        {
-            id: "icon_only",
-            icon: "🖼️",
-            name: "Icon Only",
-            description: "Minimal text with maximum icons",
+    // Sample instructions for preview
+    const sampleMotorInstruction = {
+        type: "action",
+        subtype: "motor",
+        configuration: {
+            port: "A",
+            speed: 1000, // Fast forward
         },
-        {
-            id: "beginner",
-            icon: "🔤",
-            name: "Beginner",
-            description: "Simple words with large icons",
-        },
-        {
-            id: "intermediate",
-            icon: "📝",
-            name: "Intermediate",
-            description: "Complete sentences with icons",
-        },
-        {
-            id: "advanced",
-            icon: "📚",
-            name: "Advanced",
-            description: "Detailed text with small icons",
-        },
-        {
-            id: "text_only",
-            icon: "📄",
-            name: "Text Only",
-            description: "Full text descriptions without icons",
-        },
-    ];
-
-    // Get current level description
-    const currentDescription = levels.find(
-        (level) => level.id === selectedLevel,
-    )?.description;
-
-    // Define preview content for each level
-    const renderPreview = () => {
-        switch (selectedLevel) {
-            case "icon_only":
-                return (
-                    <div className={styles.iconOnlyPreview}>
-                        <span>🤖</span>
-                        <span>➡️</span>
-                        <span>💨</span>
-                    </div>
-                );
-            case "beginner":
-                return (
-                    <div className={styles.beginnerPreview}>
-                        <span className={styles.beginnerIcon}>➡️</span>
-                        <span className={styles.beginnerText}>
-                            Robot Move Fast
-                        </span>
-                    </div>
-                );
-            case "intermediate":
-                return (
-                    <span className={styles.intermediatePreview}>
-                        Motor A spins forward at fast speed.
-                    </span>
-                );
-            case "advanced":
-                return (
-                    <div className={styles.advancedPreview}>
-                        The robot will rotate Motor A in the forward direction
-                        at fast speed. This will move the robot forward.
-                    </div>
-                );
-            case "text_only":
-                return (
-                    <div className={styles.textOnlyPreview}>
-                        The robot will activate Motor A to rotate in the forward
-                        direction at maximum speed. This will cause the robot to
-                        move forward in a straight line until a new command is
-                        received.
-                    </div>
-                );
-            default:
-                return null;
-        }
     };
+
+    const sampleTimerInstruction = {
+        type: "input",
+        subtype: "time",
+        configuration: {
+            seconds: 3,
+        },
+    };
+
+    /**
+     * Handle reading level selection - applies the change immediately
+     *
+     * @param {string} level - The selected reading level ID
+     */
+    const handleLevelSelect = (level) => {
+        console.log(`Directly setting reading level to: ${level}`);
+        setReadingLevel(level);
+    };
+
+    // Extract complexity levels into array for rendering
+    const complexityLevelsArray = Object.values(COMPLEXITY_LEVELS);
 
     return (
         <div className={styles.container}>
-            <div className={styles.title}>Reading Level</div>
+            <h2 className={styles.title}>
+                {language === "es" ? "Nivel de Lectura" : "Reading Level"}
+            </h2>
 
             <div className={styles.optionsContainer}>
-                {levels.map((level) => (
+                {complexityLevelsArray.map((level) => (
                     <button
                         key={level.id}
                         className={`${styles.optionButton} ${
-                            selectedLevel === level.id
-                                ? styles.activeOption
-                                : ""
+                            readingLevel === level.id ? styles.activeOption : ""
                         }`}
-                        onClick={() => setSelectedLevel(level.id)}
-                        aria-pressed={selectedLevel === level.id}
+                        onClick={() => handleLevelSelect(level.id)}
+                        aria-pressed={readingLevel === level.id}
                     >
                         <div className={styles.optionIcon}>{level.icon}</div>
-                        <span className={styles.optionLabel}>{level.name}</span>
+                        <span className={styles.optionLabel}>
+                            {level.name[language] || level.name.en}
+                        </span>
                     </button>
                 ))}
             </div>
 
-            <div className={styles.description}>{currentDescription}</div>
+            <div className={styles.description}>
+                {COMPLEXITY_LEVELS[readingLevel]?.description[language] ||
+                    COMPLEXITY_LEVELS[readingLevel]?.description.en}
+            </div>
 
             <div className={styles.previewContainer}>
-                <div className={styles.previewTitle}>Preview:</div>
-                <div className={styles.previewContent}>{renderPreview()}</div>
+                <div className={styles.previewTitle}>
+                    {language === "es" ? "Vista Previa:" : "Preview:"}
+                </div>
+                <div className={styles.previewContent}>
+                    <div className={styles.previewInstruction}>
+                        {generateDescription(
+                            sampleMotorInstruction,
+                            language,
+                            readingLevel,
+                        )}
+                    </div>
+                    <div className={styles.previewInstruction}>
+                        {generateDescription(
+                            sampleTimerInstruction,
+                            language,
+                            readingLevel,
+                        )}
+                    </div>
+                </div>
                 <div className={styles.previewNote}>
-                    This is how instructions will appear in the app
+                    {language === "es"
+                        ? "Así es como aparecerán las instrucciones en la aplicación"
+                        : "This is how instructions will appear in the app"}
                 </div>
             </div>
         </div>

@@ -1,10 +1,11 @@
 /**
- * @file CustomizationContext.js - FIXED with min/max step limits
+ * @file CustomizationContext.js
  * @description Context provider for managing and persisting user customization settings
- * across the application.
+ * across the application. Now with enhanced support for reading complexity and languages.
  */
 
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { AVAILABLE_LANGUAGES, COMPLEXITY_LEVELS } from "./translations/loader";
 
 // Create context
 const CustomizationContext = createContext();
@@ -30,8 +31,11 @@ export const useCustomization = () => useContext(CustomizationContext);
  * @returns {JSX.Element} Context provider
  */
 export const CustomizationProvider = ({ children, onStepCountChange }) => {
-    // Reading level settings
+    // Reading level settings - enhanced with support from our translation system
     const [readingLevel, setReadingLevel] = useState("intermediate");
+
+    // Language settings - now with proper language code
+    const [language, setLanguage] = useState("en");
 
     // Theme settings
     const [theme, setTheme] = useState("retro");
@@ -43,9 +47,6 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
 
     // Step count - starting with 2 as minimum
     const [stepCount, setStepCount] = useState(MIN_STEPS);
-
-    // Language
-    const [language, setLanguage] = useState("en");
 
     // Accessibility
     const [highContrast, setHighContrast] = useState(false);
@@ -60,6 +61,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
 
                 // Update states with saved values or use default
                 setReadingLevel(parsed.readingLevel || "intermediate");
+                setLanguage(parsed.language || "en");
                 setTheme(parsed.theme || "retro");
                 setUseDyslexiaFont(parsed.useDyslexiaFont || false);
                 setVoice(parsed.voice || "robot1");
@@ -72,12 +74,6 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                     Math.min(MAX_STEPS, parsedStepCount),
                 );
                 setStepCount(validStepCount);
-                console.log(
-                    "CustomizationContext: updated to",
-                    validStepCount,
-                    "steps",
-                );
-                setLanguage(parsed.language || "en");
                 setHighContrast(parsed.highContrast || false);
                 setLargeText(parsed.largeText || false);
             }
@@ -91,12 +87,12 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         try {
             const settings = {
                 readingLevel,
+                language,
                 theme,
                 useDyslexiaFont,
                 voice,
                 volume,
                 stepCount,
-                language,
                 highContrast,
                 largeText,
             };
@@ -109,12 +105,12 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         }
     }, [
         readingLevel,
+        language,
         theme,
         useDyslexiaFont,
         voice,
         volume,
         stepCount,
-        language,
         highContrast,
         largeText,
     ]);
@@ -148,7 +144,6 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
 
     // Add effect to notify when step count changes
     useEffect(() => {
-        console.log("CustomizationContext: Step count changed to", stepCount);
         if (onStepCountChange) {
             onStepCountChange(stepCount);
         }
@@ -156,21 +151,54 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
 
     // Custom setter for step count with validation
     const updateStepCount = (newValue) => {
-        console.log("CustomizationContext: Updating step count to", newValue);
         // Enforce min/max boundaries
         const validValue = Math.max(MIN_STEPS, Math.min(MAX_STEPS, newValue));
         setStepCount(validValue);
     };
 
+    // Helper to validate if a language is available
+    const isLanguageSupported = (langCode) => {
+        return Object.keys(AVAILABLE_LANGUAGES).includes(langCode);
+    };
+
+    // Helper to validate if a complexity level is available
+    const isComplexityLevelSupported = (levelId) => {
+        return Object.keys(COMPLEXITY_LEVELS).includes(levelId);
+    };
+
+    // Custom setter for language with validation
+    const updateLanguage = (newLanguage) => {
+        if (isLanguageSupported(newLanguage)) {
+            setLanguage(newLanguage);
+        } else {
+            console.warn(
+                `Language ${newLanguage} is not supported, using English instead`,
+            );
+            setLanguage("en");
+        }
+    };
+
+    // Custom setter for reading level with validation
+    const updateReadingLevel = (newLevel) => {
+        if (isComplexityLevelSupported(newLevel)) {
+            setReadingLevel(newLevel);
+        } else {
+            console.warn(
+                `Complexity level ${newLevel} is not supported, using intermediate instead`,
+            );
+            setReadingLevel("intermediate");
+        }
+    };
+
     // Reset all settings to defaults
     const resetSettings = () => {
         setReadingLevel("intermediate");
+        setLanguage("en");
         setTheme("retro");
         setUseDyslexiaFont(false);
         setVoice("robot1");
         setVolume(80);
         setStepCount(MIN_STEPS);
-        setLanguage("en");
         setHighContrast(false);
         setLargeText(false);
     };
@@ -179,7 +207,13 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
     const contextValue = {
         // Reading level
         readingLevel,
-        setReadingLevel,
+        setReadingLevel: updateReadingLevel,
+        isComplexityLevelSupported,
+
+        // Language
+        language,
+        setLanguage: updateLanguage,
+        isLanguageSupported,
 
         // Theme
         theme,
@@ -195,13 +229,9 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
 
         // Steps
         stepCount,
-        setStepCount: updateStepCount, // Use the custom setter
+        setStepCount: updateStepCount,
         MIN_STEPS,
         MAX_STEPS,
-
-        // Language
-        language,
-        setLanguage,
 
         // Accessibility
         highContrast,
