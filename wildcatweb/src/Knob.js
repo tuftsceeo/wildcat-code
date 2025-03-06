@@ -1,3 +1,12 @@
+/**
+ * @file Knob.js
+ * @description Interactive knob component for controlling motor speed or other parameters
+ * with mouse drag functionality and visual feedback.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
+
 import React, { useState, useEffect, useRef } from "react";
 import dial from "./assets/dial.mp3";
 import "./Knob.css";

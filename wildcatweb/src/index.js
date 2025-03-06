@@ -1,3 +1,10 @@
+/**
+ * @file index.js
+ * @description Entry point for the React application that renders the root App component.
+ * @author Jennifer Cross with support from Claude
+ * @created February 2025
+ */
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 // import ReactDOM from 'react-dom';

@@ -364,3 +364,5 @@ dist
 .pnp.*
 .firebaserc
 /.firebase
+/wildcatweb/src/OLDassets
+

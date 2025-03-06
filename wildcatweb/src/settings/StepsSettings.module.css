@@ -1,0 +1,227 @@
+/* StepsSettings.module.css - Styles for the steps count settings panel */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.stepCountControl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-8);
+    background-color: var(--color-button-selected-bg);
+    padding: var(--spacing-8);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-border-inactive);
+    width: 100%;
+    max-width: 500px;
+}
+
+.stepButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: var(--color-button-default);
+    border: 2px solid var(--color-border-inactive);
+    border-radius: 50%;
+    color: var(--color-text-inactive);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.stepButton:hover:not(.disabled) {
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+    box-shadow: var(--glow-neon-green);
+}
+
+.stepButton.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.stepCountDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 var(--spacing-8);
+    min-width: 120px;
+}
+
+.stepCount {
+    font-size: 4rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-active);
+    line-height: 1;
+    text-shadow: var(--glow-neon-green);
+}
+
+.stepLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-inactive);
+    margin-top: var(--spacing-2);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.updateButtonContainer {
+    margin-bottom: var(--spacing-8);
+}
+
+.updateButton {
+    background-color: var(--color-action-secondary);
+    color: var(--color-button-active-text);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+}
+
+.updateButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-blue);
+}
+
+.updateButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--color-disabled);
+}
+
+.description {
+    text-align: center;
+    max-width: 500px;
+    color: var(--color-text-inactive);
+    line-height: var(--line-height-relaxed);
+}
+
+.description p {
+    margin-bottom: var(--spacing-2);
+}
+
+/* Confirmation Dialog */
+.confirmationOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    pointer-events: auto;
+}
+
+.confirmationDialog {
+    background-color: var(--color-panel-background);
+    border: 2px solid var(--color-warning);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 0 15px var(--color-warning);
+    animation: slideIn 0.2s ease;
+}
+
+.confirmationHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-warning);
+}
+
+.confirmationHeader h3 {
+    margin-left: var(--spacing-3);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.confirmationMessage {
+    color: var(--color-text-inactive);
+    margin-bottom: var(--spacing-6);
+    line-height: var(--line-height-relaxed);
+}
+
+.confirmationButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-4);
+}
+
+.cancelButton {
+    background-color: transparent;
+    border: 2px solid var(--color-border-inactive);
+    color: var(--color-text-inactive);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    transition: all var(--transition-normal);
+}
+
+.cancelButton:hover {
+    border-color: var(--color-text-active);
+    color: var(--color-text-active);
+}
+
+.confirmButton {
+    background-color: var(--color-warning);
+    color: var(--color-black);
+    border: none;
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    transition: all var(--transition-normal);
+}
+
+.confirmButton:hover {
+    background-color: var(--color-orange);
+    transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

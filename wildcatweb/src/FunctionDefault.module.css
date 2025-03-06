@@ -1,279 +1,284 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=McLaren:wght@400&display=swap");
-
-/* Disable scroll */
-body {
-    overflow: hidden;
-    margin: 0; /* Ensure no margin around the body */
-    font-family: "Space Grotesk";
-}
+/* FunctionDefault.module.css - With theme variables and browser compatibility fixes */
 
 .hubTopBackground {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 90vh; /* Take up the right half of the screen with padding */
-    height: 95vh; /* Full height with padding */
-    margin: 20px; /* Padding to ensure it doesn't touch the edges */
-    border-radius: 25px;
-    background-color: #405cb0;
-    z-index: 1;
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    background-color: var(--color-panel-background);
+    padding: var(--spacing-4);
+    overflow: visible;
 }
 
 .outline {
     position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-51.5%, -48%); /* Center using transform */
-    width: 95%; /* Set width to 100% of parent */
-    height: 89%; /* Adjusted height */
-    margin: 10px;
-    z-index: 2; /* Ensure this is on top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.1;
+    pointer-events: none;
 }
 
 .functionHubText {
-    position: absolute;
-    top: 3%; /* Move it up by adjusting this value */
-    left: 12%;
-    transform: translateX(50%);
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    font-size: x-large;
-    width: 344px;
-    height: 75px;
-    color: #98aedd;
-    z-index: 3;
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-size: var(--font-size-lg);
+    color: var(--color-text-inactive);
+    position: relative;
+    z-index: 1;
 }
 
-.orText {
-    position: absolute;
-    top: 3%; /* Move it up by adjusting this value */
-    left: 12%;
-    transform: translateX(39%);
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    font-size: x-large;
-    width: 344px;
-    height: 75px;
-    color: #98aedd;
-    z-index: 3;
-}
-
+/* ACTION/SENSE buttons side by side like in FIGMA */
 .actionSenseButtonGroup {
     display: flex;
-    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
-    gap: 125px;
-    position: absolute;
-    top: 23%; /* Adjusted to lower the button group */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 390px;
-    height: 180px;
-    font-size: 30px;
-    color: #ba1df1;
-    font-family: "McLaren";
-    z-index: 4;
-}
-
-.actionButtonChild {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0%;
-    right: 0%;
-    bottom: 0%;
-    left: 0%;
-    border-radius: 10px;
-    background-color: #fff;
-    border-color: #fff;
-    font-size: 20px;
-    color: #405cb0;
-    font-family: "McLaren";
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    z-index: 300;
-    z-index: 6;
-    cursor: pointer;
-}
-
-.actionButton {
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
     position: relative;
-    height: 25%;
-    width: 100%;
-    top: 0%;
-    right: 0%;
-    bottom: 52.23%;
-    left: 0%;
-    z-index: 5;
+    z-index: 1;
 }
 
+.actionButton,
 .senseButton {
+    flex: 1;
     position: relative;
-    height: 25%;
+}
+
+/* Base button style */
+.actionButtonChild {
     width: 100%;
-    top: 0%;
-    right: 0%;
-    bottom: -0.01%;
-    left: 0%;
-    z-index: 5;
-}
-
-.actionButtonChild:focus {
-    border-top-color: #000000; /* Darker border color for the top */
-    border-right-color: #405cb0; /* Optional: change the right border color to default */
-    border-bottom-color: #405cb0; /* Optional: change the bottom border color to default */
-    border-left-color: #000000; /* Optional: change the left border color to default */
-    transform: translateY(
-        1px
-    ); /* Moves the button down slightly to simulate pressing */
-    box-shadow: none; /* Remove focus shadow if needed */
-    background-color: #32488a;
-    border-color: #32488a;
-    color: #fff;
-}
-
-/* Add these new styles after the existing styles in FunctionDefault.module.css */
-
-.dashboardContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    top: 35%;  /* Adjusted to work with existing layout */
-    z-index: 4;
-}
-
-.commitButton {
-    width: 200px;
-    height: 40px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";  /* Changed to match existing font */
-    font-size: 16px;
-    font-weight: 700;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);  /* Matched existing shadow */
+    background-color: var(--color-button-default);
+    border: 2px solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3);
     cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
 }
 
-.commitButton:hover {
-    background-color: #32488A;
-    color: #FFFFFF;
-}
-
-.subtypeSelection {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    justify-content: center;
-    position: relative;
-    z-index: 4;
-}
-
-.subtypeButton {
-    padding: 10px 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";  /* Changed to match existing font */
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.subtypeButton.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-}
-
-.controlsContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 4;
-    gap: 20px;  /* Space between action/input and subtype buttons */
-}
-
-/* Adjust subtypeSelection to work within controlsContainer */
-.subtypeSelection {
-    margin-top: 0;  /* Remove margin since we're using gap in container */
-}
-
-.subtypeSelection {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    position: absolute;
-    top: 35%;  /* Position below the action/input buttons */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-}
-
-.subtypeButton {
-    padding: 10px 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.subtypeButton.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-}
-
-.dashboardContainer {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    top: 45%;  /* Position below the subtype buttons */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-}
-
-.commitButton {
-    width: 200px;
-    height: 40px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    color: #405CB0;
-    font-family: "McLaren";
-    font-size: 16px;
-    font-weight: 700;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-.commitButton:hover {
-    background-color: #32488A;
-    color: #FFFFFF;
-}
-
+/* Active state for buttons */
 .actionButtonChild.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-    pointer-events: none;  /* Prevent clicking when active */
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+    background-color: rgba(0, 255, 0, 0.1); /* Fallback */
+    box-shadow: var(--glow-neon-green);
+}
+
+/* Theme specific active backgrounds */
+body[data-theme="retro"] .actionButtonChild.active {
+    background-color: rgba(0, 255, 0, 0.1);
+}
+body[data-theme="pastel"] .actionButtonChild.active {
+    background-color: rgba(120, 194, 173, 0.1);
+}
+body[data-theme="clean"] .actionButtonChild.active {
+    background-color: rgba(0, 170, 85, 0.1);
+}
+
+.actionButtonChild:hover {
+    opacity: 0.9;
+}
+
+/* Remove the "or" text */
+.orText {
+    display: none;
+}
+
+/* ------- LAYOUT STRUCTURE ------- */
+
+/* Main container for content area */
+.contentContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Left column container */
+.leftColumn {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Right column container */
+.rightColumn {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Subtype selection container */
+.subtypeSelection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+/* Action subtype buttons are left-aligned */
+.leftColumn .subtypeSelection {
+    align-items: flex-start;
+}
+
+/* Sense subtype buttons are right-aligned */
+.rightColumn .subtypeSelection {
+    align-items: flex-end;
+}
+
+/* Subtype button styling */
+.subtypeButton {
+    background-color: var(--color-button-default);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    border: 2px solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+    width: 90%;
+}
+
+/* Icon within subtype buttons */
+.subtypeButton .icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Text justification in buttons */
+.leftColumn .subtypeButton {
+    justify-content: flex-start;
+}
+
+.rightColumn .subtypeButton {
+    justify-content: flex-end;
+}
+
+.subtypeButton:hover {
+    opacity: 0.9;
 }
 
 .subtypeButton.active {
-    background-color: #32488A;
-    color: #FFFFFF;
-    pointer-events: none;  /* Prevent clicking when active */
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+    box-shadow: var(--glow-neon-green);
+}
+
+/* Dashboard container */
+.dashboardContainer {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+    overflow: auto;
+    border-radius: var(--radius-md);
+    border: none;
+    background-color: rgba(0, 0, 0, 0.8); /* Fallback */
+    margin-top: var(--spacing-2);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Theme-specific dashboard backgrounds */
+.dashboardContainer {
+    background-color: var(--color-background);
+}
+
+/* Placeholder for dashboard */
+.dashboardPlaceholder {
+    width: 100%;
+    height: 1px;
+    visibility: hidden;
+}
+
+/* Status panel at the bottom */
+.statusPanel {
+    margin-top: auto;
+    background-color: var(--color-white);
+    color: var(--color-black);
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.statusText {
+    font-size: var(--font-size-base);
+}
+
+.audioIcon {
+    color: var(--color-action-secondary);
+    cursor: pointer;
+}
+
+.saveIndicator {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.savedState,
+.unsavedState {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-1);
+    border-radius: var(--radius-md);
+}
+
+.checkIcon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}
+
+.plusIcon {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
 }

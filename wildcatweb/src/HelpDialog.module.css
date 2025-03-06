@@ -1,4 +1,4 @@
-/* HelpDialog.module.css */
+/* HelpDialog.module.css - Updated with retro-ui-tokens.css */
 
 .dialogBackground {
     position: fixed;
@@ -7,14 +7,15 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #f5f5f5;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10000;
-    font-family: "Space Grotesk";
-    color: #4d4d4d;
+    background-color: var(--color-background);
+    border: var(--border-width-standard) solid var(--color-blue);
+    border-radius: var(--radius-md);
+    box-shadow: var(--glow-blue);
+    z-index: var(--z-index-modal);
+    font-family: var(--font-family-primary);
+    color: var(--color-text-inactive);
     text-align: center;
-    padding: 20px;
+    padding: var(--spacing-4);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,36 +23,45 @@
 
 .closeButton {
     position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 33.5px;
-    margin-top: 15px;
-    width: 50px;
-    height: 50px;
-    font-family: "Space Grotesk";
-    font-size: 45px;
-    font-weight: 700;
-    line-height: 0px;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    width: 30px;
+    height: 30px;
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 30px;
     text-align: center;
-    color: #d9d9d9;
-    border-color: #f5f5f5;
+    color: var(--color-text-inactive);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.closeButton:hover {
+    color: var(--color-neon-green);
 }
 
 .dialogContent {
-    margin-top: 20px;
+    margin-top: var(--spacing-4);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .dialogTitle {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 10px;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-blue);
+    margin-bottom: var(--spacing-3);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .dialogText {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5em;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-inactive);
 }
