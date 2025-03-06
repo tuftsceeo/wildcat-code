@@ -21,9 +21,9 @@ export const generateDescription = (
     complexityLevel = "intermediate",
 ) => {
     // Log for debugging
-    console.log(
+    /* console.log(
         `Generating description with language: ${language}, complexity: ${complexityLevel}`,
-    );
+    ); */
 
     if (!instruction || !instruction.type) {
         return "Empty slot";
@@ -66,10 +66,26 @@ export const generateDescription = (
             { seconds },
         );
 
-        console.log("Generated wait text:", translatedText);
+        // console.log("Generated wait text:", translatedText);
         return translatedText;
     }
 
+    if (instruction.type === "input" && instruction.subtype === "button") {
+        const config = instruction.configuration || {};
+        const portText = getUIText(`motor${config.port || "A"}`, language);
+        const condition = getUIText(config.waitCondition || "pressed", language);
+        
+        // Get translated text from the appropriate template
+        const translatedText = getTranslatedText(
+            "button_action",
+            language,
+            complexityLevel,
+            { port: portText, condition }
+        );
+        
+        //console.log("Generated button text:", translatedText);
+        return translatedText;
+    }
     // Default for unknown instruction types
     return `${instruction.type === "action" ? "Action" : "Input"}: ${
         instruction.subtype || "unknown"
@@ -100,7 +116,7 @@ function generateMotorDescription(config, language, complexityLevel) {
             { port: portText },
         );
 
-        console.log("Generated motor stop text:", translatedText);
+       // console.log("Generated motor stop text:", translatedText);
         return translatedText;
     }
 
@@ -118,7 +134,7 @@ function generateMotorDescription(config, language, complexityLevel) {
         },
     );
 
-    console.log("Generated motor action text:", translatedText);
+    //console.log("Generated motor action text:", translatedText);
     return translatedText;
 }
 

@@ -30,15 +30,15 @@ const InstructionDescriptionPanel = ({
     const { language, readingLevel } = useCustomization();
 
     // DEBUG: Log when component renders or props change
-    console.log("-----------------------------------");
+/*     console.log("-----------------------------------");
     console.log("InstructionDescriptionPanel - RENDER");
     console.log("Current reading level:", readingLevel);
     console.log("Current language:", language);
-    console.log("Current instruction:", instruction);
+    console.log("Current instruction:", instruction); */
 
     // DEBUG: Log when readingLevel changes
     useEffect(() => {
-        console.log("ReadingLevel CHANGED to:", readingLevel);
+        //console.log("ReadingLevel CHANGED to:", readingLevel);
 
         // Test direct translation
         if (
@@ -74,7 +74,7 @@ const InstructionDescriptionPanel = ({
         : "Select an action or sensor...";
 
     // DEBUG: Log generated text
-    console.log(`Generated description: "${descriptionText}"`);
+    //console.log(`Generated description: "${descriptionText}"`);
 
     // Handle play button click
     const handlePlayClick = () => {

@@ -27,7 +27,20 @@
         "apply": "Aplicar",
         "cancel": "Cancelar",
         "next": "Siguiente",
-        "play": "Ejecutar"
+        "play": "Ejecutar",
+
+        "button": "Botón",
+        "buttonA": "Botón A",
+        "buttonB": "Botón B",
+        "buttonC": "Botón C",
+        "buttonD": "Botón D",
+        "buttonE": "Botón E",
+        "buttonF": "Botón F",
+        "pressed": "presionado",
+        "released": "liberado",
+        "waitUntil": "Esperar hasta",
+        "port": "Puerto",
+        "waitFor": "Esperar a"
     },
 
     "complexity": {
@@ -35,7 +48,8 @@
             "templates": {
                 "motor_action": "{port} {direction} {speed}",
                 "motor_stop": "{port} para",
-                "wait_action": "Esperar {seconds}"
+                "wait_action": "Esperar {seconds}",
+                "button_action": "{port} {condition}"
             }
         },
 
@@ -43,7 +57,8 @@
             "templates": {
                 "motor_action": "{port} gira {direction} {speed}",
                 "motor_stop": "{port} para",
-                "wait_action": "Esperar {seconds} segundos"
+                "wait_action": "Esperar {seconds} segundos",
+                "button_action": "{port} espera {condition}"
             }
         },
 
@@ -51,7 +66,8 @@
             "templates": {
                 "motor_action": "{port} gira hacia {direction} {speed}.",
                 "motor_stop": "{port} deja de girar.",
-                "wait_action": "Robot espera {seconds} segundos."
+                "wait_action": "Robot espera {seconds} segundos.",
+                "button_action": "Esperar hasta que {port} esté {condition}."
             }
         },
 
@@ -59,7 +75,8 @@
             "templates": {
                 "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
                 "motor_stop": "{port} para de girar.",
-                "wait_action": "El robot espera {seconds} segundos."
+                "wait_action": "El robot espera {seconds} segundos.",
+                "button_action": "El robot espera hasta que {port} esté {condition}."
             }
         },
 
@@ -67,7 +84,8 @@
             "templates": {
                 "motor_action": "Después, {port} gira hacia {direction} a {speed} velocidad.",
                 "motor_stop": "Luego, {port} para de girar.",
-                "wait_action": "Después, el robot espera {seconds} segundos."
+                "wait_action": "Después, el robot espera {seconds} segundos.",
+                "button_action": "El robot pausa la ejecución hasta que el botón en {port} esté {condition}."
             }
         }
     }

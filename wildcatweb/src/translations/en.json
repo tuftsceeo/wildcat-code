@@ -27,7 +27,20 @@
         "apply": "Apply",
         "cancel": "Cancel",
         "next": "Next",
-        "play": "Play"
+        "play": "Play",
+
+        "button": "Button",
+        "buttonA": "Button A",
+        "buttonB": "Button B",
+        "buttonC": "Button C",
+        "buttonD": "Button D",
+        "buttonE": "Button E",
+        "buttonF": "Button F",
+        "pressed": "pressed",
+        "released": "released",
+        "waitUntil": "Wait until",
+        "port": "Port",
+        "waitFor": "Wait for"
     },
 
     "complexity": {
@@ -35,7 +48,8 @@
             "templates": {
                 "motor_action": "{port} {direction} {speed}",
                 "motor_stop": "{port} stops",
-                "wait_action": "Wait {seconds}"
+                "wait_action": "Wait {seconds}",
+                "button_action": "{port} {condition}"
             }
         },
 
@@ -43,7 +57,8 @@
             "templates": {
                 "motor_action": "{port} turns {direction} {speed}",
                 "motor_stop": "{port} stops",
-                "wait_action": "Wait {seconds} seconds"
+                "wait_action": "Wait {seconds} seconds",
+                "button_action": "{port} wait {condition}"
             }
         },
 
@@ -51,7 +66,8 @@
             "templates": {
                 "motor_action": "{port} turns {direction} at {speed} speed.",
                 "motor_stop": "{port} stops turning.",
-                "wait_action": "Robot waits {seconds} seconds."
+                "wait_action": "Robot waits {seconds} seconds.",
+                "button_action": "Wait until {port} is {condition}."
             }
         },
 
@@ -59,7 +75,8 @@
             "templates": {
                 "motor_action": "{port} rotates {direction} at {speed} speed.",
                 "motor_stop": "{port} stops rotating.",
-                "wait_action": "The robot waits for {seconds} seconds."
+                "wait_action": "The robot waits for {seconds} seconds.",
+                "button_action": "The robot waits until {port} is {condition}."
             }
         },
 
@@ -67,7 +84,8 @@
             "templates": {
                 "motor_action": "Next, {port} rotates {direction} at {speed} speed.",
                 "motor_stop": "Then, {port} stops rotating.",
-                "wait_action": "Next, the robot waits for {seconds} seconds."
+                "wait_action": "Next, the robot waits for {seconds} seconds.",
+                "button_action": "The robot pauses execution until the button on {port} is {condition}."
             }
         }
     }

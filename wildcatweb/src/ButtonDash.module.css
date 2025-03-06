@@ -1,0 +1,282 @@
+/* ButtonDash.module.css */
+/* Child-friendly styling for the Button dashboard (force sensors) */
+
+.buttonDashContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Single button dash */
+.singleButtonDash {
+    background-color: var(--color-panel-background);
+    border: 2px solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3);
+    width: 100%;
+    transition: all var(--transition-normal);
+}
+
+.singleButtonDash.disconnected {
+    background-color: rgba(255, 0, 0, 0.1); /* Fallback */
+    border-color: var(--color-error);
+}
+
+/* Theme-specific disconnected states */
+body[data-theme="retro"] .singleButtonDash.disconnected {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+body[data-theme="pastel"] .singleButtonDash.disconnected {
+    background-color: rgba(243, 150, 154, 0.1);
+}
+body[data-theme="clean"] .singleButtonDash.disconnected {
+    background-color: rgba(221, 0, 0, 0.1);
+}
+
+/* Button header styling */
+.buttonHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.portLabel {
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    flex-grow: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.disconnectedLabel {
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-right: 8px;
+    padding: 2px 5px;
+    background-color: rgba(255, 0, 0, 0.2); /* Fallback */
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.dismissButton {
+    background: transparent;
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-left: 5px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-normal);
+}
+
+.dismissButton:hover {
+    background-color: var(--color-error);
+    color: white;
+}
+
+/* Container for button controls */
+.buttonControlContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+/* Wait condition section */
+.waitConditionContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.waitUntilLabel {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-inactive);
+    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--letter-spacing-wide);
+    align-self: flex-start;
+}
+
+/* Interactive switch styling */
+.switchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+}
+
+.switchOption {
+    background: transparent;
+    border: none;
+    padding: var(--spacing-2);
+    color: var(--color-text-inactive);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: color var(--transition-normal);
+    font-size: var(--font-size-base);
+    z-index: 1;
+    width: 90px;
+    text-align: center;
+}
+
+.switchOption.active {
+    color: var(--color-text-active);
+}
+
+/* Track and sliding handle for toggle */
+.switchTrack {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 30px;
+    background-color: var(--color-gray-800);
+    border-radius: 15px;
+    z-index: 0;
+}
+
+.switchHandle {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-action-primary);
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all var(--transition-normal);
+    box-shadow: var(--glow-neon-green);
+}
+
+.leftPosition {
+    left: -3px;
+}
+
+.rightPosition {
+    right: -3px;
+}
+
+/* Visual button representation */
+.buttonVisualContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+}
+
+.buttonVisual {
+    width: 80px;
+    height: 80px;
+    background-color: var(--color-gray-800);
+    border: none;
+    border-radius: 50%;
+    position: relative;
+    padding: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all var(--transition-fast);
+    overflow: hidden;
+}
+
+.buttonInner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background-color: var(--color-gray-600);
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+}
+
+/* Button pressed state */
+.buttonVisual.pressed {
+    transform: scale(0.95);
+}
+
+.buttonVisual.pressed .buttonInner {
+    background-color: var(--color-action-primary);
+    transform: translateY(8px);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Button status text */
+.buttonStatus {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-inactive);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* No connection/No buttons messages */
+.noConnection, .noButtons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    justify-content: center;
+    padding: var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-lg);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.noConnection {
+    background-color: rgba(255, 0, 0, 0.1); /* Fallback */
+    color: var(--color-error);
+    border: var(--border-width-standard) solid var(--color-error);
+}
+
+.noButtons {
+    background-color: rgba(255, 165, 0, 0.1); /* Fallback */
+    color: var(--color-warning);
+    border: var(--border-width-standard) solid var(--color-warning);
+}
+
+/* Theme-specific message backgrounds */
+body[data-theme="retro"] .noConnection {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+body[data-theme="pastel"] .noConnection {
+    background-color: rgba(243, 150, 154, 0.1);
+}
+body[data-theme="clean"] .noConnection {
+    background-color: rgba(221, 0, 0, 0.1);
+}
+
+body[data-theme="retro"] .noButtons {
+    background-color: rgba(255, 165, 0, 0.1);
+}
+body[data-theme="pastel"] .noButtons {
+    background-color: rgba(255, 187, 137, 0.1);
+}
+body[data-theme="clean"] .noButtons {
+    background-color: rgba(255, 102, 0, 0.1);
+}
+
+.noConnection svg, .noButtons svg {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

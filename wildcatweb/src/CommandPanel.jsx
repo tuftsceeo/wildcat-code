@@ -10,6 +10,9 @@ import styles from "./FunctionDefault.module.css"; // Reusing the CSS initially
 import { MotorDash } from "./MotorDash.jsx";
 import { TimeDash } from "./TimeDash.jsx";
 import { Check, Plus, Zap, Lightbulb, Volume } from "lucide-react";
+import { Disc } from "lucide-react"; // Import an appropriate icon
+import ButtonDash from "./ButtonDash.jsx"; // Import the button component
+
 
 // Import our components
 import TypeSelector from "./TypeSelector";
@@ -40,6 +43,11 @@ const CONTROL_TYPES = {
         time: {
             name: "Wait Time",
             component: TimeDash,
+        },
+        button: {  // Updated - Kept subtype name but changed display name
+            name: "Button",  // Changed from "Force Sensor" to "Button"
+            component: ButtonDash,
+            icon: <Disc size={20} />, // Using Disc icon for button
         },
     },
 };

@@ -26,12 +26,12 @@ export const RunMenu = ({
 
     // Log any inconsistencies between missionSteps and slotData length
     useEffect(() => {
-        console.log(
+     /*    console.log(
             "RunMenu: missionSteps =",
             missionSteps,
             "slotData.length =",
             slotData?.length,
-        );
+        ); */
 
         // The slotData array should be exactly missionSteps in length
         // (we're now treating missionSteps as the COUNT of steps, not the max index)

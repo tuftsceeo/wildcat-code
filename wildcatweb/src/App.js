@@ -1,6 +1,7 @@
 /**
  * @file App.js
- * @description Main application component with support for reading level.
+ * @description Main application component with support for reading level and step count.
+ * Fixed to properly propagate step count changes to child components.
  */
 
 import React, { useState, useEffect } from "react";
@@ -20,11 +21,43 @@ import CodeTrack from "./CodeTrack.jsx";
 import "./App.css";
 
 /**
- * Main application wrapper that provides context providers and applies settings
- *
+ * The top-level App component with all providers
+ * Manages the missionSteps state and handles changes from CustomizationContext
+ * 
  * @returns {JSX.Element} Main application component
  */
-function AppWithCustomizationContext() {
+function App() {
+    // Move missionSteps state to the top level component
+    const [missionSteps, setMissionSteps] = useState(2);
+
+    return (
+        <CustomizationProvider
+            onStepCountChange={(newStepCount) => {
+                console.log("App: onStepCountChange called with", newStepCount);
+                // Directly update missionSteps state here so it propagates to all components
+                setMissionSteps(newStepCount);
+            }}
+        >
+            <BLEProvider>
+                <KnobProvider>
+                    <DndProvider backend={HTML5Backend}>
+                        {/* Pass missionSteps as a prop to the AppWithCustomizationContext */}
+                        <AppWithCustomizationContext missionSteps={missionSteps} />
+                    </DndProvider>
+                </KnobProvider>
+            </BLEProvider>
+        </CustomizationProvider>
+    );
+}
+
+/**
+ * Main application wrapper that provides context providers and applies settings
+ * 
+ * @param {Object} props - Component props
+ * @param {number} props.missionSteps - Number of mission steps passed from parent
+ * @returns {JSX.Element} Main application content component
+ */
+function AppWithCustomizationContext({ missionSteps }) {
     // Get customization settings
     const { readingLevel, language } = useCustomization();
 
@@ -34,17 +67,20 @@ function AppWithCustomizationContext() {
         document.body.dataset.language = language;
     }, [readingLevel, language]);
 
-    return <AppContent />;
+    return <AppContent missionSteps={missionSteps} />;
 }
 
 /**
  * Main application content
+ * 
+ * @param {Object} props - Component props
+ * @param {number} props.missionSteps - Number of mission steps passed from parent
+ * @returns {JSX.Element} Application UI components
  */
-function AppContent() {
+function AppContent({ missionSteps }) {
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [currSlotNumber, setCurrSlotNumber] = useState(0);
-    const [missionSteps, setStepCount] = useState(2);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     // Log when missionSteps change
@@ -193,32 +229,13 @@ function AppContent() {
                 <CustomizationPage
                     close={() => setIsSettingsOpen(false)}
                     slotData={slotData}
-                    updateMissionSteps={setStepCount}
+                    updateMissionSteps={(newStepCount) => {
+                        console.log("CustomizationPage requested update to", newStepCount);
+                        // This is redundant now as the actual update happens via context
+                    }}
                 />
             )}
         </div>
-    );
-}
-
-/**
- * Top-level App component with all providers
- */
-function App() {
-    return (
-        <CustomizationProvider
-            onStepCountChange={(newStepCount) => {
-                console.log("App: onStepCountChange called with", newStepCount);
-                // This is handled in AppContent
-            }}
-        >
-            <BLEProvider>
-                <KnobProvider>
-                    <DndProvider backend={HTML5Backend}>
-                        <AppWithCustomizationContext />
-                    </DndProvider>
-                </KnobProvider>
-            </BLEProvider>
-        </CustomizationProvider>
     );
 }
 

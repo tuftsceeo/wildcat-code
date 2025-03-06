@@ -26,8 +26,8 @@ const NavigationControls = ({
     onPrevious,
     onNext,
 }) => {
-    console.log("NavigationControls: currSlotNumber =", currSlotNumber);
-    console.log("NavigationControls: missionSteps =", missionSteps);
+   // console.log("NavigationControls: currSlotNumber =", currSlotNumber);
+    //console.log("NavigationControls: missionSteps =", missionSteps);
 
     // FIXED: missionSteps is the COUNT, so max index is missionSteps-1
     const isPrevButtonDisabled = currSlotNumber <= 0;

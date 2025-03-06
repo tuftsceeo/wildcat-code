@@ -1,49 +1,20 @@
 /**
  * @file BLEContext.js
  * @description Context provider for Bluetooth Low Energy functionality, managing
- * connection state and port data for connected devices.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * connection state and port data for connected devices including motors and sensors.
  */
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { newSpikeBLE } from "./ble_resources/spike_ble";
-import { struct, u8, u16, s16, seq, s8, s32 } from "buffer-layout";
 
 const BLEContext = createContext();
 
-// Copy of DEVICE_MESSAGE_MAP for processing device states
-const DEVICE_MESSAGE_MAP = {
-    0x00: ["Battery", struct([u8("batteryLevel")])],
-    0x01: [
-        "IMU",
-        struct([
-            u8("faceUp"), // Hub Face pointing up
-            u8("yawFace"), // Hub Face configured as yaw face
-            s16("yaw"), // Yaw value
-            s16("pitch"), // Pitch value
-            s16("roll"), // Roll value
-            s16("accelX"), // Accelerometer reading in X
-            s16("accelY"), // Accelerometer reading in Y
-            s16("accelZ"), // Accelerometer reading in Z
-            s16("gyroX"), // Gyroscope reading in X
-            s16("gyroY"), // Gyroscope reading in Y
-            s16("gyroZ"), // Gyroscope reading in Z
-        ]),
-    ],
-    0x02: ["5x5", struct([seq(u8(), 25, "pixels")])],
-    0x0a: [
-        "Motor",
-        struct([
-            u8("port"), // Hub Port the motor is connected to
-            u8("deviceType"), // Motor Device Type
-            s16("absolutePos"), // Absolute position in degrees
-            s16("power"), // Power applied to the motor
-            s8("speed"), // Speed of the motor
-            s32("position"), // Position of the motor
-        ]),
-    ],
-    // Add other device types as needed
+// Device type constants
+export const DEVICE_TYPES = {
+    MOTOR: 0x30,         // Motor device type
+    FORCE_SENSOR: 0x3C,  // Force sensor device type 
+    COLOR_SENSOR: 0x3D,  // Color sensor device type
+    DISTANCE_SENSOR: 0x3E // Distance sensor device type
 };
 
 export const useBLE = () => {
@@ -86,30 +57,51 @@ export const BLEProvider = ({ children }) => {
             const message = event.detail;
             console.log('Processing device notification:', message);
 
-            // Reset port states for new notification
-            const newPortStates = {
-                'A': null,
-                'B': null,
-                'C': null,
-                'D': null,
-                'E': null,
-                'F': null
-            };
+            // Create a new port states object
+            const newPortStates = {};
 
             // Process each message in the notification
             message.messages.forEach(msg => {
+                // Handle motor messages
                 if (msg.name === 'Motor') {
                     const portLetter = String.fromCharCode(65 + msg.values.port);
                     newPortStates[portLetter] = {
-                        type: msg.values.deviceType,
+                        deviceType: DEVICE_TYPES.MOTOR,
+                        type: DEVICE_TYPES.MOTOR, // For backward compatibility
                         connected: true,
                         ...msg.values
                     };
+                    console.log(`BLEContext: Detected Motor on port ${portLetter}`, msg.values);
+                } 
+                // Handle force sensor messages
+                else if (msg.name === 'Force') {
+                    const portLetter = String.fromCharCode(65 + msg.values.port);
+                    newPortStates[portLetter] = {
+                        deviceType: DEVICE_TYPES.FORCE_SENSOR,
+                        type: DEVICE_TYPES.FORCE_SENSOR, // For backward compatibility
+                        connected: true,
+                        pressureDetected: msg.values.pressureDetected === 1,
+                        measuredValue: msg.values.measuredValue,
+                        ...msg.values
+                    };
+                    console.log(`BLEContext: Detected Force Sensor on port ${portLetter}`, msg.values);
                 }
+                // Can add handlers for other sensor types here
             });
 
-            // Update port states
-            setPortStates(newPortStates);
+            // Update port states by merging with previous states
+            setPortStates(prevStates => {
+                const mergedStates = { ...prevStates };
+                
+                // Only update ports that have data in this notification
+                Object.entries(newPortStates).forEach(([port, state]) => {
+                    if (state) {
+                        mergedStates[port] = state;
+                    }
+                });
+                
+                return mergedStates;
+            });
         };
 
         window.addEventListener('spikeDeviceNotification', handleDeviceNotification);
@@ -137,7 +129,8 @@ export const BLEProvider = ({ children }) => {
         ble,
         isConnected,
         setIsConnected,
-        portStates
+        portStates,
+        DEVICE_TYPES
     };
 
     return (
