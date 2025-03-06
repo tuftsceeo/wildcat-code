@@ -1,12 +1,10 @@
 /**
- * @file RunMenu.jsx
+ * @file RunMenu.jsx - FINAL FIX
  * @description Side panel for navigating and executing code, with support for
  * running individual slots or the complete program.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./RunMenu.module.css";
 import { generatePythonCode } from "./codeGenerator.js";
 import { useBLE } from "./BLEContext";
@@ -22,7 +20,27 @@ export const RunMenu = ({
     missionSteps,
     slotData,
 }) => {
+    console.log("RunMenu: Rendering with missionSteps =", missionSteps);
+
     const { ble, isConnected, portStates } = useBLE();
+
+    // Log any inconsistencies between missionSteps and slotData length
+    useEffect(() => {
+        console.log(
+            "RunMenu: missionSteps =",
+            missionSteps,
+            "slotData.length =",
+            slotData?.length,
+        );
+
+        // The slotData array should be exactly missionSteps in length
+        // (we're now treating missionSteps as the COUNT of steps, not the max index)
+        if (slotData && slotData.length !== missionSteps) {
+            console.warn(
+                "RunMenu: Inconsistency detected - slotData length doesn't match missionSteps",
+            );
+        }
+    }, [missionSteps, slotData]);
 
     // Check for disconnected motors in configurations
     const checkDisconnectedMotors = (slots) => {
@@ -124,6 +142,7 @@ export const RunMenu = ({
 
     // New handler for clicking on steps
     const handleStepClick = (stepIndex) => {
+        console.log("RunMenu: Clicked on step", stepIndex + 1);
         setCurrSlotNumber(stepIndex);
     };
 
@@ -133,33 +152,44 @@ export const RunMenu = ({
         slotData[currSlotNumber],
     ]);
 
+    // Generate buttons for each step (0 to missionSteps-1, inclusive)
+    // Note: missionSteps is the COUNT, so we create buttons from 0 to missionSteps-1
+    const renderStepButtons = () => {
+        console.log("RunMenu: Rendering", missionSteps, "step buttons");
+
+        const buttons = [];
+        // Create exactly missionSteps buttons (from 0 to missionSteps-1)
+        for (let i = 0; i < missionSteps; i++) {
+            // console.log(`RunMenu: Creating button for Step ${i + 1}`);
+            buttons.push(
+                <button
+                    key={i}
+                    className={`${styles.stepButton} ${
+                        slotData?.[i]?.type ? styles.configured : ""
+                    } ${i === currSlotNumber ? styles.current : ""} ${
+                        isConnected &&
+                        checkDisconnectedMotors([slotData?.[i]]).length > 0
+                            ? styles.warning
+                            : ""
+                    }`}
+                    onClick={() => handleStepClick(i)}
+                >
+                    Step {i + 1}
+                </button>,
+            );
+        }
+        return buttons;
+    };
+
     return (
         <div className={styles.menuBackground}>
             <div className={styles.menuContent}>
                 {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>RUN</div>
 
-                {/* Step buttons - first one green when active, all clickable */}
+                {/* Step buttons - using our renderStepButtons function */}
                 <div className={styles.stepsContainer}>
-                    {[...Array(missionSteps + 1)].map((_, index) => (
-                        <button
-                            key={index}
-                            className={`${styles.stepButton} ${
-                                slotData?.[index]?.type ? styles.configured : ""
-                            } ${
-                                index === currSlotNumber ? styles.current : ""
-                            } ${
-                                isConnected &&
-                                checkDisconnectedMotors([slotData?.[index]])
-                                    .length > 0
-                                    ? styles.warning
-                                    : ""
-                            }`}
-                            onClick={() => handleStepClick(index)}
-                        >
-                            Step {index + 1}
-                        </button>
-                    ))}
+                    {renderStepButtons()}
                 </div>
 
                 {/* Blue Play button as in FIGMA */}

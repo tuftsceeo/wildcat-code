@@ -85,7 +85,7 @@ const ThemeSettings = () => {
                 ))}
             </div>
 
-            <div className={styles.previewContainer}>
+            {/*  <div className={styles.previewContainer}>
                 <div className={styles.previewTitle}>Preview:</div>
                 <div
                     className={styles.previewContent}
@@ -110,7 +110,7 @@ const ThemeSettings = () => {
                         Forward
                     </button>
                 </div>
-            </div>
+            </div> */}
 
             {/* Font options */}
             <div className={styles.fontOptions}>

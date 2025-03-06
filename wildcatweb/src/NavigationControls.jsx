@@ -1,5 +1,5 @@
 /**
- * @file NavigationControls.jsx
+ * @file NavigationControls.jsx - FINAL FIX
  * @description Navigation controls for moving between slots in the coding track.
  * @author Jennifer Cross with support from Claude
  * @created February 2025
@@ -26,8 +26,21 @@ const NavigationControls = ({
     onPrevious,
     onNext,
 }) => {
+    console.log("NavigationControls: currSlotNumber =", currSlotNumber);
+    console.log("NavigationControls: missionSteps =", missionSteps);
+
+    // FIXED: missionSteps is the COUNT, so max index is missionSteps-1
     const isPrevButtonDisabled = currSlotNumber <= 0;
-    const isNextButtonDisabled = currSlotNumber >= missionSteps;
+    const isNextButtonDisabled = currSlotNumber >= missionSteps - 1;
+
+    console.log(
+        "NavigationControls: isPrevButtonDisabled =",
+        isPrevButtonDisabled,
+    );
+    console.log(
+        "NavigationControls: isNextButtonDisabled =",
+        isNextButtonDisabled,
+    );
 
     return (
         <div className={styles.navigationControls}>

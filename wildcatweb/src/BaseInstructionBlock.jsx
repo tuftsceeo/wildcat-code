@@ -1,7 +1,6 @@
-
 /**
  * @file BaseInstructionBlock.jsx
- * @description Base component for all instruction visualizations that provides 
+ * @description Base component for all instruction visualizations that provides
  * common layout, styling, and behavior for instruction blocks.
  * @author Jennifer Cross with support from Claude
  * @created February 2025

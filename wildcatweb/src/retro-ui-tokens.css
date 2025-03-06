@@ -296,8 +296,8 @@ body.large-text {
 /* Placeholders for OpenDyslexic font for accessibility */
 @font-face {
     font-family: "OpenDyslexic";
-    src: url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.woff")
-        format("woff");
+    src: local("OpenDyslexic"),
+        url(./assets/OpenDyslexic-Regular.woff) format("woff");
     font-weight: normal;
     font-style: normal;
 }

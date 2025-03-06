@@ -93,7 +93,14 @@ export const BluetoothUI = ({ currSlotNumber }) => {
 
             {/* Render CustomizationPage when settings button is clicked */}
             {showCustomizationPage && (
-                <CustomizationPage close={closeCustomizationPage} />
+                <CustomizationPage
+                    close={closeCustomizationPage}
+                    slotData={[]}
+                    updateMissionSteps={() => {
+                        // We cannot update mission steps from here
+                        // This instance is used without the needed context
+                    }}
+                />
             )}
 
             {showHelpDialog && (

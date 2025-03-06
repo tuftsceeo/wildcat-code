@@ -1,5 +1,5 @@
 /**
- * @file App.js
+ * @file App.js - FIXED
  * @description Example of how to integrate the CustomizationProvider and
  * CustomizationPage into the main application.
  */
@@ -22,8 +22,13 @@ function App() {
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [currSlotNumber, setCurrSlotNumber] = useState(0);
-    const missionSteps = 2;
+    const [missionSteps, setStepCount] = useState(2);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    // Log when missionSteps change
+    useEffect(() => {
+        console.log("App.js: missionSteps changed to", missionSteps);
+    }, [missionSteps]);
 
     // Define interface for slot data
     const createEmptySlot = () => ({
@@ -34,21 +39,56 @@ function App() {
 
     // Initialize slot data array with empty slots
     const [slotData, setSlotData] = useState(
-        Array(missionSteps + 1)
+        Array(missionSteps)
             .fill(null)
             .map(() => createEmptySlot()),
     );
+
+    // Update slotData when missionSteps changes
+    useEffect(() => {
+        console.log(
+            "App.js: Updating slotData based on missionSteps",
+            missionSteps,
+        );
+        setSlotData((prev) => {
+            // Only update if the length needs to change
+            if (prev.length !== missionSteps) {
+                console.log(
+                    "App.js: Adjusting slotData length from",
+                    prev.length,
+                    "to",
+                    missionSteps,
+                );
+
+                // If expanding, add new empty slots
+                if (prev.length < missionSteps) {
+                    const additionalSlots = Array(missionSteps - prev.length)
+                        .fill(null)
+                        .map(() => createEmptySlot());
+                    return [...prev, ...additionalSlots];
+                }
+
+                // If contracting, trim the array
+                return prev.slice(0, missionSteps);
+            }
+
+            // Length is already correct
+            return prev;
+        });
+    }, [missionSteps]);
+
     // Update Python code whenever slot data changes
     useEffect(() => {
         const newPyCode = generatePythonCode(slotData);
         setPyCode(newPyCode);
-
+        console.log("App.js: Generated Python Code: ", newPyCode);
         // Enable run if all slots have configurations
         const isComplete = slotData.every(
             (slot) => slot.type && slot.subtype && slot.configuration,
         );
         setCanRun(isComplete);
     }, [slotData]);
+
     // Handle updates to slot configuration
     const handleSlotUpdate = (slotConfig) => {
         setSlotData((prevData) => {
@@ -84,7 +124,12 @@ function App() {
     };
 
     return (
-        <CustomizationProvider>
+        <CustomizationProvider
+            onStepCountChange={(newStepCount) => {
+                console.log("App: onStepCountChange called with", newStepCount);
+                setStepCount(newStepCount);
+            }}
+        >
             <BLEProvider>
                 <KnobProvider>
                     <DndProvider backend={HTML5Backend}>
@@ -135,6 +180,9 @@ function App() {
                             {isSettingsOpen && (
                                 <CustomizationPage
                                     close={() => setIsSettingsOpen(false)}
+                                    slotData={slotData}
+                                    // This prop is now unused as we're using context directly
+                                    updateMissionSteps={() => {}}
                                 />
                             )}
                         </div>

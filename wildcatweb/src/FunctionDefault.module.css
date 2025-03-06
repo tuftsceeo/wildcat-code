@@ -204,14 +204,8 @@ body[data-theme="clean"] .actionButtonChild.active {
 }
 
 /* Theme-specific dashboard backgrounds */
-body[data-theme="retro"] .dashboardContainer {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-body[data-theme="pastel"] .dashboardContainer {
-    background-color: rgba(248, 249, 250, 0.8);
-}
-body[data-theme="clean"] .dashboardContainer {
-    background-color: rgba(255, 255, 255, 0.8);
+.dashboardContainer {
+    background-color: var(--color-background);
 }
 
 /* Placeholder for dashboard */

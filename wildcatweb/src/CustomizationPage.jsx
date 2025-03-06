@@ -21,6 +21,7 @@ import Portal from "./Portal";
 import { useCustomization } from "./CustomizationContext";
 import ThemeSettings from "./settings/ThemeSettings";
 import ReadingLevelSettings from "./settings/ReadingLevelSettings";
+import StepsSettings from "./settings/StepsSettings";
 import PlaceholderSettings from "./settings/PlaceholderSettings";
 import styles from "./CustomizationPage.module.css";
 
@@ -29,9 +30,11 @@ import styles from "./CustomizationPage.module.css";
  *
  * @param {Object} props Component props
  * @param {Function} props.close Function to close the settings panel
+ * @param {Array} props.slotData Current slot data to check for code in steps
+ * @param {Function} props.updateMissionSteps Function to update mission steps in App.js
  * @returns {JSX.Element} Complete settings panel UI
  */
-const CustomizationPage = ({ close }) => {
+const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
     // State for the active tab index
     const [activeTab, setActiveTab] = useState(0);
 
@@ -72,7 +75,7 @@ const CustomizationPage = ({ close }) => {
             icon: <Layers size={32} />,
             name: "Steps",
             color: "#00ddff",
-            available: false,
+            available: true,
             priority: "high",
         },
         {
@@ -270,6 +273,13 @@ const CustomizationPage = ({ close }) => {
                 return <ReadingLevelSettings />;
             case "themes":
                 return <ThemeSettings />;
+            case "steps":
+                return (
+                    <StepsSettings
+                        slotData={slotData}
+                        onUpdateMissionSteps={updateMissionSteps}
+                    />
+                );
             default:
                 return <PlaceholderSettings feature={currentTab} />;
         }

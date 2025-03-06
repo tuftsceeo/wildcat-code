@@ -1,5 +1,5 @@
 /**
- * @file CustomizationContext.js
+ * @file CustomizationContext.js - FIXED with min/max step limits
  * @description Context provider for managing and persisting user customization settings
  * across the application.
  */
@@ -8,6 +8,10 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 
 // Create context
 const CustomizationContext = createContext();
+
+// Constants for min/max steps
+export const MIN_STEPS = 2;
+export const MAX_STEPS = 10;
 
 /**
  * Hook for accessing customization settings and functions from any component
@@ -22,9 +26,10 @@ export const useCustomization = () => useContext(CustomizationContext);
  * @component
  * @param {Object} props - Provider props
  * @param {React.ReactNode} props.children - Child components
+ * @param {Function} props.onStepCountChange - Optional callback when step count changes
  * @returns {JSX.Element} Context provider
  */
-export const CustomizationProvider = ({ children }) => {
+export const CustomizationProvider = ({ children, onStepCountChange }) => {
     // Reading level settings
     const [readingLevel, setReadingLevel] = useState("intermediate");
 
@@ -36,8 +41,8 @@ export const CustomizationProvider = ({ children }) => {
     const [voice, setVoice] = useState("robot1");
     const [volume, setVolume] = useState(80);
 
-    // Step count
-    const [stepCount, setStepCount] = useState(3);
+    // Step count - starting with 2 as minimum
+    const [stepCount, setStepCount] = useState(MIN_STEPS);
 
     // Language
     const [language, setLanguage] = useState("en");
@@ -59,7 +64,19 @@ export const CustomizationProvider = ({ children }) => {
                 setUseDyslexiaFont(parsed.useDyslexiaFont || false);
                 setVoice(parsed.voice || "robot1");
                 setVolume(parsed.volume || 80);
-                setStepCount(parsed.stepCount || 3);
+
+                // Ensure step count is within valid range
+                const parsedStepCount = parsed.stepCount || MIN_STEPS;
+                const validStepCount = Math.max(
+                    MIN_STEPS,
+                    Math.min(MAX_STEPS, parsedStepCount),
+                );
+                setStepCount(validStepCount);
+                console.log(
+                    "CustomizationContext: updated to",
+                    validStepCount,
+                    "steps",
+                );
                 setLanguage(parsed.language || "en");
                 setHighContrast(parsed.highContrast || false);
                 setLargeText(parsed.largeText || false);
@@ -129,6 +146,22 @@ export const CustomizationProvider = ({ children }) => {
         }
     }, [theme, useDyslexiaFont, highContrast, largeText]);
 
+    // Add effect to notify when step count changes
+    useEffect(() => {
+        console.log("CustomizationContext: Step count changed to", stepCount);
+        if (onStepCountChange) {
+            onStepCountChange(stepCount);
+        }
+    }, [stepCount, onStepCountChange]);
+
+    // Custom setter for step count with validation
+    const updateStepCount = (newValue) => {
+        console.log("CustomizationContext: Updating step count to", newValue);
+        // Enforce min/max boundaries
+        const validValue = Math.max(MIN_STEPS, Math.min(MAX_STEPS, newValue));
+        setStepCount(validValue);
+    };
+
     // Reset all settings to defaults
     const resetSettings = () => {
         setReadingLevel("intermediate");
@@ -136,7 +169,7 @@ export const CustomizationProvider = ({ children }) => {
         setUseDyslexiaFont(false);
         setVoice("robot1");
         setVolume(80);
-        setStepCount(3);
+        setStepCount(MIN_STEPS);
         setLanguage("en");
         setHighContrast(false);
         setLargeText(false);
@@ -162,7 +195,9 @@ export const CustomizationProvider = ({ children }) => {
 
         // Steps
         stepCount,
-        setStepCount,
+        setStepCount: updateStepCount, // Use the custom setter
+        MIN_STEPS,
+        MAX_STEPS,
 
         // Language
         language,
