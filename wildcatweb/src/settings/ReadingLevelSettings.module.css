@@ -1,0 +1,149 @@
+/* ReadingLevelSettings.module.css - Styles for the reading level settings panel */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-neon-green);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.optionsContainer {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+    width: 100%;
+    max-width: 760px;
+}
+
+.optionButton {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4);
+    background-color: var(--color-button-selected-bg);
+    border: 2px solid var(--color-gray-700);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    width: 110px;
+    height: 110px;
+}
+
+.optionButton:hover:not(.activeOption) {
+    background-color: var(--color-gray-700);
+}
+
+.activeOption {
+    background-color: rgba(0, 255, 0, 0.1);
+    border-color: var(--color-neon-green);
+    box-shadow: var(--glow-neon-green);
+}
+
+.optionIcon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-2);
+}
+
+.optionLabel {
+    font-size: var(--font-size-sm);
+    text-align: center;
+}
+
+.description {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-400);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    max-width: 600px;
+}
+
+.previewContainer {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.previewTitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-neon-green);
+    margin-bottom: var(--spacing-2);
+}
+
+.previewContent {
+    padding: var(--spacing-6);
+    background-color: var(--color-button-selected-bg0);
+    border-radius: var(--radius-md);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.previewNote {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-400);
+    text-align: center;
+}
+
+/* Preview content styles */
+
+.iconOnlyPreview {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-size: 2rem;
+}
+
+.beginnerPreview {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+}
+
+.beginnerIcon {
+    font-size: 1.5rem;
+}
+
+.beginnerText {
+    font-size: var(--font-size-lg);
+}
+
+.intermediatePreview {
+    font-size: var(--font-size-lg);
+}
+
+.advancedPreview {
+    text-align: center;
+    max-width: 90%;
+}
+
+.textOnlyPreview {
+    text-align: center;
+    max-width: 90%;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

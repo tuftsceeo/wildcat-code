@@ -1,0 +1,170 @@
+/* SettingsCarousel.module.css */
+
+.settingsCarousel {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    padding: var(--spacing-2) 0;
+    background-color: var(--color-panel-background);
+    border-bottom: 2px solid var(--color-gray-800);
+    height: 150px;
+}
+
+/* Container with horizontal scroll */
+.carouselContainer {
+    flex: 1;
+    overflow-x: hidden;
+    position: relative;
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+    );
+    padding: 0 var(--spacing-4);
+}
+
+/* Track with tabs */
+.carouselTrack {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-4);
+    justify-content: center;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+    min-width: 100%;
+}
+
+/* Individual tab button */
+.carouselTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: var(--color-gray-800);
+    padding: var(--spacing-3);
+    margin: 0 var(--spacing-2);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    min-width: 120px;
+    height: 120px;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: visible;
+    color: var(--color-text-inactive);
+}
+
+/* Active tab styling */
+.carouselTab.active {
+    transform: scale(1.05);
+    background-color: var(--color-gray-700);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    color: var(--color-text-active);
+}
+
+/* Disabled tab styling */
+.carouselTab.disabled {
+    opacity: 0.5;
+    cursor: default;
+    filter: grayscale(70%);
+}
+
+/* Icon container */
+.tabIcon {
+    font-size: 32px;
+    margin-bottom: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+
+/* Tab name */
+.tabName {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    text-align: center;
+}
+
+/* Coming soon badge */
+.comingSoonBadge {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-gray-700);
+    color: var(--color-gray-300);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Navigation buttons */
+.carouselNav {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    color: var(--color-text-inactive);
+    cursor: pointer;
+    z-index: 3;
+    position: relative;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+}
+
+.carouselNav:hover {
+    background-color: var(--color-gray-800);
+    color: var(--color-text-active);
+}
+
+.carouselPrev {
+    left: var(--spacing-2);
+}
+
+.carouselNext {
+    right: var(--spacing-2);
+}
+
+/* Animation when dragging */
+.carouselTrack.dragging {
+    transition: none;
+    cursor: grabbing;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .carouselTab {
+        min-width: 100px;
+        height: 110px;
+        padding: var(--spacing-2);
+    }
+
+    .tabIcon {
+        font-size: 24px;
+        height: 30px;
+    }
+
+    .tabName {
+        font-size: 11px;
+    }
+}

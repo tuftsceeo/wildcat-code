@@ -1,112 +1,120 @@
-.background {
-    position: absolute;
-    width: 1342px;
-    height: 760px;
+/* CustomizationPage.module.css - Updated with theme variables */
+
+.customizationOverlay {
+    position: fixed;
     top: 0;
-    margin-top: 0px;
-    margin-bottom: 7px;
-    left: 49px;
-    border-radius: 20px;
-    z-index: 10000000;
-    background-color: #f5f5f5;
-    font-family: "Space Grotesk";
-    font-size: 50px;
-    font-weight: 700;
-    line-height: 63.8px;
-    text-align: center;
-    color: #d9d9d9;
-    padding-top: 15px;
-}
-
-.options {
-    display: grid;
-    grid-template-areas:
-        "a b"
-        "c d"
-        "e f";
-    justify-content: space-evenly;
-    align-content: end;
-    position: relative;
-    top: 0%;
-    row-gap: 10px;
-}
-
-.box {
-    position: relative;
-    width: 600px;
-    height: 200px;
-    background-color: #4d4d4d;
-    border-radius: 20px;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    animation: fadeIn 0.3s ease;
+    pointer-events: auto !important;
 }
 
-.icon {
-    width: 136.47px;
-    height: 100px;
-}
-
-.textWrapper {
+.customizationPanel {
+    position: relative;
+    width: 900px;
+    height: 650px;
+    background-color: var(--color-panel-background);
+    border: 2px solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+    color: var(--color-text-inactive);
+    font-family: var(--font-family-active);
+    box-shadow: var(--glow-blue);
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
 }
 
-.heading {
-    font-family: "Space Grotesk";
-    font-size: 48px;
-    font-weight: 700;
-    line-height: 0px;
-    text-align: left;
-    /* width: 351px;
-    height: 34px; */
-    flex-shrink: 4;
+/* Header Styles */
+.settingsHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-gray-800);
 }
 
-.bodyText {
-    font-family: "Space Grotesk";
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.5em;
-    text-align: left;
-    flex-shrink: 4;
-    width: 400px;
-    height: 60px;
-}
-
-.xOut {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 33.5px;
-    margin-top: 15px;
-    width: 50px;
-    height: 50px;
-    font-family: "Space Grotesk";
-    font-size: 45px;
-    font-weight: 700;
-    line-height: 0px;
+.settingsTitle {
     text-align: center;
-    color: #d9d9d9;
-    border-color: #f5f5f5;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-text-inactive);
 }
 
-.backButton {
+.closeButton {
     position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 33.5px;
-    margin-top: 15px;
-    width: 50px;
-    height: 50px;
-    font-family: "Space Grotesk";
-    font-size: 45px;
-    font-weight: 700;
-    line-height: 0px;
-    text-align: center;
-    color: #d9d9d9;
-    border-color: #f5f5f5;
+    left: var(--spacing-4);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-gray-400);
+    cursor: pointer;
+    padding: var(--spacing-2);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+}
+
+.closeButton:hover {
+    color: var(--color-text-active);
+    background-color: var(--color-gray-800);
+}
+
+/* Content Area */
+.settingsContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-6);
+    height: 450px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adaptations */
+@media (max-width: 768px) {
+    .customizationPanel {
+        width: 95%;
+        height: 90vh;
+    }
+
+    .settingsHeader {
+        padding: var(--spacing-3);
+    }
+
+    .settingsTitle {
+        font-size: var(--font-size-xl);
+    }
 }

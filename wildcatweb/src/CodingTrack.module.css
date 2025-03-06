@@ -1,65 +1,304 @@
+/* CodingTrack.module.css - With theme variables */
+
 .trackContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
-    position: absolute;
-    top: 0;
-    left: 200px;
     align-items: center;
-    z-index: 0;
-}
-
-.codeTrack {
-    transform: translateY(-30%);
-    z-index: 1;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    border: 2px solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    background-color: var(--color-panel-background);
+    padding: var(--spacing-4);
 }
 
 .codeSucker {
-    transform: translateY(-11.5%);
+    position: absolute;
+    top: var(--spacing-4);
+    left: var(--spacing-4);
+    color: var(--color-border-inactive);
+    width: 48px;
+    height: 48px;
+    opacity: 0.6;
+}
+
+.slotDisplay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Motor Visualization (from motor-demo.tsx) */
+.motorVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.motorAnimation {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.motorBorder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.motorRotor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.clockwise {
+    animation-name: clockwise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.counterclockwise {
+    animation-name: counterclockwise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterclockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+.motorLabel {
+    color: var(--color-motor-main);
+    text-align: center;
+    text-transform: uppercase;
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-4);
+}
+
+/* Multiple motor container */
+.multiMotorContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-4);
+}
+
+/* Smaller motor visualization for multiple motors */
+.smallMotorVisualization {
+    composes: motorVisualization;
+    transform: scale(0.8);
+}
+
+.xsMotorVisualization {
+    composes: motorVisualization;
+    transform: scale(0.6);
+}
+
+/* Timer visualization */
+.timerVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-8);
+}
+
+.timerIcon {
+    font-size: 48px;
+    color: var(--color-action-secondary);
+    margin-bottom: var(--spacing-2);
+}
+
+.timerLabel {
+    color: var(--color-action-secondary);
+    text-transform: uppercase;
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-2);
+}
+
+.timerValue {
+    font-size: 48px;
+    color: var(--color-timer-main);
+    margin: var(--spacing-2) 0;
+}
+
+.timerUnit {
+    font-size: var(--font-size-sm);
+    color: var(--color-timer-main);
+    text-transform: uppercase;
+}
+
+/* Test button at bottom as in FIGMA */
+.testButton {
+    background-color: var(--color-action-secondary);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-button-active-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    padding: var(--spacing-2) var(--spacing-6);
+    cursor: pointer;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: calc(var(--spacing-4) + 40px);
+    width: 100px;
     z-index: 2;
 }
 
-.slotDescription {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -120%);  /* Adjusted to position above the track */
-    color: #405CB0;
-    font-family: 'Space Grotesk';
-    font-size: 24px;
-    font-weight: 700;
-    text-align: center;
-    padding: 0 20px;
-    z-index: 3;  /* Ensure text is on top */
-    background-color: rgba(255, 255, 255, 0.9);  /* Optional: add slight background to improve readability */
-    border-radius: 5px;  /* Optional: round the corners of the background */
+.testButton:hover {
+    opacity: 0.9;
 }
 
-.nextButton,
-.prevButton {
-    background: none;
+/* Navigation controls with CSS triangles instead of SVGs */
+.navigationControls {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.navButton {
+    background-color: transparent;
     border: none;
-    padding: 0;
     cursor: pointer;
-    display: inline-block;
-    z-index: 4;  /* Navigation buttons on top */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    position: absolute;
+    pointer-events: auto;
+}
+
+.prevButton {
+    top: var(--spacing-4);
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nextButton {
-    transform: translateY(-283%);
+    bottom: var(--spacing-4);
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.prevButton {
-    transform: translateY(-330%);
+.navButton:hover:not(:disabled) {
+    transform: translateX(-50%) scale(1.2);
 }
 
-.prevButton:disabled,
-.nextButton:disabled {
+/* Active (pressed) state: scale down */
+.navButton:active:not(:disabled) {
+    transform: translateX(-50%) scale(0.95);
+}
+
+.navButton:disabled {
+    opacity: 0.3;
     cursor: not-allowed;
 }
 
-.nextButton img,
-.prevButton img {
+/* Previous button triangle */
+.prevButton:before {
+    content: "";
     display: block;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid var(--color-text-inactive);
+}
+
+.prevButton:disabled:before {
+    border-bottom-color: var(--color-disabled);
+}
+
+/* Next button triangle */
+.nextButton:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 20px solid var(--color-text-inactive);
+}
+
+.nextButton:disabled:before {
+    border-top-color: var(--color-disabled);
+}
+
+/* Slot description (hidden/removed as requested) */
+.slotDescription {
+    display: none;
+}
+
+/* Instruction block styles */
+.instructionBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: auto;
+    height: 100%;
+}
+
+.emptyInstruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-gray-400);
+}
+
+.emptyText {
+    font-size: var(--font-size-lg);
+    text-align: center;
+}
+
+.unknownInstruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-warning);
+}
+
+.unknownText {
+    font-size: var(--font-size-base);
+    text-align: center;
+    padding: var(--spacing-4);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-md);
 }
