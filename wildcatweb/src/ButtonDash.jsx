@@ -1,8 +1,7 @@
 /**
  * @file ButtonDash.jsx
  * @description Dashboard interface for configuring button instructions (force sensors)
- * with individual button displays styled for children.
- * Fixed to prevent infinite update loop.
+ * with separate visualizations for programmed condition and live sensor state.
  */
 
 import React, { useState, useEffect, useCallback, memo } from "react";
@@ -11,7 +10,7 @@ import { Disc, RefreshCwOff, BluetoothSearching } from "lucide-react";
 import styles from "./ButtonDash.module.css";
 
 /**
- * Single button dashboard component
+ * Single button dashboard component with dual state visualization
  * 
  * @component
  * @param {Object} props - Component props
@@ -46,10 +45,9 @@ const SingleButtonDash = memo(({
     
     /**
      * Handle changing the wait condition
-     * @param {string} condition - Either "pressed" or "released"
      */
-    const handleWaitConditionChange = (condition) => {
-        setWaitCondition(condition);
+    const handleWaitConditionChange = () => {
+        setWaitCondition(waitCondition === "pressed" ? "released" : "pressed");
     };
     
     // Get current sensor state if connected
@@ -92,59 +90,66 @@ const SingleButtonDash = memo(({
                 )}
             </div>
             
-            {/* Button configuration */}
+            {/* Button configuration - split into command and live sections */}
             <div className={styles.buttonControlContainer}>
-                {/* Wait condition selector */}
-                <div className={styles.waitConditionContainer}>
+                {/* Command section - shows programmed condition */}
+                <div className={styles.commandSection}>
                     <h3 className={styles.waitUntilLabel}>WAIT UNTIL</h3>
-                    <div className={styles.switchContainer}>
-                        <button
-                            className={`${styles.switchOption} ${
-                                waitCondition === "released" ? styles.active : ""
-                            }`}
-                            onClick={() => handleWaitConditionChange("released")}
-                            disabled={isDisconnected}
-                            aria-pressed={waitCondition === "released"}
-                        >
-                            RELEASED
-                        </button>
-                        
-                        <div className={styles.switchTrack}>
-                            <div 
-                                className={`${styles.switchHandle} ${
-                                    waitCondition === "pressed" ? styles.rightPosition : styles.leftPosition
-                                }`}
-                            ></div>
+                    
+                    {/* Wider toggle switch that matches the demo */}
+                    <div 
+                        className={`${styles.toggleContainer} ${
+                            waitCondition === "pressed" ? styles.active : ""
+                        }`}
+                        onClick={handleWaitConditionChange}
+                    >
+                        <div className={styles.toggleOptions}>
+                            <span className={`${styles.toggleOption} ${styles.left}`}>RELEASED</span>
+                            <span className={`${styles.toggleOption} ${styles.right}`}>PRESSED</span>
+                        </div>
+                        <div className={styles.toggleKnob}></div>
+                    </div>
+                    
+                    {/* Large button visualization for the command (as coded) */}
+                    <div className={styles.buttonVisualContainer}>
+                        <div className={styles.sensorContainer}>
+                            <div className={styles.sensorBody}></div>
+                            <div className={`${styles.sensorButton} ${
+                                waitCondition === "pressed" ? styles.pressed : ""
+                            }`}></div>
+                            <div className={styles.sensorMask}></div>
+                            <div className={`${styles.arrowIndicator} ${
+                                waitCondition === "pressed" ? styles.arrowDown : styles.arrowUp
+                            }`}></div>
                         </div>
                         
-                        <button
-                            className={`${styles.switchOption} ${
-                                waitCondition === "pressed" ? styles.active : ""
-                            }`}
-                            onClick={() => handleWaitConditionChange("pressed")}
-                            disabled={isDisconnected}
-                            aria-pressed={waitCondition === "pressed"}
-                        >
-                            PRESSED
-                        </button>
+                        <div className={styles.buttonStatus}>
+                            {waitCondition === "pressed" ? "PRESSED" : "RELEASED"}
+                        </div>
                     </div>
                 </div>
                 
-                {/* Visual button representation */}
-                <div className={styles.buttonVisualContainer}>
-                    <button 
-                        className={`${styles.buttonVisual} ${
-                            isCurrentlyPressed ? styles.pressed : styles.released
-                        }`}
-                        disabled={true}
-                        aria-label="Button visual representation"
-                    >
-                        <div className={styles.buttonInner}></div>
-                    </button>
+                {/* Live state section - shows current sensor state */}
+                <div className={styles.liveStateSection}>
+                    <div className={styles.sectionHeader}>LIVE</div>
                     
-                    <div className={styles.buttonStatus}>
-                        {isDisconnected ? "NOT CONNECTED" : 
-                            isCurrentlyPressed ? "PRESSED" : "RELEASED"}
+                    {/* Small button visualization for live state */}
+                    <div className={styles.buttonVisualContainer}>
+                        <div className={styles.liveSensorContainer}>
+                            <div className={styles.sensorBodySmall}></div>
+                            <div className={`${styles.sensorButtonSmall} ${
+                                isCurrentlyPressed ? styles.pressed : ""
+                            }`}></div>
+                            <div className={styles.sensorMaskSmall}></div>
+                            <div className={`${styles.arrowIndicatorSmall} ${
+                                isCurrentlyPressed ? styles.arrowDownSmall : styles.arrowUpSmall
+                            }`}></div>
+                        </div>
+                        
+                        <div className={styles.buttonStatus}>
+                            {isDisconnected ? "N/A" : 
+                                isCurrentlyPressed ? "PRESSED" : "RELEASED"}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -163,6 +168,7 @@ const SingleButtonDash = memo(({
  * @returns {JSX.Element} Button dashboard component
  */
 export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
+    // The rest of the component remains unchanged
     const { portStates, isConnected, DEVICE_TYPES } = useBLE();
     const [dismissedPorts, setDismissedPorts] = useState(new Set());
     
@@ -195,8 +201,7 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
         }
         
         return connected;
-        // DEVICE_TYPES removed from dependencies since it's constant
-    }, [portStates, isConnected]);
+    }, [portStates, isConnected, DEVICE_TYPES]);
     
     // Find active and disconnected buttons
     const { activeButtons, disconnectedButtons } = React.useMemo(() => {

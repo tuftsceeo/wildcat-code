@@ -31,7 +31,7 @@ import { Buffer } from "buffer"; // Not needed in node js
 const SERVICE_UUID = "0000fd02-0000-1000-8000-00805f9b34fb";
 const RX_CHAR_UUID = "0000fd02-0001-1000-8000-00805f9b34fb"; //WRITE WITHOUT RESPONSE
 const TX_CHAR_UUID = "0000fd02-0002-1000-8000-00805f9b34fb"; //NOTIFY
-const DEVICE_NOTIFICATION_INTERVAL_MS = 5000;
+const DEVICE_NOTIFICATION_INTERVAL_MS = 500;
 
 // Define constants for example usage
 const EXAMPLE_SLOT = 0;
