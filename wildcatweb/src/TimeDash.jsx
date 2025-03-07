@@ -1,10 +1,11 @@
 /**
  * @file TimeDash.jsx
  * @description Dashboard interface for configuring time wait actions with visual pie clock 
- * and numeric controls for selecting duration.
+ * and numeric controls for selecting duration. Updated for better theme compatibility.
  */
 
 import React, { useState, useEffect } from "react";
+import { Check } from "lucide-react";
 import styles from "./TimeDash.module.css";
 
 /**
@@ -19,11 +20,14 @@ import styles from "./TimeDash.module.css";
 export const TimeDash = ({ onUpdate, configuration }) => {
     // Initialize seconds from configuration or default to 3
     const [seconds, setSeconds] = useState(configuration?.seconds || 3);
+    // Track if configuration is complete
+    const [isConfigured, setIsConfigured] = useState(!!configuration?.seconds);
     
     // Update configuration when seconds changes
     useEffect(() => {
         if (onUpdate) {
             onUpdate({ seconds });
+            setIsConfigured(true);
         }
     }, [seconds, onUpdate]);
     
@@ -51,6 +55,13 @@ export const TimeDash = ({ onUpdate, configuration }) => {
     return (
         <div className={styles.timeGroup}>
             <div className={styles.timeName}>WAIT FOR</div>
+            
+            {/* Display success checkmark when configured */}
+            {isConfigured && (
+                <div className={styles.successCheck}>
+                    <Check size={24} />
+                </div>
+            )}
             
             {/* Time controls with buttons and numeric display */}
             <div className={styles.timeControlGroup}>
