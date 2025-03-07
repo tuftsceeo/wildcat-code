@@ -22,6 +22,7 @@ import ReadingLevelSettings from "./settings/ReadingLevelSettings";
 import LanguageSettings from "./settings/LanguageSettings"; // Make sure this is imported
 import StepsSettings from "./settings/StepsSettings";
 import PlaceholderSettings from "./settings/PlaceholderSettings";
+import VoiceSettings from "./settings/VoiceSettings";
 import styles from "./CustomizationPage.module.css";
 
 /**
@@ -66,7 +67,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             icon: <Volume2 size={32} />,
             name: "Voice",
             color: "#ff7700",
-            available: false,
+            available: true,
             priority: "high",
         },
         {
@@ -281,6 +282,8 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
                 );
             case "language":
                 return <LanguageSettings />; // Added this case to render the language settings
+            case "voice":
+                return <VoiceSettings />;
             default:
                 return <PlaceholderSettings feature={currentTab} />;
         }

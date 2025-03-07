@@ -149,7 +149,7 @@ body[data-theme="retro"] {
     --color-black: #000000;
     --color-white: #ffffff;
 
-    /* Semantic Color Tokens - Theme: Retro */
+    /* Semantic Color Tokens  (preferred for components) - Theme: Retro */
     --color-background: var(--color-black);
     --color-border-inactive: var(--color-blue);
     --color-border-active: var(--color-neon-green);
@@ -201,7 +201,7 @@ body[data-theme="pastel"] {
     --color-black: #3e4551; /* Slate instead of black */
     --color-white: #fffaf0; /* Very parchment background */
 
-    /* Semantic Color Tokens - Theme: Pastel */
+    /* Semantic Color Tokens (preferred for components)  - Theme: Pastel */
     --color-background: var(--color-white);
     --color-border-inactive: var(--color-blue);
     --color-border-active: var(--color-neon-green);
@@ -258,7 +258,7 @@ body[data-theme="clean"] {
     --color-black: #000000; /* True black */
     --color-white: #ffffff; /* True white */
 
-    /* Semantic Color Tokens - Theme: Clean */
+    /* Semantic Color Tokens (preferred for components) - Theme: Clean */
     --color-background: var(--color-white);
     --color-border-inactive: var(--color-gray-300);
     --color-border-active: var(--color-neon-green);

@@ -18,8 +18,8 @@ import {
 } from "./CustomizationContext";
 import CustomizationPage from "./CustomizationPage.jsx";
 import CodeTrack from "./CodeTrack.jsx";
+import { preloadVoices } from "./utils/speechUtils";
 import "./App.css";
-
 /**
  * The top-level App component with all providers
  * Manages the missionSteps state and handles changes from CustomizationContext

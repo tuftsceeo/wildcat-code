@@ -12,6 +12,7 @@ import { TimeDash } from "./TimeDash.jsx";
 import { Check, Plus, Zap, Lightbulb, Volume } from "lucide-react";
 import { Disc } from "lucide-react"; // Import an appropriate icon
 import ButtonDash from "./ButtonDash.jsx"; // Import the button component
+import { speakWithRobotVoice } from "./utils/speechUtils";
 
 
 // Import our components
@@ -148,14 +149,13 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
         setCurrentInstruction(null);
     };
 
-    // Play the audio description
+    // Get voice settings from context
+    const { language, voice, volume } = useCustomization();
+    
+    // Play the audio description with the selected robot voice
     const handlePlayAudio = (text) => {
-        // Use browser's speech synthesis
-        if ("speechSynthesis" in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.9; // Slightly slower for clarity
-            window.speechSynthesis.speak(utterance);
-        }
+        const languageCode = language === "es" ? "es-ES" : "en-US";
+        speakWithRobotVoice(text, voice, volume, languageCode);
     };
 
     // Render the dashboard based on selected subtype
