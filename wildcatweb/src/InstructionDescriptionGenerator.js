@@ -72,7 +72,7 @@ export const generateDescription = (
 
     if (instruction.type === "input" && instruction.subtype === "button") {
         const config = instruction.configuration || {};
-        const portText = getUIText(`motor${config.port || "A"}`, language);
+        const portText = getUIText(`button${config.port || "A"}`, language);
         const condition = getUIText(config.waitCondition || "pressed", language);
         
         // Get translated text from the appropriate template
