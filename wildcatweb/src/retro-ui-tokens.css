@@ -107,6 +107,28 @@
     --bluetooth-status-indicator-size: 10px;
 }
 
+/* Buttons should show hover and pressed states by scaling not color*/
+.btnReg {
+    transition: transform var(--transition-normal),
+        filter var(--transition-normal);
+    transform: scale(1);
+}
+
+.btnReg:hover {
+    transform: scale(1.2);
+}
+
+.btnReg:active {
+    transform: scale(.95);
+}
+
+.btnReg {
+    --transform-regular: scale(1);
+    --transform-hover: scale(1.2);
+    --transform-active: scale(.95);
+}
+
+
 /* RETRO Theme (default) */
 :root,
 body[data-theme="retro"] {

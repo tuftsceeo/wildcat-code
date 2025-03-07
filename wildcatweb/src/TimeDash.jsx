@@ -1,87 +1,97 @@
 /**
  * @file TimeDash.jsx
- * @description Dashboard interface for configuring time wait actions,
- * with visual time selection controls.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * @description Dashboard interface for configuring time wait actions with visual pie clock 
+ * and numeric controls for selecting duration.
  */
 
 import React, { useState, useEffect } from "react";
 import styles from "./TimeDash.module.css";
 
+/**
+ * Time dashboard component for configuring wait durations
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.onUpdate - Callback when time configuration changes
+ * @param {Object} props.configuration - Current time configuration
+ * @returns {JSX.Element} Time configuration dashboard with visual representation
+ */
 export const TimeDash = ({ onUpdate, configuration }) => {
+    // Initialize seconds from configuration or default to 3
     const [seconds, setSeconds] = useState(configuration?.seconds || 3);
-
-    // Changed to only trigger when seconds actually changes
+    
+    // Update configuration when seconds changes
     useEffect(() => {
         if (onUpdate) {
-            // Add null check
             onUpdate({ seconds });
         }
-    }, [seconds, onUpdate]); // Added onUpdate to dependencies
-
-    const handleSecondsChange = (event) => {
-        const value = parseInt(event.target.value, 10);
-        if (!isNaN(value) && value > 0) {
-            setSeconds(value);
+    }, [seconds, onUpdate]);
+    
+    /**
+     * Increase seconds (max 60)
+     */
+    const increaseSeconds = () => {
+        if (seconds < 60) {
+            setSeconds(seconds + 1);
         }
     };
-
-    // Timer visualization component
-    const TimerVisualization = ({ seconds }) => {
-        const radius = 60;
-        const circumference = 2 * Math.PI * radius;
-
-        return (
-            <div className={styles.timerVisualization}>
-                <div className={styles.timerDisplay}>
-                    <svg
-                        width="150"
-                        height="150"
-                        viewBox="0 0 150 150"
-                    >
-                        {/* Background circle */}
-                        <circle
-                            className={styles.timerBackground}
-                            cx="75"
-                            cy="75"
-                            r={radius}
-                        />
-
-                        {/* Timer circle - would animate in a functioning timer */}
-                        <circle
-                            className={styles.timerCircle}
-                            cx="75"
-                            cy="75"
-                            r={radius}
-                            strokeDasharray={circumference}
-                            strokeDashoffset="0"
-                        />
-                    </svg>
-
-                    {/* Time display */}
-                    <div className={styles.timeDigits}>{seconds}</div>
-                </div>
-            </div>
-        );
+    
+    /**
+     * Decrease seconds (min 1)
+     */
+    const decreaseSeconds = () => {
+        if (seconds > 1) {
+            setSeconds(seconds - 1);
+        }
     };
-
+    
+    // Calculate degrees for the conic gradient (portion of the clock to fill)
+    const conicValue = `${Math.min(360 * (seconds / 60), 360)}deg`;
+    
     return (
         <div className={styles.timeGroup}>
-            <div className={styles.timeName}>Wait Time</div>
-
-            {/* Timer visualization */}
-            <TimerVisualization seconds={seconds} />
-
-            <div className={styles.timeControl}>
-                <input
-                    type="number"
-                    min="1"
-                    value={seconds}
-                    onChange={handleSecondsChange}
-                    className={styles.timeInput}
-                />
-                <span className={styles.timeUnit}>seconds</span>
+            <div className={styles.timeName}>WAIT FOR</div>
+            
+            {/* Time controls with buttons and numeric display */}
+            <div className={styles.timeControlGroup}>
+                <div className={styles.timeControls}>
+                    <button 
+                        className={styles.timeButton}
+                        onClick={decreaseSeconds}
+                        disabled={seconds <= 1}
+                        aria-label="Decrease seconds"
+                    >
+                        -
+                    </button>
+                    
+                    <div className={styles.timeInput} role="spinbutton" aria-valuenow={seconds}>
+                        {seconds}
+                    </div>
+                    
+                    <button 
+                        className={styles.timeButton}
+                        onClick={increaseSeconds}
+                        disabled={seconds >= 60}
+                        aria-label="Increase seconds"
+                    >
+                        +
+                    </button>
+                </div>
+                
+                <div className={styles.timeUnit}>seconds</div>
+            </div>
+            
+            {/* Pie chart clock visualization */}
+            <div className={styles.clockContainer}>
+                <div className={styles.pieClock}>
+                    <div 
+                        className={styles.pieSlice}
+                        style={{ 
+                            background: `conic-gradient(var(--color-timer-main) ${conicValue}, transparent 0)` 
+                        }}
+                    ></div>
+                </div>
+                <div className={styles.clockBorder}></div>
             </div>
         </div>
     );
