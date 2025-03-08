@@ -14,15 +14,15 @@ import {
     Accessibility,
     UserRound,
     Users,
-    ChevronLeft,
-    ChevronRight,
 } from "lucide-react";
 import Portal from "./Portal";
 import { useCustomization } from "./CustomizationContext";
 import ThemeSettings from "./settings/ThemeSettings";
 import ReadingLevelSettings from "./settings/ReadingLevelSettings";
+import LanguageSettings from "./settings/LanguageSettings"; // Make sure this is imported
 import StepsSettings from "./settings/StepsSettings";
 import PlaceholderSettings from "./settings/PlaceholderSettings";
+import VoiceSettings from "./settings/VoiceSettings";
 import styles from "./CustomizationPage.module.css";
 
 /**
@@ -67,7 +67,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             icon: <Volume2 size={32} />,
             name: "Voice",
             color: "#ff7700",
-            available: false,
+            available: true,
             priority: "high",
         },
         {
@@ -83,8 +83,8 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             icon: <Globe size={32} />,
             name: "Language",
             color: "#0088ff",
-            available: false,
-            priority: "medium",
+            available: true, // Changed from false to true
+            priority: "high", // Changed from medium to high
         },
         {
             id: "access",
@@ -280,6 +280,10 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
                         onUpdateMissionSteps={updateMissionSteps}
                     />
                 );
+            case "language":
+                return <LanguageSettings />; // Added this case to render the language settings
+            case "voice":
+                return <VoiceSettings />;
             default:
                 return <PlaceholderSettings feature={currentTab} />;
         }

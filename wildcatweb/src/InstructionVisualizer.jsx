@@ -11,6 +11,7 @@ import React from "react";
 import styles from "./CodingTrack.module.css"; // Still using the original CSS
 import MotorInstructionBlock from "./MotorInstructionBlock";
 import TimerInstructionBlock from "./TimerInstructionBlock";
+import ButtonInstructionBlock from "./ButtonInstructionBlock";
 
 /**
  * Component that determines and renders the appropriate instruction block
@@ -38,6 +39,12 @@ const InstructionVisualizer = ({ instruction }) => {
     if (instruction.type === "input" && instruction.subtype === "time") {
         return (
             <TimerInstructionBlock configuration={instruction.configuration} />
+        );
+    }
+
+    if (instruction.type === "input" && instruction.subtype === "button") {
+        return (
+            <ButtonInstructionBlock configuration={instruction.configuration} />
         );
     }
 

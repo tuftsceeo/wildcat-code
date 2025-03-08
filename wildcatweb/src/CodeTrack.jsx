@@ -9,6 +9,10 @@ import styles from "./CodingTrack.module.css";
 import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
 import { generateDescription } from "./InstructionDescriptionGenerator";
+import { useBLE } from "./BLEContext";
+import { ClearSlotRequest, ClearSlotResponse } from "./ble_resources/messages";
+import { generateSlotCode } from "./codeGenerator";
+import { Buffer } from "buffer";
 
 /**
  * Main component for displaying the coding track with instructions
@@ -50,7 +54,7 @@ const CodeTrack = ({
     }, [currSlotNumber, missionSteps, setCurrSlotNumber]);
 
     const currentInstruction = slotData?.[currSlotNumber];
-
+    const { ble, isConnected, portStates } = useBLE();
     // Navigation handlers
     const handlePrevious = () => {
         console.log(
@@ -68,13 +72,54 @@ const CodeTrack = ({
         setCurrSlotNumber(nextSlot);
     };
 
-    // Test button handler
-    const handleTest = () => {
+    const handleTest = async () => {
         console.log(
             "Testing current instruction:",
-            generateDescription(currentInstruction),
+            generateDescription(currentInstruction)
         );
-        // Add implementation for test functionality here
+    
+        try {
+            // Check if the robot is connected
+            if (!isConnected) {
+                console.warn(
+                    "Robot not connected. Please connect via Bluetooth first."
+                );
+                return;
+            }
+    
+            // Make sure we have a valid instruction to test
+            if (!currentInstruction || !currentInstruction.type) {
+                console.warn("No valid instruction in current slot to test");
+                return;
+            }
+    
+            // Generate code specifically for this single instruction
+            const code = generateSlotCode(currentInstruction, portStates);
+            console.log("Generated Python Code for current slot:", code);
+    
+            // Clear the program slot on the robot
+            const clearResponse = await ble.sendRequest(
+                new ClearSlotRequest(0),
+                ClearSlotResponse
+            );
+    
+            if (!clearResponse.success) {
+                console.warn("Failed to clear program slot");
+                return;
+            }
+    
+            // Upload and transfer the program
+            await ble.uploadProgramFile(
+                "program.py",
+                0,
+                Buffer.from(code, "utf-8")
+            );
+    
+            // Start the program on the robot
+            await ble.startProgram(0);
+        } catch (error) {
+            console.error("Error running test program:", error);
+        }
     };
 
     return (

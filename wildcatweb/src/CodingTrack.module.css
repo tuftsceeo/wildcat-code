@@ -302,3 +302,106 @@
     border: 1px solid var(--color-warning);
     border-radius: var(--radius-md);
 }
+
+/* Force sensor visualization */
+.buttonVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.buttonIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.buttonCondition {
+    color: var(--color-sensor-main);
+    text-align: center;
+    text-transform: uppercase;
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-2);
+    font-weight: var(--font-weight-bold);
+}
+
+
+/* Button visualization */
+.buttonVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.buttonIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.buttonCondition {
+    color: var(--color-sensor-main);
+    text-align: center;
+    text-transform: uppercase;
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-2);
+    font-weight: var(--font-weight-bold);
+    transition: all var(--transition-normal);
+}
+
+.pressedCondition {
+    color: var(--color-action-primary);
+}
+
+.releasedCondition {
+    color: var(--color-action-secondary);
+}
+
+/* Visual state representation */
+.buttonStateVisual {
+    margin-top: var(--spacing-4);
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.buttonStateCircle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--color-gray-800);
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.buttonStateInner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background-color: var(--color-gray-600);
+    border-radius: 50%;
+    transition: all var(--transition-normal);
+}
+
+/* Button pressed state */
+.buttonPressed .buttonStateInner {
+    background-color: var(--color-action-primary);
+    transform: translateY(8px);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Button released state */
+.buttonReleased .buttonStateInner {
+    background-color: var(--color-action-secondary);
+    transform: translateY(0);
+}

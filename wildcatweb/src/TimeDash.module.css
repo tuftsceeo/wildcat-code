@@ -1,160 +1,157 @@
-/* TimeDash.module.css */
-/* Using design tokens from retro-ui-tokens.css */
+/* TimeDash.module.css - Redesigned with improved theme compatibility */
 
 .timeGroup {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
+    align-items: center;
+    justify-content: center;
     padding: var(--spacing-4);
-    height: 100%;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .timeName {
-    color: var(--time-label-color);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-    margin-bottom: var(--spacing-2);
+    color: var(--color-text-inactive);
+    margin-bottom: var(--spacing-4);
+    letter-spacing: var(--letter-spacing-wide);
 }
 
-.timeControl {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    margin-top: var(--spacing-2);
-}
-
-.timeInput {
-    background-color: var(--time-input-bg);
-    border: var(--time-input-border);
-    border-radius: var(--radius-md);
-    color: var(--time-input-color);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-lg);
-    padding: var(--spacing-2);
-    width: 80px;
-    text-align: center;
-}
-
-.timeInput:focus {
-    outline: none;
-    box-shadow: var(--glow-yellow);
-}
-
-.timeUnit {
-    color: var(--time-label-color);
-    font-size: var(--font-size-base);
-    text-transform: uppercase;
-}
-
-/* Time visualization */
-.timerVisualization {
+/* Time control group with label underneath */
+.timeControlGroup {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-top: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+    width: 100%;
 }
 
-.timerValue {
-    font-size: 3rem;
-    color: var(--color-timer-main);
+.timeControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     margin-bottom: var(--spacing-2);
 }
 
-.timerDisplay {
+.timeButton {
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: var(--border-width-standard) solid var(--color-border-inactive);
+    border-radius: 50%;
+    font-size: var(--font-size-xl);
+    color: var(--color-text-inactive);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    user-select: none;
+}
+
+.timeButton:hover:not(:disabled) {
+    border-color: var(--color-border-active);
+    color: var(--color-text-active);
+}
+
+.timeButton:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.timeButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Theme-adaptive number display */
+.timeInput {
+    width: 80px;
+    height: 60px;
+    background-color: var(--color-button-selected-bg);
+    border: var(--border-width-standard) solid var(--color-border-inactive);
+    border-radius: var(--radius-md);
+    margin: 0 var(--spacing-4);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-active);
+    color: var(--color-action-primary);
+}
+
+.timeUnit {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-inactive);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Clock visualization with theme adaptation */
+.clockContainer {
     position: relative;
     width: 150px;
     height: 150px;
     margin: var(--spacing-4) auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.timerCircle {
-    stroke: var(--color-timer-main);
-    fill: none;
-    stroke-width: 4;
-    stroke-linecap: round;
-    transform: rotate(-90deg);
-    transform-origin: center;
-    transition: stroke-dashoffset 1s linear;
-}
-
-.timerBackground {
-    stroke: rgba(255, 255, 0, 0.2);
-    fill: none;
-    stroke-width: 4;
-}
-
-.timeDigits {
+.pieClock {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: var(--font-size-2xl);
-    color: var(--color-timer-main);
-    font-weight: var(--font-weight-bold);
-    text-align: center;
-}
-
-/* Animation for a blinking effect */
-@keyframes blink {
-    0%,
-    100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-}
-
-.timeDigits.active {
-    animation: blink 1s infinite;
-}
-
-/* Additional timer UI elements */
-.timerControls {
-    display: flex;
-    gap: var(--spacing-2);
-    margin-top: var(--spacing-4);
-}
-
-.timerButton {
-    background-color: transparent;
-    border: var(--border-width-standard) solid var(--color-timer-main);
-    border-radius: var(--radius-md);
-    color: var(--color-timer-main);
-    font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
-    padding: var(--spacing-2) var(--spacing-4);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-}
-
-.timerButton:hover {
-    box-shadow: var(--glow-yellow);
-}
-
-.timerButton.active {
-    background-color: rgba(255, 255, 0, 0.1);
-    box-shadow: var(--glow-yellow);
-}
-
-/* Progress bar style */
-.progressContainer {
-    width: 100%;
-    height: 10px;
-    background-color: rgba(255, 255, 0, 0.1);
-    border-radius: 5px;
-    margin-top: var(--spacing-4);
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background-color: var(--color-button-selected-bg);
+    top: 5px;
+    left: 5px;
     overflow: hidden;
 }
 
-.progressBar {
+.pieSlice {
+    position: absolute;
+    width: 100%;
     height: 100%;
     background-color: var(--color-timer-main);
-    width: 0;
-    transition: width 0.3s ease;
+    transform-origin: center;
+}
+
+.clockBorder {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid var(--color-border-inactive);
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+/* Theme-specific overrides */
+body[data-theme="retro"] .timeInput,
+body[data-theme="retro"] .pieClock {
+    background-color: var(--color-gray-800);
+}
+
+body[data-theme="pastel"] .timeInput,
+body[data-theme="pastel"] .pieClock {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-color: var(--color-gray-400);
+}
+
+body[data-theme="clean"] .timeInput,
+body[data-theme="clean"] .pieClock {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: var(--color-gray-300);
+}
+
+/* Success checkmark */
+.successCheck {
+    position: absolute;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    color: var(--color-action-primary);
+    font-size: var(--font-size-xl);
 }

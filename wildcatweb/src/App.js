@@ -1,11 +1,10 @@
 /**
- * @file App.js - FIXED
- * @description Example of how to integrate the CustomizationProvider and
- * CustomizationPage into the main application.
+ * @file App.js
+ * @description Main application component with support for reading level and step count.
+ * Fixed to properly propagate step count changes to child components.
  */
 
 import React, { useState, useEffect } from "react";
-import { Settings2 } from "lucide-react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { CommandPanel } from "./CommandPanel.jsx";
@@ -13,16 +12,75 @@ import { RunMenu } from "./RunMenu.jsx";
 import { BluetoothUI } from "./BluetoothUI.jsx";
 import { KnobProvider } from "./KnobContext.js";
 import { BLEProvider } from "./BLEContext.js";
-import { CustomizationProvider } from "./CustomizationContext";
+import {
+    CustomizationProvider,
+    useCustomization,
+} from "./CustomizationContext";
 import CustomizationPage from "./CustomizationPage.jsx";
 import CodeTrack from "./CodeTrack.jsx";
+import { preloadVoices } from "./utils/speechUtils";
 import "./App.css";
-
+/**
+ * The top-level App component with all providers
+ * Manages the missionSteps state and handles changes from CustomizationContext
+ * 
+ * @returns {JSX.Element} Main application component
+ */
 function App() {
+    // Move missionSteps state to the top level component
+    const [missionSteps, setMissionSteps] = useState(2);
+
+    return (
+        <CustomizationProvider
+            onStepCountChange={(newStepCount) => {
+                console.log("App: onStepCountChange called with", newStepCount);
+                // Directly update missionSteps state here so it propagates to all components
+                setMissionSteps(newStepCount);
+            }}
+        >
+            <BLEProvider>
+                <KnobProvider>
+                    <DndProvider backend={HTML5Backend}>
+                        {/* Pass missionSteps as a prop to the AppWithCustomizationContext */}
+                        <AppWithCustomizationContext missionSteps={missionSteps} />
+                    </DndProvider>
+                </KnobProvider>
+            </BLEProvider>
+        </CustomizationProvider>
+    );
+}
+
+/**
+ * Main application wrapper that provides context providers and applies settings
+ * 
+ * @param {Object} props - Component props
+ * @param {number} props.missionSteps - Number of mission steps passed from parent
+ * @returns {JSX.Element} Main application content component
+ */
+function AppWithCustomizationContext({ missionSteps }) {
+    // Get customization settings
+    const { readingLevel, language } = useCustomization();
+
+    // Apply reading level to body data attribute
+    useEffect(() => {
+        document.body.dataset.readingLevel = readingLevel;
+        document.body.dataset.language = language;
+    }, [readingLevel, language]);
+
+    return <AppContent missionSteps={missionSteps} />;
+}
+
+/**
+ * Main application content
+ * 
+ * @param {Object} props - Component props
+ * @param {number} props.missionSteps - Number of mission steps passed from parent
+ * @returns {JSX.Element} Application UI components
+ */
+function AppContent({ missionSteps }) {
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [currSlotNumber, setCurrSlotNumber] = useState(0);
-    const [missionSteps, setStepCount] = useState(2);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     // Log when missionSteps change
@@ -124,72 +182,60 @@ function App() {
     };
 
     return (
-        <CustomizationProvider
-            onStepCountChange={(newStepCount) => {
-                console.log("App: onStepCountChange called with", newStepCount);
-                setStepCount(newStepCount);
-            }}
-        >
-            <BLEProvider>
-                <KnobProvider>
-                    <DndProvider backend={HTML5Backend}>
-                        <div className="app-container">
-                            {/* Left column - RunMenu */}
-                            <div className="step-column">
-                                <RunMenu
-                                    pyCode={pyCode}
-                                    canRun={canRun}
-                                    currSlotNumber={currSlotNumber}
-                                    setCurrSlotNumber={setCurrSlotNumber}
-                                    missionSteps={missionSteps}
-                                    slotData={slotData}
-                                />
-                            </div>
+        <div className="app-container">
+            {/* Left column - RunMenu */}
+            <div className="step-column">
+                <RunMenu
+                    pyCode={pyCode}
+                    canRun={canRun}
+                    currSlotNumber={currSlotNumber}
+                    setCurrSlotNumber={setCurrSlotNumber}
+                    missionSteps={missionSteps}
+                    slotData={slotData}
+                />
+            </div>
 
-                            {/* Middle column - CodingTrack */}
-                            <div className="center-column">
-                                <CodeTrack
-                                    setPyCode={setPyCode}
-                                    setCanRun={setCanRun}
-                                    currSlotNumber={currSlotNumber}
-                                    setCurrSlotNumber={setCurrSlotNumber}
-                                    missionSteps={missionSteps}
-                                    slotData={slotData}
-                                />
-                            </div>
+            {/* Middle column - CodingTrack */}
+            <div className="center-column">
+                <CodeTrack
+                    setPyCode={setPyCode}
+                    setCanRun={setCanRun}
+                    currSlotNumber={currSlotNumber}
+                    setCurrSlotNumber={setCurrSlotNumber}
+                    missionSteps={missionSteps}
+                    slotData={slotData}
+                />
+            </div>
 
-                            {/* Right column - Function Default & Bluetooth UI */}
-                            <div className="control-column">
-                                <div className="bluetooth-menu">
-                                    <BluetoothUI
-                                        currSlotNumber={currSlotNumber}
-                                        missionSteps={missionSteps}
-                                    />
+            {/* Right column - Function Default & Bluetooth UI */}
+            <div className="control-column">
+                <div className="bluetooth-menu">
+                    <BluetoothUI
+                        currSlotNumber={currSlotNumber}
+                        missionSteps={missionSteps}
+                        openSettings={() => setIsSettingsOpen(true)}
+                    />
+                </div>
 
-                                    {/* We'll use the existing settings button in BluetoothUI to open the settings panel */}
-                                </div>
+                <CommandPanel
+                    currSlotNumber={currSlotNumber}
+                    onSlotUpdate={handleSlotUpdate}
+                    slotData={slotData}
+                />
+            </div>
 
-                                <CommandPanel
-                                    currSlotNumber={currSlotNumber}
-                                    onSlotUpdate={handleSlotUpdate}
-                                    slotData={slotData}
-                                />
-                            </div>
-
-                            {/* Settings Modal */}
-                            {isSettingsOpen && (
-                                <CustomizationPage
-                                    close={() => setIsSettingsOpen(false)}
-                                    slotData={slotData}
-                                    // This prop is now unused as we're using context directly
-                                    updateMissionSteps={() => {}}
-                                />
-                            )}
-                        </div>
-                    </DndProvider>
-                </KnobProvider>
-            </BLEProvider>
-        </CustomizationProvider>
+            {/* Settings Modal */}
+            {isSettingsOpen && (
+                <CustomizationPage
+                    close={() => setIsSettingsOpen(false)}
+                    slotData={slotData}
+                    updateMissionSteps={(newStepCount) => {
+                        console.log("CustomizationPage requested update to", newStepCount);
+                        // This is redundant now as the actual update happens via context
+                    }}
+                />
+            )}
+        </div>
     );
 }
 
