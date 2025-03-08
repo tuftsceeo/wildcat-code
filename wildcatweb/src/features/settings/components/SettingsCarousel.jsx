@@ -1,6 +1,9 @@
 /**
  * @file SettingsCarousel.jsx
- * @description Improved carousel for settings tabs with animation and theme support
+ * @description Improved carousel for settings tabs with animation and theme support.
+ * Refactored to use design tokens for consistent styling across themes.
+ * @author Jennifer Cross with support from Claude
+ * @created March 2025
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -10,10 +13,10 @@ import styles from "../styles/SettingsCarousel.module.css";
 /**
  * Settings tab carousel with proper centering and theme support
  *
- * @param {Object} props Component props
- * @param {Array} props.tabs Array of tab objects
- * @param {number} props.activeTab Currently active tab index
- * @param {Function} props.setActiveTab Function to set active tab
+ * @param {Object} props - Component props
+ * @param {Array} props.tabs - Array of tab objects
+ * @param {number} props.activeTab - Currently active tab index
+ * @param {Function} props.setActiveTab - Function to set active tab
  * @returns {JSX.Element} Themed settings carousel
  */
 const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {

@@ -1,4 +1,4 @@
-/* ThemeSettings.module.css */
+/* ThemeSettings.module.css - Refactored with design token system */
 
 .container {
     display: flex;
@@ -32,21 +32,28 @@
     flex-direction: column;
     align-items: center;
     padding: var(--spacing-4);
-    background-color: var(--color-button-selected-bg);
-    border: 2px solid var(--color-gray-700);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--color-gray-700);
     border-radius: var(--radius-md);
     transition: all var(--transition-normal);
     cursor: pointer;
     width: 140px;
+    transform: var(--button-scale-default);
 }
 
 .themeButton:hover:not(.activeTheme) {
     background-color: var(--color-gray-700);
+    transform: var(--button-scale-hover);
+}
+
+.themeButton:active {
+    transform: var(--button-scale-active);
 }
 
 .activeTheme {
-    border-color: var(--color-border-active);
-    box-shadow: var(--glow-neon-green);
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
+    transform: var(--button-scale-hover);
 }
 
 .themeSwatches {
@@ -112,7 +119,7 @@
 .fontOptions {
     width: 100%;
     max-width: 500px;
-    background-color: var(--color-button-selected-bg);
+    background-color: var(--button-selected-bg);
     border-radius: var(--radius-md);
     padding: var(--spacing-4);
     margin-top: var(--spacing-4);
@@ -148,7 +155,7 @@
 }
 
 .toggleSwitchActive {
-    background-color: var(--color-action-secondary);
+    background-color: var(--color-secondary-main);
 }
 
 .toggleHandle {

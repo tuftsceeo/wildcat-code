@@ -1,7 +1,10 @@
 /**
- * @file RunMenu.jsx - FINAL FIX
+ * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
- * running individual slots or the complete program.
+ * running individual slots or the complete program. Refactored to use
+ * consistent design tokens for styling.
+ * @author Jennifer Cross with support from Claude
+ * @created March 2025
  */
 
 import React, { useEffect } from "react";
@@ -15,6 +18,19 @@ import {
 } from "../../../features/bluetooth/ble_resources/messages";
 import { AlertTriangle, AlertOctagon } from "lucide-react";
 
+/**
+ * RunMenu component for navigating and executing code
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.pyCode - Generated Python code
+ * @param {boolean} props.canRun - Whether code is executable
+ * @param {number} props.currSlotNumber - Current selected slot
+ * @param {Function} props.setCurrSlotNumber - Function to set current slot
+ * @param {number} props.missionSteps - Total number of mission steps
+ * @param {Array} props.slotData - Data for all coding slots
+ * @returns {JSX.Element} RunMenu component
+ */
 export const RunMenu = ({
     pyCode,
     canRun,
@@ -29,13 +45,6 @@ export const RunMenu = ({
 
     // Log any inconsistencies between missionSteps and slotData length
     useEffect(() => {
-        /*    console.log(
-            "RunMenu: missionSteps =",
-            missionSteps,
-            "slotData.length =",
-            slotData?.length,
-        ); */
-
         // The slotData array should be exactly missionSteps in length
         // (we're now treating missionSteps as the COUNT of steps, not the max index)
         if (slotData && slotData.length !== missionSteps) {
@@ -45,7 +54,12 @@ export const RunMenu = ({
         }
     }, [missionSteps, slotData]);
 
-    // Check for disconnected motors in configurations
+    /**
+     * Check for disconnected motors in configurations
+     *
+     * @param {Array} slots - Slot configurations to check
+     * @returns {Array} Array of disconnected port objects
+     */
     const checkDisconnectedMotors = (slots) => {
         const disconnectedPorts = [];
         slots.forEach((slot, index) => {
@@ -67,6 +81,9 @@ export const RunMenu = ({
         return disconnectedPorts;
     };
 
+    /**
+     * Run the currently selected slot
+     */
     const handleRunCurrentSlot = async () => {
         try {
             if (!isConnected) {
@@ -106,6 +123,9 @@ export const RunMenu = ({
         }
     };
 
+    /**
+     * Run all slots sequentially
+     */
     const handleRunAllSlots = async () => {
         try {
             if (!isConnected) {
@@ -143,7 +163,11 @@ export const RunMenu = ({
         }
     };
 
-    // New handler for clicking on steps
+    /**
+     * Handle clicking on a step button
+     *
+     * @param {number} stepIndex - Index of the clicked step
+     */
     const handleStepClick = (stepIndex) => {
         console.log("RunMenu: Clicked on step", stepIndex + 1);
         setCurrSlotNumber(stepIndex);
@@ -155,15 +179,17 @@ export const RunMenu = ({
         slotData[currSlotNumber],
     ]);
 
-    // Generate buttons for each step (0 to missionSteps-1, inclusive)
-    // Note: missionSteps is the COUNT, so we create buttons from 0 to missionSteps-1
+    /**
+     * Generate buttons for each mission step
+     *
+     * @returns {Array} Array of step button elements
+     */
     const renderStepButtons = () => {
         console.log("RunMenu: Rendering", missionSteps, "step buttons");
 
         const buttons = [];
         // Create exactly missionSteps buttons (from 0 to missionSteps-1)
         for (let i = 0; i < missionSteps; i++) {
-            // console.log(`RunMenu: Creating button for Step ${i + 1}`);
             buttons.push(
                 <button
                     key={i}
@@ -176,6 +202,10 @@ export const RunMenu = ({
                             : ""
                     }`}
                     onClick={() => handleStepClick(i)}
+                    aria-label={`Step ${i + 1}${
+                        i === currSlotNumber ? " (current)" : ""
+                    }`}
+                    aria-current={i === currSlotNumber ? "step" : false}
                 >
                     Step {i + 1}
                 </button>,
@@ -190,16 +220,17 @@ export const RunMenu = ({
                 {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>RUN</div>
 
-                {/* Step buttons - using our renderStepButtons function */}
+                {/* Step buttons */}
                 <div className={styles.stepsContainer}>
                     {renderStepButtons()}
                 </div>
 
-                {/* Blue Play button as in FIGMA */}
+                {/* Play button */}
                 <button
                     className={styles.playButton}
                     onClick={handleRunAllSlots}
                     disabled={!canRun || !isConnected}
+                    aria-label="Run all steps"
                 >
                     Play
                 </button>
@@ -207,3 +238,5 @@ export const RunMenu = ({
         </div>
     );
 };
+
+export default RunMenu;

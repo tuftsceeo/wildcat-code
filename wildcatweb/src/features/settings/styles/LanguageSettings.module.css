@@ -1,4 +1,4 @@
-/* LanguageSettings.module.css */
+/* LanguageSettings.module.css - Refactored with design token system */
 
 .container {
     display: flex;
@@ -31,22 +31,29 @@
     display: flex;
     align-items: center;
     padding: var(--spacing-4);
-    background-color: var(--color-button-selected-bg);
-    border: 2px solid var(--color-gray-700);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--color-gray-700);
     border-radius: var(--radius-md);
     transition: all var(--transition-normal);
     cursor: pointer;
     text-align: left;
+    transform: var(--button-scale-default);
 }
 
 .languageOption:hover:not(.activeLanguage) {
     background-color: var(--color-gray-700);
+    transform: var(--button-scale-hover);
+}
+
+.languageOption:active:not(.activeLanguage) {
+    transform: var(--button-scale-active);
 }
 
 .activeLanguage {
-    border-color: var(--color-border-active);
-    box-shadow: var(--glow-neon-green);
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
     background-color: rgba(0, 255, 0, 0.1);
+    transform: var(--button-scale-hover);
 }
 
 /* Theme-specific active backgrounds */
@@ -94,7 +101,7 @@ body[data-theme="clean"] .activeLanguage {
 
 .previewContent {
     padding: var(--spacing-6);
-    background-color: var(--color-button-selected-bg);
+    background-color: var(--button-selected-bg);
     border-radius: var(--radius-md);
     display: flex;
     flex-direction: column;
@@ -108,8 +115,8 @@ body[data-theme="clean"] .activeLanguage {
 }
 
 .applyButton {
-    background-color: var(--color-action-secondary);
-    color: var(--color-button-active-text);
+    background-color: var(--button-contained-bg);
+    color: var(--button-contained-text);
     border: none;
     border-radius: var(--radius-md);
     padding: var(--spacing-3) var(--spacing-6);
@@ -119,18 +126,23 @@ body[data-theme="clean"] .activeLanguage {
     text-transform: uppercase;
     transition: all var(--transition-normal);
     margin-bottom: var(--spacing-8);
+    transform: var(--button-scale-default);
 }
 
 .applyButton:hover {
-    transform: translateY(-2px);
+    transform: var(--button-scale-hover);
     box-shadow: var(--glow-blue);
+}
+
+.applyButton:active {
+    transform: var(--button-scale-active);
 }
 
 .comingSoonSection {
     width: 100%;
     max-width: 500px;
     padding: var(--spacing-4);
-    background-color: var(--color-button-selected-bg);
+    background-color: var(--button-selected-bg);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-4);
 }

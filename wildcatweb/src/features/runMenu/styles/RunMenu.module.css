@@ -1,12 +1,12 @@
-/* RunMenu.module.css - With theme variables */
+/* RunMenu.module.css - Refactored with design token system */
 
 .menuBackground {
     height: 100%;
     display: flex;
     flex-direction: column;
-    border: 2px solid var(--color-border-inactive);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--color-panel-background);
+    background-color: var(--panel-background);
     color: var(--color-text-inactive);
     font-family: var(--font-family-active);
     padding: var(--spacing-4);
@@ -34,42 +34,41 @@
     margin: auto 0;
 }
 
-/* Step buttons styled to match FIGMA with active state in theme primary color */
+/* Step buttons styled with theme tokens */
 .stepButton {
-    background-color: var(--color-button-default);
-    border: 2px solid var(--color-border-inactive);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
-    color: var(--color-text-inactive);
+    color: var(--button-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     padding: var(--spacing-3);
     text-align: center;
     cursor: pointer;
-    transition: all var(--transition-normal);
     width: 100%;
-    transition: transform var(--transition-normal),
-    filter var(--transition-normal);
-    transform: scale(1);
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
 }
 
-.stepButton:hover{
-    transform: scale(1.1);
+.stepButton:hover {
+    transform: var(--button-scale-hover);
 }
 
-.stepButton:active{
-    transform: scale(.95);
+.stepButton:active {
+    transform: var(--button-scale-active);
 }
+
 .stepButton.active,
 .stepButton.current {
-    border-color: var(--color-border-active);
-    color: var(--color-text-active);
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
     background-color: rgba(0, 255, 0, 0.1);
 }
 
 /* Inactive steps */
 .stepButton.configured:not(.current) {
-    border-color: var(--color-border-inactive);
-    color: var(--color-text-inactive);
+    border-color: var(--button-default-border);
+    color: var(--button-default-text);
 }
 
 /* Warning styling when needed */
@@ -77,12 +76,12 @@
     border-color: var(--color-warning);
 }
 
-/* FIGMA shows a blue Play button */
+/* Play button - uses blue accent color */
 .playButton {
-    background-color: var(--color-action-secondary);
+    background-color: var(--button-contained-bg);
     border: none;
     border-radius: var(--radius-md);
-    color: var(--color-button-active-text);
+    color: var(--button-contained-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
@@ -91,29 +90,26 @@
     cursor: pointer;
     margin-top: auto;
     margin-bottom: var(--spacing-2);
-    transition: all var(--transition-normal);
     text-transform: uppercase;
     align-self: center;
-    transition: transform var(--transition-normal),
-    filter var(--transition-normal);
-    transform: scale(1);
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
 }
 
 .playButton:hover:not(:disabled) {
     opacity: 0.9;
-    transform: scale(1.1);
+    transform: var(--button-scale-hover);
 }
 
 .playButton:disabled {
-    background-color: var(--color-disabled);
+    background-color: var(--button-disabled-bg);
     cursor: not-allowed;
     opacity: 0.6;
 }
 
 .playButton:active {
-    transform: scale(.95);
+    transform: var(--button-scale-active);
 }
-
 
 .errorIcon,
 .warningIcon {

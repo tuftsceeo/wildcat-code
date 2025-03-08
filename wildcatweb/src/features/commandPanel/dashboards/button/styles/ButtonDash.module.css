@@ -1,4 +1,4 @@
-/* ButtonDash.module.css - Updated with design token system */
+/* ButtonDash.module.css - Using only tokens that actually exist in tokens.css */
 
 .buttonDashContainer {
     display: flex;
@@ -44,7 +44,7 @@
 .disconnectedLabel {
     color: var(--color-error);
     font-size: var(--font-size-sm);
-    margin-right: var(--spacing-2);
+    margin-right: 8px;
     padding: 2px 5px;
     background-color: rgba(var(--color-error), 0.2);
     border-radius: var(--radius-sm);
@@ -58,20 +58,14 @@
     font-size: var(--font-size-base);
     cursor: pointer;
     padding: 2px 5px;
-    margin-left: var(--spacing-1);
+    margin-left: 5px;
     border-radius: var(--radius-sm);
     transition: all var(--transition-normal);
-    transform: var(--button-scale-default);
 }
 
 .dismissButton:hover {
     background-color: var(--color-error);
     color: var(--color-white);
-    transform: var(--button-scale-hover);
-}
-
-.dismissButton:active {
-    transform: var(--button-scale-active);
 }
 
 /* Container for button controls - split into two sections */
@@ -89,7 +83,7 @@
     flex-direction: column;
     align-items: center;
     padding: var(--spacing-3);
-    border-right: 1px solid var(--color-gray-700);
+    border-right: 1px solid var(--color-gray-medium);
 }
 
 /* Live state section - theme adaptive */
@@ -100,7 +94,7 @@
     align-items: center;
     padding: var(--spacing-3);
     background-color: var(--button-selected-bg);
-    border: 1px solid var(--button-default-border);
+    border: 1px solid var(--panel-border);
     border-radius: var(--radius-sm);
 }
 
@@ -140,7 +134,7 @@
     position: relative;
     width: 180px;
     height: 30px;
-    background-color: var(--color-gray-800);
+    background-color: var(--color-gray-bold);
     border-radius: 15px;
     padding: 2px;
     cursor: pointer;
@@ -174,7 +168,7 @@
     position: absolute;
     width: 90px;
     height: 26px;
-    background-color: var(--color-gray-600);
+    background-color: var(--color-gray-medium);
     border-radius: 13px;
     top: 2px;
     left: 2px;
@@ -189,14 +183,12 @@
 
 /* Improved contrast for toggle text */
 .toggleContainer.active .toggleOption.left {
-    color: var(--color-gray-400);
+    color: var(--color-gray-subtle);
 }
 
 .toggleContainer.active .toggleOption.right {
-    color: var(
-        --color-black
-    ); /* Changed to black for better contrast on green */
-    text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5); /* Add text shadow for readability */
+    color: var(--color-black);
+    text-shadow: 0px 0px 2px var(--color-white);
 }
 
 .toggleContainer:not(.active) .toggleOption.left {
@@ -204,7 +196,7 @@
 }
 
 .toggleContainer:not(.active) .toggleOption.right {
-    color: var(--color-gray-400);
+    color: var(--color-gray-subtle);
 }
 
 /* BUTTON VISUALIZATION */
@@ -235,10 +227,10 @@
     height: 40px;
     background: linear-gradient(
         to bottom,
-        var(--color-gray-600) 33%,
-        var(--color-black) 33%
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
     );
-    border: 2px solid var(--color-text-inactive);
+    border: 2px solid var(--color-gray-extreme);
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     border-top: none;
     left: 50%;
@@ -252,10 +244,10 @@
     height: 20px;
     background: linear-gradient(
         to bottom,
-        var(--color-gray-600) 33%,
-        var(--color-black) 33%
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
     );
-    border: 2px solid var(--color-text-inactive);
+    border: 2px solid var(--color-gray-extreme);
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     border-top: none;
     left: 50%;
@@ -267,8 +259,8 @@
     position: absolute;
     width: 80px;
     height: 25px;
-    background-color: var(--color-gray-600);
-    border: 2px solid var(--color-text-inactive);
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
     border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     border-bottom: none;
     left: 50%;
@@ -281,8 +273,8 @@
     position: absolute;
     width: 40px;
     height: 12px;
-    background-color: var(--color-gray-600);
-    border: 2px solid var(--color-text-inactive);
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
     border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     border-bottom: none;
     left: 50%;
@@ -295,8 +287,8 @@
     position: absolute;
     width: 30px;
     height: 25px;
-    background-color: var(--color-black);
-    border: 2px solid var(--color-text-inactive);
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
     border-radius: 5px 5px 0 0;
     left: 50%;
     transform: translateX(-50%);
@@ -309,8 +301,8 @@
     position: absolute;
     width: 15px;
     height: 12px;
-    background-color: var(--color-black);
-    border: 2px solid var(--color-text-inactive);
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
     border-radius: 5px 5px 0 0;
     left: 50%;
     transform: translateX(-50%);
@@ -355,7 +347,7 @@
 }
 
 .arrowUp {
-    border-bottom: 15px solid var(--color-gray-400);
+    border-bottom: 15px solid var(--color-gray-subtle);
     border-top: 0;
 }
 
@@ -365,7 +357,7 @@
 }
 
 .arrowUpSmall {
-    border-bottom: 7px solid var(--color-gray-400);
+    border-bottom: 7px solid var(--color-gray-subtle);
     border-top: 0;
 }
 
@@ -414,4 +406,16 @@
 .noConnection svg,
 .noButtons svg {
     animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }

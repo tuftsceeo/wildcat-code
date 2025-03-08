@@ -1,4 +1,4 @@
-/* PlaceholderSettings.module.css */
+/* PlaceholderSettings.module.css - Refactored with design token system */
 
 .container {
     display: flex;
@@ -38,6 +38,21 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
+}
+
+/* Theme-specific color handling */
+body[data-theme="retro"] .badge {
+    background-color: var(--color-gray-700);
+    box-shadow: var(--glow-blue);
+}
+
+body[data-theme="pastel"] .badge {
+    background-color: var(--color-gray-subtle);
+}
+
+body[data-theme="clean"] .badge {
+    background-color: var(--color-gray-faint);
+    border: 1px solid var(--color-gray-subtle);
 }
 
 @keyframes fadeIn {

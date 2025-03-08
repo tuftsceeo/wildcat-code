@@ -1,4 +1,4 @@
-/* SettingsCarousel.module.css */
+/* SettingsCarousel.module.css - Refactored with design token system */
 
 .settingsCarousel {
     display: flex;
@@ -6,8 +6,8 @@
     position: relative;
     width: 100%;
     padding: var(--spacing-2) 0;
-    background-color: var(--color-panel-background);
-    border-bottom: 2px solid var(--color-gray-800);
+    background-color: var(--panel-background);
+    border-bottom: var(--border-width-standard) solid var(--color-gray-800);
     height: 150px;
 }
 
@@ -50,7 +50,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 2px solid transparent;
+    border: var(--border-width-standard) solid transparent;
     border-radius: var(--radius-md);
     background-color: var(--color-gray-800);
     padding: var(--spacing-3);
@@ -63,15 +63,17 @@
     position: relative;
     overflow: visible;
     color: var(--color-text-inactive);
+    transform: var(--button-scale-default);
 }
 
 /* Active tab styling */
 .carouselTab.active {
-    transform: scale(1.05);
-    background-color: var(--color-gray-700);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: var(--button-scale-hover);
+    background-color: var(--button-selected-bg);
+    box-shadow: var(--glow-secondary);
     z-index: 2;
     color: var(--color-text-active);
+    border-color: var(--button-selected-border);
 }
 
 /* Disabled tab styling */
@@ -79,6 +81,16 @@
     opacity: 0.5;
     cursor: default;
     filter: grayscale(70%);
+    transform: var(--button-scale-default);
+}
+
+.carouselTab:hover:not(.active):not(.disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-gray-700);
+}
+
+.carouselTab:active:not(.disabled) {
+    transform: var(--button-scale-active);
 }
 
 /* Icon container */
@@ -130,11 +142,17 @@
     position: relative;
     border-radius: 50%;
     transition: all var(--transition-fast);
+    transform: var(--button-scale-default);
 }
 
 .carouselNav:hover {
     background-color: var(--color-gray-800);
     color: var(--color-text-active);
+    transform: var(--button-scale-hover);
+}
+
+.carouselNav:active {
+    transform: var(--button-scale-active);
 }
 
 .carouselPrev {

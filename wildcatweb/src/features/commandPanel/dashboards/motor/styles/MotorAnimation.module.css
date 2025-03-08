@@ -1,4 +1,4 @@
-/* MotorAnimation.module.css - Refactored with design token system */
+/* MotorAnimation.module.css - Carefully preserved original styling with token colors */
 
 .motorAnimation {
     position: relative;
@@ -24,19 +24,37 @@
     transition: opacity 0.3s ease;
 }
 
-/* Animation classes for rotation */
+/* Animation classes for rotation - PRESERVED EXACTLY AS ORIGINAL */
 .clockwise {
     animation-name: clockwise;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    animation-duration: 1s; /* Base duration */
+    animation-duration: 1s; /* Base duration - will be modified by component */
 }
 
 .counterclockwise {
     animation-name: counterclockwise;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    animation-duration: 1s; /* Base duration */
+    animation-duration: 1s; /* Base duration - will be modified by component */
+}
+
+@keyframes clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterclockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
 }
 
 /* Status overlay for speed indication */
@@ -62,26 +80,18 @@
 }
 
 .slowGlow {
-    background-color: rgba(
-        var(--color-motor-main),
-        0.05
-    ); /* Using motor-main color with opacity */
+    /* Use color token but preserve opacity handling */
+    background-color: var(--color-motor-main);
     opacity: 0.3;
 }
 
 .mediumGlow {
-    background-color: rgba(
-        var(--color-motor-main),
-        0.1
-    ); /* Using motor-main color with opacity */
+    background-color: var(--color-motor-main);
     opacity: 0.5;
 }
 
 .fastGlow {
-    background-color: rgba(
-        var(--color-motor-main),
-        0.15
-    ); /* Using motor-main color with opacity */
+    background-color: var(--color-motor-main);
     opacity: 0.7;
     animation: pulsate 2s infinite;
 }
