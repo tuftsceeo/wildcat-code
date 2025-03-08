@@ -1,4 +1,4 @@
-/* TimeDash.module.css - Redesigned with improved theme compatibility */
+/* TimeDash.module.css - Redesigned with design token system */
 
 .timeGroup {
     display: flex;
@@ -18,6 +18,7 @@
     color: var(--color-text-inactive);
     margin-bottom: var(--spacing-4);
     letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-family-active);
 }
 
 /* Time control group with label underneath */
@@ -40,39 +41,42 @@
 .timeButton {
     width: 40px;
     height: 40px;
-    background-color: transparent;
-    border: var(--border-width-standard) solid var(--color-border-inactive);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: 50%;
     font-size: var(--font-size-xl);
-    color: var(--color-text-inactive);
+    color: var(--button-default-text);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
     user-select: none;
 }
 
 .timeButton:hover:not(:disabled) {
-    border-color: var(--color-border-active);
-    color: var(--color-text-active);
+    transform: var(--button-scale-hover);
+    border-color: var(--button-hover-border);
 }
 
 .timeButton:active:not(:disabled) {
-    transform: scale(0.95);
+    transform: var(--button-scale-active);
 }
 
 .timeButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    border-color: var(--button-disabled-border);
+    color: var(--button-disabled-text);
 }
 
 /* Theme-adaptive number display */
 .timeInput {
     width: 80px;
     height: 60px;
-    background-color: var(--color-button-selected-bg);
-    border: var(--border-width-standard) solid var(--color-border-inactive);
+    background-color: var(--button-selected-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
     margin: 0 var(--spacing-4);
     font-size: var(--font-size-2xl);
@@ -82,7 +86,7 @@
     align-items: center;
     justify-content: center;
     font-family: var(--font-family-active);
-    color: var(--color-action-primary);
+    color: var(--color-timer-main);
 }
 
 .timeUnit {
@@ -90,6 +94,7 @@
     color: var(--color-text-inactive);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-family-active);
 }
 
 /* Clock visualization with theme adaptation */
@@ -105,7 +110,7 @@
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background-color: var(--color-button-selected-bg);
+    background-color: var(--button-selected-bg);
     top: 5px;
     left: 5px;
     overflow: hidden;
@@ -124,27 +129,9 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    border: 5px solid var(--color-border-inactive);
+    border: 5px solid var(--button-default-border);
     box-sizing: border-box;
     pointer-events: none;
-}
-
-/* Theme-specific overrides */
-body[data-theme="retro"] .timeInput,
-body[data-theme="retro"] .pieClock {
-    background-color: var(--color-gray-800);
-}
-
-body[data-theme="pastel"] .timeInput,
-body[data-theme="pastel"] .pieClock {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-color: var(--color-gray-400);
-}
-
-body[data-theme="clean"] .timeInput,
-body[data-theme="clean"] .pieClock {
-    background-color: rgba(0, 0, 0, 0.05);
-    border-color: var(--color-gray-300);
 }
 
 /* Success checkmark */
@@ -152,6 +139,6 @@ body[data-theme="clean"] .pieClock {
     position: absolute;
     top: var(--spacing-4);
     right: var(--spacing-4);
-    color: var(--color-action-primary);
+    color: var(--color-success);
     font-size: var(--font-size-xl);
 }

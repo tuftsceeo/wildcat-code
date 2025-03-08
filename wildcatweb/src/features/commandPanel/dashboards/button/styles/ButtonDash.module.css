@@ -1,4 +1,4 @@
-/* ButtonDash.module.css - Updated with theme compatibility fixes */
+/* ButtonDash.module.css - Updated with design token system */
 
 .buttonDashContainer {
     display: flex;
@@ -11,8 +11,8 @@
 
 /* Single button dash */
 .singleButtonDash {
-    background-color: var(--color-panel-background);
-    border: 2px solid var(--color-border-inactive);
+    background-color: var(--panel-background);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
     padding: var(--spacing-3);
     width: 100%;
@@ -20,19 +20,8 @@
 }
 
 .singleButtonDash.disconnected {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(var(--color-error), 0.1);
     border-color: var(--color-error);
-}
-
-/* Theme-specific disconnected states */
-body[data-theme="retro"] .singleButtonDash.disconnected {
-    background-color: rgba(255, 0, 0, 0.1);
-}
-body[data-theme="pastel"] .singleButtonDash.disconnected {
-    background-color: rgba(243, 150, 154, 0.1);
-}
-body[data-theme="clean"] .singleButtonDash.disconnected {
-    background-color: rgba(221, 0, 0, 0.1);
 }
 
 /* Button header styling */
@@ -55,9 +44,9 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 .disconnectedLabel {
     color: var(--color-error);
     font-size: var(--font-size-sm);
-    margin-right: 8px;
+    margin-right: var(--spacing-2);
     padding: 2px 5px;
-    background-color: rgba(255, 0, 0, 0.2);
+    background-color: rgba(var(--color-error), 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
 }
@@ -69,14 +58,20 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
     font-size: var(--font-size-base);
     cursor: pointer;
     padding: 2px 5px;
-    margin-left: 5px;
+    margin-left: var(--spacing-1);
     border-radius: var(--radius-sm);
     transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
 }
 
 .dismissButton:hover {
     background-color: var(--color-error);
-    color: white;
+    color: var(--color-white);
+    transform: var(--button-scale-hover);
+}
+
+.dismissButton:active {
+    transform: var(--button-scale-active);
 }
 
 /* Container for button controls - split into two sections */
@@ -104,8 +99,8 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
     flex-direction: column;
     align-items: center;
     padding: var(--spacing-3);
-    background-color: var(--color-button-selected-bg);
-    border: 1px solid var(--color-border-inactive);
+    background-color: var(--button-selected-bg);
+    border: 1px solid var(--button-default-border);
     border-radius: var(--radius-sm);
 }
 
@@ -189,7 +184,7 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 
 .toggleContainer.active .toggleKnob {
     left: calc(100% - 92px);
-    background-color: var(--color-action-primary);
+    background-color: var(--color-secondary-main);
 }
 
 /* Improved contrast for toggle text */
@@ -198,12 +193,14 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 }
 
 .toggleContainer.active .toggleOption.right {
-    color: var(--color-black); /* Changed to black for better contrast on green */
+    color: var(
+        --color-black
+    ); /* Changed to black for better contrast on green */
     text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5); /* Add text shadow for readability */
 }
 
 .toggleContainer:not(.active) .toggleOption.left {
-    color: var(--color-action-primary);
+    color: var(--color-primary-main);
 }
 
 .toggleContainer:not(.active) .toggleOption.right {
@@ -236,7 +233,11 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
     position: absolute;
     width: 80px;
     height: 40px;
-    background: linear-gradient(to bottom, var(--color-gray-600) 33%, var(--color-black) 33%);
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-600) 33%,
+        var(--color-black) 33%
+    );
     border: 2px solid var(--color-text-inactive);
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     border-top: none;
@@ -249,7 +250,11 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
     position: absolute;
     width: 40px;
     height: 20px;
-    background: linear-gradient(to bottom, var(--color-gray-600) 33%, var(--color-black) 33%);
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-600) 33%,
+        var(--color-black) 33%
+    );
     border: 2px solid var(--color-text-inactive);
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     border-top: none;
@@ -314,7 +319,8 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
     z-index: 1;
 }
 
-.sensorButton.pressed, .sensorButtonSmall.pressed {
+.sensorButton.pressed,
+.sensorButtonSmall.pressed {
     transform: translate(-50%, 10px);
 }
 
@@ -354,7 +360,7 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 }
 
 .arrowDown {
-    border-top: 15px solid var(--color-action-primary);
+    border-top: 15px solid var(--color-secondary-main);
     border-bottom: 0;
 }
 
@@ -364,7 +370,7 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 }
 
 .arrowDownSmall {
-    border-top: 7px solid var(--color-action-primary);
+    border-top: 7px solid var(--color-secondary-main);
     border-bottom: 0;
 }
 
@@ -379,7 +385,8 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 }
 
 /* No connection/No buttons messages */
-.noConnection, .noButtons {
+.noConnection,
+.noButtons {
     display: flex;
     align-items: center;
     gap: var(--spacing-3);
@@ -393,50 +400,18 @@ body[data-theme="clean"] .singleButtonDash.disconnected {
 }
 
 .noConnection {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(var(--color-error), 0.1);
     color: var(--color-error);
     border: var(--border-width-standard) solid var(--color-error);
 }
 
 .noButtons {
-    background-color: rgba(255, 165, 0, 0.1);
+    background-color: rgba(var(--color-warning), 0.1);
     color: var(--color-warning);
     border: var(--border-width-standard) solid var(--color-warning);
 }
 
-/* Theme-specific message backgrounds */
-body[data-theme="retro"] .noConnection {
-    background-color: rgba(255, 0, 0, 0.1);
-}
-body[data-theme="pastel"] .noConnection {
-    background-color: rgba(243, 150, 154, 0.1);
-}
-body[data-theme="clean"] .noConnection {
-    background-color: rgba(221, 0, 0, 0.1);
-}
-
-body[data-theme="retro"] .noButtons {
-    background-color: rgba(255, 165, 0, 0.1);
-}
-body[data-theme="pastel"] .noButtons {
-    background-color: rgba(255, 187, 137, 0.1);
-}
-body[data-theme="clean"] .noButtons {
-    background-color: rgba(255, 102, 0, 0.1);
-}
-
-.noConnection svg, .noButtons svg {
+.noConnection svg,
+.noButtons svg {
     animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-    100% {
-        opacity: 1;
-    }
 }

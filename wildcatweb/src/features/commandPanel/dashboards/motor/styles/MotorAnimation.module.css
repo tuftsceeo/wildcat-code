@@ -1,4 +1,4 @@
-/* MotorAnimation.module.css - With theme variables and browser compatibility fixes */
+/* MotorAnimation.module.css - Refactored with design token system */
 
 .motorAnimation {
     position: relative;
@@ -26,52 +26,17 @@
 
 /* Animation classes for rotation */
 .clockwise {
-    animation-name: clockwiseRotation;
+    animation-name: clockwise;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-duration: 1s; /* Base duration */
 }
 
 .counterclockwise {
-    animation-name: counterclockwiseRotation;
+    animation-name: counterclockwise;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-duration: 1s; /* Base duration */
-}
-
-/* Theme-specific animation speeds */
-body[data-theme="retro"] .clockwise,
-body[data-theme="retro"] .counterclockwise {
-    animation-duration: 1s;
-}
-
-body[data-theme="pastel"] .clockwise,
-body[data-theme="pastel"] .counterclockwise {
-    animation-duration: 1.3s;
-}
-
-body[data-theme="clean"] .clockwise,
-body[data-theme="clean"] .counterclockwise {
-    animation-duration: 0.8s;
-}
-
-/* Rotation keyframes */
-@keyframes clockwiseRotation {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes counterclockwiseRotation {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(-360deg);
-    }
 }
 
 /* Status overlay for speed indication */
@@ -97,50 +62,28 @@ body[data-theme="clean"] .counterclockwise {
 }
 
 .slowGlow {
-    background-color: rgba(0, 255, 0, 0.05); /* Fallback */
+    background-color: rgba(
+        var(--color-motor-main),
+        0.05
+    ); /* Using motor-main color with opacity */
     opacity: 0.3;
 }
 
 .mediumGlow {
-    background-color: rgba(0, 255, 0, 0.1); /* Fallback */
+    background-color: rgba(
+        var(--color-motor-main),
+        0.1
+    ); /* Using motor-main color with opacity */
     opacity: 0.5;
 }
 
 .fastGlow {
-    background-color: rgba(0, 255, 0, 0.15); /* Fallback */
+    background-color: rgba(
+        var(--color-motor-main),
+        0.15
+    ); /* Using motor-main color with opacity */
     opacity: 0.7;
     animation: pulsate 2s infinite;
-}
-
-/* Theme-specific glow colors */
-body[data-theme="retro"] .slowGlow {
-    background-color: rgba(0, 255, 0, 0.05);
-}
-body[data-theme="retro"] .mediumGlow {
-    background-color: rgba(0, 255, 0, 0.1);
-}
-body[data-theme="retro"] .fastGlow {
-    background-color: rgba(0, 255, 0, 0.15);
-}
-
-body[data-theme="pastel"] .slowGlow {
-    background-color: rgba(120, 194, 173, 0.05);
-}
-body[data-theme="pastel"] .mediumGlow {
-    background-color: rgba(120, 194, 173, 0.1);
-}
-body[data-theme="pastel"] .fastGlow {
-    background-color: rgba(120, 194, 173, 0.15);
-}
-
-body[data-theme="clean"] .slowGlow {
-    background-color: rgba(0, 170, 85, 0.05);
-}
-body[data-theme="clean"] .mediumGlow {
-    background-color: rgba(0, 170, 85, 0.1);
-}
-body[data-theme="clean"] .fastGlow {
-    background-color: rgba(0, 170, 85, 0.15);
 }
 
 @keyframes pulsate {

@@ -1,48 +1,36 @@
-/* MotorDash.module.css - With theme variables and browser compatibility fixes */
+/* MotorDash.module.css - Refactored with design tokens */
 
 .motorDashContainer {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-2);
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
 }
 
 .singleMotorDash {
-    background-color: var(--color-panel-background);
-    border: 2px solid var(--color-border-inactive);
+    background-color: var(--panel-background);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    padding: 10px;
+    padding: var(--spacing-3);
     width: 100%;
     transition: all var(--transition-normal);
 }
 
 .singleMotorDash.disconnected {
-    background-color: rgba(255, 0, 0, 0.1); /* Fallback for color-mix */
     border-color: var(--color-error);
-}
-
-/* Theme-specific disconnected states */
-body[data-theme="retro"] .singleMotorDash.disconnected {
-    background-color: rgba(255, 0, 0, 0.1);
-}
-body[data-theme="pastel"] .singleMotorDash.disconnected {
-    background-color: rgba(243, 150, 154, 0.1);
-}
-body[data-theme="clean"] .singleMotorDash.disconnected {
-    background-color: rgba(221, 0, 0, 0.1);
+    background-color: rgba(var(--color-error), 0.1);
 }
 
 .motorHeader {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
-    padding: 0;
+    margin-bottom: var(--spacing-3);
 }
 
 .portLabel {
-    color: var(--color-text-inactive);
+    color: var(--color-text-primary);
     font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
@@ -54,56 +42,40 @@ body[data-theme="clean"] .singleMotorDash.disconnected {
 .disconnectedLabel {
     color: var(--color-error);
     font-size: var(--font-size-sm);
-    margin-right: 8px;
-    padding: 2px 5px;
-    background-color: rgba(255, 0, 0, 0.2); /* Fallback for color-mix */
+    margin-right: var(--spacing-2);
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: rgba(var(--color-error), 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
 }
 
-/* Theme-specific disconnected label */
-body[data-theme="retro"] .disconnectedLabel {
-    background-color: rgba(255, 0, 0, 0.2);
-}
-body[data-theme="pastel"] .disconnectedLabel {
-    background-color: rgba(243, 150, 154, 0.2);
-}
-body[data-theme="clean"] .disconnectedLabel {
-    background-color: rgba(221, 0, 0, 0.2);
-}
-
 .dismissButton {
-    background: transparent;
-    border: 1px solid var(--color-error);
+    background-color: transparent;
+    border: var(--border-width-thin) solid var(--color-error);
     color: var(--color-error);
     font-size: var(--font-size-base);
     cursor: pointer;
-    padding: 2px 5px;
-    margin-left: 5px;
+    padding: var(--spacing-1) var(--spacing-2);
+    margin-left: var(--spacing-2);
     border-radius: var(--radius-sm);
     transition: all var(--transition-normal);
 }
 
 .dismissButton:hover {
-    background-color: rgba(255, 0, 0, 0.2); /* Fallback for color-mix */
+    background-color: var(--color-error);
+    color: var(--color-white);
+    transform: var(--button-scale-hover);
 }
 
-/* Theme-specific dismiss button hover */
-body[data-theme="retro"] .dismissButton:hover {
-    background-color: rgba(255, 0, 0, 0.2);
-}
-body[data-theme="pastel"] .dismissButton:hover {
-    background-color: rgba(243, 150, 154, 0.2);
-}
-body[data-theme="clean"] .dismissButton:hover {
-    background-color: rgba(221, 0, 0, 0.2);
+.dismissButton:active {
+    transform: var(--button-scale-active);
 }
 
 /* Container for motor controls to ensure proper alignment */
 .motorControlContainer {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--spacing-1);
 }
 
 /* Bar visualization styles */
@@ -113,76 +85,77 @@ body[data-theme="clean"] .dismissButton:hover {
     align-items: flex-end;
     height: 60px;
     width: 100%;
-    margin-bottom: 4px;
-    padding: 0 2px;
+    margin-bottom: var(--spacing-1);
+    padding: 0 var(--spacing-1);
 }
 
 .bar {
     flex: 1;
     margin: 0 2px;
     border-radius: 2px 2px 0 0;
-    background-color: var(--color-gray-700);
+    background-color: var(--color-gray-subtle);
     cursor: pointer;
     border: none;
-    transition: all 0.2s ease;
+    transition: all var(--transition-normal);
     padding: 0;
+    transform: var(--button-scale-default);
 }
 
 .bar:hover:not(:disabled) {
-    transform: scaleY(1.05);
+    transform: var(--button-scale-hover);
 }
 
 .bar:focus-visible {
-    outline: 2px solid var(--color-border-inactive);
+    outline: var(--border-width-standard) solid var(--panel-border);
 }
 
 .forwardBar {
-    background-color: var(--color-gray-700);
+    background-color: var(--color-gray-subtle);
 }
 
 .forwardBar.active {
-    background-color: var(--color-motor-main);
-    box-shadow: 0 0 6px var(--color-motor-main);
+    background-color: var(--color-motor-forward);
+    box-shadow: var(--glow-secondary);
 }
 
 .backwardBar {
-    background-color: var(--color-gray-700);
+    background-color: var(--color-gray-subtle);
 }
 
 .backwardBar.active {
-    background-color: var(--color-timer-main);
-    box-shadow: 0 0 6px var(--color-timer-main);
+    background-color: var(--color-motor-backward);
+    box-shadow: var(--glow-warning);
 }
 
 /* Slider control styles */
 .sliderControl {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--spacing-1);
 }
 
 /* Container for slider and labels */
 .sliderWithLabels {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--spacing-2);
 }
 
 /* Direction labels */
 .backwardLabel,
 .forwardLabel {
-    font-size: 10px;
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     white-space: nowrap;
 }
 
 .backwardLabel {
-    color: var(--color-timer-main);
+    color: var(--color-motor-backward);
 }
 
 .forwardLabel {
-    color: var(--color-motor-main);
+    color: var(--color-motor-forward);
 }
 
 /* Slider track */
@@ -194,19 +167,19 @@ body[data-theme="clean"] .dismissButton:hover {
     cursor: pointer;
     background: linear-gradient(
         to right,
-        var(--color-timer-main) 0%,
-        var(--color-timer-main) 33%,
-        var(--color-gray-700) 33%,
-        var(--color-gray-700) 67%,
-        var(--color-motor-main) 67%,
-        var(--color-motor-main) 100%
+        var(--color-motor-backward) 0%,
+        var(--color-motor-backward) 33%,
+        var(--color-gray-subtle) 33%,
+        var(--color-gray-subtle) 67%,
+        var(--color-motor-forward) 67%,
+        var(--color-motor-forward) 100%
     );
-    border: 1px solid var(--color-gray-600);
+    border: var(--border-width-thin) solid var(--color-gray-medium);
     outline: none;
 }
 
 .sliderTrack:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-border-inactive);
+    box-shadow: var(--glow-primary);
 }
 
 /* Slider thumb */
@@ -216,11 +189,11 @@ body[data-theme="clean"] .dismissButton:hover {
     height: 22px;
     border-radius: 50%;
     background-color: var(--color-white);
-    border: 2px solid var(--color-black);
+    border: var(--border-width-standard) solid var(--color-black);
     transform: translateX(-50%);
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    box-shadow: var(--glow-white);
     z-index: 2;
-    transition: left 0.2s ease;
+    transition: left var(--transition-normal);
     top: -3px;
     cursor: grab;
 }
@@ -245,26 +218,32 @@ body[data-theme="clean"] .dismissButton:hover {
     justify-content: center;
     cursor: pointer;
     opacity: 0.7;
-    transition: all 0.2s ease;
-    padding: 3px;
-    color: var(--color-text-inactive);
+    transition: all var(--transition-normal);
+    padding: var(--spacing-1);
+    color: var(--color-text-primary);
     width: 30px;
     height: 30px;
+    transform: var(--button-scale-default);
 }
 
 .positionIcon:hover:not(:disabled) {
     opacity: 1;
     color: var(--color-text-active);
+    transform: var(--button-scale-hover);
+}
+
+.positionIcon:active:not(:disabled) {
+    transform: var(--button-scale-active);
 }
 
 .positionIcon:focus-visible {
-    outline: 2px solid var(--color-border-inactive);
+    outline: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-sm);
 }
 
 .positionIcon.active {
     opacity: 1;
-    transform: scale(1.1);
+    transform: var(--button-scale-hover);
     color: var(--color-text-active);
 }
 
@@ -298,36 +277,15 @@ body[data-theme="clean"] .dismissButton:hover {
 }
 
 .noConnection {
-    background-color: rgba(255, 0, 0, 0.1); /* Fallback */
+    background-color: rgba(var(--color-error), 0.1);
     color: var(--color-error);
     border: var(--border-width-standard) solid var(--color-error);
 }
 
 .noMotors {
-    background-color: rgba(255, 165, 0, 0.1); /* Fallback */
+    background-color: rgba(var(--color-warning), 0.1);
     color: var(--color-warning);
     border: var(--border-width-standard) solid var(--color-warning);
-}
-
-/* Theme-specific message backgrounds */
-body[data-theme="retro"] .noConnection {
-    background-color: rgba(255, 0, 0, 0.1);
-}
-body[data-theme="pastel"] .noConnection {
-    background-color: rgba(243, 150, 154, 0.1);
-}
-body[data-theme="clean"] .noConnection {
-    background-color: rgba(221, 0, 0, 0.1);
-}
-
-body[data-theme="retro"] .noMotors {
-    background-color: rgba(255, 165, 0, 0.1);
-}
-body[data-theme="pastel"] .noMotors {
-    background-color: rgba(255, 187, 137, 0.1);
-}
-body[data-theme="clean"] .noMotors {
-    background-color: rgba(255, 102, 0, 0.1);
 }
 
 .noConnection svg,

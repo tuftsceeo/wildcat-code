@@ -1,4 +1,4 @@
-/* InstructionDisplay.module.css */
+/* InstructionDisplay.module.css - Refactored with design token system */
 
 .instructionDisplay {
     display: flex;
@@ -66,6 +66,7 @@
     font-weight: var(--font-weight-bold);
     color: var(--color-timer-main);
     margin-top: var(--spacing-2);
+    font-family: var(--font-family-active);
 }
 
 /* Text container styling */
@@ -96,6 +97,7 @@
     color: var(--color-gray-400);
     font-size: var(--font-size-lg);
     text-align: center;
+    font-family: var(--font-family-active);
 }
 
 .unknownText {
@@ -105,4 +107,5 @@
     padding: var(--spacing-4);
     border: 1px solid var(--color-warning);
     border-radius: var(--radius-md);
+    font-family: var(--font-family-active);
 }

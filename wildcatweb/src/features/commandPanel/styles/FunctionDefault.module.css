@@ -1,13 +1,13 @@
-/* FunctionDefault.module.css - With theme variables and browser compatibility fixes */
+/* FunctionDefault.module.css - Refactored with design tokens */
 
 .hubTopBackground {
     position: relative;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    border: 2px solid var(--color-border-inactive);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--color-panel-background);
+    background-color: var(--panel-background);
     padding: var(--spacing-4);
     overflow: visible;
 }
@@ -30,7 +30,7 @@
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
     font-size: var(--font-size-lg);
-    color: var(--color-text-inactive);
+    color: var(--color-text-primary);
     position: relative;
     z-index: 1;
 }
@@ -55,39 +55,33 @@
 /* Base button style */
 .actionButtonChild {
     width: 100%;
-    background-color: var(--color-button-default);
-    border: 2px solid var(--color-border-inactive);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
-    color: var(--color-text-inactive);
+    color: var(--button-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     padding: var(--spacing-3);
     cursor: pointer;
     text-transform: uppercase;
     transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
 }
 
 /* Active state for buttons */
 .actionButtonChild.active {
-    border-color: var(--color-border-active);
-    color: var(--color-text-active);
-    background-color: rgba(0, 255, 0, 0.1); /* Fallback */
-    box-shadow: var(--glow-neon-green);
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    background-color: var(--button-selected-bg);
+    box-shadow: var(--glow-secondary);
 }
 
-/* Theme specific active backgrounds */
-body[data-theme="retro"] .actionButtonChild.active {
-    background-color: rgba(0, 255, 0, 0.1);
-}
-body[data-theme="pastel"] .actionButtonChild.active {
-    background-color: rgba(120, 194, 173, 0.1);
-}
-body[data-theme="clean"] .actionButtonChild.active {
-    background-color: rgba(0, 170, 85, 0.1);
+.actionButtonChild:hover:not(.active) {
+    transform: var(--button-scale-hover);
 }
 
-.actionButtonChild:hover {
-    opacity: 0.9;
+.actionButtonChild:active:not(.active) {
+    transform: var(--button-scale-active);
 }
 
 /* Remove the "or" text */
@@ -144,13 +138,13 @@ body[data-theme="clean"] .actionButtonChild.active {
 
 /* Subtype button styling */
 .subtypeButton {
-    background-color: var(--color-button-default);
+    background-color: var(--button-default-bg);
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
-    border: 2px solid var(--color-border-inactive);
+    border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
-    color: var(--color-text-inactive);
+    color: var(--button-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     padding: var(--spacing-2) var(--spacing-4);
@@ -158,6 +152,7 @@ body[data-theme="clean"] .actionButtonChild.active {
     transition: all var(--transition-normal);
     text-transform: uppercase;
     width: 90%;
+    transform: var(--button-scale-default);
 }
 
 /* Icon within subtype buttons */
@@ -178,14 +173,18 @@ body[data-theme="clean"] .actionButtonChild.active {
     justify-content: flex-end;
 }
 
-.subtypeButton:hover {
-    opacity: 0.9;
+.subtypeButton:hover:not(.active) {
+    transform: var(--button-scale-hover);
+}
+
+.subtypeButton:active:not(.active) {
+    transform: var(--button-scale-active);
 }
 
 .subtypeButton.active {
-    border-color: var(--color-border-active);
-    color: var(--color-text-active);
-    box-shadow: var(--glow-neon-green);
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    box-shadow: var(--glow-secondary);
 }
 
 /* Dashboard container */
@@ -196,16 +195,11 @@ body[data-theme="clean"] .actionButtonChild.active {
     overflow: auto;
     border-radius: var(--radius-md);
     border: none;
-    background-color: rgba(0, 0, 0, 0.8); /* Fallback */
+    background-color: var(--color-background);
     margin-top: var(--spacing-2);
     display: flex;
     flex-direction: column;
     width: 100%;
-}
-
-/* Theme-specific dashboard backgrounds */
-.dashboardContainer {
-    background-color: var(--color-background);
 }
 
 /* Placeholder for dashboard */
@@ -232,8 +226,18 @@ body[data-theme="clean"] .actionButtonChild.active {
 }
 
 .audioIcon {
-    color: var(--color-action-secondary);
+    color: var(--color-primary-main);
     cursor: pointer;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.audioIcon:hover {
+    transform: var(--button-scale-hover);
+}
+
+.audioIcon:active {
+    transform: var(--button-scale-active);
 }
 
 .saveIndicator {
@@ -254,6 +258,7 @@ body[data-theme="clean"] .actionButtonChild.active {
 }
 
 .checkIcon {
+    color: var(--color-secondary-main);
     animation: pulse 2s infinite;
 }
 
@@ -270,6 +275,7 @@ body[data-theme="clean"] .actionButtonChild.active {
 }
 
 .plusIcon {
+    color: var(--color-gray-medium);
     animation: blink 1s infinite;
 }
 

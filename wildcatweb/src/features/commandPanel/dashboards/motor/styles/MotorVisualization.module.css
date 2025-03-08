@@ -1,5 +1,4 @@
-/* MotorVisualization.module.css */
-/* Styled according to the Figma design with focus on accessibility for middle school students */
+/* MotorVisualization.module.css - Refactored with design token system */
 
 .motorVisualizationContainer {
     display: flex;
@@ -25,7 +24,7 @@
 
 .motorTitle {
     color: var(--color-white);
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
@@ -51,11 +50,11 @@
 }
 
 .backwardBar {
-    background-color: #ffd700; /* Yellow for backward */
+    background-color: var(--color-warning); /* Yellow for backward */
 }
 
 .forwardBar {
-    background-color: #00ff00; /* Green for forward */
+    background-color: var(--color-motor-main); /* Green for forward */
 }
 
 .bar.active {
@@ -80,7 +79,7 @@
     position: absolute;
     width: 12px;
     height: 12px;
-    background-color: var(--color-red);
+    background-color: var(--color-error);
     border-radius: 50%;
     top: -3px;
     transform: translateX(-50%);
@@ -122,7 +121,7 @@
     font-size: var(--font-size-sm);
     color: var(--color-white);
     text-align: center;
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-active);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
     height: 20px; /* Fixed height to prevent layout shifts */

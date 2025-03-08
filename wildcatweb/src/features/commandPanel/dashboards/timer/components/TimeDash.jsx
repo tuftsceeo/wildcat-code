@@ -1,7 +1,10 @@
 /**
  * @file TimeDash.jsx
  * @description Dashboard interface for configuring time wait actions with visual pie clock
- * and numeric controls for selecting duration. Updated for better theme compatibility.
+ * and numeric controls for selecting duration. Refactored to use consistent design tokens
+ * and styling patterns for improved theme compatibility.
+ * @author Jennifer Cross with support from Claude
+ * @created March 2025
  */
 
 import React, { useState, useEffect } from "react";
@@ -20,6 +23,7 @@ import styles from "../styles/TimeDash.module.css";
 export const TimeDash = ({ onUpdate, configuration }) => {
     // Initialize seconds from configuration or default to 3
     const [seconds, setSeconds] = useState(configuration?.seconds || 3);
+
     // Track if configuration is complete
     const [isConfigured, setIsConfigured] = useState(!!configuration?.seconds);
 
@@ -79,6 +83,8 @@ export const TimeDash = ({ onUpdate, configuration }) => {
                         className={styles.timeInput}
                         role="spinbutton"
                         aria-valuenow={seconds}
+                        aria-valuemin={1}
+                        aria-valuemax={60}
                     >
                         {seconds}
                     </div>
@@ -104,9 +110,13 @@ export const TimeDash = ({ onUpdate, configuration }) => {
                         style={{
                             background: `conic-gradient(var(--color-timer-main) ${conicValue}, transparent 0)`,
                         }}
+                        aria-hidden="true"
                     ></div>
                 </div>
-                <div className={styles.clockBorder}></div>
+                <div
+                    className={styles.clockBorder}
+                    aria-hidden="true"
+                ></div>
             </div>
         </div>
     );

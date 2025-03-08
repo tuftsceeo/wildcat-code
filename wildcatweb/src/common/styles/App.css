@@ -1,6 +1,8 @@
 /* App.css - Main application styling matching FIGMA design */
 @import "../../themes/tokens.css";
 
+/* App.css - Main application styling with updated token-based design system */
+
 /* Global resets and base styles */
 * {
     box-sizing: border-box;
@@ -10,7 +12,7 @@
 
 body {
     background-color: var(--color-background);
-    color: var(--color-text-inactive);
+    color: var(--color-text-primary);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     line-height: var(--line-height-normal);
@@ -59,16 +61,13 @@ body {
 .bluetooth-menu {
     position: relative;
     margin-bottom: var(--spacing-4);
-    /*top: var(--spacing-4);
-    right: var(--spacing-4);
-    z-index: var(--z-index-above);*/
 }
 
-/* Panel styling to match FIGMA */
+/* Panel styling with token-based approach */
 .retro-panel {
-    border: 2px solid var(--color-border-inactive);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--color-panel-background);
+    background-color: var(--panel-background);
     height: 100%;
     overflow: hidden; /* Prevent content overflow */
 }
@@ -92,7 +91,7 @@ body {
 }
 
 .status-panel-icon {
-    color: var(--color-action-secondary);
+    color: var(--color-primary-main);
 }
 
 /* Override for portal to maintain proper z-index */
@@ -112,8 +111,8 @@ body {
 
 /* Common button styles for unified look */
 .blue-button {
-    background-color: var(--color-action-secondary);
-    color: var(--color-button-active-text);
+    background-color: var(--button-contained-bg);
+    color: var(--button-contained-text);
     border: none;
     border-radius: var(--radius-md);
     padding: var(--spacing-2) var(--spacing-4);
@@ -121,24 +120,58 @@ body {
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     cursor: pointer;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.blue-button:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.blue-button:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.blue-button:disabled {
+    background-color: var(--button-contained-disabled-bg);
+    color: var(--button-contained-disabled-text);
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: var(--button-scale-default);
 }
 
 .green-button {
     background-color: transparent;
-    color: var(--color-action-primary);
-    border: 2px solid var(--color-action-primary);
+    color: var(--button-selected-text);
+    border: var(--border-width-standard) solid var(--button-selected-border);
     border-radius: var(--radius-md);
     padding: var(--spacing-2) var(--spacing-4);
     font-family: var(--font-family-active);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     cursor: pointer;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.green-button:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.green-button:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.green-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: var(--button-scale-default);
 }
 
 .blue-panel {
     background-color: transparent;
-    color: var(--color-text-inactive);
-    border: 2px solid var(--color-border-inactive);
+    color: var(--color-text-primary);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
     padding: var(--spacing-2) var(--spacing-4);
     font-family: var(--font-family-active);

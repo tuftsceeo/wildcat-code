@@ -1,14 +1,14 @@
 /**
  * @file TypeSelector.jsx
  * @description Component for selecting between ACTION and SENSE modes,
- * the primary mode selection for the command panel.
+ * the primary mode selection for the command panel. Refactored to use
+ * consistent design tokens and styling patterns.
  * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * @created March 2025
  */
 
-// TypeSelector.jsx
 import React from "react";
-import styles from "../styles/FunctionDefault.module.css"; // We'll use the same CSS initially
+import styles from "../styles/FunctionDefault.module.css";
 
 /**
  * TypeSelector component for selecting between ACTION and SENSE modes
@@ -28,6 +28,8 @@ const TypeSelector = ({ selectedType, onTypeChange }) => {
                         selectedType === "action" ? styles.active : ""
                     }`}
                     onClick={() => onTypeChange("action")}
+                    aria-pressed={selectedType === "action"}
+                    aria-label="Select Action mode"
                 >
                     ACTION
                 </button>
@@ -38,6 +40,8 @@ const TypeSelector = ({ selectedType, onTypeChange }) => {
                         selectedType === "input" ? styles.active : ""
                     }`}
                     onClick={() => onTypeChange("input")}
+                    aria-pressed={selectedType === "input"}
+                    aria-label="Select Sense mode"
                 >
                     SENSE
                 </button>

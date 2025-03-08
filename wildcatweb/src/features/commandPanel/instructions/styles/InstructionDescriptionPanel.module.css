@@ -1,4 +1,4 @@
-/* InstructionDescriptionPanel.module.css - Enhanced with separator styling */
+/* InstructionDescriptionPanel.module.css - Refactored with design token system */
 
 /* Base panel styles */
 .panel {
@@ -109,12 +109,12 @@
 .iconSeparator {
     margin: 0 var(--spacing-2);
     font-size: 24px;
-    color: var(--color-blue);
+    color: var(--color-primary-main);
 }
 
 /* Icon-only specific styling - using default text color */
 .iconOnlyIcon {
-    color: var(--color-text-inactive); /* Use default text color for icon-only mode */
+    color: var(--color-text-inactive);
 }
 
 /* Text and icon display for beginner and intermediate modes */
@@ -161,7 +161,7 @@
 
 /* Icon styling for mixed text/icon modes */
 .conceptIcon {
-    color: var(--color-blue); /* Use blue for mixed text/icon modes */
+    color: var(--color-primary-main);
 }
 
 /* Audio button */
@@ -178,51 +178,51 @@
     justify-content: center;
     transition: all var(--transition-normal);
     flex-shrink: 0;
+    transform: var(--button-scale-default);
 }
 
 .audioButton:hover {
-
-    transform: scale(1.1);
+    transform: var(--button-scale-hover);
 }
 
 .audioButton:active {
-    transform: scale(0.95);
+    transform: var(--button-scale-active);
 }
 
 /* Theme-specific adjustments */
 body[data-theme="retro"] .panel {
-    border: 2px solid var(--color-blue);
+    border: 2px solid var(--panel-border);
     background-color: var(--color-black);
     color: var(--color-white);
 }
 
 body[data-theme="retro"] .descriptionText,
 body[data-theme="retro"] .pairText,
-body[data-theme="retro"] .audioButton{
+body[data-theme="retro"] .audioButton {
     color: var(--color-white);
 }
 
 body[data-theme="retro"] .iconOnlyIcon,
 body[data-theme="retro"] .separatorIcon {
-    color: var(--color-white); /* Use white text for retro theme in icon-only mode */
+    color: var(--color-white);
 }
 
 body[data-theme="retro"] .conceptIcon {
-    color: var(--color-blue); /* Use blue for retro theme */
+    color: var(--color-primary-main);
 }
 
 body[data-theme="pastel"] .panel {
     background-color: var(--color-white);
-    border: 1px solid var(--color-blue);
+    border: 1px solid var(--panel-border);
 }
 
 body[data-theme="pastel"] .iconOnlyIcon,
 body[data-theme="pastel"] .separatorIcon {
-    color: var(--color-black); /* Use black text for pastel theme in icon-only mode */
+    color: var(--color-black);
 }
 
 body[data-theme="pastel"] .conceptIcon {
-    color: var(--color-blue); /* Use blue for pastel theme */
+    color: var(--color-primary-main);
 }
 
 body[data-theme="clean"] .panel {
@@ -232,9 +232,9 @@ body[data-theme="clean"] .panel {
 
 body[data-theme="clean"] .iconOnlyIcon,
 body[data-theme="clean"] .separatorIcon {
-    color: var(--color-black); /* Use black text for clean theme in icon-only mode */
+    color: var(--color-black);
 }
 
 body[data-theme="clean"] .conceptIcon {
-    color: var(--color-action-secondary); /* Use secondary action color for clean theme */
+    color: var(--color-secondary-main);
 }
