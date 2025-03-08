@@ -29,16 +29,16 @@ const CONTROL_TYPES = {
             component: MotorDash,
             icon: <Zap size={20} />,
         },
-        hub: {
-            name: "Hub",
-            component: null, // Will be implemented later
-            icon: <Lightbulb size={20} />,
-        },
-        sound: {
-            name: "Sound",
-            component: null, // Will be implemented later
-            icon: <Volume size={20} />,
-        },
+        // hub: {
+        //     name: "Hub",
+        //     component: null, // Will be implemented later
+        //     icon: <Lightbulb size={20} />,
+        // },
+        // sound: {
+        //     name: "Sound",
+        //     component: null, // Will be implemented later
+        //     icon: <Volume size={20} />,
+        // },
     },
     input: {
         time: {
@@ -244,10 +244,11 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 </div>
             )}
 
-            {/* Instruction Description Panel at bottom */}
+            {/* Instruction Description Panel at bottom - Now passing the currSlotNumber */}
             <InstructionDescriptionPanel
                 instruction={currentInstruction}
                 onPlayAudio={handlePlayAudio}
+                slotNumber={currSlotNumber}
             />
         </div>
     );

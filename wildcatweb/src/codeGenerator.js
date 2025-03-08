@@ -302,8 +302,10 @@ const generateSlotCode = (slot, portStates = {}) => {
                 console.log(`generatePythonCode: Added code for slot:`, slotCode);
             }
         ;
+        if (slot.type === "action"){
         code.push(`${indent}await runloop.sleep_ms(500)`);
-        // Add the runloop execution
+        }
+         // Add the runloop execution
         code.push("");
         code.push("runloop.run(main())");
     

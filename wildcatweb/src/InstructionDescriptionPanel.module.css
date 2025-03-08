@@ -1,5 +1,6 @@
-/* InstructionDescriptionPanel.module.css */
+/* InstructionDescriptionPanel.module.css - Enhanced with separator styling */
 
+/* Base panel styles */
 .panel {
     background-color: var(--color-white);
     border-radius: var(--radius-md);
@@ -14,14 +15,32 @@
     transition: all var(--transition-normal);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
+    min-height: 60px; /* Base height */
 }
 
+/* Panel with increased height for icon display */
+.panelWithIcons {
+    min-height: 130px; /* Increased height for larger icons */
+    padding-top: var(--spacing-4);
+    padding-bottom: var(--spacing-4);
+}
+
+/* Content wrapper */
+.contentWrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: var(--spacing-4);
+    overflow: visible; /* Allow overflow to ensure proper display */
+}
+
+/* Basic description text */
 .descriptionText {
     flex: 1;
     line-height: var(--line-height-relaxed);
     font-size: var(--font-size-base);
     color: var(--color-black);
-    padding-right: var(--spacing-4);
 }
 
 /* Reading level classes - directly applied to text */
@@ -53,35 +72,103 @@
     line-height: var(--line-height-relaxed);
 }
 
-/* Per-reading level panel styling */
-.panel[data-reading-level="icon_only"] {
-    background-color: #f0f8ff; /* Light blue background for icon only */
-    border-left: 4px solid #00aaff;
+/* Icon container for icon-only mode */
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2);
+    width: 100%;
 }
 
-.panel[data-reading-level="beginner"] {
-    background-color: #f0fff0; /* Light green background for beginner */
-    border-left: 4px solid #00cc00;
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    position: relative;
 }
 
-.panel[data-reading-level="intermediate"] {
-    /* Default styling */
+/* Separator styling */
+.separatorWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    min-height: 44px;
+    margin: 0 var(--spacing-1);
 }
 
-.panel[data-reading-level="advanced"] {
-    background-color: #fff8f0; /* Light orange background for advanced */
-    border-left: 4px solid #ffaa00;
+.separatorIcon {
+    color: var(--color-text-inactive);
 }
 
-.panel[data-reading-level="text_only"] {
-    background-color: #fff0f8; /* Light pink background for text only */
-    border-left: 4px solid #ff00aa;
+.iconSeparator {
+    margin: 0 var(--spacing-2);
+    font-size: 24px;
+    color: var(--color-blue);
 }
 
+/* Icon-only specific styling - using default text color */
+.iconOnlyIcon {
+    color: var(--color-text-inactive); /* Use default text color for icon-only mode */
+}
+
+/* Text and icon display for beginner and intermediate modes */
+.textIconContainer {
+    display: flex;
+    align-items: flex-start; /* Align items at the top */
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    width: 100%;
+}
+
+.textIconPair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 var(--spacing-1);
+    min-width: 30px; /* Minimum width for the pair */
+}
+
+.pairText {
+    line-height: 1.5;
+    text-align: center;
+    padding-bottom: var(--spacing-1);
+    white-space: nowrap;
+    height: 24px; /* Fixed height to ensure alignment */
+    display: flex;
+    align-items: center;
+}
+
+.pairIcon {
+    height: 36px; /* Fixed height for icon area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconPlaceholder {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
+/* Icon styling for mixed text/icon modes */
+.conceptIcon {
+    color: var(--color-blue); /* Use blue for mixed text/icon modes */
+}
+
+/* Audio button */
 .audioButton {
     background: none;
     border: none;
-    color: var(--color-action-secondary);
+    color: var(--color-black);
     cursor: pointer;
     padding: var(--spacing-1);
     margin-left: var(--spacing-2);
@@ -94,7 +181,7 @@
 }
 
 .audioButton:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+
     transform: scale(1.1);
 }
 
@@ -102,27 +189,25 @@
     transform: scale(0.95);
 }
 
-/* Reading level indicator for debugging */
-.levelIndicator {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: var(--color-black);
-    color: var(--color-white);
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-}
-
 /* Theme-specific adjustments */
 body[data-theme="retro"] .panel {
     border: 2px solid var(--color-blue);
+    background-color: var(--color-black);
+    color: var(--color-white);
+}
+
+body[data-theme="retro"] .descriptionText,
+body[data-theme="retro"] .pairText {
+    color: var(--color-white);
+}
+
+body[data-theme="retro"] .iconOnlyIcon,
+body[data-theme="retro"] .separatorIcon {
+    color: var(--color-white); /* Use white text for retro theme in icon-only mode */
+}
+
+body[data-theme="retro"] .conceptIcon {
+    color: var(--color-blue); /* Use blue for retro theme */
 }
 
 body[data-theme="pastel"] .panel {
@@ -130,7 +215,25 @@ body[data-theme="pastel"] .panel {
     border: 1px solid var(--color-blue);
 }
 
+body[data-theme="pastel"] .iconOnlyIcon,
+body[data-theme="pastel"] .separatorIcon {
+    color: var(--color-black); /* Use black text for pastel theme in icon-only mode */
+}
+
+body[data-theme="pastel"] .conceptIcon {
+    color: var(--color-blue); /* Use blue for pastel theme */
+}
+
 body[data-theme="clean"] .panel {
     background-color: var(--color-white);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body[data-theme="clean"] .iconOnlyIcon,
+body[data-theme="clean"] .separatorIcon {
+    color: var(--color-black); /* Use black text for clean theme in icon-only mode */
+}
+
+body[data-theme="clean"] .conceptIcon {
+    color: var(--color-action-secondary); /* Use secondary action color for clean theme */
 }
