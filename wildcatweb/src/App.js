@@ -7,23 +7,27 @@
 import React, { useState, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { CommandPanel } from "./CommandPanel.jsx";
-import { RunMenu } from "./RunMenu.jsx";
-import { BluetoothUI } from "./BluetoothUI.jsx";
-import { KnobProvider } from "./KnobContext.js";
-import { BLEProvider } from "./BLEContext.js";
+import { CommandPanel } from "./features/commandPanel/components/CommandPanel.jsx";
+import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
+import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
+import { KnobProvider } from "./context/KnobContext.js";
+import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
+import "./common/styles/App.css";
+import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";
+import CustomizationPage from "./features/settings/components/CustomizationPage.jsx";
+
 import {
     CustomizationProvider,
     useCustomization,
-} from "./CustomizationContext";
-import CustomizationPage from "./CustomizationPage.jsx";
-import CodeTrack from "./CodeTrack.jsx";
-import { preloadVoices } from "./utils/speechUtils";
-import "./App.css";
+} from "./context/CustomizationContext";
+import { preloadVoices } from "./common/utils/speechUtils";
+import logo from "./assets/images/logo.svg";
+import "/common/styles/App.css";
+import reportWebVitals from "./common/utils/reportWebVitals";
 /**
  * The top-level App component with all providers
  * Manages the missionSteps state and handles changes from CustomizationContext
- * 
+ *
  * @returns {JSX.Element} Main application component
  */
 function App() {
@@ -42,7 +46,9 @@ function App() {
                 <KnobProvider>
                     <DndProvider backend={HTML5Backend}>
                         {/* Pass missionSteps as a prop to the AppWithCustomizationContext */}
-                        <AppWithCustomizationContext missionSteps={missionSteps} />
+                        <AppWithCustomizationContext
+                            missionSteps={missionSteps}
+                        />
                     </DndProvider>
                 </KnobProvider>
             </BLEProvider>
@@ -52,7 +58,7 @@ function App() {
 
 /**
  * Main application wrapper that provides context providers and applies settings
- * 
+ *
  * @param {Object} props - Component props
  * @param {number} props.missionSteps - Number of mission steps passed from parent
  * @returns {JSX.Element} Main application content component
@@ -72,7 +78,7 @@ function AppWithCustomizationContext({ missionSteps }) {
 
 /**
  * Main application content
- * 
+ *
  * @param {Object} props - Component props
  * @param {number} props.missionSteps - Number of mission steps passed from parent
  * @returns {JSX.Element} Application UI components
@@ -230,7 +236,10 @@ function AppContent({ missionSteps }) {
                     close={() => setIsSettingsOpen(false)}
                     slotData={slotData}
                     updateMissionSteps={(newStepCount) => {
-                        console.log("CustomizationPage requested update to", newStepCount);
+                        console.log(
+                            "CustomizationPage requested update to",
+                            newStepCount,
+                        );
                         // This is redundant now as the actual update happens via context
                     }}
                 />
