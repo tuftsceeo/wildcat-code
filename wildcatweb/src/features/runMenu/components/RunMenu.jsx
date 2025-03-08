@@ -6,8 +6,8 @@
 
 import React, { useEffect } from "react";
 import styles from "../styles/RunMenu.module.css";
-import { generatePythonCode } from "./codeGenerator.js";
-import { useBLE } from "./BLEContext";
+import { generatePythonCode } from "../../code-generation/codeGenerator.js";
+import { useBLE } from "../../bluetooth/context/BLEContext";
 import { Buffer } from "buffer";
 import {
     ClearSlotRequest,

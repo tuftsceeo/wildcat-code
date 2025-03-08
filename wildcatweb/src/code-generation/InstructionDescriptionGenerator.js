@@ -4,7 +4,7 @@
  * instructions using simplified translations from JSON files.
  */
 
-import { getSpeedDescription } from "../features/motor/utils/motorSpeedUtils";
+import { getSpeedDescription } from "../features/commandPanel/dashboards/motor/utils/motorSpeedUtils";
 import { getTranslatedText, getUIText } from "../translations/loader";
 
 /**

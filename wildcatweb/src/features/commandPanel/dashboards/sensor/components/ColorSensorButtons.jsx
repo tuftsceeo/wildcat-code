@@ -7,7 +7,7 @@
  */
 
 import React from "react";
-Replace: import styles from '../styles/SensorDash.module.css';Dash.module.css";
+import styles from '../styles/SensorDash.module.css';Dash.module.css";
 
 export const ColorSensorButtons = ({ color, children, onClick }) => {
     return (

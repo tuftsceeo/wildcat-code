@@ -7,7 +7,7 @@
 
 // TimerAnimation.jsx
 import React from "react";
-Replace: import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
+import styles from "../../../../codeTrack/styles/CodingTrack.module.css"; // Still using the original CSS
 
 /**
  * Visualization for a timer instruction

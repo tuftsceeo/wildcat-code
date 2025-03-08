@@ -5,8 +5,8 @@
  */
 
 import React from "react";
-import BaseInstructionBlock from "./BaseInstructionBlock";
-Replace: import styles from "../styles/CodingTrack.module.css";
+import BaseInstructionBlock from "../../../../codeTrack/components/BaseInstructionBlock";
+import styles from "../../../../codeTrack/styles/CodingTrack.module.css";
 import { Disc } from "lucide-react";
 
 /**

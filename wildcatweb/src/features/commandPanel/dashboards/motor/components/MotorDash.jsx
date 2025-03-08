@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
-import { useBLE } from "../../../features/bluetooth/context/BLEContext";
+import { useBLE } from "../../../../bluetooth/context/BLEContext";
 import styles from "../styles/MotorDash.module.css";
 import {
     validateSpeed,
@@ -202,7 +202,7 @@ const SingleMotorDash = memo(
 
                 handleSliderChange(position);
             },
-            [handleSliderChange],
+            [handleSliderChange, isDragging],
         );
 
         const handleMouseUp = useCallback(() => {

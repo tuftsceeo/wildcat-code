@@ -5,9 +5,9 @@
  */
 
 import React from "react";
-import BaseInstructionBlock from "./BaseInstructionBlock";
+import BaseInstructionBlock from "../../../../codeTrack/components/BaseInstructionBlock";
 import MotorAnimation from "./MotorAnimation";
-Replace: import styles from "../styles/CodingTrack.module.css";
+import styles from "../../../../codeTrack/styles/CodingTrack.module.css";
 
 /**
  * Block for visualizing motor instructions

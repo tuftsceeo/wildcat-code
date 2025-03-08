@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import { Minus, Plus, AlertTriangle } from "lucide-react";
 import { useCustomization } from "../CustomizationContext";
 import Portal from "../Portal";
-Replace: import styles from "../styles/StepsSettings.module.css";
+import styles from "../styles/StepsSettings.module.css";
 
 // Constants for step limits
 const MIN_STEPS = 2;

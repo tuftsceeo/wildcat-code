@@ -7,7 +7,7 @@
 
 // NavigationControls.jsx
 import React from "react";
-Replace: import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
+import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
 
 /**
  * Navigation controls for moving between slots

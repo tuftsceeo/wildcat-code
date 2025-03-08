@@ -20,7 +20,7 @@ import {
     ChevronRight,
     Square,
 } from "lucide-react";
-Replace: import styles from "../styles/MotorSlider.module.css";
+import styles from "../styles/MotorSlider.module.css";
 
 /**
  * Motor speed and direction slider component

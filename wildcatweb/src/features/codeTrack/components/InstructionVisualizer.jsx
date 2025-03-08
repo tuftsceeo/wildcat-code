@@ -8,10 +8,10 @@
 
 // InstructionVisualizer.jsx
 import React from "react";
-Replace: import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
-import MotorInstructionBlock from "./MotorInstructionBlock";
-import TimerInstructionBlock from "./TimerInstructionBlock";
-import ButtonInstructionBlock from "./ButtonInstructionBlock";
+import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
+import MotorInstructionBlock from "../../commandPanel/dashboards/motor/components/MotorInstructionBlock";
+import TimerInstructionBlock from "../../commandPanel/dashboards/timer/components/TimerInstructionBlock";
+import ButtonInstructionBlock from "../../commandPanel/dashboards/button/components/ButtonInstructionBlock";
 
 /**
  * Component that determines and renders the appropriate instruction block

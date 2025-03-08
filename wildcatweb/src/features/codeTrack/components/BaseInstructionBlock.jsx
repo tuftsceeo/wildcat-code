@@ -8,7 +8,7 @@
 
 // BaseInstructionBlock.jsx
 import React from "react";
-Replace: import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
+import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
 
 /**
  * Base component for all instruction visualizations

@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useCustomization } from "../CustomizationContext";
 import { AVAILABLE_LANGUAGES, getUIText } from "../translations/loader";
 import { generateDescription } from "../InstructionDescriptionGenerator";
-Replace: import styles from '../styles/LanguageSettings.module.css';ings.module.css";
+import styles from '../styles/LanguageSettings.module.css';ings.module.css";
 
 /**
  * Language selection component with preview

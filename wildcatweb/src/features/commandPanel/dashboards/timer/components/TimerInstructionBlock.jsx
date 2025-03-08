@@ -7,7 +7,7 @@
 
 // TimerInstructionBlock.jsx
 import React from "react";
-import BaseInstructionBlock from "./BaseInstructionBlock";
+import BaseInstructionBlock from "../../../../codeTrack/components/BaseInstructionBlock";
 import TimerAnimation from "./TimerAnimation";
 
 /**

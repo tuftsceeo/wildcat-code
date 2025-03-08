@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Check } from "lucide-react";
-Replace: import styles from '../styles/TimeDash.module.css';Dash.module.css";
+import styles from "../styles/TimeDash.module.css";
 
 /**
  * Time dashboard component for configuring wait durations

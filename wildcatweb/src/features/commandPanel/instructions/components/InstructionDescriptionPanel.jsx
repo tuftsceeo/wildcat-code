@@ -8,9 +8,9 @@
 import React from "react";
 import { Volume2 } from "lucide-react";
 import { useCustomization } from "../../../context/CustomizationContext";
-import { generateDescription } from "./InstructionDescriptionGenerator";
-import { COMPLEXITY_LEVELS } from "./translations/loader";
-import { speakWithRobotVoice } from "./utils/speechUtils";
+import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
+import { COMPLEXITY_LEVELS } from "../../../translations/loader";
+import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 import {
     getIconForConcept,
     segmentDescriptionText,

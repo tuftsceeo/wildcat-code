@@ -5,8 +5,11 @@
  */
 
 import React from "react";
-Replace: import styles from "../styles/MotorAnimation.module.css";
-import { validateSpeed, getSpeedDescription } from "./motorSpeedUtils";
+import styles from "../styles/MotorAnimation.module.css";
+import {
+    validateSpeed,
+    getSpeedDescription,
+} from "../../motor/utils/motorSpeedUtils";
 
 /**
  * Animated visualization of a motor

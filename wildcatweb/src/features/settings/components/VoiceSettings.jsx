@@ -8,7 +8,7 @@
 import React, { useState, useEffect } from "react";
 import { useCustomization } from "../CustomizationContext";
 import { Volume2, VolumeX, Bot, Zap, Bird } from "lucide-react";
-Replace: import styles from "../styles/VoiceSettings.module.css";
+import styles from "../styles/VoiceSettings.module.css";
 import { VOICE_PRESETS, speakWithRobotVoice } from "../utils/speechUtils";
 
 /**

@@ -20,7 +20,7 @@ import {
     ChevronRight,
     Clock,
 } from "lucide-react";
-Replace: import styles from "../styles/InstructionDisplay.module.css";
+import styles from "../styles/InstructionDisplay.module.css";
 
 /**
  * Component to display instructions with configurable complexity

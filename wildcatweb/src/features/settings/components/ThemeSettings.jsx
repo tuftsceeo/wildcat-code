@@ -5,7 +5,7 @@
 
 import React from "react";
 import { useCustomization } from "../CustomizationContext";
-Replace: import styles from "../styles/ThemeSettings.module.css";
+import styles from "../styles/ThemeSettings.module.css";
 
 /**
  * Theme settings component with proper theme variable usage

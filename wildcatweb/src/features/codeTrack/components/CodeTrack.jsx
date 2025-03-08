@@ -10,8 +10,11 @@ import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
 import { useBLE } from "../../bluetooth/context/BLEContext";
-import { ClearSlotRequest, ClearSlotResponse } from "./ble_resources/messages";
-import { generateSlotCode } from "./codeGenerator";
+import {
+    ClearSlotRequest,
+    ClearSlotResponse,
+} from "../../bluetooth/ble_resources/messages";
+import { generateSlotCode } from "../../../code-generation/codeGenerator";
 import { Buffer } from "buffer";
 
 /**

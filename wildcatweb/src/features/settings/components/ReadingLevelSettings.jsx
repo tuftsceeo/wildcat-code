@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import { useCustomization } from "../CustomizationContext";
 import { COMPLEXITY_LEVELS } from "../translations/loader";
 import { generateDescription } from "../InstructionDescriptionGenerator";
-Replace: import styles from "../styles/ReadingLevelSettings.module.css";
+import styles from "../styles/ReadingLevelSettings.module.css";
 
 /**
  * Reading level configuration options with live preview

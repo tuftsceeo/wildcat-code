@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect, useCallback, memo } from "react";
-import { useBLE } from "../../../features/bluetooth/context/BLEContext";
+import { useBLE } from "../../../../bluetooth/context/BLEContext";
 import { Disc, RefreshCwOff, BluetoothSearching } from "lucide-react";
 import styles from "../styles/ButtonDash.module.css";
 

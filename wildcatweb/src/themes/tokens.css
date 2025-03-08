@@ -119,15 +119,14 @@
 }
 
 .btnReg:active {
-    transform: scale(.95);
+    transform: scale(0.95);
 }
 
 .btnReg {
     --transform-regular: scale(1);
     --transform-hover: scale(1.2);
-    --transform-active: scale(.95);
+    --transform-active: scale(0.95);
 }
-
 
 /* RETRO Theme (default) */
 :root,
@@ -319,7 +318,7 @@ body.large-text {
 @font-face {
     font-family: "OpenDyslexic";
     src: local("OpenDyslexic"),
-        url(./assets/OpenDyslexic-Regular.woff) format("woff");
+        url(../assets/fonts/OpenDyslexic-Regular.woff) format("woff");
     font-weight: normal;
     font-style: normal;
 }

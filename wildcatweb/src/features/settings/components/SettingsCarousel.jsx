@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-Replace: import styles from "../styles/SettingsCarousel.module.css";
+import styles from "../styles/SettingsCarousel.module.css";
 
 /**
  * Settings tab carousel with proper centering and theme support

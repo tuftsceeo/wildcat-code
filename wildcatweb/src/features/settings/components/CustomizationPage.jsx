@@ -16,13 +16,13 @@ import {
     Users,
 } from "lucide-react";
 import Portal from "../../../common/components/Portal";
-import { useCustomization } from "./CustomizationContext";
-import ThemeSettings from "./settings/ThemeSettings";
-import ReadingLevelSettings from "./settings/ReadingLevelSettings";
-import LanguageSettings from "./settings/LanguageSettings"; // Make sure this is imported
-import StepsSettings from "./settings/StepsSettings";
-import PlaceholderSettings from "./settings/PlaceholderSettings";
-import VoiceSettings from "./settings/VoiceSettings";
+import { useCustomization } from "../../context/CustomizationContext";
+import ThemeSettings from "./ThemeSettings";
+import ReadingLevelSettings from "./ReadingLevelSettings";
+import LanguageSettings from "./LanguageSettings";
+import StepsSettings from "./StepsSettings";
+import PlaceholderSettings from "./PlaceholderSettings";
+import VoiceSettings from "./VoiceSettings";
 import styles from "../styles/CustomizationPage.module.css";
 
 /**

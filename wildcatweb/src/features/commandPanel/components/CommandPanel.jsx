@@ -9,11 +9,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Check, Plus, Zap, Disc, Lightbulb, Volume } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
-import { MotorDash } from "../../motor/components/MotorDash.jsx";
-import { TimeDash } from "../../timer/components/TimeDash.jsx";
-import { ButtonDash } from "../../button/components/ButtonDash.jsx";
+import { MotorDash } from "../dashboards/motor/components/MotorDash.jsx";
+import { TimeDash } from "../dashboards/timer/components/TimeDash.jsx";
+import { ButtonDash } from "../dashboards/button/components/ButtonDash.jsx";
 import TypeSelector from "./TypeSelector";
-import InstructionDescriptionPanel from "../../instructions/components/InstructionDescriptionPanel";
+import InstructionDescriptionPanel from "../instructions/components/InstructionDescriptionPanel";
 import SubtypeSelector from "./SubtypeSelector";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
