@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { useCustomization } from "../CustomizationContext";
+import { useCustomization } from "../../../context/CustomizationContext";
 import styles from "../styles/ThemeSettings.module.css";
 
 /**

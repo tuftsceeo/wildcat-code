@@ -6,8 +6,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Minus, Plus, AlertTriangle } from "lucide-react";
-import { useCustomization } from "../CustomizationContext";
-import Portal from "../Portal";
+import { useCustomization } from "../../../context/CustomizationContext";
+import Portal from "../../../common/components/Portal";
 import styles from "../styles/StepsSettings.module.css";
 
 // Constants for step limits

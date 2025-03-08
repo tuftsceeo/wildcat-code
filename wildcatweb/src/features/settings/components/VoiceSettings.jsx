@@ -6,10 +6,13 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useCustomization } from "../CustomizationContext";
+import { useCustomization } from "../../../context/CustomizationContext";
 import { Volume2, VolumeX, Bot, Zap, Bird } from "lucide-react";
 import styles from "../styles/VoiceSettings.module.css";
-import { VOICE_PRESETS, speakWithRobotVoice } from "../utils/speechUtils";
+import {
+    VOICE_PRESETS,
+    speakWithRobotVoice,
+} from "../../../common/utils/speechUtils";
 
 /**
  * Voice settings component with selectable robot voice presets

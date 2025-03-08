@@ -4,10 +4,10 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useCustomization } from "../CustomizationContext";
-import { AVAILABLE_LANGUAGES, getUIText } from "../translations/loader";
-import { generateDescription } from "../InstructionDescriptionGenerator";
-import styles from '../styles/LanguageSettings.module.css';ings.module.css";
+import { useCustomization } from "../../../context/CustomizationContext";
+import { AVAILABLE_LANGUAGES, getUIText } from "../../../translations/loader";
+import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
+import styles from "../styles/LanguageSettings.module.css";
 
 /**
  * Language selection component with preview

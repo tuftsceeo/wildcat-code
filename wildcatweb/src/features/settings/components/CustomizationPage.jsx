@@ -16,7 +16,7 @@ import {
     Users,
 } from "lucide-react";
 import Portal from "../../../common/components/Portal";
-import { useCustomization } from "../../context/CustomizationContext";
+import { useCustomization } from "../../../context/CustomizationContext";
 import ThemeSettings from "./ThemeSettings";
 import ReadingLevelSettings from "./ReadingLevelSettings";
 import LanguageSettings from "./LanguageSettings";

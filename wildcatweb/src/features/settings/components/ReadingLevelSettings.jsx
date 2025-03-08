@@ -5,9 +5,9 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useCustomization } from "../CustomizationContext";
-import { COMPLEXITY_LEVELS } from "../translations/loader";
-import { generateDescription } from "../InstructionDescriptionGenerator";
+import { useCustomization } from "../../../context/CustomizationContext";
+import { COMPLEXITY_LEVELS } from "../../../translations/loader";
+import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
 import styles from "../styles/ReadingLevelSettings.module.css";
 
 /**
