@@ -9,7 +9,10 @@ import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "./codeGenerator.js";
 import { useBLE } from "./BLEContext";
 import { Buffer } from "buffer";
-import { ClearSlotRequest, ClearSlotResponse } from "./ble_resources/messages";
+import {
+    ClearSlotRequest,
+    ClearSlotResponse,
+} from "../../../features/bluetooth/ble_resources/messages";
 import { AlertTriangle, AlertOctagon } from "lucide-react";
 
 export const RunMenu = ({

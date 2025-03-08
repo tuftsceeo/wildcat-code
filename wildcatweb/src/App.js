@@ -22,7 +22,7 @@ import {
 } from "./context/CustomizationContext";
 import { preloadVoices } from "./common/utils/speechUtils";
 import logo from "./assets/images/logo.svg";
-import "/common/styles/App.css";
+import "./common/styles/App.css";
 import reportWebVitals from "./common/utils/reportWebVitals";
 /**
  * The top-level App component with all providers

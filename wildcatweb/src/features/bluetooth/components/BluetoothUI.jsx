@@ -4,13 +4,13 @@
  */
 
 import React, { useState } from "react";
-Replace: import styles from "../styles/BluetoothUI.module.css";
-import bluetoothDefault from "./assets/bluetooth-med.svg";
-import bluetoothConnected from "./assets/bluetooth-connected-correct.svg";
-import settings from "./assets/settings.svg";
-import questionMark from "./assets/question-mark.svg";
-import HelpDialog from "./HelpDialog";
-import { useBLE } from "./BLEContext";
+import styles from "../styles/BluetoothUI.module.css";
+import bluetoothDefault from "../../../assets/images/bluetooth-med.svg";
+import bluetoothConnected from "../../../assets/images/bluetooth-connected-correct.svg";
+import settings from "../../../assets/images/settings.svg";
+import questionMark from "../../../assets/images/question-mark.svg";
+import HelpDialog from "../../../common/components/HelpDialog";
+import { useBLE } from "../../bluetooth/context/BLEContext";
 
 /**
  * Interface for Bluetooth connection and settings access

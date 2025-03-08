@@ -8,7 +8,7 @@
 
 // TypeSelector.jsx
 import React from "react";
-Replace: import styles from "../styles/FunctionDefault.module.css"; // We'll use the same CSS initially
+import styles from "../styles/FunctionDefault.module.css"; // We'll use the same CSS initially
 
 /**
  * TypeSelector component for selecting between ACTION and SENSE modes

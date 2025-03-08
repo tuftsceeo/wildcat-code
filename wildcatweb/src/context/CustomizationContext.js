@@ -5,7 +5,7 @@
  */
 
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { AVAILABLE_LANGUAGES, COMPLEXITY_LEVELS } from "./translations/loader";
+import { AVAILABLE_LANGUAGES, COMPLEXITY_LEVELS } from "../translations/loader";
 
 // Create context
 const CustomizationContext = createContext();

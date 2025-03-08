@@ -5,11 +5,11 @@
  */
 
 import React, { useEffect } from "react";
-Replace: import styles from "../styles/CodingTrack.module.css";
+import styles from "../styles/CodingTrack.module.css";
 import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
-import { generateDescription } from "./InstructionDescriptionGenerator";
-import { useBLE } from "./BLEContext";
+import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
+import { useBLE } from "../../bluetooth/context/BLEContext";
 import { ClearSlotRequest, ClearSlotResponse } from "./ble_resources/messages";
 import { generateSlotCode } from "./codeGenerator";
 import { Buffer } from "buffer";

@@ -15,7 +15,7 @@ import {
     UserRound,
     Users,
 } from "lucide-react";
-import Portal from "./Portal";
+import Portal from "../../../common/components/Portal";
 import { useCustomization } from "./CustomizationContext";
 import ThemeSettings from "./settings/ThemeSettings";
 import ReadingLevelSettings from "./settings/ReadingLevelSettings";
