@@ -366,3 +366,4 @@ dist
 /.firebase
 /wildcatweb/src/OLDassets
 
+firebase.json
