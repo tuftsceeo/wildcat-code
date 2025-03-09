@@ -15,6 +15,7 @@
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
 }
 
 .languageOptions {
@@ -32,17 +33,17 @@
     align-items: center;
     padding: var(--spacing-4);
     background-color: var(--button-default-bg);
-    border: var(--border-width-standard) solid var(--color-gray-700);
+    border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
-    transition: all var(--transition-normal);
     cursor: pointer;
     text-align: left;
+    transition: all var(--transition-normal);
     transform: var(--button-scale-default);
 }
 
 .languageOption:hover:not(.activeLanguage) {
-    background-color: var(--color-gray-700);
     transform: var(--button-scale-hover);
+    border-color: var(--button-hover-border);
 }
 
 .languageOption:active:not(.activeLanguage) {
@@ -52,19 +53,8 @@
 .activeLanguage {
     border-color: var(--button-selected-border);
     box-shadow: var(--glow-secondary);
-    background-color: rgba(0, 255, 0, 0.1);
+    background-color: var(--button-selected-bg);
     transform: var(--button-scale-hover);
-}
-
-/* Theme-specific active backgrounds */
-body[data-theme="retro"] .activeLanguage {
-    background-color: rgba(0, 255, 0, 0.1);
-}
-body[data-theme="pastel"] .activeLanguage {
-    background-color: rgba(120, 194, 173, 0.1);
-}
-body[data-theme="clean"] .activeLanguage {
-    background-color: rgba(0, 170, 85, 0.1);
 }
 
 .languageIcon {
@@ -75,11 +65,13 @@ body[data-theme="clean"] .activeLanguage {
 .languageDetail {
     display: flex;
     flex-direction: column;
+    font-family: var(--font-family-active);
 }
 
 .languageName {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
+    color: var(--panel-text);
 }
 
 .nativeName {
@@ -97,6 +89,8 @@ body[data-theme="clean"] .activeLanguage {
     font-size: var(--font-size-lg);
     color: var(--color-text-secondary);
     margin-bottom: var(--spacing-2);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
 }
 
 .previewContent {
@@ -106,12 +100,14 @@ body[data-theme="clean"] .activeLanguage {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
+    border: var(--border-width-thin) solid var(--panel-border);
 }
 
 .previewInstruction {
     padding: var(--spacing-3);
     border-radius: var(--radius-sm);
     background-color: rgba(255, 255, 255, 0.05);
+    font-family: var(--font-family-active);
 }
 
 .applyButton {
@@ -127,6 +123,7 @@ body[data-theme="clean"] .activeLanguage {
     transition: all var(--transition-normal);
     margin-bottom: var(--spacing-8);
     transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
 }
 
 .applyButton:hover {
@@ -145,6 +142,7 @@ body[data-theme="clean"] .activeLanguage {
     background-color: var(--button-selected-bg);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-4);
+    border: var(--border-width-thin) solid var(--panel-border);
 }
 
 .comingSoonTitle {
@@ -153,6 +151,8 @@ body[data-theme="clean"] .activeLanguage {
     margin-bottom: var(--spacing-3);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
 }
 
 .comingSoonLanguages {
@@ -166,6 +166,7 @@ body[data-theme="clean"] .activeLanguage {
     align-items: center;
     gap: var(--spacing-2);
     opacity: 0.5;
+    font-family: var(--font-family-active);
 }
 
 @keyframes fadeIn {

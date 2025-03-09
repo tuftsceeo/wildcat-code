@@ -1,6 +1,8 @@
 /**
  * @file CustomizationPage.jsx
- * @description Main settings page component with theme support
+ * @description Main settings page component with theme support for adjusting
+ * application preferences including themes, reading level, language, and steps.
+ * @author Jennifer Cross with support from Claude
  */
 
 import React, { useState, useRef, useEffect } from "react";
@@ -23,23 +25,22 @@ import LanguageSettings from "./LanguageSettings";
 import StepsSettings from "./StepsSettings";
 import PlaceholderSettings from "./PlaceholderSettings";
 import VoiceSettings from "./VoiceSettings";
+import SettingsCarousel from "./SettingsCarousel";
 import styles from "../styles/CustomizationPage.module.css";
 
 /**
  * Enhanced customization page with theme support
  *
- * @param {Object} props Component props
- * @param {Function} props.close Function to close the settings panel
- * @param {Array} props.slotData Current slot data to check for code in steps
- * @param {Function} props.updateMissionSteps Function to update mission steps in App.js
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.close - Function to close the settings panel
+ * @param {Array} props.slotData - Current slot data to check for code in steps
+ * @param {Function} props.updateMissionSteps - Function to update mission steps
  * @returns {JSX.Element} Complete settings panel UI
  */
 const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
     // State for the active tab index
     const [activeTab, setActiveTab] = useState(0);
-
-    // Access theme context
-    const { theme } = useCustomization();
 
     // Create a ref for the panel to detect outside clicks
     const panelRef = useRef(null);
@@ -83,8 +84,8 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             icon: <Globe size={32} />,
             name: "Language",
             color: "#0088ff",
-            available: true, // Changed from false to true
-            priority: "high", // Changed from medium to high
+            available: true,
+            priority: "high",
         },
         {
             id: "access",
@@ -126,138 +127,6 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
         };
     }, [close]);
 
-    // Handle tab navigation
-    const handlePrevTab = () => {
-        setActiveTab((prev) => (prev > 0 ? prev - 1 : tabs.length - 1));
-    };
-
-    const handleNextTab = () => {
-        setActiveTab((prev) => (prev < tabs.length - 1 ? prev + 1 : 0));
-    };
-
-    /**
-     * Settings Carousel for tab navigation
-     * With smaller tabs to fit without scrolling
-     */
-    const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
-        return (
-            <div
-                style={{
-                    position: "relative",
-                    display: "flex",
-                    borderBottom: "2px solid var(--color-gray-800)",
-                    backgroundColor: "var(--color-panel-background)",
-                    padding: "var(--spacing-4) 0",
-                }}
-            >
-                {/* Tab container with all tabs visible */}
-                <div
-                    style={{
-                        display: "flex",
-                        width: "100%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: "8px", // Smaller gap between tabs
-                        padding: "0 var(--spacing-4)",
-                    }}
-                >
-                    {tabs.map((tab, index) => {
-                        const isDisabled = !tab.available;
-                        const isActive = index === activeTab;
-
-                        return (
-                            <button
-                                key={tab.id}
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    padding: "8px", // Smaller padding
-                                    borderRadius: "var(--radius-md)",
-                                    backgroundColor: isActive
-                                        ? "var(--color-button-selected-bg, var(--color-gray-800))"
-                                        : "transparent",
-                                    border: isActive
-                                        ? `2px solid var(--color-border-active)`
-                                        : "2px solid transparent",
-                                    cursor: isDisabled ? "default" : "pointer",
-                                    opacity: isDisabled
-                                        ? 0.4
-                                        : isActive
-                                        ? 1
-                                        : 0.7,
-                                    width: "85px", // Fixed smaller width
-                                    height: "90px", // Fixed smaller height
-                                    color: isActive
-                                        ? "var(--color-text-active)"
-                                        : "var(--color-text-inactive)",
-                                    transition: "all var(--transition-normal)",
-                                    boxShadow: isActive
-                                        ? "var(--glow-neon-green)"
-                                        : "none",
-                                }}
-                                onClick={() =>
-                                    !isDisabled && setActiveTab(index)
-                                }
-                                disabled={isDisabled}
-                                aria-label={`${tab.name} settings tab${
-                                    isDisabled ? " (coming soon)" : ""
-                                }`}
-                                aria-selected={isActive}
-                                role="tab"
-                            >
-                                <div
-                                    style={{
-                                        color: isActive
-                                            ? "var(--color-text-active)"
-                                            : tab.color,
-                                        marginBottom: "6px", // Smaller margin
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        height: "32px", // Smaller icon container
-                                    }}
-                                >
-                                    {React.cloneElement(tab.icon, { size: 24 })}{" "}
-                                    {/* Smaller icon size */}
-                                </div>
-                                <span
-                                    style={{
-                                        fontSize: "10px", // Smaller font size
-                                        textAlign: "center",
-                                        textTransform: "uppercase",
-                                        letterSpacing: "0.05em", // Slightly tighter letter spacing
-                                        lineHeight: 1.2, // Tighter line height
-                                    }}
-                                >
-                                    {tab.name}
-                                </span>
-
-                                {isDisabled && (
-                                    <span
-                                        style={{
-                                            marginTop: "4px",
-                                            fontSize: "8px", // Smaller badge font
-                                            backgroundColor:
-                                                "var(--color-gray-700)",
-                                            color: "var(--color-gray-400)",
-                                            padding: "1px 4px",
-                                            borderRadius: "var(--radius-sm)",
-                                            textTransform: "uppercase",
-                                        }}
-                                    >
-                                        Soon
-                                    </span>
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-        );
-    };
-
     // Render current tab content based on activeTab
     const renderTabContent = () => {
         const currentTab = tabs[activeTab];
@@ -281,7 +150,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
                     />
                 );
             case "language":
-                return <LanguageSettings />; // Added this case to render the language settings
+                return <LanguageSettings />;
             case "voice":
                 return <VoiceSettings />;
             default:

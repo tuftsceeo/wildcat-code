@@ -7,13 +7,21 @@
     width: 100%;
     padding: var(--spacing-2) 0;
     background-color: var(--panel-background);
-    border-bottom: var(--border-width-standard) solid var(--color-gray-800);
-    height: 150px;
-}
+    border-bottom: var(--border-width-standard) solid var(--color-gray-medium);
+    /* height: 150px; */
 
-/* Container with horizontal scroll */
+    /*         position: "relative",
+        display: "flex",
+        borderBottom: "2px solid var(--color-gray-800)",
+        backgroundColor: "var(--color-panel-background)",
+        padding: "var(--spacing-4) 0", */
+}
+/**
+     * Settings Carousel for tab navigation
+     * With smaller tabs to fit without scrolling
+     */
 .carouselContainer {
-    flex: 1;
+    /*   flex: 1;
     overflow-x: hidden;
     position: relative;
     mask-image: linear-gradient(
@@ -31,6 +39,18 @@
         transparent 100%
     );
     padding: 0 var(--spacing-4);
+ */
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 0 var(--spacing-4);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.carouselContainer::-webkit-scrollbar {
+    display: none;
 }
 
 /* Track with tabs */
@@ -52,17 +72,17 @@
     justify-content: center;
     border: var(--border-width-standard) solid transparent;
     border-radius: var(--radius-md);
-    background-color: var(--color-gray-800);
+    background-color: var(--button-default-bg);
     padding: var(--spacing-3);
     margin: 0 var(--spacing-2);
     transition: all var(--transition-normal);
     cursor: pointer;
-    min-width: 120px;
-    height: 120px;
+    width: 85px;
+    height: 90px;
     flex: 0 0 auto;
     position: relative;
     overflow: visible;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     transform: var(--button-scale-default);
 }
 
@@ -70,10 +90,10 @@
 .carouselTab.active {
     transform: var(--button-scale-hover);
     background-color: var(--button-selected-bg);
-    box-shadow: var(--glow-secondary);
+    border: var(--border-width-thick) solid transparent;
+    /*  box-shadow: var(--glow-secondary); */
     z-index: 2;
-    color: var(--color-text-active);
-    border-color: var(--button-selected-border);
+    color: var(--panel-text);
 }
 
 /* Disabled tab styling */
@@ -105,11 +125,20 @@
 
 /* Tab name */
 .tabName {
-    font-size: var(--font-size-sm);
+    /*
+            fontSize: "10px", // Smaller font size
+            textAlign: "center",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em", // Slightly tighter letter spacing
+            lineHeight: 1.2, // Tighter line height
+        */
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    line-height: var(--line-height-tight);
     text-align: center;
+    font-family: var(--font-family-active);
 }
 
 /* Coming soon badge */
@@ -119,12 +148,13 @@
     left: 50%;
     transform: translateX(-50%);
     background-color: var(--color-gray-700);
-    color: var(--color-gray-300);
-    font-size: 9px;
+    color: var(--panel-text);
+    font-size: calc(var(--font-size-xs) * 0.8);
     padding: 2px 6px;
     border-radius: 10px;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     white-space: nowrap;
+    font-family: var(--font-family-active);
 }
 
 /* Navigation buttons */
@@ -136,7 +166,7 @@
     justify-content: center;
     background-color: transparent;
     border: none;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     cursor: pointer;
     z-index: 3;
     position: relative;
@@ -145,14 +175,19 @@
     transform: var(--button-scale-default);
 }
 
-.carouselNav:hover {
+.carouselNav:hover:not(:disabled) {
     background-color: var(--color-gray-800);
-    color: var(--color-text-active);
+    color: var(--panel-text);
     transform: var(--button-scale-hover);
 }
 
-.carouselNav:active {
+.carouselNav:active:not(:disabled) {
     transform: var(--button-scale-active);
+}
+
+.carouselNav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .carouselPrev {

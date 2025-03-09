@@ -1,6 +1,8 @@
 /**
  * @file ThemeSettings.jsx
- * @description Component for selecting visual themes with theme variable support
+ * @description Component for selecting visual themes with theme variable support.
+ * Allows users to choose between different visual styles and font options.
+ * @author Jennifer Cross with support from Claude
  */
 
 import React from "react";
@@ -9,6 +11,9 @@ import styles from "../styles/ThemeSettings.module.css";
 
 /**
  * Theme settings component with proper theme variable usage
+ *
+ * @component
+ * @returns {JSX.Element} Theme settings panel
  */
 const ThemeSettings = () => {
     // Get theme settings from context
@@ -84,33 +89,6 @@ const ThemeSettings = () => {
                     </button>
                 ))}
             </div>
-
-            {/*  <div className={styles.previewContainer}>
-                <div className={styles.previewTitle}>Preview:</div>
-                <div
-                    className={styles.previewContent}
-                    style={{
-                        backgroundColor:
-                            themes.find((t) => t.id === theme)?.preview.bg ||
-                            "#000000",
-                    }}
-                >
-                    <div className={styles.previewHeader}>Robot Controls</div>
-                    <button
-                        className={styles.previewButton}
-                        style={{
-                            backgroundColor:
-                                themes.find((t) => t.id === theme)?.preview
-                                    .buttonBg || "#00bfff",
-                            color:
-                                themes.find((t) => t.id === theme)?.preview
-                                    .buttonText || "#ffffff",
-                        }}
-                    >
-                        Forward
-                    </button>
-                </div>
-            </div> */}
 
             {/* Font options */}
             <div className={styles.fontOptions}>

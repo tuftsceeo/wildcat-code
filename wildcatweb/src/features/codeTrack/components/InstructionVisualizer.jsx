@@ -3,12 +3,10 @@
  * @description Component that determines and renders the appropriate instruction block
  * based on the type and configuration of the instruction.
  * @author Jennifer Cross with support from Claude
- * @created February 2025
  */
 
-// InstructionVisualizer.jsx
 import React from "react";
-import styles from "../styles/CodingTrack.module.css"; // Still using the original CSS
+import styles from "../styles/CodingTrack.module.css";
 import MotorInstructionBlock from "../../commandPanel/dashboards/motor/components/MotorInstructionBlock";
 import TimerInstructionBlock from "../../commandPanel/dashboards/timer/components/TimerInstructionBlock";
 import ButtonInstructionBlock from "../../commandPanel/dashboards/button/components/ButtonInstructionBlock";

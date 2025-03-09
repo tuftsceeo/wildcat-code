@@ -47,7 +47,7 @@
 
 /* Connected state styling */
 .connectButton.connected img {
-    filter: drop-shadow(0 0 5px var(--color-text-active));
+    filter: drop-shadow(0 0 5px var(--panel-text));
 }
 
 /* Button icons - using theme colors */
@@ -58,12 +58,12 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     transition: all var(--transition-normal);
 }
 
 .connected .iconWrapper {
-    color: var(--color-text-active);
+    color: var(--panel-text);
 }
 
 /* Ensure all button icons use theme colors */
@@ -99,7 +99,7 @@ body[data-theme="pastel"] .helpButton img {
 }
 
 .statusIndicator.connected {
-    background-color: var(--color-text-active);
+    background-color: var(--panel-text);
     animation: pulse 2s infinite;
 }
 

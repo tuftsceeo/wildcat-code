@@ -13,7 +13,7 @@
     box-shadow: var(--glow-blue);
     z-index: var(--z-index-modal);
     font-family: var(--font-family-primary);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     text-align: center;
     padding: var(--spacing-4);
     display: flex;
@@ -32,7 +32,7 @@
     font-weight: var(--font-weight-bold);
     line-height: 30px;
     text-align: center;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -63,5 +63,5 @@
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-relaxed);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
 }

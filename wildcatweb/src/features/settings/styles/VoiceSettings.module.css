@@ -43,7 +43,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-3);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
 }
@@ -82,7 +82,7 @@
 }
 
 .previewText {
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     margin-bottom: var(--spacing-3);
     font-size: var(--font-size-base);
     line-height: var(--line-height-relaxed);
@@ -93,7 +93,7 @@
     padding: var(--spacing-2);
     background-color: var(--panel-background);
     border: var(--border-width-thin) solid var(--panel-border);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     border-radius: var(--radius-sm);
     font-family: var(--font-family-active);
     font-size: var(--font-size-sm);
@@ -172,13 +172,13 @@
 .voiceName {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
-    color: var(--color-text-active);
+    color: var(--panel-text);
     margin-bottom: var(--spacing-1);
 }
 
 .voiceDescription {
     font-size: var(--font-size-sm);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
 }
 
 /* Volume control */
@@ -195,7 +195,7 @@
     align-items: center;
     gap: var(--spacing-3);
     width: 100%;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
 }
 
 .slider {

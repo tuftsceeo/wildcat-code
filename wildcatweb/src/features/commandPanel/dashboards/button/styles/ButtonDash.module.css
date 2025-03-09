@@ -32,7 +32,7 @@
 }
 
 .portLabel {
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
@@ -104,7 +104,7 @@
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     margin-bottom: var(--spacing-2);
     letter-spacing: var(--letter-spacing-wide);
     text-align: center;
@@ -123,7 +123,7 @@
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     margin-bottom: var(--spacing-2);
     letter-spacing: var(--letter-spacing-wide);
     align-self: flex-start;
@@ -158,7 +158,7 @@
 .toggleOption {
     font-family: var(--font-family-active);
     font-weight: var(--font-weight-bold);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-size: var(--font-size-xs);
     text-transform: uppercase;
     transition: all var(--transition-normal);
@@ -369,7 +369,7 @@
 .buttonStatus {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-bold);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
     margin-top: var(--spacing-2);

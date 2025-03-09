@@ -228,7 +228,7 @@
 
 .positionIcon:hover:not(:disabled) {
     opacity: 1;
-    color: var(--color-text-active);
+    color: var(--panel-text);
     transform: var(--button-scale-hover);
 }
 
@@ -244,7 +244,7 @@
 .positionIcon.active {
     opacity: 1;
     transform: var(--button-scale-hover);
-    color: var(--color-text-active);
+    color: var(--panel-text);
 }
 
 /* For icons that need to be flipped horizontally */

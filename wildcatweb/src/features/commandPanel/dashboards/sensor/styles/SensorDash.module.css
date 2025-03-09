@@ -16,7 +16,7 @@
 }
 
 .colorSensorLabel {
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-family: var(--font-family-primary);
     font-size: var(--font-size-lg);
     text-transform: uppercase;

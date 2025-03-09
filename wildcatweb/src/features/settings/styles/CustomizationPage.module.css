@@ -1,4 +1,4 @@
-/* CustomizationPage.module.css - Refactored with theme variables */
+/* CustomizationPage.module.css - Refactored with design token system */
 
 .customizationOverlay {
     position: fixed;
@@ -6,7 +6,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(0, 0, 0, 0.55);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,12 +19,12 @@
     position: relative;
     width: 900px;
     height: 650px;
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
     overflow: hidden;
     animation: slideIn 0.3s ease;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-family: var(--font-family-active);
     box-shadow: var(--glow-blue);
     display: flex;
@@ -47,17 +47,18 @@
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
+    margin: 0;
+    font-family: var(--font-family-active);
 }
 
 .closeButton {
     position: absolute;
     left: var(--spacing-4);
     top: 50%;
-    transform: translateY(-50%);
     background: none;
     border: none;
-    color: var(--color-gray-400);
+    color: var(--panel-text);
     cursor: pointer;
     padding: var(--spacing-2);
     border-radius: var(--radius-full);
@@ -65,16 +66,17 @@
     align-items: center;
     justify-content: center;
     transition: all var(--transition-normal);
+    transform: translateY(-50%) var(--button-scale-default);
 }
 
 .closeButton:hover {
-    color: var(--color-text-active);
+    color: var(--panel-text);
     background-color: var(--color-gray-800);
-    transform: translateY(-50%) scale(1.1);
+    transform: translateY(-50%) var(--button-scale-hover);
 }
 
 .closeButton:active {
-    transform: translateY(-50%) scale(0.95);
+    transform: translateY(-50%) var(--button-scale-active);
 }
 
 /* Content Area */
@@ -89,11 +91,9 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 

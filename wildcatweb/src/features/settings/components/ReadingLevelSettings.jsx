@@ -1,10 +1,12 @@
 /**
  * @file ReadingLevelSettings.jsx
- * @description Component for adjusting reading complexity levels with visual previews
- * showing how content will appear at different levels.
+ * @description Component for adjusting reading complexity levels with visual
+ * previews showing how content will appear at different levels. Supports
+ * internationalization.
+ * @author Jennifer Cross with support from Claude
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { COMPLEXITY_LEVELS } from "../../../translations/loader";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
@@ -44,7 +46,6 @@ const ReadingLevelSettings = () => {
      * @param {string} level - The selected reading level ID
      */
     const handleLevelSelect = (level) => {
-        console.log(`Directly setting reading level to: ${level}`);
         setReadingLevel(level);
     };
 

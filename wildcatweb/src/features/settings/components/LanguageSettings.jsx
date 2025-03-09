@@ -1,6 +1,8 @@
 /**
  * @file LanguageSettings.jsx
  * @description Component for selecting application language with simplified translations.
+ * Provides a preview of how instructions will appear in the selected language.
+ * @author Jennifer Cross with support from Claude
  */
 
 import React, { useState, useEffect } from "react";
@@ -45,7 +47,9 @@ const LanguageSettings = () => {
         },
     };
 
-    // Apply button handler
+    /**
+     * Apply button handler
+     */
     const handleApplyLanguage = () => {
         setLanguage(selectedLanguage);
     };
@@ -53,19 +57,31 @@ const LanguageSettings = () => {
     // Extract languages into array for rendering
     const languagesArray = Object.values(AVAILABLE_LANGUAGES);
 
-    // Get appropriate title text based on current language selection
+    /**
+     * Get appropriate title text based on current language selection
+     *
+     * @returns {string} Localized title text
+     */
     const getTitleText = () => {
         return selectedLanguage === "es"
             ? "Seleccionar Idioma"
             : "Select Language";
     };
 
-    // Get appropriate preview text based on current language selection
+    /**
+     * Get appropriate preview text based on current language selection
+     *
+     * @returns {string} Localized preview text
+     */
     const getPreviewText = () => {
         return selectedLanguage === "es" ? "Vista Previa:" : "Preview:";
     };
 
-    // Get appropriate button text
+    /**
+     * Get appropriate button text
+     *
+     * @returns {string} Localized button text
+     */
     const getButtonText = () => {
         return getUIText("apply", selectedLanguage);
     };

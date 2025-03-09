@@ -1,4 +1,4 @@
-/* CodingTrack.module.css - With theme variables */
+/* CodingTrack.module.css - Refactored with design token system */
 
 .trackContainer {
     position: relative;
@@ -8,9 +8,9 @@
     justify-content: center;
     height: 100%;
     width: 100%;
-    border: 2px solid var(--color-border-inactive);
+    border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--color-panel-background);
+    background-color: var(--panel-background);
     padding: var(--spacing-4);
 }
 
@@ -18,7 +18,7 @@
     position: absolute;
     top: var(--spacing-4);
     left: var(--spacing-4);
-    color: var(--color-border-inactive);
+    color: var(--panel-text);
     width: 48px;
     height: 48px;
     opacity: 0.6;
@@ -34,7 +34,7 @@
     justify-content: center;
 }
 
-/* Motor Visualization (from motor-demo.tsx) */
+/* Motor Visualization */
 .motorVisualization {
     display: flex;
     flex-direction: column;
@@ -77,30 +77,15 @@
     animation-iteration-count: infinite;
 }
 
-@keyframes clockwise {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes counterclockwise {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(-360deg);
-    }
-}
-
-.motorLabel {
-    color: var(--color-motor-main);
+.blockTitle {
+    color: var(--panel-text);
     text-align: center;
     text-transform: uppercase;
     font-size: var(--font-size-lg);
     margin-top: var(--spacing-4);
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--font-weight-bold);
 }
 
 /* Multiple motor container */
@@ -134,35 +119,41 @@
 
 .timerIcon {
     font-size: 48px;
-    color: var(--color-action-secondary);
+    color: var(--color-timer-main);
     margin-bottom: var(--spacing-2);
 }
 
 .timerLabel {
-    color: var(--color-action-secondary);
+    color: var(--color-timer-main);
     text-transform: uppercase;
     font-size: var(--font-size-lg);
     margin-top: var(--spacing-2);
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .timerValue {
     font-size: 48px;
     color: var(--color-timer-main);
     margin: var(--spacing-2) 0;
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-bold);
 }
 
 .timerUnit {
     font-size: var(--font-size-sm);
     color: var(--color-timer-main);
     text-transform: uppercase;
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
 }
 
-/* Test button at bottom as in FIGMA */
+/* Test button at bottom */
 .testButton {
-    background-color: var(--color-action-secondary);
+    background-color: var(--button-contained-bg);
     border: none;
     border-radius: var(--radius-md);
-    color: var(--color-button-active-text);
+    color: var(--button-contained-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
@@ -173,13 +164,25 @@
     bottom: calc(var(--spacing-4) + 40px);
     width: 100px;
     z-index: 2;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
 }
 
-.testButton:hover {
-    opacity: 0.9;
+.testButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
 }
 
-/* Navigation controls with CSS triangles instead of SVGs */
+.testButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.testButton:disabled {
+    background-color: var(--button-disabled-bg);
+    color: var(--button-disabled-text);
+    cursor: not-allowed;
+}
+
+/* Navigation controls */
 .navigationControls {
     position: absolute;
     width: 100%;
@@ -199,6 +202,7 @@
     transition: all var(--transition-normal);
     position: absolute;
     pointer-events: auto;
+    transform: var(--button-scale-default);
 }
 
 .prevButton {
@@ -217,7 +221,6 @@
     transform: translateX(-50%) scale(1.2);
 }
 
-/* Active (pressed) state: scale down */
 .navButton:active:not(:disabled) {
     transform: translateX(-50%) scale(0.95);
 }
@@ -235,11 +238,16 @@
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-bottom: 20px solid var(--color-text-inactive);
+    border-bottom: 20px solid var(--panel-text);
+    transition: border-color var(--transition-normal);
+}
+
+.prevButton:hover:not(:disabled):before {
+    border-bottom-color: var(--panel-text);
 }
 
 .prevButton:disabled:before {
-    border-bottom-color: var(--color-disabled);
+    border-bottom-color: var(--color-text-disabled);
 }
 
 /* Next button triangle */
@@ -250,16 +258,16 @@
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 20px solid var(--color-text-inactive);
+    border-top: 20px solid var(--panel-text);
+    transition: border-color var(--transition-normal);
+}
+
+.nextButton:hover:not(:disabled):before {
+    border-top-color: var(--panel-text);
 }
 
 .nextButton:disabled:before {
-    border-top-color: var(--color-disabled);
-}
-
-/* Slot description (hidden/removed as requested) */
-.slotDescription {
-    display: none;
+    border-top-color: var(--color-text-disabled);
 }
 
 /* Instruction block styles */
@@ -278,12 +286,13 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    color: var(--color-gray-400);
+    color: var(--panel-text);
 }
 
 .emptyText {
     font-size: var(--font-size-lg);
     text-align: center;
+    font-family: var(--font-family-active);
 }
 
 .unknownInstruction {
@@ -301,9 +310,10 @@
     padding: var(--spacing-4);
     border: 1px solid var(--color-warning);
     border-radius: var(--radius-md);
+    font-family: var(--font-family-active);
 }
 
-/* Force sensor visualization */
+/* Force sensor/button visualization */
 .buttonVisualization {
     display: flex;
     flex-direction: column;
@@ -326,41 +336,17 @@
     font-size: var(--font-size-lg);
     margin-top: var(--spacing-2);
     font-weight: var(--font-weight-bold);
-}
-
-
-/* Button visualization */
-.buttonVisualization {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--spacing-4);
-}
-
-.buttonIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--spacing-2);
-}
-
-.buttonCondition {
-    color: var(--color-sensor-main);
-    text-align: center;
-    text-transform: uppercase;
-    font-size: var(--font-size-lg);
-    margin-top: var(--spacing-2);
-    font-weight: var(--font-weight-bold);
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
     transition: all var(--transition-normal);
 }
 
 .pressedCondition {
-    color: var(--color-action-primary);
+    color: var(--color-secondary-main);
 }
 
 .releasedCondition {
-    color: var(--color-action-secondary);
+    color: var(--color-primary-main);
 }
 
 /* Visual state representation */
@@ -395,13 +381,13 @@
 
 /* Button pressed state */
 .buttonPressed .buttonStateInner {
-    background-color: var(--color-action-primary);
+    background-color: var(--color-secondary-main);
     transform: translateY(8px);
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Button released state */
 .buttonReleased .buttonStateInner {
-    background-color: var(--color-action-secondary);
+    background-color: var(--color-primary-main);
     transform: translateY(0);
 }

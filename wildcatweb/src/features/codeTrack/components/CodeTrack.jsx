@@ -1,7 +1,8 @@
 /**
- * @file CodeTrack.jsx - FINAL FIX
+ * @file CodeTrack.jsx
  * @description Main component for displaying the coding track with instructions,
  * including navigation controls and instruction visualization.
+ * @author Jennifer Cross with support from Claude
  */
 
 import React, { useEffect } from "react";
@@ -38,43 +39,37 @@ const CodeTrack = ({
     setPyCode,
     setCanRun,
 }) => {
-    console.log("CodeTrack: Rendering with missionSteps =", missionSteps);
-    console.log("CodeTrack: Current slot number =", currSlotNumber);
-
     // Ensure current slot is valid based on missionSteps
     useEffect(() => {
         // If currSlotNumber is beyond the valid range, reset it to the max allowed
-        // IMPORTANT: missionSteps is now the COUNT, so max index is missionSteps-1
+        // IMPORTANT: missionSteps is the COUNT, so max index is missionSteps-1
         if (currSlotNumber >= missionSteps) {
-            console.log(
-                "CodeTrack: Resetting currSlotNumber from",
-                currSlotNumber,
-                "to",
-                missionSteps - 1,
-            );
             setCurrSlotNumber(missionSteps - 1);
         }
     }, [currSlotNumber, missionSteps, setCurrSlotNumber]);
 
     const currentInstruction = slotData?.[currSlotNumber];
     const { ble, isConnected, portStates } = useBLE();
-    // Navigation handlers
+
+    /**
+     * Handle navigation to previous slot
+     */
     const handlePrevious = () => {
-        console.log(
-            "CodeTrack: handlePrevious called, current =",
-            currSlotNumber,
-        );
         setCurrSlotNumber(Math.max(0, currSlotNumber - 1));
     };
 
+    /**
+     * Handle navigation to next slot
+     */
     const handleNext = () => {
-        console.log("CodeTrack: handleNext called, current =", currSlotNumber);
-        // FIXED: missionSteps is the COUNT, so max index is missionSteps-1
+        // missionSteps is the COUNT, so max index is missionSteps-1
         const nextSlot = Math.min(currSlotNumber + 1, missionSteps - 1);
-        console.log("CodeTrack: Moving to next slot:", nextSlot);
         setCurrSlotNumber(nextSlot);
     };
 
+    /**
+     * Handle test button click to run current instruction
+     */
     const handleTest = async () => {
         console.log(
             "Testing current instruction:",
@@ -144,6 +139,8 @@ const CodeTrack = ({
                 <button
                     className={styles.testButton}
                     onClick={handleTest}
+                    disabled={!isConnected || !currentInstruction?.type}
+                    aria-label="Test current instruction"
                 >
                     Test
                 </button>

@@ -7,7 +7,7 @@
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
     background-color: var(--panel-background);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-family: var(--font-family-active);
     padding: var(--spacing-4);
 }

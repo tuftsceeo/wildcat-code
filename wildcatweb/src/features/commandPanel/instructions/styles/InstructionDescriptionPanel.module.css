@@ -103,7 +103,7 @@
 }
 
 .separatorIcon {
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
 }
 
 .iconSeparator {
@@ -114,7 +114,7 @@
 
 /* Icon-only specific styling - using default text color */
 .iconOnlyIcon {
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
 }
 
 /* Text and icon display for beginner and intermediate modes */
@@ -199,12 +199,12 @@ body[data-theme="retro"] .panel {
 body[data-theme="retro"] .descriptionText,
 body[data-theme="retro"] .pairText,
 body[data-theme="retro"] .audioButton {
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 body[data-theme="retro"] .iconOnlyIcon,
 body[data-theme="retro"] .separatorIcon {
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 body[data-theme="retro"] .conceptIcon {
@@ -218,7 +218,7 @@ body[data-theme="pastel"] .panel {
 
 body[data-theme="pastel"] .iconOnlyIcon,
 body[data-theme="pastel"] .separatorIcon {
-    color: var(--color-black);
+    color: var(--color-text);
 }
 
 body[data-theme="pastel"] .conceptIcon {
@@ -232,9 +232,9 @@ body[data-theme="clean"] .panel {
 
 body[data-theme="clean"] .iconOnlyIcon,
 body[data-theme="clean"] .separatorIcon {
-    color: var(--color-black);
+    color: var(--color-text);
 }
 
 body[data-theme="clean"] .conceptIcon {
-    color: var(--color-secondary-main);
+    color: var(--color-primary-main);
 }

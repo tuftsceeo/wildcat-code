@@ -15,6 +15,7 @@
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
 }
 
 .stepCountControl {
@@ -49,7 +50,7 @@
     border-color: var(--button-hover-border);
     color: var(--button-hover-text);
     transform: var(--button-scale-hover);
-    box-shadow: var(--glow-secondary);
+    box-shadow: var(--glow-primary);
 }
 
 .stepButton:active:not(.disabled) {
@@ -74,17 +75,19 @@
 .stepCount {
     font-size: 4rem;
     font-weight: var(--font-weight-bold);
-    color: var(--color-text-active);
+    color: var(--panel-text);
     line-height: 1;
     text-shadow: var(--glow-secondary);
+    font-family: var(--font-family-active);
 }
 
 .stepLabel {
     font-size: var(--font-size-sm);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     margin-top: var(--spacing-2);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
 }
 
 .updateButtonContainer {
@@ -103,6 +106,7 @@
     text-transform: uppercase;
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
 }
 
 .updateButton:hover:not(:disabled) {
@@ -118,13 +122,15 @@
     opacity: 0.5;
     cursor: not-allowed;
     background-color: var(--button-disabled-bg);
+    color: var(--button-disabled-text);
 }
 
 .description {
     text-align: center;
     max-width: 500px;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     line-height: var(--line-height-relaxed);
+    font-family: var(--font-family-active);
 }
 
 .description p {
@@ -153,8 +159,9 @@
     padding: var(--spacing-6);
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 0 15px var(--color-warning);
+    box-shadow: var(--glow-warning);
     animation: slideIn 0.2s ease;
+    font-family: var(--font-family-active);
 }
 
 .confirmationHeader {
@@ -169,12 +176,14 @@
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
+    font-family: var(--font-family-active);
 }
 
 .confirmationMessage {
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     margin-bottom: var(--spacing-6);
     line-height: var(--line-height-relaxed);
+    font-family: var(--font-family-active);
 }
 
 .confirmationButtons {
@@ -193,6 +202,7 @@
     font-size: var(--font-size-base);
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
 }
 
 .cancelButton:hover {
@@ -216,10 +226,10 @@
     font-weight: var(--font-weight-bold);
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
 }
 
 .confirmButton:hover {
-    background-color: var(--color-orange);
     transform: var(--button-scale-hover);
 }
 

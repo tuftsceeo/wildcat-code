@@ -1,7 +1,8 @@
 /**
  * @file PlaceholderSettings.jsx
- * @description Placeholder component for settings panels that are under development
- * that properly uses theme variables
+ * @description Placeholder component for settings panels that are under development.
+ * Provides a consistent visual for upcoming features that are not yet implemented.
+ * @author Jennifer Cross with support from Claude
  */
 
 import React from "react";
@@ -11,12 +12,17 @@ import styles from "../styles/PlaceholderSettings.module.css";
 /**
  * Placeholder component for future or in-development features
  *
- * @param {Object} props Component props
- * @param {Object} props.feature Feature information object
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.feature - Feature information object with name, icon, color and priority
  * @returns {JSX.Element} Placeholder with coming soon messaging
  */
 const PlaceholderSettings = ({ feature }) => {
-    // Messages based on priority
+    /**
+     * Get appropriate message based on feature priority
+     *
+     * @returns {string} Message explaining availability timeline
+     */
     const getMessage = () => {
         switch (feature?.priority) {
             case "high":
@@ -33,7 +39,9 @@ const PlaceholderSettings = ({ feature }) => {
         <div className={styles.container}>
             <div
                 className={styles.icon}
-                style={{ color: feature?.color || "var(--color-gray-500)" }}
+                style={{
+                    color: feature?.color || "var(--panel-text)",
+                }}
             >
                 {feature?.icon || <RotateCcw size={48} />}
             </div>

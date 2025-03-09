@@ -7,8 +7,9 @@
     justify-content: center;
     height: 300px;
     text-align: center;
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     animation: fadeIn 0.3s ease;
+    font-family: var(--font-family-active);
 }
 
 .icon {
@@ -21,17 +22,22 @@
     font-size: var(--font-size-xl);
     margin-bottom: var(--spacing-2);
     color: var(--color-text-secondary);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-bold);
 }
 
 .message {
     max-width: 60%;
     font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--panel-text);
+    margin-bottom: var(--spacing-4);
 }
 
 .badge {
     margin-top: var(--spacing-4);
     background-color: var(--color-gray-700);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     font-size: var(--font-size-sm);
     padding: var(--spacing-1) var(--spacing-3);
     border-radius: var(--radius-full);

@@ -145,13 +145,13 @@
     opacity: 0.7;
     transition: all var(--transition-normal);
     padding: var(--spacing-1);
-    color: var(--color-text-inactive);
+    color: var(--panel-text);
     transform: var(--button-scale-default);
 }
 
 .positionIcon:hover:not(:disabled) {
     opacity: 1;
-    color: var(--color-text-active);
+    color: var(--panel-text);
     transform: var(--button-scale-hover);
 }
 
@@ -167,7 +167,7 @@
 .positionIcon.active {
     opacity: 1;
     transform: scale(1.1);
-    color: var(--color-text-active);
+    color: var(--panel-text);
 }
 
 .iconWrapper {

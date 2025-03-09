@@ -1,7 +1,8 @@
 /**
- * @file StepsSettings.jsx - FIXED with consistent Min/Max
+ * @file StepsSettings.jsx
  * @description Component for controlling the number of coding steps available in the application
  * with safeguards against accidentally deleting steps that contain code.
+ * @author Jennifer Cross with support from Claude
  */
 
 import React, { useState, useEffect } from "react";
@@ -10,23 +11,19 @@ import { useCustomization } from "../../../context/CustomizationContext";
 import Portal from "../../../common/components/Portal";
 import styles from "../styles/StepsSettings.module.css";
 
-// Constants for step limits
-const MIN_STEPS = 2;
-const MAX_STEPS = 10;
-
 /**
  * Settings component for step count configuration
  *
+ * @component
  * @param {Object} props - Component props
  * @param {Array} props.slotData - Current slot data to check for populated steps
- * @param {Function} props.onUpdateMissionSteps - Function to update the mission steps (not used)
+ * @param {Function} props.onUpdateMissionSteps - Function to update the mission steps
  * @returns {JSX.Element} Step settings interface
  */
 const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
     // Get step count from context
-    const { stepCount, setStepCount } = useCustomization();
-
-    console.log("StepsSettings: Initial stepCount from context =", stepCount);
+    const { stepCount, setStepCount, MIN_STEPS, MAX_STEPS } =
+        useCustomization();
 
     // Local state for step count (before applying)
     const [tempStepCount, setTempStepCount] = useState(stepCount);
@@ -37,7 +34,6 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
 
     // Reset local count when context changes
     useEffect(() => {
-        console.log("StepsSettings: Context stepCount changed to", stepCount);
         setTempStepCount(stepCount);
     }, [stepCount]);
 
@@ -86,13 +82,6 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
      * Handle applying the new step count
      */
     const handleApplySteps = () => {
-        console.log(
-            "StepsSettings: Apply button clicked, current temp =",
-            tempStepCount,
-            "stored =",
-            stepCount,
-        );
-
         // If reducing steps, check if any populated steps would be removed
         if (tempStepCount < stepCount) {
             const populatedSteps = checkForPopulatedSteps();
@@ -119,11 +108,6 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
      * Apply the step count change after confirmation (if needed)
      */
     const applyStepCountChange = () => {
-        console.log(
-            "StepsSettings: Applying step count change to",
-            tempStepCount,
-        );
-
         // Ensure the step count is within valid range
         const validStepCount = Math.max(
             MIN_STEPS,
@@ -133,10 +117,13 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
         // Update the context
         setStepCount(validStepCount);
 
+        // Notify parent component if callback provided
+        if (onUpdateMissionSteps) {
+            onUpdateMissionSteps(validStepCount);
+        }
+
         // Hide confirmation dialog if it was showing
         setShowConfirmation(false);
-
-        console.log("StepsSettings: Step count applied, now =", validStepCount);
     };
 
     /**

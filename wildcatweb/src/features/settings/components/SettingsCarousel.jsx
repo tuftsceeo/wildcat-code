@@ -1,9 +1,8 @@
 /**
  * @file SettingsCarousel.jsx
- * @description Improved carousel for settings tabs with animation and theme support.
- * Refactored to use design tokens for consistent styling across themes.
+ * @description Carousel component for settings tabs with animation and theme support.
+ * Provides an interactive way to navigate between different settings sections.
  * @author Jennifer Cross with support from Claude
- * @created March 2025
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -13,11 +12,12 @@ import styles from "../styles/SettingsCarousel.module.css";
 /**
  * Settings tab carousel with proper centering and theme support
  *
+ * @component
  * @param {Object} props - Component props
- * @param {Array} props.tabs - Array of tab objects
+ * @param {Array} props.tabs - Array of tab objects with icon, name, color, and availability
  * @param {number} props.activeTab - Currently active tab index
  * @param {Function} props.setActiveTab - Function to set active tab
- * @returns {JSX.Element} Themed settings carousel
+ * @returns {JSX.Element} Interactive settings carousel
  */
 const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
     const containerRef = useRef(null);
@@ -74,77 +74,141 @@ const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
         }, 300);
     }, [activeTab, containerWidth, initialLoad]);
 
+    /**
+     * Settings Carousel for tab navigation
+     * With smaller tabs to fit without scrolling
+     */
     return (
-        <div className={styles.settingsCarousel}>
-            <button
-                className={`${styles.carouselNav} ${styles.carouselPrev}`}
-                onClick={() => setActiveTab(Math.max(0, activeTab - 1))}
-                aria-label="Previous tab"
-            >
-                <ChevronLeft size={24} />
-            </button>
-
+        <div
+            className={styles.settingsCarousel}
+            // style={{
+            //     position: "relative",
+            //     display: "flex",
+            //     borderBottom: "2px solid var(--color-gray-800)",
+            //     backgroundColor: "var(--color-panel-background)",
+            //     padding: "var(--spacing-4) 0",
+            // }}
+        >
+            {/* Tab container with all tabs visible */}
             <div
                 className={styles.carouselContainer}
                 ref={containerRef}
+                // style={{
+                //     display: "flex",
+                //     width: "100%",
+                //     justifyContent: "center",
+                //     alignItems: "center",
+                //     gap: "8px", // Smaller gap between tabs
+                //     padding: "0 var(--spacing-4)",
+                // }}
             >
-                <div className={styles.carouselTrack}>
-                    {tabs.map((tab, index) => {
-                        const isActive = index === activeTab;
-                        const isDisabled = !tab.available;
+                {tabs.map((tab, index) => {
+                    const isDisabled = !tab.available;
+                    const isActive = index === activeTab;
 
-                        return (
-                            <button
-                                key={tab.id}
-                                ref={(el) => (tabRefs.current[index] = el)}
-                                className={`${styles.carouselTab} ${
-                                    isActive ? styles.active : ""
-                                } ${isDisabled ? styles.disabled : ""}`}
-                                onClick={() =>
-                                    !isDisabled && setActiveTab(index)
-                                }
-                                disabled={isDisabled}
-                                style={{
-                                    borderColor: isActive
-                                        ? tab.color
-                                        : "transparent",
-                                }}
-                                aria-label={`${tab.name} settings tab${
-                                    isDisabled ? " (coming soon)" : ""
-                                }`}
-                                aria-selected={isActive}
-                                role="tab"
+                    return (
+                        <button
+                            key={tab.id}
+                            ref={(el) => (tabRefs.current[index] = el)}
+                            className={`${styles.carouselTab} ${
+                                isActive ? styles.active : ""
+                            } ${isDisabled ? styles.disabled : ""}`}
+                            onClick={() => !isDisabled && setActiveTab(index)}
+                            disabled={isDisabled}
+                            style={{
+                                borderColor: isActive
+                                    ? tab.color
+                                    : "transparent",
+                            }}
+                            aria-label={`${tab.name} settings tab${
+                                isDisabled ? " (coming soon)" : ""
+                            }`}
+                            aria-selected={isActive}
+                            role="tab"
+                            // style={{
+                            //     display: "flex",
+                            //     flexDirection: "column",
+                            //     alignItems: "center",
+                            //     justifyContent: "center",
+                            //     padding: "8px", // Smaller padding
+                            //     borderRadius: "var(--radius-md)",
+                            //     backgroundColor: isActive
+                            //         ? "var(--color-button-selected-bg, var(--color-gray-800))"
+                            //         : "transparent",
+                            //     border: isActive
+                            //         ? `2px solid var(--color-border-active)`
+                            //         : "2px solid transparent",
+                            //     cursor: isDisabled ? "default" : "pointer",
+                            //     opacity: isDisabled ? 0.4 : isActive ? 1 : 0.7,
+                            //     width: "85px", // Fixed smaller width
+                            //     height: "90px", // Fixed smaller height
+                            //     color: isActive
+                            //         ? "var(--color-text-active)"
+                            //         : "var(--color-text-inactive)",
+                            //     transition: "all var(--transition-normal)",
+                            //     boxShadow: isActive
+                            //         ? "var(--glow-neon-green)"
+                            //         : "none",
+                            // }}
+                            // onClick={() => !isDisabled && setActiveTab(index)}
+                            // disabled={isDisabled}
+                            // aria-label={`${tab.name} settings tab${
+                            //     isDisabled ? " (coming soon)" : ""
+                            // }`}
+                            // aria-selected={isActive}
+                            // role="tab"
+                        >
+                            <div
+                                className={styles.tabIcon}
+                                style={{ color: tab.color }}
+                                // style={{
+                                //     color: isActive
+                                //         ? "var(--color-text-active)"
+                                //         : tab.color,
+                                //     marginBottom: "6px", // Smaller margin
+                                //     display: "flex",
+                                //     alignItems: "center",
+                                //     justifyContent: "center",
+                                //     height: "32px", // Smaller icon container
+                                // }}
                             >
-                                <div
-                                    className={styles.tabIcon}
-                                    style={{ color: tab.color }}
+                                {React.cloneElement(tab.icon, { size: 24 })}{" "}
+                                {/* Smaller icon size */}
+                            </div>
+                            <span
+                                className={styles.tabName}
+                                // style={{
+                                //     fontSize: "10px", // Smaller font size
+                                //     textAlign: "center",
+                                //     textTransform: "uppercase",
+                                //     letterSpacing: "0.05em", // Slightly tighter letter spacing
+                                //     lineHeight: 1.2, // Tighter line height
+                                // }}
+                            >
+                                {tab.name}
+                            </span>
+
+                            {isDisabled && (
+                                <span
+                                    className={styles.comingSoonBadge}
+                                    /* style={{
+                                        marginTop: "4px",
+                                        fontSize: "8px", // Smaller badge font
+                                        backgroundColor:
+                                            "var(--color-gray-700)",
+                                        color: "var(--color-gray-400)",
+                                        padding: "1px 4px",
+                                        borderRadius: "var(--radius-sm)",
+                                        textTransform: "uppercase",
+                                    }} */
                                 >
-                                    {tab.icon}
-                                </div>
-                                <span className={styles.tabName}>
-                                    {tab.name}
+                                    In Progress
                                 </span>
-
-                                {isDisabled && (
-                                    <span className={styles.comingSoonBadge}>
-                                        Coming Soon
-                                    </span>
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
+                            )}
+                        </button>
+                    );
+                })}
             </div>
-
-            <button
-                className={`${styles.carouselNav} ${styles.carouselNext}`}
-                onClick={() =>
-                    setActiveTab(Math.min(tabs.length - 1, activeTab + 1))
-                }
-                aria-label="Next tab"
-            >
-                <ChevronRight size={24} />
-            </button>
         </div>
     );
 };

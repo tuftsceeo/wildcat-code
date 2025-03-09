@@ -81,16 +81,19 @@
     --transition-duration-fast: 150ms;
     --transition-duration-normal: 250ms;
     --transition-duration-slow: 350ms;
-    
+
     /* Easing Functions */
     --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
     --transition-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
-    
+
     /* Complete transitions */
-    --transition-standard: var(--transition-duration-normal) var(--transition-easing-standard);
-    --transition-fast: var(--transition-duration-fast) var(--transition-easing-standard);
-    --transition-slow: var(--transition-duration-slow) var(--transition-easing-standard);
+    --transition-standard: var(--transition-duration-normal)
+        var(--transition-easing-standard);
+    --transition-fast: var(--transition-duration-fast)
+        var(--transition-easing-standard);
+    --transition-slow: var(--transition-duration-slow)
+        var(--transition-easing-standard);
 
     /* Component dimensions - consistent across themes */
     --panel-width-step: 220px;
@@ -101,7 +104,7 @@
     --bluetooth-button-size: 40px;
     --bluetooth-icon-size: 24px;
     --bluetooth-status-indicator-size: 10px;
-    
+
     /* Button Scale Transforms - consistent across themes */
     --button-scale-default: scale(1);
     --button-scale-hover: scale(1.1);
@@ -111,7 +114,7 @@
 /* ============================================
    RETRO THEME (Dark Mode with Neon Elements)
    ============================================ */
-:root, 
+:root,
 body[data-theme="retro"] {
     /* Font Family */
     --font-family-primary: "Kode Mono", monospace;
@@ -122,47 +125,47 @@ body[data-theme="retro"] {
     /* Base Colors */
     --color-background: #000000;
     --color-text: #ffffff;
-    
+
     /* Primary Color - Neon Blue */
     --color-primary-main: #00bfff;
-    --color-primary-low: #0066aa;   /* Darker/Less contrast in dark mode */
-    --color-primary-high: #80dfff;  /* Lighter/Higher contrast in dark mode */
+    --color-primary-low: #0066aa; /* Darker/Less contrast in dark mode */
+    --color-primary-high: #80dfff; /* Lighter/Higher contrast in dark mode */
     --color-primary-contrast: #000000;
-    
+
     /* Secondary Color - Neon Green */
     --color-secondary-main: #00ff00;
     --color-secondary-low: #009900; /* Darker/Less contrast in dark mode */
     --color-secondary-high: #80ff80; /* Lighter/Higher contrast in dark mode */
     --color-secondary-contrast: #000000;
-    
+
     /* Feedback Colors */
     --color-error-main: #ff0000;
     --color-error-low: #990000;
     --color-error-high: #ff8080;
     --color-error-contrast: #ffffff;
-    
+
     --color-warning-main: #ffa500;
     --color-warning-low: #996300;
     --color-warning-high: #ffc966;
     --color-warning-contrast: #000000;
-    
+
     --color-info-main: #ffff00;
     --color-info-low: #999900;
     --color-info-high: #ffff80;
     --color-info-contrast: #000000;
-    
+
     --color-success-main: #00ff00; /* Same as secondary in Retro theme */
     --color-success-low: #009900;
     --color-success-high: #80ff80;
     --color-success-contrast: #000000;
-    
+
     /* Gray Scale - Contrast based */
-    --color-gray-faint: #222222;    /* Very low contrast with background */
-    --color-gray-subtle: #444444;   /* Low contrast */
-    --color-gray-medium: #777777;   /* Medium contrast */
-    --color-gray-bold: #aaaaaa;     /* High contrast */
-    --color-gray-extreme: #dddddd;  /* Very high contrast with background, close to text */
-    
+    --color-gray-faint: #222222; /* Very low contrast with background */
+    --color-gray-subtle: #444444; /* Low contrast */
+    --color-gray-medium: #777777; /* Medium contrast */
+    --color-gray-bold: #aaaaaa; /* High contrast */
+    --color-gray-extreme: #dddddd; /* Very high contrast with background, close to text */
+
     /* Glow Effects - Only in Retro theme */
     --glow-primary: 0 0 8px rgba(0, 191, 255, 0.7);
     --glow-secondary: 0 0 8px rgba(0, 255, 0, 0.7);
@@ -170,59 +173,59 @@ body[data-theme="retro"] {
     --glow-warning: 0 0 8px rgba(255, 165, 0, 0.7);
     --glow-info: 0 0 8px rgba(255, 255, 0, 0.7);
     --glow-white: 0 0 8px rgba(255, 255, 255, 0.7);
-    
+
     /* Component-specific colors */
     --color-motor-forward: var(--color-secondary-main);
     --color-motor-backward: var(--color-warning-main);
     --color-motor-stopped: var(--color-gray-medium);
-    
+
     --color-timer-main: var(--color-info-main);
     --color-sensor-main: var(--color-primary-main);
-    
+
     /* UI Element Tokens */
-    
+
     /* Button States - Outlined */
     --button-default-bg: transparent;
     --button-default-text: var(--color-text);
     --button-default-border: var(--color-primary-main);
-    
+
     --button-selected-bg: transparent;
     --button-selected-text: var(--color-secondary-main);
     --button-selected-border: var(--color-secondary-main);
-    
+
     --button-disabled-bg: transparent;
     --button-disabled-text: var(--color-gray-medium);
     --button-disabled-border: var(--color-gray-medium);
-    
+
     /* Button States - Contained */
     --button-contained-default-bg: var(--color-primary-main);
     --button-contained-default-text: var(--color-primary-contrast);
     --button-contained-default-border: var(--color-primary-main);
-    
+
     --button-contained-selected-bg: var(--color-secondary-main);
     --button-contained-selected-text: var(--color-secondary-contrast);
     --button-contained-selected-border: var(--color-secondary-main);
-    
+
     --button-contained-disabled-bg: var(--color-gray-medium);
     --button-contained-disabled-text: var(--color-gray-faint);
     --button-contained-disabled-border: var(--color-gray-medium);
-    
+
     /* Panel/Card */
     --panel-bg: var(--color-background);
     --panel-border: var(--color-primary-main);
     --panel-active-border: var(--color-secondary-main);
     --panel-text: var(--color-text);
-    
+
     /* Input */
     --input-default-bg: var(--color-background);
     --input-default-text: var(--color-text);
     --input-default-border: var(--color-primary-main);
-    
+
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
     --input-focus-border: var(--color-secondary-main);
     --input-focus-outline: var(--glow-secondary);
-    
+
     --input-disabled-bg: var(--color-background);
     --input-disabled-text: var(--color-gray-medium);
     --input-disabled-border: var(--color-gray-medium);
@@ -240,47 +243,47 @@ body[data-theme="clean"] {
     /* Base Colors */
     --color-background: #ffffff;
     --color-text: #000000;
-    
+
     /* Primary Color - Blue */
     --color-primary-main: #0066cc;
-    --color-primary-low: #4488cc;  /* Lighter/Less contrast in light mode */
+    --color-primary-low: #4488cc; /* Lighter/Less contrast in light mode */
     --color-primary-high: #004499; /* Darker/Higher contrast in light mode */
     --color-primary-contrast: #ffffff;
-    
+
     /* Secondary Color - Green */
     --color-secondary-main: #00aa55;
-    --color-primary-low: #4cbb7c;  /* Lighter/Less contrast in light mode */
+    --color-primary-low: #4cbb7c; /* Lighter/Less contrast in light mode */
     --color-primary-high: #007744; /* Darker/Higher contrast in light mode */
     --color-secondary-contrast: #ffffff;
-    
+
     /* Feedback Colors */
     --color-error-main: #dd0000;
     --color-error-low: #e65c5c;
     --color-error-high: #aa0000;
     --color-error-contrast: #ffffff;
-    
+
     --color-warning-main: #ff6600;
     --color-warning-low: #ff944d;
     --color-warning-high: #cc5200;
     --color-warning-contrast: #000000;
-    
+
     --color-info-main: #ffcc00;
     --color-info-low: #ffdb4d;
     --color-info-high: #cca300;
     --color-info-contrast: #000000;
-    
+
     --color-success-main: #00aa55; /* Same as secondary */
     --color-success-low: #4cbb7c;
     --color-success-high: #007744;
     --color-success-contrast: #ffffff;
-    
+
     /* Gray Scale - Contrast based */
-    --color-gray-faint: #f5f5f5;    /* Very low contrast with background */
-    --color-gray-subtle: #dddddd;   /* Low contrast */
-    --color-gray-medium: #aaaaaa;   /* Medium contrast */
-    --color-gray-bold: #666666;     /* High contrast */
-    --color-gray-extreme: #333333;  /* Very high contrast with background, close to text */
-    
+    --color-gray-faint: #f5f5f5; /* Very low contrast with background */
+    --color-gray-subtle: #dddddd; /* Low contrast */
+    --color-gray-medium: #aaaaaa; /* Medium contrast */
+    --color-gray-bold: #666666; /* High contrast */
+    --color-gray-extreme: #333333; /* Very high contrast with background, close to text */
+
     /* No glow effects in Clean theme */
     --glow-primary: none;
     --glow-secondary: none;
@@ -288,59 +291,59 @@ body[data-theme="clean"] {
     --glow-warning: none;
     --glow-info: none;
     --glow-white: none;
-    
+
     /* Component-specific colors */
     --color-motor-forward: var(--color-secondary-main);
     --color-motor-backward: var(--color-warning-main);
     --color-motor-stopped: var(--color-gray-medium);
-    
+
     --color-timer-main: var(--color-info-main);
     --color-sensor-main: var(--color-primary-main);
-    
+
     /* UI Element Tokens */
-    
+
     /* Button States - Outlined */
     --button-default-bg: transparent;
     --button-default-text: var(--color-primary-main);
     --button-default-border: var(--color-primary-main);
-    
+
     --button-selected-bg: transparent;
     --button-selected-text: var(--color-secondary-main);
     --button-selected-border: var(--color-secondary-main);
-    
+
     --button-disabled-bg: transparent;
     --button-disabled-text: var(--color-gray-medium);
     --button-disabled-border: var(--color-gray-medium);
-    
+
     /* Button States - Contained */
     --button-contained-default-bg: var(--color-primary-main);
     --button-contained-default-text: var(--color-primary-contrast);
     --button-contained-default-border: var(--color-primary-main);
-    
+
     --button-contained-selected-bg: var(--color-secondary-main);
     --button-contained-selected-text: var(--color-secondary-contrast);
     --button-contained-selected-border: var(--color-secondary-main);
-    
+
     --button-contained-disabled-bg: var(--color-gray-medium);
     --button-contained-disabled-text: var(--color-white);
     --button-contained-disabled-border: var(--color-gray-medium);
-    
+
     /* Panel/Card */
     --panel-bg: var(--color-background);
     --panel-border: var(--color-primary-main);
     --panel-active-border: var(--color-secondary-main);
     --panel-text: var(--color-text);
-    
+
     /* Input */
     --input-default-bg: var(--color-background);
     --input-default-text: var(--color-text);
     --input-default-border: var(--color-primary-main);
-    
+
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
     --input-focus-border: var(--color-secondary-main);
     --input-focus-outline: 0 0 0 2px rgba(0, 170, 85, 0.2);
-    
+
     --input-disabled-bg: var(--color-gray-faint);
     --input-disabled-text: var(--color-gray-medium);
     --input-disabled-border: var(--color-gray-medium);
@@ -358,47 +361,47 @@ body[data-theme="pastel"] {
     /* Base Colors */
     --color-background: #fffaf0; /* Warm parchment */
     --color-text: #3e4551; /* Slate instead of pure black */
-    
+
     /* Primary Color - Blue */
     --color-primary-main: #6cc3d5;
-    --color-primary-low: #a5d8e6;  /* Lighter/Less contrast in light mode */
+    --color-primary-low: #a5d8e6; /* Lighter/Less contrast in light mode */
     --color-primary-high: #5a9ba8; /* Darker/Higher contrast in light mode */
     --color-primary-contrast: #000000;
-    
+
     /* Secondary Color - Green */
     --color-secondary-main: #78c2ad;
     --color-secondary-low: #a5d8c6; /* Lighter/Less contrast in light mode */
     --color-secondary-high: #5a9b89; /* Darker/Higher contrast in light mode */
     --color-secondary-contrast: #000000;
-    
+
     /* Feedback Colors */
     --color-error-main: #f3969a;
     --color-error-low: #f7bec0;
     --color-error-high: #e96a70;
     --color-error-contrast: #000000;
-    
+
     --color-warning-main: #ffbb89;
     --color-warning-low: #ffd9bd;
     --color-warning-high: #ff9e56;
     --color-warning-contrast: #000000;
-    
+
     --color-info-main: #f3dc6d;
     --color-info-low: #f8e9a6;
     --color-info-high: #e6cb3e;
     --color-info-contrast: #000000;
-    
+
     --color-success-main: #78c2ad; /* Same as secondary */
     --color-success-low: #a5d8c6;
     --color-success-high: #5a9b89;
     --color-success-contrast: #000000;
-    
+
     /* Gray Scale - Contrast based */
-    --color-gray-faint: #f5f0e5;    /* Warm off-white, very low contrast */
-    --color-gray-subtle: #e0d6c5;   /* Warm light gray */
-    --color-gray-medium: #bdb19e;   /* Warm medium gray */
-    --color-gray-bold: #8a7f6d;     /* Warm dark gray */
-    --color-gray-extreme: #5a534a;  /* Warm very dark gray, close to text */
-    
+    --color-gray-faint: #f5f0e5; /* Warm off-white, very low contrast */
+    --color-gray-subtle: #e0d6c5; /* Warm light gray */
+    --color-gray-medium: #bdb19e; /* Warm medium gray */
+    --color-gray-bold: #8a7f6d; /* Warm dark gray */
+    --color-gray-extreme: #5a534a; /* Warm very dark gray, close to text */
+
     /* No glow effects in Pastel theme */
     --glow-primary: none;
     --glow-secondary: none;
@@ -406,59 +409,59 @@ body[data-theme="pastel"] {
     --glow-warning: none;
     --glow-info: none;
     --glow-white: none;
-    
+
     /* Component-specific colors */
     --color-motor-forward: var(--color-secondary-main);
     --color-motor-backward: var(--color-warning-main);
     --color-motor-stopped: var(--color-gray-medium);
-    
+
     --color-timer-main: var(--color-info-main);
     --color-sensor-main: var(--color-primary-main);
-    
+
     /* UI Element Tokens */
-    
+
     /* Button States - Outlined */
     --button-default-bg: transparent;
     --button-default-text: var(--color-primary-main);
     --button-default-border: var(--color-primary-main);
-    
+
     --button-selected-bg: transparent;
     --button-selected-text: var(--color-secondary-main);
     --button-selected-border: var(--color-secondary-main);
-    
+
     --button-disabled-bg: transparent;
     --button-disabled-text: var(--color-gray-medium);
     --button-disabled-border: var(--color-gray-medium);
-    
+
     /* Button States - Contained */
     --button-contained-default-bg: var(--color-primary-main);
     --button-contained-default-text: var(--color-primary-contrast);
     --button-contained-default-border: var(--color-primary-main);
-    
+
     --button-contained-selected-bg: var(--color-secondary-main);
     --button-contained-selected-text: var(--color-secondary-contrast);
     --button-contained-selected-border: var(--color-secondary-main);
-    
+
     --button-contained-disabled-bg: var(--color-gray-medium);
     --button-contained-disabled-text: var(--color-white);
     --button-contained-disabled-border: var(--color-gray-medium);
-    
+
     /* Panel/Card */
     --panel-bg: var(--color-background);
     --panel-border: var(--color-primary-main);
     --panel-active-border: var(--color-secondary-main);
     --panel-text: var(--color-text);
-    
+
     /* Input */
     --input-default-bg: var(--color-background);
     --input-default-text: var(--color-text);
     --input-default-border: var(--color-primary-main);
-    
+
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
     --input-focus-border: var(--color-secondary-main);
     --input-focus-outline: none;
-    
+
     --input-disabled-bg: var(--color-gray-faint);
     --input-disabled-text: var(--color-gray-medium);
     --input-disabled-border: var(--color-gray-medium);
@@ -567,7 +570,8 @@ body.large-text {
     transform: var(--button-scale-active);
 }
 
-.wildcat-button.active, .wildcat-button.selected {
+.wildcat-button.active,
+.wildcat-button.selected {
     border-color: var(--button-selected-border);
     color: var(--button-selected-text);
 }
@@ -587,7 +591,8 @@ body.large-text {
     border-color: var(--button-contained-default-border);
 }
 
-.wildcat-button.contained.active, .wildcat-button.contained.selected {
+.wildcat-button.contained.active,
+.wildcat-button.contained.selected {
     background-color: var(--button-contained-selected-bg);
     color: var(--button-contained-selected-text);
     border-color: var(--button-contained-selected-border);

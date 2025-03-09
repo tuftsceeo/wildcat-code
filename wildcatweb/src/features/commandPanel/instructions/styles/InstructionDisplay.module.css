@@ -31,7 +31,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-active);
+    color: var(--panel-text);
     transition: all var(--transition-normal);
 }
 
@@ -76,7 +76,7 @@
 }
 
 .instructionText {
-    color: var(--color-text-active);
+    color: var(--panel-text);
     font-family: var(--font-family-active);
     transition: all var(--transition-normal);
     line-height: var(--line-height-relaxed);
