@@ -33,7 +33,6 @@
     color: var(--color-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
     flex-grow: 1;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
@@ -145,7 +144,6 @@
 .backwardLabel,
 .forwardLabel {
     font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     white-space: nowrap;
 }
@@ -270,7 +268,7 @@
     justify-content: center;
     padding: var(--spacing-4);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-sm);
     border-radius: var(--radius-md);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);

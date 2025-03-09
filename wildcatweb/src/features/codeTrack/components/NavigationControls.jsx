@@ -34,13 +34,21 @@ const NavigationControls = ({
                 className={`${styles.navButton} ${styles.prevButton}`}
                 disabled={isPrevButtonDisabled}
                 onClick={onPrevious}
-                aria-label="Previous step"
+                aria-label={
+                    isPrevButtonDisabled
+                        ? "Start"
+                        : `Previous Go to Step ${currSlotNumber}`
+                }
             />
             <button
                 className={`${styles.navButton} ${styles.nextButton}`}
                 disabled={isNextButtonDisabled}
                 onClick={onNext}
-                aria-label="Next step"
+                aria-label={
+                    isNextButtonDisabled
+                        ? "End"
+                        : `Next Go to Step ${currSlotNumber + 2}`
+                }
             />
         </div>
     );

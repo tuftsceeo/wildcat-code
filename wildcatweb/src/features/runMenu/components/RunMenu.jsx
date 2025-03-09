@@ -82,48 +82,6 @@ export const RunMenu = ({
     };
 
     /**
-     * Run the currently selected slot
-     */
-    const handleRunCurrentSlot = async () => {
-        try {
-            if (!isConnected) {
-                console.warn(
-                    "Robot not connected. Please connect via Bluetooth first.",
-                );
-                return;
-            }
-
-            // Create single-slot array with current slot
-            const singleSlot = [slotData[currSlotNumber]];
-            const code = generatePythonCode(singleSlot, portStates);
-            console.log("Generated Python Code for current slot:", code);
-
-            // Clear the program slot
-            const clearResponse = await ble.sendRequest(
-                new ClearSlotRequest(0),
-                ClearSlotResponse,
-            );
-
-            if (!clearResponse.success) {
-                console.warn("Failed to clear program slot");
-                return;
-            }
-
-            // Upload and transfer the program
-            await ble.uploadProgramFile(
-                "program.py",
-                0,
-                Buffer.from(code, "utf-8"),
-            );
-
-            // Start the program
-            await ble.startProgram(0);
-        } catch (error) {
-            console.error("Error running program:", error);
-        }
-    };
-
-    /**
      * Run all slots sequentially
      */
     const handleRunAllSlots = async () => {
@@ -218,7 +176,7 @@ export const RunMenu = ({
         <div className={styles.menuBackground}>
             <div className={styles.menuContent}>
                 {/* Title hidden by CSS */}
-                <div className={styles.menuTitle}>RUN</div>
+                <div className={styles.menuTitle}>CODE STEPS</div>
 
                 {/* Step buttons */}
                 <div className={styles.stepsContainer}>

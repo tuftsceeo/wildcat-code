@@ -95,8 +95,6 @@ const SingleButtonDash = memo(
                 <div className={styles.buttonControlContainer}>
                     {/* Command section - shows programmed condition */}
                     <div className={styles.commandSection}>
-                        <h3 className={styles.waitUntilLabel}>WAIT UNTIL</h3>
-
                         {/* Wider toggle switch that matches the demo */}
                         <div
                             className={`${styles.toggleContainer} ${
@@ -286,13 +284,13 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
             {!isConnected ? (
                 <div className={styles.noConnection}>
                     <BluetoothSearching size={24} />
-                    <span>Connect robot first</span>
+                    <span>Connect robot</span>
                 </div>
             ) : Object.keys(activeButtons).length === 0 &&
               disconnectedButtons.length === 0 ? (
                 <div className={styles.noButtons}>
                     <RefreshCwOff size={24} />
-                    <span>Connect a button</span>
+                    <span>Connect button</span>
                 </div>
             ) : (
                 <>

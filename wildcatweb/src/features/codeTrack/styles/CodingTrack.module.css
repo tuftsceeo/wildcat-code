@@ -3,6 +3,7 @@
 .trackContainer {
     position: relative;
     display: flex;
+    overflow-y: auto;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -81,17 +82,16 @@
     color: var(--panel-text);
     text-align: center;
     text-transform: uppercase;
-    font-size: var(--font-size-lg);
     margin-top: var(--spacing-4);
     font-family: var(--font-family-active);
     letter-spacing: var(--letter-spacing-wide);
-    font-weight: var(--font-weight-bold);
 }
 
 /* Multiple motor container */
 .multiMotorContainer {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: var(--spacing-4);
@@ -118,7 +118,7 @@
 }
 
 .timerIcon {
-    font-size: 48px;
+    font-size: var(--font-size-lg);
     color: var(--color-timer-main);
     margin-bottom: var(--spacing-2);
 }
@@ -133,7 +133,7 @@
 }
 
 .timerValue {
-    font-size: 48px;
+    font-size: var(--font-size-lg);
     color: var(--color-timer-main);
     margin: var(--spacing-2) 0;
     font-family: var(--font-family-active);
@@ -156,16 +156,21 @@
     color: var(--button-contained-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
-    padding: var(--spacing-2) var(--spacing-6);
+
     cursor: pointer;
     text-transform: uppercase;
     position: absolute;
     bottom: calc(var(--spacing-4) + 40px);
     width: 100px;
-    z-index: 2;
+    /* z-index: 2; */
     transition: transform var(--transition-normal);
     transform: var(--button-scale-default);
+
+    padding: var(--spacing-2) var(--spacing-4);
+    margin-top: auto;
+    margin-bottom: var(--spacing-2);
+    text-transform: uppercase;
+    align-self: center;
 }
 
 .testButton:hover:not(:disabled) {
@@ -178,8 +183,9 @@
 
 .testButton:disabled {
     background-color: var(--button-contained-disabled-bg);
-    color: var(--button-disabled-text);
+    color: var(--button-contained-disabled-text);
     cursor: not-allowed;
+    opacity: var(--button-contained-disabled-opacity);
 }
 
 /* Navigation controls */
@@ -333,10 +339,7 @@
     color: var(--color-sensor-main);
     text-align: center;
     text-transform: uppercase;
-    font-size: var(--font-size-lg);
     margin-top: var(--spacing-2);
-    font-weight: var(--font-weight-bold);
-    font-family: var(--font-family-active);
     letter-spacing: var(--letter-spacing-wide);
     transition: all var(--transition-normal);
 }

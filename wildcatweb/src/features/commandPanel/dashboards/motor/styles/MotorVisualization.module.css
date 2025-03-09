@@ -26,7 +26,6 @@
     color: var(--color-background);
     font-family: var(--font-family-active);
     font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     margin-bottom: var(--spacing-4);
     letter-spacing: var(--letter-spacing-wide);

@@ -5,11 +5,12 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    border: var(--border-width-standard) solid var(--panel-border);
-    border-radius: var(--radius-md);
+    overflow-y: auto;
+    /* border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md); */
     background-color: var(--panel-bg);
-    padding: var(--spacing-4);
-    overflow: visible;
+    /* padding: var(--spacing-4); */
+    /* overflow: visible; */
 }
 
 .outline {

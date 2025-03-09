@@ -6,7 +6,18 @@
  */
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Check, Plus, Zap, Disc, Lightbulb, Volume } from "lucide-react";
+import {
+    Check,
+    RefreshCcwDot,
+    Plus,
+    Zap,
+    Disc,
+    Lightbulb,
+    RotateCw,
+    Volume,
+    TimerReset,
+    Clock9,
+} from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
 import { MotorDash } from "../dashboards/motor/components/MotorDash.jsx";
@@ -24,7 +35,7 @@ const CONTROL_TYPES = {
         motor: {
             name: "Motor Control",
             component: MotorDash,
-            icon: <Zap size={20} />,
+            icon: <RotateCw size={32} />,
         },
         // hub: {
         //     name: "Hub",
@@ -41,12 +52,13 @@ const CONTROL_TYPES = {
         time: {
             name: "Wait Time",
             component: TimeDash,
+            icon: <Clock9 size={32} />,
         },
         button: {
             // Updated - Kept subtype name but changed display name
             name: "Button", // Changed from "Force Sensor" to "Button"
             component: ButtonDash,
-            icon: <Disc size={20} />, // Using Disc icon for button
+            icon: <Disc size={32} />, // Using Disc icon for button
         },
     },
 };

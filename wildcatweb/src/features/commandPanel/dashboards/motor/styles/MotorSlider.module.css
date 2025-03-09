@@ -19,7 +19,6 @@
 .backwardLabel {
     color: var(--color-error-main);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     font-family: var(--font-family-active);
 }
@@ -27,7 +26,6 @@
 .forwardLabel {
     color: var(--color-motor-main);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     font-family: var(--font-family-active);
 }

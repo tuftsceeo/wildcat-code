@@ -13,7 +13,6 @@
 
 .timeName {
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     color: var(--panel-text);
     margin-bottom: var(--spacing-4);

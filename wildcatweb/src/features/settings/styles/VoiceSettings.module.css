@@ -45,7 +45,6 @@
     margin-bottom: var(--spacing-3);
     color: var(--panel-text);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
 }
 
 .playButton {
@@ -58,7 +57,6 @@
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
     cursor: pointer;
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
@@ -171,7 +169,6 @@
 
 .voiceName {
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
     color: var(--panel-text);
     margin-bottom: var(--spacing-1);
 }

@@ -35,7 +35,7 @@
     color: var(--panel-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
+
     flex-grow: 1;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
@@ -102,7 +102,6 @@
 .sectionHeader {
     width: 100%;
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     color: var(--panel-text);
     margin-bottom: var(--spacing-2);
@@ -121,7 +120,7 @@
 
 .waitUntilLabel {
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
+
     text-transform: uppercase;
     color: var(--panel-text);
     margin-bottom: var(--spacing-2);
@@ -157,7 +156,7 @@
 
 .toggleOption {
     font-family: var(--font-family-active);
-    font-weight: var(--font-weight-bold);
+
     color: var(--panel-text);
     font-size: var(--font-size-xs);
     text-transform: uppercase;
@@ -368,7 +367,7 @@
 
 .buttonStatus {
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
+
     color: var(--panel-text);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
@@ -385,7 +384,7 @@
     justify-content: center;
     padding: var(--spacing-4);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-sm);
     border-radius: var(--radius-md);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);

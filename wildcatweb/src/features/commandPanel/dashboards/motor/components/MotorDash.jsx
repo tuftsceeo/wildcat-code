@@ -490,13 +490,13 @@ export const MotorDash = ({
             {!isConnected ? (
                 <div className={styles.noConnection}>
                     <BluetoothSearching size={24} />
-                    <span>Connect robot first</span>
+                    <span>Connect robot</span>
                 </div>
             ) : Object.keys(activeMotors).length === 0 &&
               disconnectedPorts.length === 0 ? (
                 <div className={styles.noMotors}>
                     <RefreshCwOff size={24} />
-                    <span>Connect a motor</span>
+                    <span>Connect motor</span>
                 </div>
             ) : (
                 <>

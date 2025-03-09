@@ -1,6 +1,7 @@
 /* tokens.css - Comprehensive design token system for WildCat app
  * This file provides a complete set of design tokens for all themes
- * using contrast-based naming conventions instead of light/dark
+ * using contrast-based naming conventions instead of light/dark.
+ * Preference for rem scaling.
  */
 
 /* Import necessary fonts */
@@ -27,18 +28,18 @@
 
     /* Border Radius */
     --radius-none: 0;
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
+    --radius-sm: 0.25rem; /* 4px */
+    --radius-md: 0.5rem; /* 8px */
+    --radius-lg: 0.75rem; /* 12px */
+    --radius-xl: 1rem; /* 16px */
     --radius-full: 9999px;
 
     /* Border Width */
     --border-width-none: 0;
-    --border-width-thin: 1px;
-    --border-width-standard: 2px;
-    --border-width-thick: 3px;
-    --border-width-extra: 4px;
+    --border-width-thin: 0.125rem;
+    --border-width-standard: 0.1875rem;
+    --border-width-thick: 0.25rem;
+    --border-width-extra: 0.3125rem;
 
     /* Z-Index Layers */
     --z-index-below: -1;
@@ -51,13 +52,13 @@
     --z-index-toast: 50;
 
     /* Font Sizes */
-    --font-size-xs: 0.75rem; /* 12px */
-    --font-size-sm: 0.875rem; /* 14px */
-    --font-size-base: 1rem; /* 16px */
-    --font-size-lg: 1.25rem; /* 20px */
-    --font-size-xl: 1.5rem; /* 24px */
-    --font-size-2xl: 2rem; /* 32px */
-    --font-size-3xl: 2.5rem; /* 40px */
+    --font-size-xs: 1.2rem; /* 12px */
+    --font-size-sm: 1.4rem; /* 14px */
+    --font-size-base: 1.6rem; /* 16px */
+    --font-size-lg: 2rem; /* 32 px*/
+    --font-size-xl: 2.5rem; /* 24px */
+    --font-size-2xl: 3.2rem; /* 32px */
+    --font-size-3xl: 4rem; /* 40px */
 
     /* Font Weights */
     --font-weight-regular: 400;
@@ -96,19 +97,54 @@
         var(--transition-easing-standard);
 
     /* Component dimensions - consistent across themes */
-    --panel-width-step: 220px;
-    --panel-width-control: 280px;
-    --panel-width-settings: 320px;
+    --panel-width-step: 325px;
+    --panel-width-code: 325px;
+    --panel-width-control: 620px;
+    --panel-width-settings: 350px;
     --panel-spacing: var(--spacing-4);
     --header-height: 60px;
     --bluetooth-button-size: 40px;
     --bluetooth-icon-size: 24px;
     --bluetooth-status-indicator-size: 10px;
 
+    /* Responsive adjustments */
     /* Button Scale Transforms - consistent across themes */
     --button-scale-default: scale(1);
-    --button-scale-hover: scale(1.1);
-    --button-scale-active: scale(0.95);
+    --button-scale-hover: scale(1.01);
+    --button-scale-active: scale(0.99);
+}
+
+@media (max-width: 1400px) {
+    /*Small Screens*/
+    :root {
+        /* Font Sizes */
+        --font-size-xs: 0.9rem; /* 12px */
+        --font-size-sm: 1.05rem; /* 14px */
+        --font-size-base: 1.2rem; /* 16px */
+        --font-size-lg: 1.5rem; /* 32 px*/
+        --font-size-xl: 1.875rem; /* 24px */
+        --font-size-2xl: 2.4rem; /* 32px */
+        --font-size-3xl: 3rem; /* 40px */
+
+        /* Component dimensions - consistent across themes */
+        --panel-width-step: 235px;
+        --panel-width-code: 235px;
+        --panel-width-control: 482px;
+    }
+}
+
+@media (max-width: 1000px) {
+    /*Portrait/Phone*/
+    :root {
+        /* Font Sizes */
+        --font-size-xs: 0.6rem; /* 12px */
+        --font-size-sm: 0.7rem; /* 14px */
+        --font-size-base: 0.8rem; /* 16px */
+        --font-size-lg: 1rem; /* 32 px*/
+        --font-size-xl: 1.25rem; /* 24px */
+        --font-size-2xl: 1.6rem; /* 32px */
+        --font-size-3xl: 2rem; /* 40px */
+    }
 }
 
 /* ============================================
@@ -123,20 +159,20 @@ body[data-theme="retro"] {
     --font-family-active: var(--font-family-primary);
 
     /* Base Colors */
-    --color-background: #000000;
+    --color-background: #1e1e1e;
     --color-text: #ffffff;
 
     /* Primary Color - Neon Blue */
-    --color-primary-main: #00bfff;
-    --color-primary-low: #0066aa; /* Darker/Less contrast in dark mode */
-    --color-primary-high: #80dfff; /* Lighter/Higher contrast in dark mode */
-    --color-primary-contrast: #000000;
+    --color-primary-main: #0050d8;
+    --color-primary-low: #093055; /* Darker/Less contrast in dark mode */
+    --color-primary-high: #35b1ff; /* Lighter/Higher contrast in dark mode */
+    --color-primary-contrast: #1e1e1e;
 
     /* Secondary Color - Neon Green */
-    --color-secondary-main: #00ff00;
-    --color-secondary-low: #009900; /* Darker/Less contrast in dark mode */
-    --color-secondary-high: #80ff80; /* Lighter/Higher contrast in dark mode */
-    --color-secondary-contrast: #000000;
+    --color-secondary-main: #009f18;
+    --color-secondary-low: #03520f; /* Darker/Less contrast in dark mode */
+    --color-secondary-high: #33ff52; /* Lighter/Higher contrast in dark mode */
+    --color-secondary-contrast: #1e1e1e;
 
     /* Feedback Colors */
     --color-error-main: #ff0000;
@@ -147,17 +183,17 @@ body[data-theme="retro"] {
     --color-warning-main: #ffa500;
     --color-warning-low: #996300;
     --color-warning-high: #ffc966;
-    --color-warning-contrast: #000000;
+    --color-warning-contrast: #1e1e1e;
 
     --color-info-main: #ffff00;
     --color-info-low: #999900;
     --color-info-high: #ffff80;
-    --color-info-contrast: #000000;
+    --color-info-contrast: #1e1e1e;
 
-    --color-success-main: #00ff00; /* Same as secondary in Retro theme */
-    --color-success-low: #009900;
-    --color-success-high: #80ff80;
-    --color-success-contrast: #000000;
+    --color-success-main: #009f18; /* Same as secondary in Retro theme */
+    --color-success-low: #03520f;
+    --color-success-high: #33ff52;
+    --color-success-contrast: #1e1e1e;
 
     /* Gray Scale - Contrast based */
     --color-gray-faint: #222222; /* Very low contrast with background */
@@ -167,52 +203,54 @@ body[data-theme="retro"] {
     --color-gray-extreme: #dddddd; /* Very high contrast with background, close to text */
 
     /* Glow Effects - Only in Retro theme */
-    --glow-primary: 0 0 8px rgba(0, 191, 255, 0.7);
-    --glow-secondary: 0 0 8px rgba(0, 255, 0, 0.7);
-    --glow-error: 0 0 8px rgba(255, 0, 0, 0.7);
-    --glow-warning: 0 0 8px rgba(255, 165, 0, 0.7);
-    --glow-info: 0 0 8px rgba(255, 255, 0, 0.7);
-    --glow-white: 0 0 8px rgba(255, 255, 255, 0.7);
+    --glow-primary: 0 0 0.25rem rgba(0, 191, 255, 0.7);
+    --glow-secondary: 0 0 0.25rem rgba(0, 255, 0, 0.7);
+    --glow-error: 0 0 0.25rem rgba(255, 0, 0, 0.7);
+    --glow-warning: 0 0 0.25rem rgba(255, 165, 0, 0.7);
+    --glow-info: 0 0 0.25rem rgba(255, 255, 0, 0.7);
+    --glow-white: 0 0 0.25rem rgba(255, 255, 255, 0.7);
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-warning-main);
+    --color-motor-forward: var(--color-secondary-high);
+    --color-motor-backward: var(--color-info-main);
     --color-motor-stopped: var(--color-gray-medium);
 
-    --color-timer-main: var(--color-info-main);
-    --color-sensor-main: var(--color-primary-main);
+    --color-timer-main: var(--color-secondary-high);
+    --color-sensor-main: var(--color-primary-high);
 
     /* UI Element Tokens */
 
     /* Button States - Outlined */
     --button-default-bg: transparent;
     --button-default-text: var(--color-text);
-    --button-default-border: var(--color-primary-main);
+    --button-default-border: var(--color-primary-high);
 
     --button-selected-bg: transparent;
-    --button-selected-text: var(--color-secondary-main);
-    --button-selected-border: var(--color-secondary-main);
+    --button-selected-text: var(--color-secondary-high);
+    --button-selected-border: var(--color-secondary-high);
 
     --button-disabled-bg: transparent;
     --button-disabled-text: var(--color-gray-medium);
     --button-disabled-border: var(--color-gray-medium);
+    --button-disabled-opacity: 0.6;
 
     /* Button States - Contained */
-    --button-contained-default-bg: var(--color-primary-main);
+    --button-contained-default-bg: var(--color-primary-high);
     --button-contained-default-text: var(--color-primary-contrast);
     --button-contained-default-border: var(--color-primary-main);
 
-    --button-contained-selected-bg: var(--color-secondary-main);
+    --button-contained-selected-bg: var(--color-secondary-high);
     --button-contained-selected-text: var(--color-secondary-contrast);
     --button-contained-selected-border: var(--color-secondary-main);
 
-    --button-contained-disabled-bg: var(--color-gray-medium);
+    --button-contained-disabled-bg: var(--color-gray-subtle);
     --button-contained-disabled-text: var(--color-gray-faint);
-    --button-contained-disabled-border: var(--color-gray-medium);
+    --button-contained-disabled-border: var(--color-gray-subtle);
+    --button-contained-disabled-opacity: 0.6;
 
     /* Panel/Card */
     --panel-bg: var(--color-background);
-    --panel-border: var(--color-primary-main);
+    --panel-border: var(--color-primary-high);
     --panel-active-border: var(--color-secondary-main);
     --panel-text: var(--color-text);
 
@@ -294,10 +332,10 @@ body[data-theme="clean"] {
 
     /* Component-specific colors */
     --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-warning-main);
+    --color-motor-backward: var(--color-info-main);
     --color-motor-stopped: var(--color-gray-medium);
 
-    --color-timer-main: var(--color-info-main);
+    --color-timer-main: var(--color-secondary-main);
     --color-sensor-main: var(--color-primary-main);
 
     /* UI Element Tokens */
@@ -412,10 +450,10 @@ body[data-theme="pastel"] {
 
     /* Component-specific colors */
     --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-warning-main);
+    --color-motor-backward: var(--color-info-high);
     --color-motor-stopped: var(--color-gray-medium);
 
-    --color-timer-main: var(--color-info-main);
+    --color-timer-main: var(--color-secondary-main);
     --color-sensor-main: var(--color-primary-main);
 
     /* UI Element Tokens */
@@ -555,7 +593,7 @@ body.large-text {
     border-radius: var(--radius-md);
     color: var(--button-default-text);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-large);
     padding: var(--spacing-2) var(--spacing-4);
     cursor: pointer;
     transition: transform var(--transition-standard);

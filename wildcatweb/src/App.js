@@ -202,7 +202,7 @@ function AppContent({ missionSteps }) {
             </div>
 
             {/* Middle column - CodingTrack */}
-            <div className="center-column">
+            <div className="code-column">
                 <CodeTrack
                     setPyCode={setPyCode}
                     setCanRun={setCanRun}

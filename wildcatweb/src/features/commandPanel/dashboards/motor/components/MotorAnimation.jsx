@@ -75,8 +75,8 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
                     cy="50"
                     r="46"
                     fill="none"
-                    stroke="var(--color-secondary-main)"
-                    strokeWidth="2"
+                    stroke="var(--color-motor-forward)"
+                    strokeWidth="var(--border-width-thick)"
                 />
             </svg>
 
@@ -91,25 +91,25 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
                     cx="50"
                     cy="25"
                     r="8"
-                    fill="var(--color-secondary-main)"
+                    fill="var(--color-motor-forward)"
                 />
                 <circle
                     cx="75"
                     cy="50"
                     r="8"
-                    fill="var(--color-secondary-main)"
+                    fill="var(--color-motor-forward)"
                 />
                 <circle
                     cx="50"
                     cy="75"
                     r="8"
-                    fill="var(--color-secondary-main)"
+                    fill="var(--color-motor-forward)"
                 />
                 <circle
                     cx="25"
                     cy="50"
                     r="8"
-                    fill="var(--color-secondary-main)"
+                    fill="var(--color-motor-forward)"
                 />
 
                 {/* Center hub */}
@@ -117,7 +117,7 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
                     cx="50"
                     cy="50"
                     r="10"
-                    fill="var(--color-secondary-main)"
+                    fill="var(--color-motor-forward)"
                 />
             </svg>
 

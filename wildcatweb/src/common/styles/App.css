@@ -26,24 +26,28 @@ body {
 /* Main app container layout - HORIZONTAL LAYOUT */
 .app-container {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100vw;
     height: 100vh;
-    padding: var(--spacing-4);
-    gap: var(--spacing-4);
+    padding: var(--spacing-8);
+    gap: var(--spacing-5);
     overflow: hidden;
 }
 
 /* Fixed width for step panel - narrower as in FIGMA */
 .step-column {
-    flex: 0 0 180px;
+    flex: 0 0 auto;
     height: 100%;
-    min-width: 180px;
+    min-width: var(--panel-width-step);
+    max-width: var(--panel-width-step);
 }
 
 /* Fixed width for center panel - narrower as in FIGMA */
-.center-column {
-    flex: 0 0 350px;
-    min-width: 350px;
+.code-column {
+    flex: 0 0 auto;
+    min-width: var(--panel-width-code);
+    max-width: var(--panel-width-code);
     height: 100%;
 }
 
@@ -54,6 +58,7 @@ body {
     flex-direction: column;
     height: 100%;
     min-width: var(--panel-width-control);
+    max-width: var(--panel-width-control);
     position: relative;
 }
 
@@ -109,97 +114,34 @@ body {
     pointer-events: auto;
 }
 
-/* Common button styles for unified look */
-.blue-button {
-    background-color: var(--button-contained-default-bg);
-    color: var(--button-contained-default-text);
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    font-family: var(--font-family-active);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-}
-
-.blue-button:hover:not(:disabled) {
-    transform: var(--button-scale-hover);
-}
-
-.blue-button:active:not(:disabled) {
-    transform: var(--button-scale-active);
-}
-
-.blue-button:disabled {
-    background-color: var(--button-contained-disabled-bg);
-    color: var(--button-contained-disabled-text);
-    cursor: not-allowed;
-    opacity: 0.5;
-    transform: var(--button-scale-default);
-}
-
-.green-button {
-    background-color: transparent;
-    color: var(--button-selected-text);
-    border: var(--border-width-standard) solid var(--button-selected-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    font-family: var(--font-family-active);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-}
-
-.green-button:hover:not(:disabled) {
-    transform: var(--button-scale-hover);
-}
-
-.green-button:active:not(:disabled) {
-    transform: var(--button-scale-active);
-}
-
-.green-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: var(--button-scale-default);
-}
-
-.blue-panel {
-    background-color: transparent;
-    color: var(--color-text);
-    border: var(--border-width-standard) solid var(--panel-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-4);
-    font-family: var(--font-family-active);
-    text-transform: uppercase;
-}
-
 /* Responsive adjustments */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
     .app-container {
         padding: var(--spacing-2);
         gap: var(--spacing-2);
     }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1000px) {
     .app-container {
         flex-direction: column;
         overflow-y: auto;
         height: auto;
         min-height: 100vh;
+        overflow: initial;
+        padding: var(--spacing-4);
+        gap: var(--spacing-4);
     }
 
     .step-column,
     .center-column,
     .control-column {
-        flex: 0 0 auto;
+        flex: 0 0 1;
         width: 100%;
         height: auto;
-        min-height: 30vh;
+        /* min-height: 33vh; */
+        min-width: initial;
+        max-width: initial;
     }
+    /* Fixed width for step panel - narrower as in FIGMA */
 }

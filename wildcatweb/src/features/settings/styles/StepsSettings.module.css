@@ -101,7 +101,6 @@
     border-radius: var(--radius-md);
     padding: var(--spacing-3) var(--spacing-6);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
     cursor: pointer;
     text-transform: uppercase;
     transition: all var(--transition-normal);
@@ -174,7 +173,6 @@
 .confirmationHeader h3 {
     margin-left: var(--spacing-3);
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     font-family: var(--font-family-active);
 }
@@ -223,7 +221,6 @@
     border-radius: var(--radius-md);
     cursor: pointer;
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
     font-family: var(--font-family-active);

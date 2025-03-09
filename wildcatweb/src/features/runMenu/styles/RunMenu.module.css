@@ -4,6 +4,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
     background-color: var(--panel-bg);
@@ -62,7 +63,7 @@
 .stepButton.current {
     border-color: var(--button-selected-border);
     color: var(--button-selected-text);
-    background-color: rgba(0, 255, 0, 0.1);
+    background-color: var(--button-selected-bg);
 }
 
 /* Inactive steps */
@@ -84,11 +85,10 @@
     color: var(--button-contained-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
     padding: var(--spacing-2) var(--spacing-4);
     width: 100px;
     cursor: pointer;
-    margin-top: auto;
+    margin-top: var(--spacing-3);
     margin-bottom: var(--spacing-2);
     text-transform: uppercase;
     align-self: center;
@@ -103,8 +103,9 @@
 
 .playButton:disabled {
     background-color: var(--button-contained-disabled-bg);
+    color: var(--button-contained-disabled-text);
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: var(--button-contained-disabled-opacity);
 }
 
 .playButton:active {
