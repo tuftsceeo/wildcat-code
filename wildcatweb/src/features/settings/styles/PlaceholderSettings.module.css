@@ -21,7 +21,7 @@
 .title {
     font-size: var(--font-size-xl);
     margin-bottom: var(--spacing-2);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     font-family: var(--font-family-active);
     font-weight: var(--font-weight-bold);
 }
@@ -36,7 +36,7 @@
 
 .badge {
     margin-top: var(--spacing-4);
-    background-color: var(--color-gray-700);
+    background-color: var(--color-gray-bold);
     color: var(--panel-text);
     font-size: var(--font-size-sm);
     padding: var(--spacing-1) var(--spacing-3);
@@ -48,8 +48,8 @@
 
 /* Theme-specific color handling */
 body[data-theme="retro"] .badge {
-    background-color: var(--color-gray-700);
-    box-shadow: var(--glow-blue);
+    background-color: var(--color-gray-bold);
+    box-shadow: var(--glow-primary);
 }
 
 body[data-theme="pastel"] .badge {

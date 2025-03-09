@@ -193,7 +193,7 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
                             <div className={styles.confirmationHeader}>
                                 <AlertTriangle
                                     size={24}
-                                    color="var(--color-warning)"
+                                    color="var(--color-warning-main)"
                                 />
                                 <h3>Warning: Code Will Be Deleted</h3>
                             </div>

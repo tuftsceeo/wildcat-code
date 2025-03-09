@@ -84,7 +84,7 @@ const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
             // style={{
             //     position: "relative",
             //     display: "flex",
-            //     borderBottom: "2px solid var(--color-gray-800)",
+            //     borderBottom: "2px solid var(--color-gray-bold)",
             //     backgroundColor: "var(--color-panel-background)",
             //     padding: "var(--spacing-4) 0",
             // }}
@@ -133,7 +133,7 @@ const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
                             //     padding: "8px", // Smaller padding
                             //     borderRadius: "var(--radius-md)",
                             //     backgroundColor: isActive
-                            //         ? "var(--color-button-selected-bg, var(--color-gray-800))"
+                            //         ? "var(--color-button-selected-bg, var(--color-gray-bold))"
                             //         : "transparent",
                             //     border: isActive
                             //         ? `2px solid var(--color-border-active)`
@@ -195,8 +195,8 @@ const SettingsCarousel = ({ tabs, activeTab, setActiveTab }) => {
                                         marginTop: "4px",
                                         fontSize: "8px", // Smaller badge font
                                         backgroundColor:
-                                            "var(--color-gray-700)",
-                                        color: "var(--color-gray-400)",
+                                            "var(--color-gray-bold)",
+                                        color: "var(--color-gray-subtle)",
                                         padding: "1px 4px",
                                         borderRadius: "var(--radius-sm)",
                                         textTransform: "uppercase",

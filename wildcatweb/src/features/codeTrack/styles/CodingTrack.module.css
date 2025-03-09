@@ -10,7 +10,7 @@
     width: 100%;
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     padding: var(--spacing-4);
 }
 
@@ -150,10 +150,10 @@
 
 /* Test button at bottom */
 .testButton {
-    background-color: var(--button-contained-bg);
+    background-color: var(--button-contained-default-bg);
     border: none;
     border-radius: var(--radius-md);
-    color: var(--button-contained-text);
+    color: var(--button-contained-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
@@ -177,7 +177,7 @@
 }
 
 .testButton:disabled {
-    background-color: var(--button-disabled-bg);
+    background-color: var(--button-contained-disabled-bg);
     color: var(--button-disabled-text);
     cursor: not-allowed;
 }
@@ -247,7 +247,7 @@
 }
 
 .prevButton:disabled:before {
-    border-bottom-color: var(--color-text-disabled);
+    border-bottom-color: var(--color-gray-bold);
 }
 
 /* Next button triangle */
@@ -267,7 +267,7 @@
 }
 
 .nextButton:disabled:before {
-    border-top-color: var(--color-text-disabled);
+    border-top-color: var(--color-gray-bold);
 }
 
 /* Instruction block styles */
@@ -301,14 +301,14 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    color: var(--color-warning);
+    color: var(--color-warning-main);
 }
 
 .unknownText {
     font-size: var(--font-size-base);
     text-align: center;
     padding: var(--spacing-4);
-    border: 1px solid var(--color-warning);
+    border: 1px solid var(--color-warning-main);
     border-radius: var(--radius-md);
     font-family: var(--font-family-active);
 }
@@ -361,7 +361,7 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: var(--color-gray-800);
+    background-color: var(--color-gray-bold);
     position: relative;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -374,7 +374,7 @@
     left: 10px;
     right: 10px;
     bottom: 10px;
-    background-color: var(--color-gray-600);
+    background-color: var(--color-gray-medium);
     border-radius: 50%;
     transition: all var(--transition-normal);
 }

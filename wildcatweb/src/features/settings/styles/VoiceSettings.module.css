@@ -12,7 +12,7 @@
 
 .title {
     font-size: var(--font-size-xl);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     text-align: center;
     margin-bottom: var(--spacing-8);
     font-weight: var(--font-weight-bold);
@@ -22,7 +22,7 @@
 
 .sectionTitle {
     font-size: var(--font-size-lg);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     margin-bottom: var(--spacing-4);
     font-weight: var(--font-weight-medium);
     width: 100%;
@@ -53,8 +53,8 @@
     align-items: center;
     gap: var(--spacing-2);
     padding: var(--spacing-2) var(--spacing-3);
-    background-color: var(--button-contained-bg);
-    color: var(--button-contained-text);
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--font-size-sm);
@@ -66,7 +66,7 @@
 
 .playButton:hover {
     transform: var(--button-scale-hover);
-    box-shadow: var(--glow-blue);
+    box-shadow: var(--glow-primary);
 }
 
 .playButton:active {
@@ -75,7 +75,7 @@
 
 .previewBox {
     width: 100%;
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     border-radius: var(--radius-md);
     border: var(--border-width-thin) solid var(--panel-border);
     padding: var(--spacing-4);
@@ -91,7 +91,7 @@
 .previewInput {
     width: 100%;
     padding: var(--spacing-2);
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     border: var(--border-width-thin) solid var(--panel-border);
     color: var(--panel-text);
     border-radius: var(--radius-sm);
@@ -134,10 +134,10 @@
 }
 
 .voiceCard:hover:not(.selectedVoice) {
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     transform: var(--button-scale-hover);
-    box-shadow: var(--glow-blue);
-    border-color: var(--button-hover-border);
+    box-shadow: var(--glow-primary);
+    border-color: var(--button-default-border);
 }
 
 .voiceCard:active:not(.selectedVoice) {
@@ -161,7 +161,7 @@
     font-size: 24px;
     margin-right: var(--spacing-4);
     flex-shrink: 0;
-    color: var(--color-black);
+    color: var(--color-text);
 }
 
 .voiceInfo {
@@ -251,12 +251,12 @@
 
 /* Theme-specific adjustments */
 body[data-theme="retro"] .voiceCard:hover:not(.selectedVoice) {
-    background-color: var(--color-gray-800);
+    background-color: var(--color-gray-bold);
 }
 
 body[data-theme="clean"] .voiceCard,
 body[data-theme="pastel"] .voiceCard {
-    border-color: var(--color-gray-300);
+    border-color: var(--color-gray-faint);
 }
 
 body[data-theme="clean"] .voiceCard:hover:not(.selectedVoice),

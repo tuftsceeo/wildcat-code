@@ -17,7 +17,7 @@
 }
 
 .backwardLabel {
-    color: var(--color-error);
+    color: var(--color-error-main);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
@@ -37,7 +37,7 @@
     position: relative;
     height: 24px;
     border-radius: 12px;
-    background-color: var(--color-gray-800);
+    background-color: var(--color-gray-bold);
     cursor: pointer;
     margin-bottom: var(--spacing-3);
     border: 1px solid var(--button-default-border);
@@ -45,7 +45,7 @@
 }
 
 .sliderTrack:focus-visible {
-    box-shadow: var(--glow-blue);
+    box-shadow: var(--glow-primary);
 }
 
 /* Track background with gradient */
@@ -64,14 +64,14 @@
     flex: 3;
     background: linear-gradient(
         to right,
-        var(--color-error),
+        var(--color-error-main),
         rgba(255, 0, 0, 0.3)
     );
 }
 
 .centerStop {
     flex: 1;
-    background-color: var(--color-gray-600);
+    background-color: var(--color-gray-medium);
 }
 
 .forwardSection {
@@ -98,7 +98,7 @@
 .positionIndicator {
     width: 4px;
     height: 16px;
-    background-color: var(--color-white);
+    background-color: var(--color-background);
     border-radius: 2px;
     margin-top: 4px;
     opacity: 0.7;
@@ -106,7 +106,7 @@
 }
 
 .positionIndicator.active {
-    background-color: var(--color-white);
+    background-color: var(--color-background);
     opacity: 1;
     height: 20px;
     margin-top: 2px;
@@ -119,8 +119,8 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: var(--color-white);
-    border: 2px solid var(--color-black);
+    background-color: var(--color-background);
+    border: 2px solid var(--color-text);
     transform: translateX(-50%);
     box-shadow: var(--glow-white);
     z-index: 2;

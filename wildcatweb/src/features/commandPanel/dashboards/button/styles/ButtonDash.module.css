@@ -11,7 +11,7 @@
 
 /* Single button dash */
 .singleButtonDash {
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
     padding: var(--spacing-3);
@@ -20,8 +20,8 @@
 }
 
 .singleButtonDash.disconnected {
-    background-color: rgba(var(--color-error), 0.1);
-    border-color: var(--color-error);
+    background-color: rgba(var(--color-error-main), 0.1);
+    border-color: var(--color-error-main);
 }
 
 /* Button header styling */
@@ -42,19 +42,19 @@
 }
 
 .disconnectedLabel {
-    color: var(--color-error);
+    color: var(--color-error-main);
     font-size: var(--font-size-sm);
     margin-right: 8px;
     padding: 2px 5px;
-    background-color: rgba(var(--color-error), 0.2);
+    background-color: rgba(var(--color-error-main), 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
 }
 
 .dismissButton {
     background: transparent;
-    border: 1px solid var(--color-error);
-    color: var(--color-error);
+    border: 1px solid var(--color-error-main);
+    color: var(--color-error-main);
     font-size: var(--font-size-base);
     cursor: pointer;
     padding: 2px 5px;
@@ -64,8 +64,8 @@
 }
 
 .dismissButton:hover {
-    background-color: var(--color-error);
-    color: var(--color-white);
+    background-color: var(--color-error-main);
+    color: var(--color-background);
 }
 
 /* Container for button controls - split into two sections */
@@ -187,8 +187,8 @@
 }
 
 .toggleContainer.active .toggleOption.right {
-    color: var(--color-black);
-    text-shadow: 0px 0px 2px var(--color-white);
+    color: var(--color-text);
+    text-shadow: 0px 0px 2px var(--color-background);
 }
 
 .toggleContainer:not(.active) .toggleOption.left {
@@ -392,15 +392,15 @@
 }
 
 .noConnection {
-    background-color: rgba(var(--color-error), 0.1);
-    color: var(--color-error);
-    border: var(--border-width-standard) solid var(--color-error);
+    background-color: rgba(var(--color-error-main), 0.1);
+    color: var(--color-error-main);
+    border: var(--border-width-standard) solid var(--color-error-main);
 }
 
 .noButtons {
-    background-color: rgba(var(--color-warning), 0.1);
-    color: var(--color-warning);
-    border: var(--border-width-standard) solid var(--color-warning);
+    background-color: rgba(var(--color-warning-main), 0.1);
+    color: var(--color-warning-main);
+    border: var(--border-width-standard) solid var(--color-warning-main);
 }
 
 .noConnection svg,

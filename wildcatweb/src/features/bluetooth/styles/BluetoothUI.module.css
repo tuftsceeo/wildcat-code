@@ -94,7 +94,7 @@ body[data-theme="pastel"] .helpButton img {
     width: var(--bluetooth-status-indicator-size);
     height: var(--bluetooth-status-indicator-size);
     border-radius: 50%;
-    background-color: var(--color-error);
+    background-color: var(--color-error-main);
     border: 1px solid var(--color-background);
 }
 

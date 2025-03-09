@@ -184,7 +184,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                                 <Check
                                     className={styles.checkIcon}
                                     size={24}
-                                    color="var(--color-neon-green)"
+                                    color="var(--color-secondary-main)"
                                 />
                             </div>
                         ) : (
@@ -192,7 +192,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                                 <Plus
                                     className={styles.plusIcon}
                                     size={24}
-                                    color="var(--color-gray-400)"
+                                    color="var(--color-gray-subtle)"
                                 />
                             </div>
                         ))}

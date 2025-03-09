@@ -7,7 +7,7 @@
     flex-direction: column;
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     padding: var(--spacing-4);
     overflow: visible;
 }
@@ -30,7 +30,7 @@
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
     font-size: var(--font-size-lg);
-    color: var(--color-text-primary);
+    color: var(--color-text);
     position: relative;
     z-index: 1;
 }
@@ -212,8 +212,8 @@
 /* Status panel at the bottom */
 .statusPanel {
     margin-top: auto;
-    background-color: var(--color-white);
-    color: var(--color-black);
+    background-color: var(--color-background);
+    color: var(--color-text);
     padding: var(--spacing-3);
     border-radius: var(--radius-md);
     display: flex;

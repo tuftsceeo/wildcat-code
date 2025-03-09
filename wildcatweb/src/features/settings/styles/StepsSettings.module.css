@@ -9,7 +9,7 @@
 
 .title {
     font-size: var(--font-size-xl);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     text-align: center;
     margin-bottom: var(--spacing-8);
     font-weight: var(--font-weight-bold);
@@ -47,7 +47,7 @@
 }
 
 .stepButton:hover:not(.disabled) {
-    border-color: var(--button-hover-border);
+    border-color: var(--button-default-border);
     color: var(--button-hover-text);
     transform: var(--button-scale-hover);
     box-shadow: var(--glow-primary);
@@ -95,8 +95,8 @@
 }
 
 .updateButton {
-    background-color: var(--button-contained-bg);
-    color: var(--button-contained-text);
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
     border: none;
     border-radius: var(--radius-md);
     padding: var(--spacing-3) var(--spacing-6);
@@ -111,7 +111,7 @@
 
 .updateButton:hover:not(:disabled) {
     transform: var(--button-scale-hover);
-    box-shadow: var(--glow-blue);
+    box-shadow: var(--glow-primary);
 }
 
 .updateButton:active:not(:disabled) {
@@ -121,7 +121,7 @@
 .updateButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background-color: var(--button-disabled-bg);
+    background-color: var(--button-contained-disabled-bg);
     color: var(--button-disabled-text);
 }
 
@@ -153,8 +153,8 @@
 }
 
 .confirmationDialog {
-    background-color: var(--panel-background);
-    border: var(--border-width-standard) solid var(--color-warning);
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--color-warning-main);
     border-radius: var(--radius-md);
     padding: var(--spacing-6);
     width: 90%;
@@ -168,7 +168,7 @@
     display: flex;
     align-items: center;
     margin-bottom: var(--spacing-4);
-    color: var(--color-warning);
+    color: var(--color-warning-main);
 }
 
 .confirmationHeader h3 {
@@ -206,7 +206,7 @@
 }
 
 .cancelButton:hover {
-    border-color: var(--button-hover-border);
+    border-color: var(--button-default-border);
     color: var(--button-hover-text);
     transform: var(--button-scale-hover);
 }
@@ -216,8 +216,8 @@
 }
 
 .confirmButton {
-    background-color: var(--color-warning);
-    color: var(--color-black);
+    background-color: var(--color-warning-main);
+    color: var(--color-text);
     border: none;
     padding: var(--spacing-2) var(--spacing-4);
     border-radius: var(--radius-md);

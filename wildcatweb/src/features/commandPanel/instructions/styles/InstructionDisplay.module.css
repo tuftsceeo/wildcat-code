@@ -94,18 +94,18 @@
 }
 
 .emptyText {
-    color: var(--color-gray-400);
+    color: var(--color-gray-subtle);
     font-size: var(--font-size-lg);
     text-align: center;
     font-family: var(--font-family-active);
 }
 
 .unknownText {
-    color: var(--color-warning);
+    color: var(--color-warning-main);
     font-size: var(--font-size-base);
     text-align: center;
     padding: var(--spacing-4);
-    border: 1px solid var(--color-warning);
+    border: 1px solid var(--color-warning-main);
     border-radius: var(--radius-md);
     font-family: var(--font-family-active);
 }

@@ -10,7 +10,7 @@
     background-color: var(--color-background);
     border: var(--border-width-standard) solid var(--color-blue);
     border-radius: var(--radius-md);
-    box-shadow: var(--glow-blue);
+    box-shadow: var(--glow-primary);
     z-index: var(--z-index-modal);
     font-family: var(--font-family-primary);
     color: var(--panel-text);
@@ -40,7 +40,7 @@
 }
 
 .closeButton:hover {
-    color: var(--color-neon-green);
+    color: var(--color-secondary-main);
 }
 
 .dialogContent {

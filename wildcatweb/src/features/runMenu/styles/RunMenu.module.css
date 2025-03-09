@@ -6,7 +6,7 @@
     flex-direction: column;
     border: var(--border-width-standard) solid var(--panel-border);
     border-radius: var(--radius-md);
-    background-color: var(--panel-background);
+    background-color: var(--panel-bg);
     color: var(--panel-text);
     font-family: var(--font-family-active);
     padding: var(--spacing-4);
@@ -73,15 +73,15 @@
 
 /* Warning styling when needed */
 .stepButton.warning {
-    border-color: var(--color-warning);
+    border-color: var(--color-warning-main);
 }
 
 /* Play button - uses blue accent color */
 .playButton {
-    background-color: var(--button-contained-bg);
+    background-color: var(--button-contained-default-bg);
     border: none;
     border-radius: var(--radius-md);
-    color: var(--button-contained-text);
+    color: var(--button-contained-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
@@ -102,7 +102,7 @@
 }
 
 .playButton:disabled {
-    background-color: var(--button-disabled-bg);
+    background-color: var(--button-contained-disabled-bg);
     cursor: not-allowed;
     opacity: 0.6;
 }

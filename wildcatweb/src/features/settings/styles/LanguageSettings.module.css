@@ -9,7 +9,7 @@
 
 .title {
     font-size: var(--font-size-xl);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     text-align: center;
     margin-bottom: var(--spacing-8);
     font-weight: var(--font-weight-bold);
@@ -43,7 +43,7 @@
 
 .languageOption:hover:not(.activeLanguage) {
     transform: var(--button-scale-hover);
-    border-color: var(--button-hover-border);
+    border-color: var(--button-default-border);
 }
 
 .languageOption:active:not(.activeLanguage) {
@@ -76,7 +76,7 @@
 
 .nativeName {
     font-size: var(--font-size-sm);
-    color: var(--color-gray-400);
+    color: var(--color-gray-subtle);
 }
 
 .previewContainer {
@@ -87,7 +87,7 @@
 
 .previewTitle {
     font-size: var(--font-size-lg);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     margin-bottom: var(--spacing-2);
     font-family: var(--font-family-active);
     font-weight: var(--font-weight-medium);
@@ -111,8 +111,8 @@
 }
 
 .applyButton {
-    background-color: var(--button-contained-bg);
-    color: var(--button-contained-text);
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
     border: none;
     border-radius: var(--radius-md);
     padding: var(--spacing-3) var(--spacing-6);
@@ -128,7 +128,7 @@
 
 .applyButton:hover {
     transform: var(--button-scale-hover);
-    box-shadow: var(--glow-blue);
+    box-shadow: var(--glow-primary);
 }
 
 .applyButton:active {
@@ -147,7 +147,7 @@
 
 .comingSoonTitle {
     font-size: var(--font-size-base);
-    color: var(--color-gray-400);
+    color: var(--color-gray-subtle);
     margin-bottom: var(--spacing-3);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);

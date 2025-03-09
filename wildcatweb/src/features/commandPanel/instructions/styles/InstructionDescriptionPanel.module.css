@@ -2,11 +2,11 @@
 
 /* Base panel styles */
 .panel {
-    background-color: var(--color-white);
+    background-color: var(--color-background);
     border-radius: var(--radius-md);
     padding: var(--spacing-3);
     margin-top: auto;
-    color: var(--color-black);
+    color: var(--color-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     display: flex;
@@ -40,7 +40,7 @@
     flex: 1;
     line-height: var(--line-height-relaxed);
     font-size: var(--font-size-base);
-    color: var(--color-black);
+    color: var(--color-text);
 }
 
 /* Reading level classes - directly applied to text */
@@ -169,7 +169,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--color-black);
+    color: var(--color-text);
     padding: var(--spacing-1);
     margin-left: var(--spacing-2);
     border-radius: 50%;
@@ -192,8 +192,8 @@
 /* Theme-specific adjustments */
 body[data-theme="retro"] .panel {
     border: 2px solid var(--panel-border);
-    background-color: var(--color-black);
-    color: var(--color-white);
+    background-color: var(--color-text);
+    color: var(--color-background);
 }
 
 body[data-theme="retro"] .descriptionText,
@@ -212,7 +212,7 @@ body[data-theme="retro"] .conceptIcon {
 }
 
 body[data-theme="pastel"] .panel {
-    background-color: var(--color-white);
+    background-color: var(--color-background);
     border: 1px solid var(--panel-border);
 }
 
@@ -226,7 +226,7 @@ body[data-theme="pastel"] .conceptIcon {
 }
 
 body[data-theme="clean"] .panel {
-    background-color: var(--color-white);
+    background-color: var(--color-background);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 

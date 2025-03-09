@@ -16,7 +16,7 @@ export const ColorSensorButtons = ({ color, children, onClick }) => {
             style={{
                 backgroundColor: color,
                 borderColor:
-                    color === "#FFFFFF" ? "var(--color-gray-600)" : color,
+                    color === "#FFFFFF" ? "var(--color-gray-medium)" : color,
                 boxShadow: color === "#FFFFFF" ? "none" : `0 0 5px ${color}`,
             }}
             onClick={onClick}

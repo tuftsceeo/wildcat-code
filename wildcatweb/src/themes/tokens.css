@@ -325,7 +325,7 @@ body[data-theme="clean"] {
     --button-contained-selected-border: var(--color-secondary-main);
 
     --button-contained-disabled-bg: var(--color-gray-medium);
-    --button-contained-disabled-text: var(--color-white);
+    --button-contained-disabled-text: var(--color-background);
     --button-contained-disabled-border: var(--color-gray-medium);
 
     /* Panel/Card */
@@ -443,7 +443,7 @@ body[data-theme="pastel"] {
     --button-contained-selected-border: var(--color-secondary-main);
 
     --button-contained-disabled-bg: var(--color-gray-medium);
-    --button-contained-disabled-text: var(--color-white);
+    --button-contained-disabled-text: var(--color-background);
     --button-contained-disabled-border: var(--color-gray-medium);
 
     /* Panel/Card */

@@ -9,7 +9,7 @@
 
 .title {
     font-size: var(--font-size-xl);
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     text-align: center;
     margin-bottom: var(--spacing-8);
     font-weight: var(--font-weight-bold);
@@ -44,7 +44,7 @@
 
 .themeButton:hover:not(.activeTheme) {
     transform: var(--button-scale-hover);
-    border-color: var(--button-hover-border);
+    border-color: var(--button-default-border);
 }
 
 .themeButton:active:not(.activeTheme) {
@@ -91,7 +91,7 @@
 }
 
 .fontOptionsHeader {
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-4);
     font-family: var(--font-family-active);
@@ -116,7 +116,7 @@
     width: 48px;
     height: 24px;
     border-radius: 12px;
-    background-color: var(--color-gray-600);
+    background-color: var(--color-gray-medium);
     transition: all var(--transition-normal);
     cursor: pointer;
     border: none;
@@ -133,7 +133,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: var(--color-white);
+    background-color: var(--color-background);
     transition: all var(--transition-normal);
 }
 
