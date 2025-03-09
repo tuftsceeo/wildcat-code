@@ -192,8 +192,8 @@
 /* Theme-specific adjustments */
 body[data-theme="retro"] .panel {
     border: 2px solid var(--panel-border);
-    background-color: var(--color-text);
-    color: var(--color-background);
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 
 body[data-theme="retro"] .descriptionText,
