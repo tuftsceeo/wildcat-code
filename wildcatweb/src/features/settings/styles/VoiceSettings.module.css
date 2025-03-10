@@ -182,7 +182,6 @@
 .volumeControl {
     width: 100%;
     padding: var(--spacing-4) var(--spacing-6);
-    background-color: var(--button-selected-bg);
     border-radius: var(--radius-md);
     border: var(--border-width-standard) solid var(--panel-border);
 }

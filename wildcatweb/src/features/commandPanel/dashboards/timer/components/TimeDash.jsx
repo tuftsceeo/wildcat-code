@@ -60,13 +60,6 @@ export const TimeDash = ({ onUpdate, configuration }) => {
         <div className={styles.timeGroup}>
             <div className={styles.timeName}>WAIT FOR</div>
 
-            {/* Display success checkmark when configured */}
-            {isConfigured && (
-                <div className={styles.successCheck}>
-                    <Check size={24} />
-                </div>
-            )}
-
             {/* Time controls with buttons and numeric display */}
             <div className={styles.timeControlGroup}>
                 <div className={styles.timeControls}>

@@ -22,7 +22,7 @@
      */
 .carouselContainer {
     /*   flex: 1;
-    overflow-x: hidden;
+    
     position: relative;
     mask-image: linear-gradient(
         to right,
@@ -41,17 +41,19 @@
     padding: 0 var(--spacing-4);
  */
     display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     width: 100%;
     justify-content: center;
-    align-items: center;
+    align-items: start;
     gap: 8px;
     padding: 0 var(--spacing-4);
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-.carouselContainer::-webkit-scrollbar {
+/*.carouselContainer::-webkit-scrollbar {
     display: none;
-}
+} */
 
 /* Track with tabs */
 .carouselTrack {
@@ -132,7 +134,7 @@
             letterSpacing: "0.05em", // Slightly tighter letter spacing
             lineHeight: 1.2, // Tighter line height
         */
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-xxs);
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
@@ -144,14 +146,14 @@
 /* Coming soon badge */
 .comingSoonBadge {
     position: absolute;
-    bottom: -8px;
+    bottom: var(--spacing-2);
     left: 50%;
     transform: translateX(-50%);
     background-color: var(--color-gray-bold);
     color: var(--panel-text);
-    font-size: calc(var(--font-size-xs) * 0.8);
-    padding: 2px 6px;
-    border-radius: 10px;
+    font-size: calc(var(--font-size-xxs) * 0.8);
+    padding: var(--spacing-2) var(--spacing-2);
+    border-radius: var(--radius-md);
     /* text-transform: uppercase; */
     white-space: nowrap;
     font-family: var(--font-family-active);

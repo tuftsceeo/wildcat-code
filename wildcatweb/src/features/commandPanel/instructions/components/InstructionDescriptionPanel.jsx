@@ -47,8 +47,8 @@ const InstructionDescriptionPanel = ({
     const descriptionText = instruction
         ? generateDescription(instruction, language, readingLevel, slotNumber)
         : language === "es"
-        ? "Seleccionar una acción o sensor..."
-        : "Select an action or sensor...";
+        ? "Seleccionar una acción o sensor"
+        : "Select an action or sensor";
 
     // Check if this is a multi-instruction description (with periods)
     const isMultiInstruction = descriptionText.split(". ").length > 1;

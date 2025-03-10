@@ -71,11 +71,11 @@ const SingleMotorDash = memo(
         // Define bar properties
         const getBars = () => {
             // Create the 7 bars with their relative heights (3-2-1-0-1-2-3)
-            const barHeights = [3, 2, 1, 0, 1, 2, 3];
+            const barHeights = [3, 2, 1, 1.5, 1, 2, 3];
 
             return barHeights.map((height, index) => {
                 // The fourth bar (index 3) should have zero height (invisible)
-                const actualHeight = index === 3 ? 0 : height * 20; // Scale heights
+                const actualHeight = height * 20; // Scale heights
 
                 // Determine if the bar should be highlighted based on slider position
                 let isActive = false;
@@ -88,10 +88,13 @@ const SingleMotorDash = memo(
                     isActive = index === 1 || index === 2;
                 } else if (sliderPosition === 2) {
                     // backward-slow
+
                     isActive = index === 2;
                 } else if (sliderPosition === 3) {
                     // stop
-                    isActive = false; // No bars highlighted
+
+                    isActive =
+                        index === 3 && configuration?.speed !== undefined; // No bars highlighted
                 } else if (sliderPosition === 4) {
                     // forward-slow
                     isActive = index === 4;
@@ -104,14 +107,15 @@ const SingleMotorDash = memo(
                 }
 
                 // Determine if bar is in backward or forward section
-                const isForward = index >= 3;
+                const isForward = index > 3;
+                const isVisible = index !== 3;
 
                 return {
                     index,
                     height: actualHeight,
                     isActive,
                     isForward,
-                    isVisible: actualHeight >= 0, // Bar 4 isn't visible
+                    isVisible, // Bar 4 isn't visible
                 };
             });
         };
@@ -279,27 +283,32 @@ const SingleMotorDash = memo(
                 <div className={styles.motorControlContainer}>
                     {/* Full-width bar visualization that matches slider width */}
                     <div className={styles.barVisualization}>
-                        {bars.map(
-                            (bar) =>
-                                bar.isVisible && (
-                                    <button
-                                        key={`bar-${bar.index}`}
-                                        className={`${styles.bar} ${
-                                            bar.isForward
-                                                ? styles.forwardBar
-                                                : styles.backwardBar
-                                        } ${bar.isActive ? styles.active : ""}`}
-                                        style={{ height: `${bar.height}px` }}
-                                        onClick={() =>
-                                            handleBarClick(bar.index)
-                                        }
-                                        disabled={isDisconnected}
-                                        aria-label={`Set speed to ${
-                                            positionIcons[bar.index].label
-                                        }`}
-                                    />
-                                ),
-                        )}
+                        {bars.map((bar) => (
+                            <button
+                                key={`bar-${bar.index}`}
+                                className={`${styles.bar} 
+                                ${
+                                    bar.isVisible
+                                        ? `${
+                                              bar.isForward
+                                                  ? styles.forwardBar
+                                                  : styles.backwardBar
+                                          }`
+                                        : styles.stopBar
+                                } 
+                                
+                                ${bar.isActive ? styles.active : ""} 
+                                `}
+                                style={{ height: `${bar.height}px` }}
+                                onClick={() => handleBarClick(bar.index)}
+                                disabled={isDisconnected}
+                                aria-label={`Set speed to ${
+                                    positionIcons[bar.index].label
+                                }`}
+                            >
+                                {bar.height === 30 ? <Octagon /> : ""}
+                            </button>
+                        ))}
                     </div>
 
                     {/* Slider control */}

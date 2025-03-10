@@ -6,7 +6,12 @@
 
 import React, { useState, useEffect, useCallback, memo } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
-import { Disc, RefreshCwOff, BluetoothSearching } from "lucide-react";
+import {
+    Disc,
+    RefreshCwOff,
+    BluetoothSearching,
+    BluetoothConnected,
+} from "lucide-react";
 import styles from "../styles/ButtonDash.module.css";
 
 /**
@@ -22,7 +27,14 @@ import styles from "../styles/ButtonDash.module.css";
  * @returns {JSX.Element} Single button dashboard
  */
 const SingleButtonDash = memo(
-    ({ port, onUpdate, configuration, isDisconnected, onDismiss }) => {
+    ({
+        port,
+        onUpdate,
+        configuration,
+        isDisconnected,
+        onDismiss,
+        showLabels = true,
+    }) => {
         // Initialize state from props or defaults
         const [waitCondition, setWaitCondition] = useState(
             configuration?.waitCondition || "pressed",
@@ -92,66 +104,69 @@ const SingleButtonDash = memo(
                 </div>
 
                 {/* Button configuration - split into command and live sections */}
-                <div className={styles.buttonControlContainer}>
+                <div className={styles.sliderControl}>
                     {/* Command section - shows programmed condition */}
-                    <div className={styles.commandSection}>
-                        {/* Wider toggle switch that matches the demo */}
+
+                    <div
+                        className={`${styles.sliderWithLabels} ${
+                            waitCondition === "pressed" ? styles.active : ""
+                        }`}
+                    >
+                        {showLabels && (
+                            <div className={styles.releasedLabel}>RELEASED</div>
+                        )}
+
                         <div
-                            className={`${styles.toggleContainer} ${
+                            className={`${styles.sliderTrack} ${
                                 waitCondition === "pressed" ? styles.active : ""
                             }`}
                             onClick={handleWaitConditionChange}
                         >
-                            <div className={styles.toggleOptions}>
-                                <span
-                                    className={`${styles.toggleOption} ${styles.left}`}
-                                >
-                                    RELEASED
-                                </span>
-                                <span
-                                    className={`${styles.toggleOption} ${styles.right}`}
-                                >
-                                    PRESSED
-                                </span>
-                            </div>
-                            <div className={styles.toggleKnob}></div>
+                            <div className={styles.sliderThumb}></div>
                         </div>
 
-                        {/* Large button visualization for the command (as coded) */}
-                        <div className={styles.buttonVisualContainer}>
-                            <div className={styles.sensorContainer}>
-                                <div className={styles.sensorBody}></div>
-                                <div
-                                    className={`${styles.sensorButton} ${
-                                        waitCondition === "pressed"
-                                            ? styles.pressed
-                                            : ""
-                                    }`}
-                                ></div>
-                                <div className={styles.sensorMask}></div>
-                                <div
-                                    className={`${styles.arrowIndicator} ${
-                                        waitCondition === "pressed"
-                                            ? styles.arrowDown
-                                            : styles.arrowUp
-                                    }`}
-                                ></div>
-                            </div>
+                        {showLabels && (
+                            <div className={styles.pressedLabel}>PRESSED</div>
+                        )}
+                    </div>
+                </div>
+                {/* Large button visualization for the command (as coded) */}
+                <div className={styles.visualsContainer}>
+                    <div className={styles.buttonVisualContainer}>
+                        <div className={styles.sensorContainer}>
+                            <div className={styles.sensorBody}></div>
+                            <div
+                                className={`${styles.sensorButton} ${
+                                    waitCondition === "pressed"
+                                        ? styles.pressed
+                                        : ""
+                                }`}
+                            ></div>
+                            <div className={styles.sensorMask}></div>
+                            <div
+                                className={`${styles.arrowIndicator} ${
+                                    waitCondition === "pressed"
+                                        ? styles.arrowDown
+                                        : styles.arrowUp
+                                }`}
+                            ></div>
+                        </div>
 
-                            <div className={styles.buttonStatus}>
-                                {waitCondition === "pressed"
-                                    ? "PRESSED"
-                                    : "RELEASED"}
-                            </div>
+                        <div className={styles.buttonStatus}>
+                            {waitCondition === "pressed"
+                                ? "PRESSED"
+                                : "RELEASED"}
                         </div>
                     </div>
 
                     {/* Live state section - shows current sensor state */}
                     <div className={styles.liveStateSection}>
-                        <div className={styles.sectionHeader}>LIVE</div>
+                        <div className={styles.sectionHeader}>
+                            <BluetoothConnected size={20} />
+                        </div>
 
                         {/* Small button visualization for live state */}
-                        <div className={styles.buttonVisualContainer}>
+                        <div className={styles.liveVisualContainer}>
                             <div className={styles.liveSensorContainer}>
                                 <div className={styles.sensorBodySmall}></div>
                                 <div
@@ -167,14 +182,6 @@ const SingleButtonDash = memo(
                                             : styles.arrowUpSmall
                                     }`}
                                 ></div>
-                            </div>
-
-                            <div className={styles.buttonStatus}>
-                                {isDisconnected
-                                    ? "N/A"
-                                    : isCurrentlyPressed
-                                    ? "PRESSED"
-                                    : "RELEASED"}
                             </div>
                         </div>
                     </div>

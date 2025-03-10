@@ -66,9 +66,10 @@
 }
 
 .optionLabel {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     text-align: center;
     font-family: var(--font-family-active);
+    color: var(--color-text);
 }
 
 .description {

@@ -60,6 +60,7 @@ body {
     min-width: var(--panel-width-control);
     max-width: var(--panel-width-control);
     position: relative;
+    overflow-y: auto;
 }
 
 /* Bluetooth menu positioning */

@@ -133,7 +133,7 @@ const VoiceSettings = () => {
                 {isSpanish ? "Voces de Robot" : "Robot Voices"}
             </h2>
 
-            <div className={styles.previewContainer}>
+            {/*  <div className={styles.previewContainer}>
                 <div className={styles.previewTitle}>
                     <span>{isSpanish ? "Vista Previa" : "Preview Voice"}</span>
                     <button
@@ -153,7 +153,7 @@ const VoiceSettings = () => {
                 <div className={styles.previewBox}>
                     <p className={styles.previewText}>{previewText}</p>
                 </div>
-            </div>
+            </div> */}
 
             <div className={styles.voiceOptions}>
                 <h3 className={styles.sectionTitle}>

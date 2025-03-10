@@ -75,8 +75,6 @@
     width: 80px;
     height: 60px;
     background-color: var(--button-selected-bg);
-    border: var(--border-width-standard) solid var(--button-default-border);
-    border-radius: var(--radius-md);
     margin: 0 var(--spacing-4);
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
@@ -138,6 +136,6 @@
     position: absolute;
     top: var(--spacing-4);
     right: var(--spacing-4);
-    color: var(--color-success-main);
+    color: var(--color-success-high);
     font-size: var(--font-size-xl);
 }

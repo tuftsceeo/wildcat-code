@@ -70,13 +70,12 @@
 
 .languageName {
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
     color: var(--panel-text);
 }
 
 .nativeName {
     font-size: var(--font-size-sm);
-    color: var(--color-gray-subtle);
+    color: var(--color-gray-medium);
 }
 
 .previewContainer {
@@ -117,7 +116,6 @@
     border-radius: var(--radius-md);
     padding: var(--spacing-3) var(--spacing-6);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
     cursor: pointer;
     text-transform: uppercase;
     transition: all var(--transition-normal);

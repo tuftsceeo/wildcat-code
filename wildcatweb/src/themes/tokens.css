@@ -52,6 +52,7 @@
     --z-index-toast: 50;
 
     /* Font Sizes */
+    --font-size-xxs: 0.6rem; /* 12px */
     --font-size-xs: 1.2rem; /* 12px */
     --font-size-sm: 1.4rem; /* 14px */
     --font-size-base: 1.6rem; /* 16px */
@@ -118,6 +119,7 @@
     /*Small Screens*/
     :root {
         /* Font Sizes */
+        --font-size-xxs: 0.5rem; /* 12px */
         --font-size-xs: 0.9rem; /* 12px */
         --font-size-sm: 1.05rem; /* 14px */
         --font-size-base: 1.2rem; /* 16px */
@@ -137,6 +139,7 @@
     /*Portrait/Phone*/
     :root {
         /* Font Sizes */
+        --font-size-xxs: 0.4rem; /* 12px */
         --font-size-xs: 0.6rem; /* 12px */
         --font-size-sm: 0.7rem; /* 14px */
         --font-size-base: 0.8rem; /* 16px */
@@ -161,6 +164,7 @@ body[data-theme="retro"] {
     /* Base Colors */
     --color-background: #1e1e1e;
     --color-text: #ffffff;
+    --color-transparent: transparent;
 
     /* Primary Color - Neon Blue */
     --color-primary-main: #0050d8;
@@ -186,7 +190,7 @@ body[data-theme="retro"] {
     --color-warning-contrast: #1e1e1e;
 
     --color-info-main: #ffff00;
-    --color-info-low: #999900;
+    --color-info-low: #e0be00;
     --color-info-high: #ffff80;
     --color-info-contrast: #1e1e1e;
 
@@ -289,7 +293,7 @@ body[data-theme="clean"] {
     --color-primary-contrast: #ffffff;
 
     /* Secondary Color - Green */
-    --color-secondary-main: #00aa55;
+    --color-secondary-main: rgb(0, 170, 85);
     --color-primary-low: #4cbb7c; /* Lighter/Less contrast in light mode */
     --color-primary-high: #007744; /* Darker/Higher contrast in light mode */
     --color-secondary-contrast: #ffffff;
@@ -342,10 +346,10 @@ body[data-theme="clean"] {
 
     /* Button States - Outlined */
     --button-default-bg: transparent;
-    --button-default-text: var(--color-primary-main);
+    --button-default-text: var(--color-text);
     --button-default-border: var(--color-primary-main);
 
-    --button-selected-bg: transparent;
+    --button-selected-bg: rgba(0, 170, 85, 0.1);
     --button-selected-text: var(--color-secondary-main);
     --button-selected-border: var(--color-secondary-main);
 
@@ -512,6 +516,14 @@ body[data-theme="pastel"] {
 /* Apply dyslexia font when enabled */
 body.dyslexia-font {
     --font-family-active: var(--font-family-dyslexic);
+    --font-size-xxs: 0.5rem; /* 12px */
+    --font-size-xs: 0.9rem; /* 12px */
+    --font-size-sm: 1.05rem; /* 14px */
+    --font-size-base: 1.2rem; /* 16px */
+    --font-size-lg: 1.5rem; /* 32 px*/
+    --font-size-xl: 1.875rem; /* 24px */
+    --font-size-2xl: 2.4rem; /* 32px */
+    --font-size-3xl: 3rem; /* 40px */
 }
 
 /* Apply high contrast when enabled */

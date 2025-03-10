@@ -15,6 +15,7 @@ import {
     Globe,
     Accessibility,
     UserRound,
+    MessageCircleMore,
     Users,
 } from "lucide-react";
 import Portal from "../../../common/components/Portal";
@@ -65,7 +66,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
         },
         {
             id: "voice",
-            icon: <Volume2 size={32} />,
+            icon: <MessageCircleMore size={32} />,
             name: "Voice",
             color: "#ff7700",
             available: true,
@@ -88,8 +89,8 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             priority: "high",
         },
         {
-            id: "access",
-            icon: <Accessibility size={32} />,
+            id: "sound",
+            icon: <Volume2 size={32} />,
             name: "Help",
             color: "#ffdd00",
             available: false,

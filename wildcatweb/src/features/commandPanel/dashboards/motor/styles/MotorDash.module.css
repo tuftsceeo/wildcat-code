@@ -11,7 +11,7 @@
 
 .singleMotorDash {
     background-color: var(--panel-bg);
-    border: var(--border-width-standard) solid var(--panel-border);
+    border: var(--border-width-standard) solid var(--color-transparent);
     border-radius: var(--radius-md);
     padding: var(--spacing-3);
     width: 100%;
@@ -32,7 +32,7 @@
 .portLabel {
     color: var(--color-text);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
     flex-grow: 1;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
@@ -112,6 +112,15 @@
     background-color: var(--color-gray-subtle);
 }
 
+.stopBar {
+    background-color: transparent;
+    color: var(--color-gray-subtle);
+}
+
+.stopBar.active {
+    color: var(--color-error-main);
+}
+
 .forwardBar.active {
     background-color: var(--color-motor-forward);
     box-shadow: var(--glow-secondary);
@@ -143,7 +152,7 @@
 /* Direction labels */
 .backwardLabel,
 .forwardLabel {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-xxs);
     text-transform: uppercase;
     white-space: nowrap;
 }
@@ -166,10 +175,10 @@
     background: linear-gradient(
         to right,
         var(--color-motor-backward) 0%,
-        var(--color-motor-backward) 33%,
-        var(--color-gray-subtle) 33%,
-        var(--color-gray-subtle) 67%,
-        var(--color-motor-forward) 67%,
+        var(--color-motor-backward) 10%,
+        var(--color-gray-subtle) 38%,
+        var(--color-gray-subtle) 62%,
+        var(--color-motor-forward) 90%,
         var(--color-motor-forward) 100%
     );
     border: var(--border-width-thin) solid var(--color-gray-medium);

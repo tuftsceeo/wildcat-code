@@ -32,28 +32,38 @@ const ButtonInstructionBlock = ({ configuration }) => {
     const { port = "A", waitCondition = "pressed" } = configuration;
 
     return (
-        <BaseInstructionBlock title={`WAIT FOR BUTTON ${port}`}>
+        <BaseInstructionBlock>
             <div className={styles.buttonVisualization}>
-                <div className={styles.buttonIcon}>
-                    <Disc
-                        size={48}
-                        color="var(--color-sensor-main)"
-                    />
-                </div>
-                <div
-                    className={`${styles.buttonCondition} ${
-                        waitCondition === "pressed"
-                            ? styles.pressedCondition
-                            : styles.releasedCondition
-                    }`}
-                >
-                    {waitCondition === "pressed"
-                        ? "UNTIL PRESSED"
-                        : "UNTIL RELEASED"}
-                </div>
+                {/* Large button visualization for the command (as coded) */}
+                <div className={styles.buttonVisualContainer}>
+                    <div className={styles.sensorContainer}>
+                        <div className={styles.sensorBody}></div>
+                        <div
+                            className={`${styles.sensorButton} ${
+                                waitCondition === "pressed"
+                                    ? styles.pressed
+                                    : ""
+                            }`}
+                        ></div>
+                        <div className={styles.sensorMask}></div>
+                        <div
+                            className={`${styles.arrowIndicator} ${
+                                waitCondition === "pressed"
+                                    ? styles.arrowDown
+                                    : styles.arrowUp
+                            }`}
+                        ></div>
+                    </div>
 
+                    <div className={styles.buttonStatus}>
+                        {waitCondition === "pressed" ? "PRESSED" : "RELEASED"}
+                    </div>
+                    <div className={styles.motorLabel}>
+                        {`BUTTON ${port} `}
+                    </div>
+                </div>
                 {/* Visual representation of button state */}
-                <div className={styles.buttonStateVisual}>
+                {/*<div className={styles.buttonStateVisual}>
                     <div
                         className={`${styles.buttonStateCircle} ${
                             waitCondition === "pressed"
@@ -63,7 +73,7 @@ const ButtonInstructionBlock = ({ configuration }) => {
                     >
                         <div className={styles.buttonStateInner}></div>
                     </div>
-                </div>
+                </div>*/}
             </div>
         </BaseInstructionBlock>
     );

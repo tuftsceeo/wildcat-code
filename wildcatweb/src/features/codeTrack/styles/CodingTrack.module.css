@@ -133,16 +133,15 @@
 }
 
 .timerValue {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-xl);
     color: var(--color-timer-main);
-    margin: var(--spacing-2) 0;
     font-family: var(--font-family-active);
     font-weight: var(--font-weight-bold);
 }
 
 .timerUnit {
     font-size: var(--font-size-sm);
-    color: var(--color-timer-main);
+    color: var(--color-text);
     text-transform: uppercase;
     font-family: var(--font-family-active);
     letter-spacing: var(--letter-spacing-wide);
@@ -393,4 +392,181 @@
 .buttonReleased .buttonStateInner {
     background-color: var(--color-primary-main);
     transform: translateY(0);
+}
+
+/* BUTTON VISUALIZATION */
+.buttonVisualContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--spacing-2);
+}
+
+.sensorContainer {
+    position: relative;
+    width: 100px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.liveSensorContainer {
+    position: relative;
+    width: 60px;
+    height: 50px;
+    margin: 0 auto;
+}
+
+.sensorBody {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
+    );
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border-top: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 40px;
+}
+
+.sensorBodySmall {
+    position: absolute;
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
+    );
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border-top: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+}
+
+.sensorMask {
+    position: absolute;
+    width: 80px;
+    height: 25px;
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 15px;
+    z-index: 2;
+}
+
+.sensorMaskSmall {
+    position: absolute;
+    width: 40px;
+    height: 12px;
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 8px;
+    z-index: 2;
+}
+
+.sensorButton {
+    position: absolute;
+    width: 30px;
+    height: 25px;
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.sensorButtonSmall {
+    position: absolute;
+    width: 15px;
+    height: 12px;
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.sensorButton.pressed,
+.sensorButtonSmall.pressed {
+    transform: translate(-50%, 10px);
+}
+
+.sensorButtonSmall.pressed {
+    transform: translate(-50%, 5px);
+}
+
+.arrowIndicator {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    z-index: 0;
+    transition: all var(--transition-normal);
+}
+
+.arrowIndicatorSmall {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 25px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    z-index: 0;
+    transition: all var(--transition-normal);
+}
+
+.arrowUp {
+    border-bottom: 15px solid var(--color-motor-backward);
+    border-top: 0;
+}
+
+.arrowDown {
+    border-top: 15px solid var(--color-motor-forward);
+    border-bottom: 0;
+}
+
+.arrowUpSmall {
+    border-bottom: 7px solid var(--color-motor-backward);
+    border-top: 0;
+}
+
+.arrowDownSmall {
+    border-top: 7px solid var(--color-motor-forward);
+    border-bottom: 0;
+}
+
+.buttonStatus {
+    font-size: var(--font-size-xs);
+    color: var(--panel-text);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-top: var(--spacing-2);
+    text-align: center;
 }

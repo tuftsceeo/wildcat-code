@@ -115,7 +115,7 @@ const LanguageSettings = () => {
                 ))}
             </div>
 
-            <div className={styles.previewContainer}>
+            {/* <div className={styles.previewContainer}>
                 <div className={styles.previewTitle}>{getPreviewText()}</div>
                 <div className={styles.previewContent}>
                     <div className={styles.previewInstruction}>
@@ -133,7 +133,7 @@ const LanguageSettings = () => {
                         )}
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Only show Apply button if the selection differs from current setting */}
             {selectedLanguage !== language && (
@@ -146,7 +146,7 @@ const LanguageSettings = () => {
             )}
 
             {/* Coming soon section for additional languages */}
-            <div className={styles.comingSoonSection}>
+            {/* <div className={styles.comingSoonSection}>
                 <h3 className={styles.comingSoonTitle}>
                     {selectedLanguage === "es" ? "Próximamente" : "Coming Soon"}
                 </h3>
@@ -162,7 +162,7 @@ const LanguageSettings = () => {
                         <span className={styles.languageName}>French</span>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

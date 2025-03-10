@@ -81,7 +81,7 @@ const ReadingLevelSettings = () => {
                     COMPLEXITY_LEVELS[readingLevel]?.description.en}
             </div>
 
-            <div className={styles.previewContainer}>
+            {/* <div className={styles.previewContainer}>
                 <div className={styles.previewTitle}>
                     {language === "es" ? "Vista Previa:" : "Preview:"}
                 </div>
@@ -100,13 +100,13 @@ const ReadingLevelSettings = () => {
                             readingLevel,
                         )}
                     </div>
-                </div>
+                </div> 
                 <div className={styles.previewNote}>
                     {language === "es"
                         ? "Así es como aparecerán las instrucciones en la aplicación"
                         : "This is how instructions will appear in the app"}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

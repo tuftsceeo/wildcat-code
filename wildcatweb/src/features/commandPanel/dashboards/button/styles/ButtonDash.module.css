@@ -12,7 +12,7 @@
 /* Single button dash */
 .singleButtonDash {
     background-color: var(--panel-bg);
-    border: var(--border-width-standard) solid var(--panel-border);
+    border: var(--border-width-standard) solid var(--color-transparent);
     border-radius: var(--radius-md);
     padding: var(--spacing-3);
     width: 100%;
@@ -34,7 +34,7 @@
 .portLabel {
     color: var(--panel-text);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
 
     flex-grow: 1;
     text-transform: uppercase;
@@ -83,30 +83,41 @@
     flex-direction: column;
     align-items: center;
     padding: var(--spacing-3);
-    border-right: 1px solid var(--color-gray-medium);
+    /* border-right: 1px solid var(--color-gray-medium); */
+}
+
+.visualsContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: var(--spacing-2);
 }
 
 /* Live state section - theme adaptive */
 .liveStateSection {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: var(--spacing-3);
-    background-color: var(--button-selected-bg);
-    border: 1px solid var(--panel-border);
+    padding: var(--spacing-1);
+    background-color: var(--color-gray-faint);
+    opacity: 0.7;
+    border: var(--border-width-thin) solid var(--panel-border);
     border-radius: var(--radius-sm);
+    z-index: 1;
 }
 
 /* Section headers */
 .sectionHeader {
-    width: 100%;
-    font-size: var(--font-size-sm);
+    color: var(--color-primary-high);
+    animation: pulse 3s infinite;
+    font-size: var(--font-size-xxs);
     text-transform: uppercase;
-    color: var(--panel-text);
-    margin-bottom: var(--spacing-2);
+    margin: var(--spacing-1);
     letter-spacing: var(--letter-spacing-wide);
     text-align: center;
+    z-index: 2;
 }
 
 /* Wait condition section */
@@ -128,7 +139,115 @@
     align-self: flex-start;
 }
 
+/* MotorSlider.module.css - Refactored with design token system */
+
+/* Slider control styles */
+.sliderControl {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+}
+
+/* Container for slider and labels */
+.sliderWithLabels {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+/* Direction labels */
+.pressedLabel,
+.releasedLabel {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.releasedLabel {
+    color: var(--color-motor-backward);
+}
+
+.pressedLabel {
+    color: var(--color-motor-forward);
+}
+/* 
+.sliderWithLabels.active .releasedLabel {
+    color: var(--color-motor-backward);
+}
+
+.sliderWithLabels.active .pressedLabel {
+    color: var(--color-motor-forward);
+}
+
+.sliderWithLabels:not(.active) .releasedLabel {
+    color: var(--color-motor-backward);
+}
+
+.sliderWithLabels:not(.active) .pressedLabel {
+    color: var(--color-gray-bold);
+}
+ */
+/* Slider track */
+.sliderTrack {
+    flex: 1;
+    position: relative;
+    height: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--color-gray-subtle);
+    border: var(--border-width-thin) solid var(--color-gray-medium);
+    outline: none;
+}
+
+.sliderTrack:focus-visible {
+    box-shadow: var(--glow-primary);
+}
+
+/* Slider thumb */
+.sliderThumb {
+    position: absolute;
+    width: 44px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: var(--color-motor-backward);
+    border: var(--border-width-standard) solid var(--color-text);
+    /* transform: translateX(-50%); */
+    box-shadow: var(--glow-white);
+    z-index: 1;
+    transition: left var(--transition-normal);
+    top: -4px;
+    left: -4px;
+    cursor: pointer;
+}
+
+.sliderTrack.active .sliderThumb:hover {
+    transform: scale(var(--button-scale-hover));
+}
+
+.sliderTrack:not(.active) .sliderThumb:hover {
+    transform: scale(var(--button-scale-hover));
+}
+
+.sliderTrack.active .sliderThumb {
+    left: calc(100% - 40px);
+    background-color: var(--color-motor-forward);
+}
+
 /* TOGGLE SWITCH STYLING - IMPROVED CONTRAST */
+/* 
+.toggleKnob {
+    position: absolute;
+    width: 90px;
+    height: 26px;
+    background-color: var(--color-gray-medium);
+    border-radius: 13px;
+    top: 2px;
+    left: 2px;
+    transition: left var(--transition-normal);
+    z-index: 1;
+}
+
+
 .toggleContainer {
     position: relative;
     width: 180px;
@@ -179,9 +298,9 @@
     left: calc(100% - 92px);
     background-color: var(--color-secondary-main);
 }
-
+*/
 /* Improved contrast for toggle text */
-.toggleContainer.active .toggleOption.left {
+/*.toggleContainer.active .toggleOption.left {
     color: var(--color-gray-subtle);
 }
 
@@ -197,6 +316,7 @@
 .toggleContainer:not(.active) .toggleOption.right {
     color: var(--color-gray-subtle);
 }
+*/
 
 /* BUTTON VISUALIZATION */
 .buttonVisualContainer {
@@ -204,6 +324,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: var(--spacing-2);
 }
 
 .sensorContainer {
@@ -211,6 +332,13 @@
     width: 100px;
     height: 80px;
     margin: 0 auto;
+}
+
+.liveVisualContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--spacing-2);
 }
 
 .liveSensorContainer {
@@ -346,22 +474,22 @@
 }
 
 .arrowUp {
-    border-bottom: 15px solid var(--color-gray-subtle);
+    border-bottom: 15px solid var(--color-motor-backward);
     border-top: 0;
 }
 
 .arrowDown {
-    border-top: 15px solid var(--color-secondary-main);
+    border-top: 15px solid var(--color-motor-forward);
     border-bottom: 0;
 }
 
 .arrowUpSmall {
-    border-bottom: 7px solid var(--color-gray-subtle);
+    border-bottom: 7px solid var(--color-motor-backward);
     border-top: 0;
 }
 
 .arrowDownSmall {
-    border-top: 7px solid var(--color-secondary-main);
+    border-top: 7px solid var(--color-motor-forward);
     border-bottom: 0;
 }
 

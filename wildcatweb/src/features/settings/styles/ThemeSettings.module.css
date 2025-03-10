@@ -83,7 +83,6 @@
 .fontOptions {
     width: 100%;
     max-width: 500px;
-    background-color: var(--button-selected-bg);
     border-radius: var(--radius-md);
     padding: var(--spacing-4);
     margin-top: var(--spacing-4);
