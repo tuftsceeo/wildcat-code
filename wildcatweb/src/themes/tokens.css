@@ -2,6 +2,8 @@
  * This file provides a complete set of design tokens for all themes
  * using contrast-based naming conventions instead of light/dark.
  * Preference for rem scaling.
+ * 
+ * UPDATED: Added RGB values for all colors to support rgba() usage
  */
 
 /* Import necessary fonts */
@@ -162,57 +164,88 @@ body[data-theme="retro"] {
     --font-family-active: var(--font-family-primary);
 
     /* Base Colors */
-    --color-background: #1e1e1e;
-    --color-text: #ffffff;
+    --color-background-rgb: 30, 30, 30;
+    --color-background: rgb(var(--color-background-rgb));
+    --color-text-rgb: 255, 255, 255;
+    --color-text: rgb(var(--color-text-rgb));
     --color-transparent: transparent;
 
     /* Primary Color - Neon Blue */
-    --color-primary-main: #0050d8;
-    --color-primary-low: #093055; /* Darker/Less contrast in dark mode */
-    --color-primary-high: #35b1ff; /* Lighter/Higher contrast in dark mode */
-    --color-primary-contrast: #1e1e1e;
+    --color-primary-main-rgb: 0, 80, 216;
+    --color-primary-main: rgb(var(--color-primary-main-rgb));
+    --color-primary-low-rgb: 9, 48, 85;
+    --color-primary-low: rgb(var(--color-primary-low-rgb));
+    --color-primary-high-rgb: 53, 177, 255;
+    --color-primary-high: rgb(var(--color-primary-high-rgb));
+    --color-primary-contrast-rgb: 30, 30, 30;
+    --color-primary-contrast: rgb(var(--color-primary-contrast-rgb));
 
     /* Secondary Color - Neon Green */
-    --color-secondary-main: #009f18;
-    --color-secondary-low: #03520f; /* Darker/Less contrast in dark mode */
-    --color-secondary-high: #33ff52; /* Lighter/Higher contrast in dark mode */
-    --color-secondary-contrast: #1e1e1e;
+    --color-secondary-main-rgb: 0, 159, 24;
+    --color-secondary-main: rgb(var(--color-secondary-main-rgb));
+    --color-secondary-low-rgb: 3, 82, 15;
+    --color-secondary-low: rgb(var(--color-secondary-low-rgb));
+    --color-secondary-high-rgb: 51, 255, 82;
+    --color-secondary-high: rgb(var(--color-secondary-high-rgb));
+    --color-secondary-contrast-rgb: 30, 30, 30;
+    --color-secondary-contrast: rgb(var(--color-secondary-contrast-rgb));
 
     /* Feedback Colors */
-    --color-error-main: #ff0000;
-    --color-error-low: #990000;
-    --color-error-high: #ff8080;
-    --color-error-contrast: #ffffff;
+    --color-error-main-rgb: 255, 0, 0;
+    --color-error-main: rgb(var(--color-error-main-rgb));
+    --color-error-low-rgb: 153, 0, 0;
+    --color-error-low: rgb(var(--color-error-low-rgb));
+    --color-error-high-rgb: 255, 128, 128;
+    --color-error-high: rgb(var(--color-error-high-rgb));
+    --color-error-contrast-rgb: 255, 255, 255;
+    --color-error-contrast: rgb(var(--color-error-contrast-rgb));
 
-    --color-warning-main: #ffa500;
-    --color-warning-low: #996300;
-    --color-warning-high: #ffc966;
-    --color-warning-contrast: #1e1e1e;
+    --color-warning-main-rgb: 255, 165, 0;
+    --color-warning-main: rgb(var(--color-warning-main-rgb));
+    --color-warning-low-rgb: 153, 99, 0;
+    --color-warning-low: rgb(var(--color-warning-low-rgb));
+    --color-warning-high-rgb: 255, 201, 102;
+    --color-warning-high: rgb(var(--color-warning-high-rgb));
+    --color-warning-contrast-rgb: 30, 30, 30;
+    --color-warning-contrast: rgb(var(--color-warning-contrast-rgb));
 
-    --color-info-main: #ffff00;
-    --color-info-low: #e0be00;
-    --color-info-high: #ffff80;
-    --color-info-contrast: #1e1e1e;
+    --color-info-main-rgb: 255, 255, 0;
+    --color-info-main: rgb(var(--color-info-main-rgb));
+    --color-info-low-rgb: 224, 190, 0;
+    --color-info-low: rgb(var(--color-info-low-rgb));
+    --color-info-high-rgb: 255, 255, 128;
+    --color-info-high: rgb(var(--color-info-high-rgb));
+    --color-info-contrast-rgb: 30, 30, 30;
+    --color-info-contrast: rgb(var(--color-info-contrast-rgb));
 
-    --color-success-main: #009f18; /* Same as secondary in Retro theme */
-    --color-success-low: #03520f;
-    --color-success-high: #33ff52;
-    --color-success-contrast: #1e1e1e;
+    --color-success-main-rgb: 0, 159, 24;
+    --color-success-main: rgb(var(--color-success-main-rgb));
+    --color-success-low-rgb: 3, 82, 15;
+    --color-success-low: rgb(var(--color-success-low-rgb));
+    --color-success-high-rgb: 51, 255, 82;
+    --color-success-high: rgb(var(--color-success-high-rgb));
+    --color-success-contrast-rgb: 30, 30, 30;
+    --color-success-contrast: rgb(var(--color-success-contrast-rgb));
 
     /* Gray Scale - Contrast based */
-    --color-gray-faint: #222222; /* Very low contrast with background */
-    --color-gray-subtle: #444444; /* Low contrast */
-    --color-gray-medium: #777777; /* Medium contrast */
-    --color-gray-bold: #aaaaaa; /* High contrast */
-    --color-gray-extreme: #dddddd; /* Very high contrast with background, close to text */
+    --color-gray-faint-rgb: 34, 34, 34;
+    --color-gray-faint: rgb(var(--color-gray-faint-rgb));
+    --color-gray-subtle-rgb: 68, 68, 68;
+    --color-gray-subtle: rgb(var(--color-gray-subtle-rgb));
+    --color-gray-medium-rgb: 119, 119, 119;
+    --color-gray-medium: rgb(var(--color-gray-medium-rgb));
+    --color-gray-bold-rgb: 170, 170, 170;
+    --color-gray-bold: rgb(var(--color-gray-bold-rgb));
+    --color-gray-extreme-rgb: 221, 221, 221;
+    --color-gray-extreme: rgb(var(--color-gray-extreme-rgb));
 
     /* Glow Effects - Only in Retro theme */
-    --glow-primary: 0 0 0.25rem rgba(0, 191, 255, 0.7);
-    --glow-secondary: 0 0 0.25rem rgba(0, 255, 0, 0.7);
-    --glow-error: 0 0 0.25rem rgba(255, 0, 0, 0.7);
-    --glow-warning: 0 0 0.25rem rgba(255, 165, 0, 0.7);
-    --glow-info: 0 0 0.25rem rgba(255, 255, 0, 0.7);
-    --glow-white: 0 0 0.25rem rgba(255, 255, 255, 0.7);
+    --glow-primary: 0 0 0.25rem rgba(var(--color-primary-main-rgb-rgb), 0.7);
+    --glow-secondary: 0 0 0.25rem rgba(var(--color-secondary-main-rgb-rgb), 0.7);
+    --glow-error: 0 0 0.25rem rgba(var(--color-error-main-rgb-rgb), 0.7);
+    --glow-warning: 0 0 0.25rem rgba(var(--color-warning-main-rgb-rgb), 0.7);
+    --glow-info: 0 0 0.25rem rgba(var(--color-info-main-rgb-rgb), 0.7);
+    --glow-white: 0 0 0.25rem rgba(var(--color-text-rgb-rgb), 0.7);
 
     /* Component-specific colors */
     --color-motor-forward: var(--color-secondary-high);
@@ -283,48 +316,79 @@ body[data-theme="clean"] {
     --font-family-active: var(--font-family-primary);
 
     /* Base Colors */
-    --color-background: #ffffff;
-    --color-text: #000000;
+    --color-background-rgb: 255, 255, 255;
+    --color-background: rgb(var(--color-background-rgb));
+    --color-text-rgb: 0, 0, 0;
+    --color-text: rgb(var(--color-text-rgb));
 
     /* Primary Color - Blue */
-    --color-primary-main: #0066cc;
-    --color-primary-low: #4488cc; /* Lighter/Less contrast in light mode */
-    --color-primary-high: #004499; /* Darker/Higher contrast in light mode */
-    --color-primary-contrast: #ffffff;
+    --color-primary-main-rgb: 0, 102, 204;
+    --color-primary-main: rgb(var(--color-primary-main-rgb));
+    --color-primary-low-rgb: 68, 136, 204;
+    --color-primary-low: rgb(var(--color-primary-low-rgb));
+    --color-primary-high-rgb: 0, 68, 153;
+    --color-primary-high: rgb(var(--color-primary-high-rgb));
+    --color-primary-contrast-rgb: 255, 255, 255;
+    --color-primary-contrast: rgb(var(--color-primary-contrast-rgb));
 
     /* Secondary Color - Green */
-    --color-secondary-main: rgb(0, 170, 85);
-    --color-primary-low: #4cbb7c; /* Lighter/Less contrast in light mode */
-    --color-primary-high: #007744; /* Darker/Higher contrast in light mode */
-    --color-secondary-contrast: #ffffff;
+    --color-secondary-main-rgb: 0, 170, 85;
+    --color-secondary-main: rgb(var(--color-secondary-main-rgb));
+    --color-secondary-low-rgb: 76, 187, 124;
+    --color-secondary-low: rgb(var(--color-secondary-low-rgb));
+    --color-secondary-high-rgb: 0, 119, 68;
+    --color-secondary-high: rgb(var(--color-secondary-high-rgb));
+    --color-secondary-contrast-rgb: 255, 255, 255;
+    --color-secondary-contrast: rgb(var(--color-secondary-contrast-rgb));
 
     /* Feedback Colors */
-    --color-error-main: #dd0000;
-    --color-error-low: #e65c5c;
-    --color-error-high: #aa0000;
-    --color-error-contrast: #ffffff;
+    --color-error-main-rgb: 221, 0, 0;
+    --color-error-main: rgb(var(--color-error-main-rgb));
+    --color-error-low-rgb: 230, 92, 92;
+    --color-error-low: rgb(var(--color-error-low-rgb));
+    --color-error-high-rgb: 170, 0, 0;
+    --color-error-high: rgb(var(--color-error-high-rgb));
+    --color-error-contrast-rgb: 255, 255, 255;
+    --color-error-contrast: rgb(var(--color-error-contrast-rgb));
 
-    --color-warning-main: #ff6600;
-    --color-warning-low: #ff944d;
-    --color-warning-high: #cc5200;
-    --color-warning-contrast: #000000;
+    --color-warning-main-rgb: 255, 102, 0;
+    --color-warning-main: rgb(var(--color-warning-main-rgb));
+    --color-warning-low-rgb: 255, 148, 77;
+    --color-warning-low: rgb(var(--color-warning-low-rgb));
+    --color-warning-high-rgb: 204, 82, 0;
+    --color-warning-high: rgb(var(--color-warning-high-rgb));
+    --color-warning-contrast-rgb: 0, 0, 0;
+    --color-warning-contrast: rgb(var(--color-warning-contrast-rgb));
 
-    --color-info-main: #ffcc00;
-    --color-info-low: #ffdb4d;
-    --color-info-high: #cca300;
-    --color-info-contrast: #000000;
+    --color-info-main-rgb: 255, 204, 0;
+    --color-info-main: rgb(var(--color-info-main-rgb));
+    --color-info-low-rgb: 255, 219, 77;
+    --color-info-low: rgb(var(--color-info-low-rgb));
+    --color-info-high-rgb: 204, 163, 0;
+    --color-info-high: rgb(var(--color-info-high-rgb));
+    --color-info-contrast-rgb: 0, 0, 0;
+    --color-info-contrast: rgb(var(--color-info-contrast-rgb));
 
-    --color-success-main: #00aa55; /* Same as secondary */
-    --color-success-low: #4cbb7c;
-    --color-success-high: #007744;
-    --color-success-contrast: #ffffff;
+    --color-success-main-rgb: 0, 170, 85;
+    --color-success-main: rgb(var(--color-success-main-rgb));
+    --color-success-low-rgb: 76, 187, 124;
+    --color-success-low: rgb(var(--color-success-low-rgb));
+    --color-success-high-rgb: 0, 119, 68;
+    --color-success-high: rgb(var(--color-success-high-rgb));
+    --color-success-contrast-rgb: 255, 255, 255;
+    --color-success-contrast: rgb(var(--color-success-contrast-rgb));
 
     /* Gray Scale - Contrast based */
-    --color-gray-faint: #f5f5f5; /* Very low contrast with background */
-    --color-gray-subtle: #dddddd; /* Low contrast */
-    --color-gray-medium: #aaaaaa; /* Medium contrast */
-    --color-gray-bold: #666666; /* High contrast */
-    --color-gray-extreme: #333333; /* Very high contrast with background, close to text */
+    --color-gray-faint-rgb: 245, 245, 245;
+    --color-gray-faint: rgb(var(--color-gray-faint-rgb));
+    --color-gray-subtle-rgb: 221, 221, 221;
+    --color-gray-subtle: rgb(var(--color-gray-subtle-rgb));
+    --color-gray-medium-rgb: 170, 170, 170;
+    --color-gray-medium: rgb(var(--color-gray-medium-rgb));
+    --color-gray-bold-rgb: 102, 102, 102;
+    --color-gray-bold: rgb(var(--color-gray-bold-rgb));
+    --color-gray-extreme-rgb: 51, 51, 51;
+    --color-gray-extreme: rgb(var(--color-gray-extreme-rgb));
 
     /* No glow effects in Clean theme */
     --glow-primary: none;
@@ -349,7 +413,7 @@ body[data-theme="clean"] {
     --button-default-text: var(--color-text);
     --button-default-border: var(--color-primary-main);
 
-    --button-selected-bg: rgba(0, 170, 85, 0.1);
+    --button-selected-bg: rgba(var(--color-secondary-main-rgb-rgb), 0.1);
     --button-selected-text: var(--color-secondary-main);
     --button-selected-border: var(--color-secondary-main);
 
@@ -384,7 +448,8 @@ body[data-theme="clean"] {
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
     --input-focus-border: var(--color-secondary-main);
-    --input-focus-outline: 0 0 0 2px rgba(0, 170, 85, 0.2);
+    --input-focus-outline: 0 0 0 2px
+        rgba(var(--color-secondary-main-rgb-rgb), 0.2);
 
     --input-disabled-bg: var(--color-gray-faint);
     --input-disabled-text: var(--color-gray-medium);
@@ -401,48 +466,79 @@ body[data-theme="pastel"] {
     --font-family-active: var(--font-family-primary);
 
     /* Base Colors */
-    --color-background: #fffaf0; /* Warm parchment */
-    --color-text: #3e4551; /* Slate instead of pure black */
+    --color-background-rgb: 255, 250, 240;
+    --color-background: rgb(var(--color-background-rgb));
+    --color-text-rgb: 62, 69, 81;
+    --color-text: rgb(var(--color-text-rgb));
 
     /* Primary Color - Blue */
-    --color-primary-main: #6cc3d5;
-    --color-primary-low: #a5d8e6; /* Lighter/Less contrast in light mode */
-    --color-primary-high: #5a9ba8; /* Darker/Higher contrast in light mode */
-    --color-primary-contrast: #000000;
+    --color-primary-main-rgb: 108, 195, 213;
+    --color-primary-main: rgb(var(--color-primary-main-rgb));
+    --color-primary-low-rgb: 165, 216, 230;
+    --color-primary-low: rgb(var(--color-primary-low-rgb));
+    --color-primary-high-rgb: 90, 155, 168;
+    --color-primary-high: rgb(var(--color-primary-high-rgb));
+    --color-primary-contrast-rgb: 0, 0, 0;
+    --color-primary-contrast: rgb(var(--color-primary-contrast-rgb));
 
     /* Secondary Color - Green */
-    --color-secondary-main: #78c2ad;
-    --color-secondary-low: #a5d8c6; /* Lighter/Less contrast in light mode */
-    --color-secondary-high: #5a9b89; /* Darker/Higher contrast in light mode */
-    --color-secondary-contrast: #000000;
+    --color-secondary-main-rgb: 120, 194, 173;
+    --color-secondary-main: rgb(var(--color-secondary-main-rgb));
+    --color-secondary-low-rgb: 165, 216, 198;
+    --color-secondary-low: rgb(var(--color-secondary-low-rgb));
+    --color-secondary-high-rgb: 90, 155, 137;
+    --color-secondary-high: rgb(var(--color-secondary-high-rgb));
+    --color-secondary-contrast-rgb: 0, 0, 0;
+    --color-secondary-contrast: rgb(var(--color-secondary-contrast-rgb));
 
     /* Feedback Colors */
-    --color-error-main: #f3969a;
-    --color-error-low: #f7bec0;
-    --color-error-high: #e96a70;
-    --color-error-contrast: #000000;
+    --color-error-main-rgb: 243, 150, 154;
+    --color-error-main: rgb(var(--color-error-main-rgb));
+    --color-error-low-rgb: 247, 190, 192;
+    --color-error-low: rgb(var(--color-error-low-rgb));
+    --color-error-high-rgb: 233, 106, 112;
+    --color-error-high: rgb(var(--color-error-high-rgb));
+    --color-error-contrast-rgb: 0, 0, 0;
+    --color-error-contrast: rgb(var(--color-error-contrast-rgb));
 
-    --color-warning-main: #ffbb89;
-    --color-warning-low: #ffd9bd;
-    --color-warning-high: #ff9e56;
-    --color-warning-contrast: #000000;
+    --color-warning-main-rgb: 255, 187, 137;
+    --color-warning-main: rgb(var(--color-warning-main-rgb));
+    --color-warning-low-rgb: 255, 217, 189;
+    --color-warning-low: rgb(var(--color-warning-low-rgb));
+    --color-warning-high-rgb: 255, 158, 86;
+    --color-warning-high: rgb(var(--color-warning-high-rgb));
+    --color-warning-contrast-rgb: 0, 0, 0;
+    --color-warning-contrast: rgb(var(--color-warning-contrast-rgb));
 
-    --color-info-main: #f3dc6d;
-    --color-info-low: #f8e9a6;
-    --color-info-high: #e6cb3e;
-    --color-info-contrast: #000000;
+    --color-info-main-rgb: 243, 220, 109;
+    --color-info-main: rgb(var(--color-info-main-rgb));
+    --color-info-low-rgb: 248, 233, 166;
+    --color-info-low: rgb(var(--color-info-low-rgb));
+    --color-info-high-rgb: 230, 203, 62;
+    --color-info-high: rgb(var(--color-info-high-rgb));
+    --color-info-contrast-rgb: 0, 0, 0;
+    --color-info-contrast: rgb(var(--color-info-contrast-rgb));
 
-    --color-success-main: #78c2ad; /* Same as secondary */
-    --color-success-low: #a5d8c6;
-    --color-success-high: #5a9b89;
-    --color-success-contrast: #000000;
+    --color-success-main-rgb: 120, 194, 173;
+    --color-success-main: rgb(var(--color-success-main-rgb));
+    --color-success-low-rgb: 165, 216, 198;
+    --color-success-low: rgb(var(--color-success-low-rgb));
+    --color-success-high-rgb: 90, 155, 137;
+    --color-success-high: rgb(var(--color-success-high-rgb));
+    --color-success-contrast-rgb: 0, 0, 0;
+    --color-success-contrast: rgb(var(--color-success-contrast-rgb));
 
     /* Gray Scale - Contrast based */
-    --color-gray-faint: #f5f0e5; /* Warm off-white, very low contrast */
-    --color-gray-subtle: #e0d6c5; /* Warm light gray */
-    --color-gray-medium: #bdb19e; /* Warm medium gray */
-    --color-gray-bold: #8a7f6d; /* Warm dark gray */
-    --color-gray-extreme: #5a534a; /* Warm very dark gray, close to text */
+    --color-gray-faint-rgb: 245, 240, 229;
+    --color-gray-faint: rgb(var(--color-gray-faint-rgb));
+    --color-gray-subtle-rgb: 224, 214, 197;
+    --color-gray-subtle: rgb(var(--color-gray-subtle-rgb));
+    --color-gray-medium-rgb: 189, 177, 158;
+    --color-gray-medium: rgb(var(--color-gray-medium-rgb));
+    --color-gray-bold-rgb: 138, 127, 109;
+    --color-gray-bold: rgb(var(--color-gray-bold-rgb));
+    --color-gray-extreme-rgb: 90, 83, 74;
+    --color-gray-extreme: rgb(var(--color-gray-extreme-rgb));
 
     /* No glow effects in Pastel theme */
     --glow-primary: none;
@@ -510,8 +606,8 @@ body[data-theme="pastel"] {
 }
 
 /* ============================================
-   ACCESSIBILITY ADJUSTMENTS
-   ============================================ */
+       ACCESSIBILITY ADJUSTMENTS
+       ============================================ */
 
 /* Apply dyslexia font when enabled */
 body.dyslexia-font {
@@ -528,8 +624,10 @@ body.dyslexia-font {
 
 /* Apply high contrast when enabled */
 body.high-contrast {
-    --color-text: #ffffff;
-    --color-background: #000000;
+    --color-text-rgb: 255, 255, 255;
+    --color-text: rgb(var(--color-text-rgb));
+    --color-background-rgb: 0, 0, 0;
+    --color-background: rgb(var(--color-background-rgb));
     --panel-bg: #000000;
     --panel-border: #ffffff;
     --button-default-border: #ffffff;
@@ -555,8 +653,8 @@ body.large-text {
 }
 
 /* ============================================
-   ANIMATIONS & KEYFRAMES
-   ============================================ */
+       ANIMATIONS & KEYFRAMES
+       ============================================ */
 @keyframes clockwise {
     from {
         transform: rotate(0deg);
@@ -588,8 +686,8 @@ body.large-text {
 }
 
 /* ============================================
-   UTILITY CLASSES
-   ============================================ */
+       UTILITY CLASSES
+       ============================================ */
 .wildcat-panel {
     background-color: var(--panel-bg);
     border: var(--border-width-standard) solid var(--panel-border);

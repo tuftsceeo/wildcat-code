@@ -20,7 +20,7 @@
 }
 
 .singleButtonDash.disconnected {
-    background-color: rgba(var(--color-error-main), 0.1);
+    background-color: rgba(var(--color-error-main-rgb), 0.1);
     border-color: var(--color-error-main);
 }
 
@@ -46,7 +46,7 @@
     font-size: var(--font-size-sm);
     margin-right: 8px;
     padding: 2px 5px;
-    background-color: rgba(var(--color-error-main), 0.2);
+    background-color: rgba(var(--color-error-main-rgb), 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
 }
@@ -519,13 +519,13 @@
 }
 
 .noConnection {
-    background-color: rgba(var(--color-error-main), 0.1);
+    background-color: rgba(var(--color-error-main-rgb), 0.1);
     color: var(--color-error-main);
     border: var(--border-width-standard) solid var(--color-error-main);
 }
 
 .noButtons {
-    background-color: rgba(var(--color-warning-main), 0.1);
+    background-color: rgba(var(--color-warning-main-rgb), 0.1);
     color: var(--color-warning-main);
     border: var(--border-width-standard) solid var(--color-warning-main);
 }
