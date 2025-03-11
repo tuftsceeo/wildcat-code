@@ -1,0 +1,67 @@
+/* HelpDialog.module.css - Updated with retro-ui-tokens.css */
+
+.dialogBackground {
+    position: fixed;
+    width: 400px;
+    height: 250px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-background);
+    border: var(--border-width-standard) solid var(--color-blue);
+    border-radius: var(--radius-md);
+    box-shadow: var(--glow-primary);
+    z-index: var(--z-index-modal);
+    font-family: var(--font-family-primary);
+    color: var(--panel-text);
+    text-align: center;
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.closeButton {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    width: 30px;
+    height: 30px;
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 30px;
+    text-align: center;
+    color: var(--panel-text);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.closeButton:hover {
+    color: var(--color-secondary-main);
+}
+
+.dialogContent {
+    margin-top: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dialogTitle {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-blue);
+    margin-bottom: var(--spacing-3);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.dialogText {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    color: var(--panel-text);
+}

@@ -1,0 +1,269 @@
+/* VoiceSettings.module.css - Refactored with design token system */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.sectionTitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-4);
+    font-weight: var(--font-weight-medium);
+    width: 100%;
+}
+
+/* Preview section */
+.previewContainer {
+    width: 100%;
+    margin-bottom: var(--spacing-8);
+    background-color: var(--button-selected-bg);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+    border: var(--border-width-standard) solid var(--panel-border);
+}
+
+.previewTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+    color: var(--panel-text);
+    font-size: var(--font-size-base);
+}
+
+.playButton {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.playButton:hover {
+    transform: var(--button-scale-hover);
+    box-shadow: var(--glow-primary);
+}
+
+.playButton:active {
+    transform: var(--button-scale-active);
+}
+
+.previewBox {
+    width: 100%;
+    background-color: var(--panel-bg);
+    border-radius: var(--radius-md);
+    border: var(--border-width-thin) solid var(--panel-border);
+    padding: var(--spacing-4);
+}
+
+.previewText {
+    color: var(--panel-text);
+    margin-bottom: var(--spacing-3);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+}
+
+.previewInput {
+    width: 100%;
+    padding: var(--spacing-2);
+    background-color: var(--panel-bg);
+    border: var(--border-width-thin) solid var(--panel-border);
+    color: var(--panel-text);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-sm);
+    resize: none;
+}
+
+.previewInput:focus {
+    outline: none;
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
+}
+
+/* Voice selection cards */
+.voiceOptions {
+    width: 100%;
+    margin-bottom: var(--spacing-8);
+}
+
+.voiceCards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    width: 100%;
+}
+
+.voiceCard {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-4);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transform: var(--button-scale-default);
+}
+
+.voiceCard:hover:not(.selectedVoice) {
+    background-color: var(--panel-bg);
+    transform: var(--button-scale-hover);
+    box-shadow: var(--glow-primary);
+    border-color: var(--button-default-border);
+}
+
+.voiceCard:active:not(.selectedVoice) {
+    transform: var(--button-scale-active);
+}
+
+.selectedVoice {
+    border-width: var(--border-width-thick);
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
+    transform: var(--button-scale-hover);
+}
+
+.voiceIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-right: var(--spacing-4);
+    flex-shrink: 0;
+    color: var(--color-text);
+}
+
+.voiceInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.voiceName {
+    font-size: var(--font-size-base);
+    color: var(--panel-text);
+    margin-bottom: var(--spacing-1);
+}
+
+.voiceDescription {
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+}
+
+/* Volume control */
+.volumeControl {
+    width: 100%;
+    padding: var(--spacing-4) var(--spacing-6);
+    border-radius: var(--radius-md);
+    border: var(--border-width-standard) solid var(--panel-border);
+}
+
+.volumeSlider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    color: var(--panel-text);
+}
+
+.slider {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--panel-border);
+    border-radius: var(--radius-full);
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-primary-main);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-primary-main);
+    cursor: pointer;
+    border: none;
+}
+
+.slider:focus {
+    box-shadow: 0 0 0 2px var(--color-primary-main);
+}
+
+.volumeValue {
+    min-width: 40px;
+    font-size: var(--font-size-sm);
+    text-align: right;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Theme-specific adjustments */
+body[data-theme="retro"] .voiceCard:hover:not(.selectedVoice) {
+    background-color: var(--color-gray-bold);
+}
+
+body[data-theme="clean"] .voiceCard,
+body[data-theme="pastel"] .voiceCard {
+    border-color: var(--color-gray-faint);
+}
+
+body[data-theme="clean"] .voiceCard:hover:not(.selectedVoice),
+body[data-theme="pastel"] .voiceCard:hover:not(.selectedVoice) {
+    border-color: var(--color-primary-main);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .voiceCards {
+        grid-template-columns: 1fr;
+    }
+}

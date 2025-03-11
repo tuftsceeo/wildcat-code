@@ -1,0 +1,125 @@
+/* CustomizationPage.module.css - Refactored with design token system */
+
+.customizationOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    animation: fadeIn 0.3s ease;
+    pointer-events: auto !important;
+}
+
+.customizationPanel {
+    position: relative;
+    width: 80vw;
+    height: 80vh;
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    box-shadow: var(--glow-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.settingsHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-gray-bold);
+}
+
+.settingsTitle {
+    text-align: center;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--panel-text);
+    margin: 0;
+    font-family: var(--font-family-active);
+}
+
+.closeButton {
+    position: absolute;
+    left: var(--spacing-4);
+    top: 50%;
+    background: none;
+    border: none;
+    color: var(--panel-text);
+    cursor: pointer;
+    padding: var(--spacing-2);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    transform: translateY(-50%) var(--button-scale-default);
+}
+
+.closeButton:hover {
+    color: var(--panel-text);
+    background-color: var(--color-gray-bold);
+    transform: translateY(-50%) var(--button-scale-hover);
+}
+
+.closeButton:active {
+    transform: translateY(-50%) var(--button-scale-active);
+}
+
+/* Content Area */
+.settingsContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-6);
+    height: 450px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adaptations */
+@media (max-width: 768px) {
+    .customizationPanel {
+        width: 95%;
+        height: 90vh;
+    }
+
+    .settingsHeader {
+        padding: var(--spacing-3);
+    }
+
+    .settingsTitle {
+        font-size: var(--font-size-xl);
+    }
+}

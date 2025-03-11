@@ -1,0 +1,292 @@
+/* FunctionDefault.module.css - Refactored with design tokens */
+
+.hubTopBackground {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-y: hidden;
+    /* border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md); */
+    background-color: var(--panel-bg);
+    /* padding: var(--spacing-4); */
+    /* overflow: visible; */
+}
+
+.outline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.functionHubText {
+    text-align: center;
+    margin-bottom: var(--spacing-6);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    position: relative;
+    z-index: 1;
+}
+
+/* ACTION/SENSE buttons side by side like in FIGMA */
+.actionSenseButtonGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+    position: relative;
+    z-index: 1;
+}
+
+.actionButton,
+.senseButton {
+    flex: 1;
+    position: relative;
+}
+
+/* Base button style */
+.actionButtonChild {
+    width: 100%;
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    color: var(--button-default-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+/* Active state for buttons */
+.actionButtonChild.active {
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    background-color: var(--button-selected-bg);
+    box-shadow: var(--glow-secondary);
+}
+
+.actionButtonChild:hover:not(.active) {
+    transform: var(--button-scale-hover);
+}
+
+.actionButtonChild:active:not(.active) {
+    transform: var(--button-scale-active);
+}
+
+/* Remove the "or" text */
+.orText {
+    display: none;
+}
+
+/* ------- LAYOUT STRUCTURE ------- */
+
+/* Main container for content area */
+.contentContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Left column container */
+.leftColumn {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Right column container */
+.rightColumn {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Subtype selection container */
+.subtypeSelection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+/* Action subtype buttons are left-aligned */
+.leftColumn .subtypeSelection {
+    align-items: flex-start;
+}
+
+/* Sense subtype buttons are right-aligned */
+.rightColumn .subtypeSelection {
+    align-items: flex-end;
+}
+
+/* Subtype button styling */
+.subtypeButton {
+    background-color: var(--button-default-bg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    color: var(--button-default-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+    width: 90%;
+    transform: var(--button-scale-default);
+}
+
+/* Icon within subtype buttons */
+.subtypeButton .icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Text justification in buttons */
+.leftColumn .subtypeButton {
+    justify-content: flex-start;
+}
+
+.rightColumn .subtypeButton {
+    justify-content: flex-end;
+}
+
+.subtypeButton:hover:not(.active) {
+    transform: var(--button-scale-hover);
+}
+
+.subtypeButton:active:not(.active) {
+    transform: var(--button-scale-active);
+}
+
+.subtypeButton.active {
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    box-shadow: var(--glow-secondary);
+}
+
+/* Dashboard container */
+.dashboardContainer {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+    overflow: auto;
+    border-radius: var(--radius-md);
+    border: none;
+    background-color: var(--color-background);
+    margin-top: var(--spacing-2);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Placeholder for dashboard */
+.dashboardPlaceholder {
+    width: 100%;
+    height: 1px;
+    visibility: hidden;
+}
+
+/* Status panel at the bottom */
+.statusPanel {
+    margin-top: auto;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.statusText {
+    font-size: var(--font-size-base);
+}
+
+.audioIcon {
+    color: var(--color-primary-main);
+    cursor: pointer;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.audioIcon:hover {
+    transform: var(--button-scale-hover);
+}
+
+.audioIcon:active {
+    transform: var(--button-scale-active);
+}
+
+.saveIndicator {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.savedState,
+.unsavedState {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-1);
+    border-radius: var(--radius-md);
+}
+
+.checkIcon {
+    color: var(--color-secondary-main);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}
+
+.plusIcon {
+    color: var(--color-gray-medium);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}

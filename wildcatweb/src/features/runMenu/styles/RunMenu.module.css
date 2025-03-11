@@ -1,0 +1,134 @@
+/* RunMenu.module.css - Refactored with design token system */
+
+.menuBackground {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    background-color: var(--panel-bg);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    padding: var(--spacing-4);
+}
+
+.menuContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hide title as requested */
+.menuTitle {
+    display: none;
+}
+
+.stepsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    width: 100%;
+    margin: auto 0;
+}
+
+/* Step buttons styled with theme tokens */
+.stepButton {
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    color: var(--button-default-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-3);
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.stepButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.stepButton:active {
+    transform: var(--button-scale-active);
+}
+
+.stepButton.active,
+.stepButton.current {
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    background-color: var(--button-selected-bg);
+}
+
+/* Inactive steps */
+.stepButton.configured:not(.current) {
+    border-color: var(--button-default-border);
+    color: var(--button-default-text);
+}
+
+/* Warning styling when needed */
+.stepButton.warning {
+    border-color: var(--color-warning-main);
+}
+
+/* Play button - uses blue accent color */
+.playButton {
+    background-color: var(--button-contained-default-bg);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--button-contained-default-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    width: 100px;
+    cursor: pointer;
+    margin-top: var(--spacing-3);
+    margin-bottom: var(--spacing-2);
+    text-transform: uppercase;
+    align-self: center;
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.playButton:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: var(--button-scale-hover);
+}
+
+.playButton:disabled {
+    background-color: var(--button-contained-disabled-bg);
+    color: var(--button-contained-disabled-text);
+    cursor: not-allowed;
+    opacity: var(--button-contained-disabled-opacity);
+}
+
+.playButton:active {
+    transform: var(--button-scale-active);
+}
+
+.errorIcon,
+.warningIcon {
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    z-index: var(--z-index-above);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}

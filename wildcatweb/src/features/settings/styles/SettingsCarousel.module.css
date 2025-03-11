@@ -1,0 +1,225 @@
+/* SettingsCarousel.module.css - Refactored with design token system */
+
+.settingsCarousel {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    padding: var(--spacing-2) 0;
+    background-color: var(--panel-bg);
+    border-bottom: var(--border-width-standard) solid var(--color-gray-medium);
+    /* height: 150px; */
+
+    /*         position: "relative",
+        display: "flex",
+        borderBottom: "2px solid var(--color-gray-bold)",
+        backgroundColor: "var(--color-panel-background)",
+        padding: "var(--spacing-4) 0", */
+}
+/**
+     * Settings Carousel for tab navigation
+     * With smaller tabs to fit without scrolling
+     */
+.carouselContainer {
+    /*   flex: 1;
+    
+    position: relative;
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+    );
+    padding: 0 var(--spacing-4);
+ */
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    justify-content: center;
+    align-items: start;
+    gap: 8px;
+    padding: 0 var(--spacing-4);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+/*.carouselContainer::-webkit-scrollbar {
+    display: none;
+} */
+
+/* Track with tabs */
+.carouselTrack {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-4);
+    justify-content: center;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+    min-width: 100%;
+}
+
+/* Individual tab button */
+.carouselTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-width-standard) solid transparent;
+    border-radius: var(--radius-md);
+    background-color: var(--button-default-bg);
+    padding: var(--spacing-3);
+    margin: 0 var(--spacing-2);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    width: 85px;
+    height: 90px;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: visible;
+    color: var(--panel-text);
+    transform: var(--button-scale-default);
+}
+
+/* Active tab styling */
+.carouselTab.active {
+    transform: var(--button-scale-hover);
+    background-color: var(--button-selected-bg);
+    border: var(--border-width-thick) solid transparent;
+    /*  box-shadow: var(--glow-secondary); */
+    z-index: 2;
+    color: var(--panel-text);
+}
+
+/* Disabled tab styling */
+.carouselTab.disabled {
+    opacity: 0.5;
+    cursor: default;
+    filter: grayscale(70%);
+    transform: var(--button-scale-default);
+}
+
+.carouselTab:hover:not(.active):not(.disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-gray-bold);
+}
+
+.carouselTab:active:not(.disabled) {
+    transform: var(--button-scale-active);
+}
+
+/* Icon container */
+.tabIcon {
+    font-size: 32px;
+    margin-bottom: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+
+/* Tab name */
+.tabName {
+    /*
+            fontSize: "10px", // Smaller font size
+            textAlign: "center",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em", // Slightly tighter letter spacing
+            lineHeight: 1.2, // Tighter line height
+        */
+    font-size: var(--font-size-xxs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    line-height: var(--line-height-tight);
+    text-align: center;
+    font-family: var(--font-family-active);
+}
+
+/* Coming soon badge */
+.comingSoonBadge {
+    position: absolute;
+    bottom: var(--spacing-2);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-gray-bold);
+    color: var(--panel-text);
+    font-size: calc(var(--font-size-xxs) * 0.8);
+    padding: var(--spacing-2) var(--spacing-2);
+    border-radius: var(--radius-md);
+    /* text-transform: uppercase; */
+    white-space: nowrap;
+    font-family: var(--font-family-active);
+}
+
+/* Navigation buttons */
+.carouselNav {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    color: var(--panel-text);
+    cursor: pointer;
+    z-index: 3;
+    position: relative;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    transform: var(--button-scale-default);
+}
+
+.carouselNav:hover:not(:disabled) {
+    background-color: var(--color-gray-bold);
+    color: var(--panel-text);
+    transform: var(--button-scale-hover);
+}
+
+.carouselNav:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.carouselNav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.carouselPrev {
+    left: var(--spacing-2);
+}
+
+.carouselNext {
+    right: var(--spacing-2);
+}
+
+/* Animation when dragging */
+.carouselTrack.dragging {
+    transition: none;
+    cursor: grabbing;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .carouselTab {
+        min-width: 100px;
+        height: 110px;
+        padding: var(--spacing-2);
+    }
+
+    .tabIcon {
+        font-size: 24px;
+        height: 30px;
+    }
+
+    .tabName {
+        font-size: 11px;
+    }
+}

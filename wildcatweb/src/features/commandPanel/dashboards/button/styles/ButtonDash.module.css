@@ -1,0 +1,548 @@
+/* ButtonDash.module.css - Using only tokens that actually exist in tokens.css */
+
+.buttonDashContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Single button dash */
+.singleButtonDash {
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--color-transparent);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3);
+    width: 100%;
+    transition: all var(--transition-normal);
+}
+
+.singleButtonDash.disconnected {
+    background-color: rgba(var(--color-error-main), 0.1);
+    border-color: var(--color-error-main);
+}
+
+/* Button header styling */
+.buttonHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+}
+
+.portLabel {
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+
+    flex-grow: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.disconnectedLabel {
+    color: var(--color-error-main);
+    font-size: var(--font-size-sm);
+    margin-right: 8px;
+    padding: 2px 5px;
+    background-color: rgba(var(--color-error-main), 0.2);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.dismissButton {
+    background: transparent;
+    border: 1px solid var(--color-error-main);
+    color: var(--color-error-main);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-left: 5px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-normal);
+}
+
+.dismissButton:hover {
+    background-color: var(--color-error-main);
+    color: var(--color-background);
+}
+
+/* Container for button controls - split into two sections */
+.buttonControlContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+}
+
+/* Code command section */
+.commandSection {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-3);
+    /* border-right: 1px solid var(--color-gray-medium); */
+}
+
+.visualsContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: var(--spacing-2);
+}
+
+/* Live state section - theme adaptive */
+.liveStateSection {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--spacing-1);
+    background-color: var(--color-gray-faint);
+    opacity: 0.7;
+    border: var(--border-width-thin) solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    z-index: 1;
+}
+
+/* Section headers */
+.sectionHeader {
+    color: var(--color-primary-high);
+    animation: pulse 3s infinite;
+    font-size: var(--font-size-xxs);
+    text-transform: uppercase;
+    margin: var(--spacing-1);
+    letter-spacing: var(--letter-spacing-wide);
+    text-align: center;
+    z-index: 2;
+}
+
+/* Wait condition section */
+.waitConditionContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+}
+
+.waitUntilLabel {
+    font-size: var(--font-size-base);
+
+    text-transform: uppercase;
+    color: var(--panel-text);
+    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--letter-spacing-wide);
+    align-self: flex-start;
+}
+
+/* MotorSlider.module.css - Refactored with design token system */
+
+/* Slider control styles */
+.sliderControl {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+}
+
+/* Container for slider and labels */
+.sliderWithLabels {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+/* Direction labels */
+.pressedLabel,
+.releasedLabel {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.releasedLabel {
+    color: var(--color-motor-backward);
+}
+
+.pressedLabel {
+    color: var(--color-motor-forward);
+}
+/* 
+.sliderWithLabels.active .releasedLabel {
+    color: var(--color-motor-backward);
+}
+
+.sliderWithLabels.active .pressedLabel {
+    color: var(--color-motor-forward);
+}
+
+.sliderWithLabels:not(.active) .releasedLabel {
+    color: var(--color-motor-backward);
+}
+
+.sliderWithLabels:not(.active) .pressedLabel {
+    color: var(--color-gray-bold);
+}
+ */
+/* Slider track */
+.sliderTrack {
+    flex: 1;
+    position: relative;
+    height: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--color-gray-subtle);
+    border: var(--border-width-thin) solid var(--color-gray-medium);
+    outline: none;
+}
+
+.sliderTrack:focus-visible {
+    box-shadow: var(--glow-primary);
+}
+
+/* Slider thumb */
+.sliderThumb {
+    position: absolute;
+    width: 44px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: var(--color-motor-backward);
+    border: var(--border-width-standard) solid var(--color-text);
+    /* transform: translateX(-50%); */
+    box-shadow: var(--glow-white);
+    z-index: 1;
+    transition: left var(--transition-normal);
+    top: -4px;
+    left: -4px;
+    cursor: pointer;
+}
+
+.sliderTrack.active .sliderThumb:hover {
+    transform: scale(var(--button-scale-hover));
+}
+
+.sliderTrack:not(.active) .sliderThumb:hover {
+    transform: scale(var(--button-scale-hover));
+}
+
+.sliderTrack.active .sliderThumb {
+    left: calc(100% - 40px);
+    background-color: var(--color-motor-forward);
+}
+
+/* TOGGLE SWITCH STYLING - IMPROVED CONTRAST */
+/* 
+.toggleKnob {
+    position: absolute;
+    width: 90px;
+    height: 26px;
+    background-color: var(--color-gray-medium);
+    border-radius: 13px;
+    top: 2px;
+    left: 2px;
+    transition: left var(--transition-normal);
+    z-index: 1;
+}
+
+
+.toggleContainer {
+    position: relative;
+    width: 180px;
+    height: 30px;
+    background-color: var(--color-gray-bold);
+    border-radius: 15px;
+    padding: 2px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-3);
+}
+
+.toggleOptions {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 var(--spacing-4);
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.toggleOption {
+    font-family: var(--font-family-active);
+
+    color: var(--panel-text);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+}
+
+.toggleKnob {
+    position: absolute;
+    width: 90px;
+    height: 26px;
+    background-color: var(--color-gray-medium);
+    border-radius: 13px;
+    top: 2px;
+    left: 2px;
+    transition: left var(--transition-normal);
+    z-index: 1;
+}
+
+.toggleContainer.active .toggleKnob {
+    left: calc(100% - 92px);
+    background-color: var(--color-secondary-main);
+}
+*/
+/* Improved contrast for toggle text */
+/*.toggleContainer.active .toggleOption.left {
+    color: var(--color-gray-subtle);
+}
+
+.toggleContainer.active .toggleOption.right {
+    color: var(--color-text);
+    text-shadow: 0px 0px 2px var(--color-background);
+}
+
+.toggleContainer:not(.active) .toggleOption.left {
+    color: var(--color-primary-main);
+}
+
+.toggleContainer:not(.active) .toggleOption.right {
+    color: var(--color-gray-subtle);
+}
+*/
+
+/* BUTTON VISUALIZATION */
+.buttonVisualContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--spacing-2);
+}
+
+.sensorContainer {
+    position: relative;
+    width: 100px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.liveVisualContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--spacing-2);
+}
+
+.liveSensorContainer {
+    position: relative;
+    width: 60px;
+    height: 50px;
+    margin: 0 auto;
+}
+
+.sensorBody {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
+    );
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border-top: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 40px;
+}
+
+.sensorBodySmall {
+    position: absolute;
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
+    );
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border-top: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+}
+
+.sensorMask {
+    position: absolute;
+    width: 80px;
+    height: 25px;
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 15px;
+    z-index: 2;
+}
+
+.sensorMaskSmall {
+    position: absolute;
+    width: 40px;
+    height: 12px;
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 8px;
+    z-index: 2;
+}
+
+.sensorButton {
+    position: absolute;
+    width: 30px;
+    height: 25px;
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.sensorButtonSmall {
+    position: absolute;
+    width: 15px;
+    height: 12px;
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.sensorButton.pressed,
+.sensorButtonSmall.pressed {
+    transform: translate(-50%, 10px);
+}
+
+.sensorButtonSmall.pressed {
+    transform: translate(-50%, 5px);
+}
+
+.arrowIndicator {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    z-index: 0;
+    transition: all var(--transition-normal);
+}
+
+.arrowIndicatorSmall {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 25px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    z-index: 0;
+    transition: all var(--transition-normal);
+}
+
+.arrowUp {
+    border-bottom: 15px solid var(--color-motor-backward);
+    border-top: 0;
+}
+
+.arrowDown {
+    border-top: 15px solid var(--color-motor-forward);
+    border-bottom: 0;
+}
+
+.arrowUpSmall {
+    border-bottom: 7px solid var(--color-motor-backward);
+    border-top: 0;
+}
+
+.arrowDownSmall {
+    border-top: 7px solid var(--color-motor-forward);
+    border-bottom: 0;
+}
+
+.buttonStatus {
+    font-size: var(--font-size-sm);
+
+    color: var(--panel-text);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-top: var(--spacing-2);
+    text-align: center;
+}
+
+/* No connection/No buttons messages */
+.noConnection,
+.noButtons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    justify-content: center;
+    padding: var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.noConnection {
+    background-color: rgba(var(--color-error-main), 0.1);
+    color: var(--color-error-main);
+    border: var(--border-width-standard) solid var(--color-error-main);
+}
+
+.noButtons {
+    background-color: rgba(var(--color-warning-main), 0.1);
+    color: var(--color-warning-main);
+    border: var(--border-width-standard) solid var(--color-warning-main);
+}
+
+.noConnection svg,
+.noButtons svg {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

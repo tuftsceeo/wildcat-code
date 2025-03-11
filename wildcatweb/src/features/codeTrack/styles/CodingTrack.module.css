@@ -1,0 +1,572 @@
+/* CodingTrack.module.css - Refactored with design token system */
+
+.trackContainer {
+    position: relative;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    background-color: var(--panel-bg);
+    padding: var(--spacing-4);
+}
+
+.codeSucker {
+    position: absolute;
+    top: var(--spacing-4);
+    left: var(--spacing-4);
+    color: var(--panel-text);
+    width: 48px;
+    height: 48px;
+    opacity: 0.6;
+}
+
+.slotDisplay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Motor Visualization */
+.motorVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.motorAnimation {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.motorBorder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.motorRotor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.clockwise {
+    animation-name: clockwise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.counterclockwise {
+    animation-name: counterclockwise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.blockTitle {
+    color: var(--panel-text);
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: var(--spacing-4);
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Multiple motor container */
+.multiMotorContainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-4);
+}
+
+/* Smaller motor visualization for multiple motors */
+.smallMotorVisualization {
+    composes: motorVisualization;
+    transform: scale(0.8);
+}
+
+.xsMotorVisualization {
+    composes: motorVisualization;
+    transform: scale(0.6);
+}
+
+/* Timer visualization */
+.timerVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-8);
+}
+
+.timerIcon {
+    font-size: var(--font-size-lg);
+    color: var(--color-timer-main);
+    margin-bottom: var(--spacing-2);
+}
+
+.timerLabel {
+    color: var(--color-timer-main);
+    text-transform: uppercase;
+    font-size: var(--font-size-lg);
+    margin-top: var(--spacing-2);
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.timerValue {
+    font-size: var(--font-size-xl);
+    color: var(--color-timer-main);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-bold);
+}
+
+.timerUnit {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    text-transform: uppercase;
+    font-family: var(--font-family-active);
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Test button at bottom */
+.testButton {
+    background-color: var(--button-contained-default-bg);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--button-contained-default-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+
+    cursor: pointer;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: calc(var(--spacing-4) + 40px);
+    width: 100px;
+    /* z-index: 2; */
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+
+    padding: var(--spacing-2) var(--spacing-4);
+    margin-top: auto;
+    margin-bottom: var(--spacing-2);
+    text-transform: uppercase;
+    align-self: center;
+}
+
+.testButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.testButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.testButton:disabled {
+    background-color: var(--button-contained-disabled-bg);
+    color: var(--button-contained-disabled-text);
+    cursor: not-allowed;
+    opacity: var(--button-contained-disabled-opacity);
+}
+
+/* Navigation controls */
+.navigationControls {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.navButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    position: absolute;
+    pointer-events: auto;
+    transform: var(--button-scale-default);
+}
+
+.prevButton {
+    top: var(--spacing-4);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nextButton {
+    bottom: var(--spacing-4);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.navButton:hover:not(:disabled) {
+    transform: translateX(-50%) scale(1.2);
+}
+
+.navButton:active:not(:disabled) {
+    transform: translateX(-50%) scale(0.95);
+}
+
+.navButton:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Previous button triangle */
+.prevButton:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid var(--panel-text);
+    transition: border-color var(--transition-normal);
+}
+
+.prevButton:hover:not(:disabled):before {
+    border-bottom-color: var(--panel-text);
+}
+
+.prevButton:disabled:before {
+    border-bottom-color: var(--color-gray-bold);
+}
+
+/* Next button triangle */
+.nextButton:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 20px solid var(--panel-text);
+    transition: border-color var(--transition-normal);
+}
+
+.nextButton:hover:not(:disabled):before {
+    border-top-color: var(--panel-text);
+}
+
+.nextButton:disabled:before {
+    border-top-color: var(--color-gray-bold);
+}
+
+/* Instruction block styles */
+.instructionBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.emptyInstruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--panel-text);
+}
+
+.emptyText {
+    font-size: var(--font-size-lg);
+    text-align: center;
+    font-family: var(--font-family-active);
+}
+
+.unknownInstruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-warning-main);
+}
+
+.unknownText {
+    font-size: var(--font-size-base);
+    text-align: center;
+    padding: var(--spacing-4);
+    border: 1px solid var(--color-warning-main);
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-active);
+}
+
+/* Force sensor/button visualization */
+.buttonVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.buttonIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.buttonCondition {
+    color: var(--color-sensor-main);
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: var(--spacing-2);
+    letter-spacing: var(--letter-spacing-wide);
+    transition: all var(--transition-normal);
+}
+
+.pressedCondition {
+    color: var(--color-secondary-main);
+}
+
+.releasedCondition {
+    color: var(--color-primary-main);
+}
+
+/* Visual state representation */
+.buttonStateVisual {
+    margin-top: var(--spacing-4);
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.buttonStateCircle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--color-gray-bold);
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.buttonStateInner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background-color: var(--color-gray-medium);
+    border-radius: 50%;
+    transition: all var(--transition-normal);
+}
+
+/* Button pressed state */
+.buttonPressed .buttonStateInner {
+    background-color: var(--color-secondary-main);
+    transform: translateY(8px);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Button released state */
+.buttonReleased .buttonStateInner {
+    background-color: var(--color-primary-main);
+    transform: translateY(0);
+}
+
+/* BUTTON VISUALIZATION */
+.buttonVisualContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--spacing-2);
+}
+
+.sensorContainer {
+    position: relative;
+    width: 100px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.liveSensorContainer {
+    position: relative;
+    width: 60px;
+    height: 50px;
+    margin: 0 auto;
+}
+
+.sensorBody {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
+    );
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border-top: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 40px;
+}
+
+.sensorBodySmall {
+    position: absolute;
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-gray-faint) 33%,
+        var(--color-gray-bold) 33%
+    );
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border-top: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+}
+
+.sensorMask {
+    position: absolute;
+    width: 80px;
+    height: 25px;
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 15px;
+    z-index: 2;
+}
+
+.sensorMaskSmall {
+    position: absolute;
+    width: 40px;
+    height: 12px;
+    background-color: var(--color-gray-faint);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 8px;
+    z-index: 2;
+}
+
+.sensorButton {
+    position: absolute;
+    width: 30px;
+    height: 25px;
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.sensorButtonSmall {
+    position: absolute;
+    width: 15px;
+    height: 12px;
+    background-color: var(--color-gray-bold);
+    border: 2px solid var(--color-gray-extreme);
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    transition: transform var(--transition-normal);
+    z-index: 1;
+}
+
+.sensorButton.pressed,
+.sensorButtonSmall.pressed {
+    transform: translate(-50%, 10px);
+}
+
+.sensorButtonSmall.pressed {
+    transform: translate(-50%, 5px);
+}
+
+.arrowIndicator {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 50px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    z-index: 0;
+    transition: all var(--transition-normal);
+}
+
+.arrowIndicatorSmall {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 25px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    z-index: 0;
+    transition: all var(--transition-normal);
+}
+
+.arrowUp {
+    border-bottom: 15px solid var(--color-motor-backward);
+    border-top: 0;
+}
+
+.arrowDown {
+    border-top: 15px solid var(--color-motor-forward);
+    border-bottom: 0;
+}
+
+.arrowUpSmall {
+    border-bottom: 7px solid var(--color-motor-backward);
+    border-top: 0;
+}
+
+.arrowDownSmall {
+    border-top: 7px solid var(--color-motor-forward);
+    border-bottom: 0;
+}
+
+.buttonStatus {
+    font-size: var(--font-size-xs);
+    color: var(--panel-text);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-top: var(--spacing-2);
+    text-align: center;
+}

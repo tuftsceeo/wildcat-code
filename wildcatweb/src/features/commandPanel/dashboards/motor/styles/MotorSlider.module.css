@@ -1,0 +1,194 @@
+/* MotorSlider.module.css - Refactored with design token system */
+
+.sliderContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: var(--spacing-2) 0;
+    user-select: none;
+    position: relative;
+}
+
+/* Direction labels above the slider */
+.directionLabels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-2);
+}
+
+.backwardLabel {
+    color: var(--color-error-main);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    font-family: var(--font-family-active);
+}
+
+.forwardLabel {
+    color: var(--color-motor-main);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    font-family: var(--font-family-active);
+}
+
+/* Main slider track */
+.sliderTrack {
+    position: relative;
+    height: 24px;
+    border-radius: 12px;
+    background-color: var(--color-gray-bold);
+    cursor: pointer;
+    margin-bottom: var(--spacing-3);
+    border: 1px solid var(--button-default-border);
+    outline: none;
+}
+
+.sliderTrack:focus-visible {
+    box-shadow: var(--glow-primary);
+}
+
+/* Track background with gradient */
+.sliderBackground {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.backwardSection {
+    flex: 3;
+    background: linear-gradient(
+        to right,
+        var(--color-error-main),
+        rgba(255, 0, 0, 0.3)
+    );
+}
+
+.centerStop {
+    flex: 1;
+    background-color: var(--color-gray-medium);
+}
+
+.forwardSection {
+    flex: 3;
+    background: linear-gradient(
+        to left,
+        var(--color-motor-main),
+        rgba(0, 255, 0, 0.3)
+    );
+}
+
+/* Position indicators (tick marks) */
+.positionIndicators {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8px;
+}
+
+.positionIndicator {
+    width: 4px;
+    height: 16px;
+    background-color: var(--color-background);
+    border-radius: 2px;
+    margin-top: 4px;
+    opacity: 0.7;
+    transition: all var(--transition-normal);
+}
+
+.positionIndicator.active {
+    background-color: var(--color-background);
+    opacity: 1;
+    height: 20px;
+    margin-top: 2px;
+    box-shadow: var(--glow-white);
+}
+
+/* Slider thumb */
+.sliderThumb {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--color-background);
+    border: 2px solid var(--color-text);
+    transform: translateX(-50%);
+    box-shadow: var(--glow-white);
+    z-index: 2;
+    transition: left var(--transition-normal);
+    top: 0;
+}
+
+/* Position icons below the slider */
+.positionIcons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-2);
+}
+
+.positionIcon {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all var(--transition-normal);
+    padding: var(--spacing-1);
+    color: var(--panel-text);
+    transform: var(--button-scale-default);
+}
+
+.positionIcon:hover:not(:disabled) {
+    opacity: 1;
+    color: var(--panel-text);
+    transform: var(--button-scale-hover);
+}
+
+.positionIcon:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.positionIcon:focus-visible {
+    outline: 2px solid var(--color-primary-main);
+    border-radius: var(--radius-sm);
+}
+
+.positionIcon.active {
+    opacity: 1;
+    transform: scale(1.1);
+    color: var(--panel-text);
+}
+
+.iconWrapper {
+    margin-bottom: var(--spacing-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+}
+
+.iconLabel {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-family-active);
+}
+
+/* Styling for disabled state */
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.disabled .sliderTrack,
+.disabled .positionIndicator,
+.disabled .positionIcon {
+    cursor: not-allowed;
+}

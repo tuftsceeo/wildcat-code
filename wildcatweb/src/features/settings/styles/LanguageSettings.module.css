@@ -1,0 +1,179 @@
+/* LanguageSettings.module.css - Refactored with design token system */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+.languageOptions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-8);
+    width: 100%;
+    max-width: 500px;
+}
+
+.languageOption {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-4);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.languageOption:hover:not(.activeLanguage) {
+    transform: var(--button-scale-hover);
+    border-color: var(--button-default-border);
+}
+
+.languageOption:active:not(.activeLanguage) {
+    transform: var(--button-scale-active);
+}
+
+.activeLanguage {
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
+    background-color: var(--button-selected-bg);
+    transform: var(--button-scale-hover);
+}
+
+.languageIcon {
+    font-size: 2rem;
+    margin-right: var(--spacing-4);
+}
+
+.languageDetail {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-family-active);
+}
+
+.languageName {
+    font-size: var(--font-size-base);
+    color: var(--panel-text);
+}
+
+.nativeName {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+}
+
+.previewContainer {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: var(--spacing-8);
+}
+
+.previewTitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-2);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
+}
+
+.previewContent {
+    padding: var(--spacing-6);
+    background-color: var(--button-selected-bg);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    border: var(--border-width-thin) solid var(--panel-border);
+}
+
+.previewInstruction {
+    padding: var(--spacing-3);
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.05);
+    font-family: var(--font-family-active);
+}
+
+.applyButton {
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-8);
+    transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
+}
+
+.applyButton:hover {
+    transform: var(--button-scale-hover);
+    box-shadow: var(--glow-primary);
+}
+
+.applyButton:active {
+    transform: var(--button-scale-active);
+}
+
+.comingSoonSection {
+    width: 100%;
+    max-width: 500px;
+    padding: var(--spacing-4);
+    background-color: var(--button-selected-bg);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-4);
+    border: var(--border-width-thin) solid var(--panel-border);
+}
+
+.comingSoonTitle {
+    font-size: var(--font-size-base);
+    color: var(--color-gray-subtle);
+    margin-bottom: var(--spacing-3);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
+}
+
+.comingSoonLanguages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+}
+
+.comingSoonLanguage {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    opacity: 0.5;
+    font-family: var(--font-family-active);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

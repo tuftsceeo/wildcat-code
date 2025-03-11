@@ -8,9 +8,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 // import ReactDOM from 'react-dom';
-import "./index.css";
+import "./common/styles/index.css";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import reportWebVitals from "./common/utils/reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);

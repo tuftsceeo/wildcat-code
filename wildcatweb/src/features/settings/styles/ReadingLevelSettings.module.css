@@ -1,0 +1,137 @@
+/* ReadingLevelSettings.module.css - Refactored with design token system */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+.optionsContainer {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+    width: 100%;
+    max-width: 760px;
+}
+
+.optionButton {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    width: 110px;
+    height: 110px;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.optionButton:hover:not(.activeOption) {
+    transform: var(--button-scale-hover);
+    border-color: var(--button-default-border);
+}
+
+.optionButton:active:not(.activeOption) {
+    transform: var(--button-scale-active);
+}
+
+.activeOption {
+    background-color: var(--button-selected-bg);
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
+    transform: var(--button-scale-hover);
+}
+
+.optionIcon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-2);
+}
+
+.optionLabel {
+    font-size: var(--font-size-xs);
+    text-align: center;
+    font-family: var(--font-family-active);
+    color: var(--color-text);
+}
+
+.description {
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    max-width: 600px;
+    font-family: var(--font-family-active);
+    line-height: var(--line-height-relaxed);
+}
+
+.previewContainer {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.previewTitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-2);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
+}
+
+.previewContent {
+    padding: var(--spacing-6);
+    background-color: var(--button-selected-bg);
+    border-radius: var(--radius-md);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
+    gap: var(--spacing-4);
+    border: var(--border-width-thin) solid var(--panel-border);
+}
+
+.previewInstruction {
+    padding: var(--spacing-3);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    width: 100%;
+}
+
+.previewNote {
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+    text-align: center;
+    font-family: var(--font-family-active);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

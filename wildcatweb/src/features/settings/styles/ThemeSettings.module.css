@@ -1,0 +1,159 @@
+/* ThemeSettings.module.css - Refactored with design token system */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+.themesContainer {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-10);
+    width: 100%;
+    max-width: 760px;
+}
+
+.themeButton {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-4);
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    width: 140px;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.themeButton:hover:not(.activeTheme) {
+    transform: var(--button-scale-hover);
+    border-color: var(--button-default-border);
+}
+
+.themeButton:active:not(.activeTheme) {
+    transform: var(--button-scale-active);
+}
+
+.activeTheme {
+    border-color: var(--button-selected-border);
+    box-shadow: var(--glow-secondary);
+    background-color: var(--button-selected-bg);
+    transform: var(--button-scale-hover);
+}
+
+.themeSwatches {
+    display: flex;
+    margin-bottom: var(--spacing-4);
+    width: 100%;
+    justify-content: center;
+    gap: 4px;
+}
+
+.colorSwatch {
+    width: 25px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+}
+
+.themeName {
+    font-size: var(--font-size-sm);
+    text-align: center;
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
+}
+
+.fontOptions {
+    width: 100%;
+    max-width: 500px;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    margin-top: var(--spacing-4);
+    border: var(--border-width-thin) solid var(--panel-border);
+}
+
+.fontOptionsHeader {
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
+}
+
+.fontToggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-2);
+}
+
+.toggleLabel {
+    font-size: var(--font-size-base);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+}
+
+.toggleSwitch {
+    position: relative;
+    width: 48px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: var(--color-gray-medium);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    border: none;
+}
+
+.toggleSwitchActive {
+    background-color: var(--color-secondary-main);
+}
+
+.toggleHandle {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--color-background);
+    transition: all var(--transition-normal);
+}
+
+.toggleHandleActive {
+    left: 26px;
+}
+
+.fontDescription {
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+    margin-top: var(--spacing-2);
+    font-family: var(--font-family-active);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

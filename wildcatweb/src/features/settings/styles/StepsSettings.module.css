@@ -1,0 +1,256 @@
+/* StepsSettings.module.css - Refactored with design token system */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+.stepCountControl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-8);
+    padding: var(--spacing-8);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 500px;
+}
+
+.stepButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: 50%;
+    color: var(--button-default-text);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.stepButton:hover:not(.disabled) {
+    border-color: var(--button-default-border);
+    color: var(--button-hover-text);
+    transform: var(--button-scale-hover);
+    box-shadow: var(--glow-primary);
+}
+
+.stepButton:active:not(.disabled) {
+    transform: var(--button-scale-active);
+}
+
+.stepButton.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--button-disabled-border);
+    color: var(--button-disabled-text);
+}
+
+.stepCountDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 var(--spacing-8);
+    min-width: 120px;
+}
+
+.stepCount {
+    font-size: 4rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--panel-text);
+    line-height: 1;
+    text-shadow: var(--glow-secondary);
+    font-family: var(--font-family-active);
+}
+
+.stepLabel {
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+    margin-top: var(--spacing-2);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+.updateButtonContainer {
+    margin-bottom: var(--spacing-8);
+}
+
+.updateButton {
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
+}
+
+.updateButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    box-shadow: var(--glow-primary);
+}
+
+.updateButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.updateButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--button-contained-disabled-bg);
+    color: var(--button-disabled-text);
+}
+
+.description {
+    text-align: center;
+    max-width: 500px;
+    color: var(--panel-text);
+    line-height: var(--line-height-relaxed);
+    font-family: var(--font-family-active);
+}
+
+.description p {
+    margin-bottom: var(--spacing-2);
+}
+
+/* Confirmation Dialog */
+.confirmationOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    pointer-events: auto;
+}
+
+.confirmationDialog {
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--color-warning-main);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--glow-warning);
+    animation: slideIn 0.2s ease;
+    font-family: var(--font-family-active);
+}
+
+.confirmationHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-warning-main);
+}
+
+.confirmationHeader h3 {
+    margin-left: var(--spacing-3);
+    font-size: var(--font-size-lg);
+    text-transform: uppercase;
+    font-family: var(--font-family-active);
+}
+
+.confirmationMessage {
+    color: var(--panel-text);
+    margin-bottom: var(--spacing-6);
+    line-height: var(--line-height-relaxed);
+    font-family: var(--font-family-active);
+}
+
+.confirmationButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-4);
+}
+
+.cancelButton {
+    background-color: transparent;
+    border: var(--border-width-standard) solid var(--button-default-border);
+    color: var(--button-default-text);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
+}
+
+.cancelButton:hover {
+    border-color: var(--button-default-border);
+    color: var(--button-hover-text);
+    transform: var(--button-scale-hover);
+}
+
+.cancelButton:active {
+    transform: var(--button-scale-active);
+}
+
+.confirmButton {
+    background-color: var(--color-warning-main);
+    color: var(--color-text);
+    border: none;
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
+}
+
+.confirmButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.confirmButton:active {
+    transform: var(--button-scale-active);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

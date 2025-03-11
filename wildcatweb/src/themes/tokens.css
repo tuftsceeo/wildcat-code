@@ -1,0 +1,655 @@
+/* tokens.css - Comprehensive design token system for WildCat app
+ * This file provides a complete set of design tokens for all themes
+ * using contrast-based naming conventions instead of light/dark.
+ * Preference for rem scaling.
+ */
+
+/* Import necessary fonts */
+@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Georgia&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Arial&display=swap");
+
+/* ============================================
+   SHARED TOKENS (constant across all themes)
+   ============================================ */
+:root {
+    /* Spacing Scale */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem; /* 8px */
+    --spacing-3: 0.75rem; /* 12px */
+    --spacing-4: 1rem; /* 16px */
+    --spacing-5: 1.25rem; /* 20px */
+    --spacing-6: 1.5rem; /* 24px */
+    --spacing-8: 2rem; /* 32px */
+    --spacing-10: 2.5rem; /* 40px */
+    --spacing-12: 3rem; /* 48px */
+    --spacing-16: 4rem; /* 64px */
+    --spacing-20: 5rem; /* 80px */
+
+    /* Border Radius */
+    --radius-none: 0;
+    --radius-sm: 0.25rem; /* 4px */
+    --radius-md: 0.5rem; /* 8px */
+    --radius-lg: 0.75rem; /* 12px */
+    --radius-xl: 1rem; /* 16px */
+    --radius-full: 9999px;
+
+    /* Border Width */
+    --border-width-none: 0;
+    --border-width-thin: 0.125rem;
+    --border-width-standard: 0.1875rem;
+    --border-width-thick: 0.25rem;
+    --border-width-extra: 0.3125rem;
+
+    /* Z-Index Layers */
+    --z-index-below: -1;
+    --z-index-base: 0;
+    --z-index-above: 1;
+    --z-index-dropdown: 10;
+    --z-index-popover: 20;
+    --z-index-modal: 30;
+    --z-index-overlay: 40;
+    --z-index-toast: 50;
+
+    /* Font Sizes */
+    --font-size-xxs: 0.6rem; /* 12px */
+    --font-size-xs: 1.2rem; /* 12px */
+    --font-size-sm: 1.4rem; /* 14px */
+    --font-size-base: 1.6rem; /* 16px */
+    --font-size-lg: 2rem; /* 32 px*/
+    --font-size-xl: 2.5rem; /* 24px */
+    --font-size-2xl: 3.2rem; /* 32px */
+    --font-size-3xl: 4rem; /* 40px */
+
+    /* Font Weights */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* Line Heights */
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+
+    /* Letter Spacing */
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    --letter-spacing-widest: 0.1em;
+
+    /* Animation and Transition */
+    --transition-duration-fast: 150ms;
+    --transition-duration-normal: 250ms;
+    --transition-duration-slow: 350ms;
+
+    /* Easing Functions */
+    --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+    --transition-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+
+    /* Complete transitions */
+    --transition-standard: var(--transition-duration-normal)
+        var(--transition-easing-standard);
+    --transition-fast: var(--transition-duration-fast)
+        var(--transition-easing-standard);
+    --transition-slow: var(--transition-duration-slow)
+        var(--transition-easing-standard);
+
+    /* Component dimensions - consistent across themes */
+    --panel-width-step: 325px;
+    --panel-width-code: 325px;
+    --panel-width-control: 620px;
+    --panel-width-settings: 350px;
+    --panel-spacing: var(--spacing-4);
+    --header-height: 60px;
+    --bluetooth-button-size: 40px;
+    --bluetooth-icon-size: 24px;
+    --bluetooth-status-indicator-size: 10px;
+
+    /* Responsive adjustments */
+    /* Button Scale Transforms - consistent across themes */
+    --button-scale-default: scale(1);
+    --button-scale-hover: scale(1.01);
+    --button-scale-active: scale(0.99);
+}
+
+@media (max-width: 1400px) {
+    /*Small Screens*/
+    :root {
+        /* Font Sizes */
+        --font-size-xxs: 0.5rem; /* 12px */
+        --font-size-xs: 0.9rem; /* 12px */
+        --font-size-sm: 1.05rem; /* 14px */
+        --font-size-base: 1.2rem; /* 16px */
+        --font-size-lg: 1.5rem; /* 32 px*/
+        --font-size-xl: 1.875rem; /* 24px */
+        --font-size-2xl: 2.4rem; /* 32px */
+        --font-size-3xl: 3rem; /* 40px */
+
+        /* Component dimensions - consistent across themes */
+        --panel-width-step: 235px;
+        --panel-width-code: 235px;
+        --panel-width-control: 482px;
+    }
+}
+
+@media (max-width: 1000px) {
+    /*Portrait/Phone*/
+    :root {
+        /* Font Sizes */
+        --font-size-xxs: 0.4rem; /* 12px */
+        --font-size-xs: 0.6rem; /* 12px */
+        --font-size-sm: 0.7rem; /* 14px */
+        --font-size-base: 0.8rem; /* 16px */
+        --font-size-lg: 1rem; /* 32 px*/
+        --font-size-xl: 1.25rem; /* 24px */
+        --font-size-2xl: 1.6rem; /* 32px */
+        --font-size-3xl: 2rem; /* 40px */
+    }
+}
+
+/* ============================================
+   RETRO THEME (Dark Mode with Neon Elements)
+   ============================================ */
+:root,
+body[data-theme="retro"] {
+    /* Font Family */
+    --font-family-primary: "Kode Mono", monospace;
+    --font-family-fallback: "Courier New", monospace;
+    --font-family-dyslexic: "OpenDyslexic", "Comic Sans MS", sans-serif;
+    --font-family-active: var(--font-family-primary);
+
+    /* Base Colors */
+    --color-background: #1e1e1e;
+    --color-text: #ffffff;
+    --color-transparent: transparent;
+
+    /* Primary Color - Neon Blue */
+    --color-primary-main: #0050d8;
+    --color-primary-low: #093055; /* Darker/Less contrast in dark mode */
+    --color-primary-high: #35b1ff; /* Lighter/Higher contrast in dark mode */
+    --color-primary-contrast: #1e1e1e;
+
+    /* Secondary Color - Neon Green */
+    --color-secondary-main: #009f18;
+    --color-secondary-low: #03520f; /* Darker/Less contrast in dark mode */
+    --color-secondary-high: #33ff52; /* Lighter/Higher contrast in dark mode */
+    --color-secondary-contrast: #1e1e1e;
+
+    /* Feedback Colors */
+    --color-error-main: #ff0000;
+    --color-error-low: #990000;
+    --color-error-high: #ff8080;
+    --color-error-contrast: #ffffff;
+
+    --color-warning-main: #ffa500;
+    --color-warning-low: #996300;
+    --color-warning-high: #ffc966;
+    --color-warning-contrast: #1e1e1e;
+
+    --color-info-main: #ffff00;
+    --color-info-low: #e0be00;
+    --color-info-high: #ffff80;
+    --color-info-contrast: #1e1e1e;
+
+    --color-success-main: #009f18; /* Same as secondary in Retro theme */
+    --color-success-low: #03520f;
+    --color-success-high: #33ff52;
+    --color-success-contrast: #1e1e1e;
+
+    /* Gray Scale - Contrast based */
+    --color-gray-faint: #222222; /* Very low contrast with background */
+    --color-gray-subtle: #444444; /* Low contrast */
+    --color-gray-medium: #777777; /* Medium contrast */
+    --color-gray-bold: #aaaaaa; /* High contrast */
+    --color-gray-extreme: #dddddd; /* Very high contrast with background, close to text */
+
+    /* Glow Effects - Only in Retro theme */
+    --glow-primary: 0 0 0.25rem rgba(0, 191, 255, 0.7);
+    --glow-secondary: 0 0 0.25rem rgba(0, 255, 0, 0.7);
+    --glow-error: 0 0 0.25rem rgba(255, 0, 0, 0.7);
+    --glow-warning: 0 0 0.25rem rgba(255, 165, 0, 0.7);
+    --glow-info: 0 0 0.25rem rgba(255, 255, 0, 0.7);
+    --glow-white: 0 0 0.25rem rgba(255, 255, 255, 0.7);
+
+    /* Component-specific colors */
+    --color-motor-forward: var(--color-secondary-high);
+    --color-motor-backward: var(--color-info-main);
+    --color-motor-stopped: var(--color-gray-medium);
+
+    --color-timer-main: var(--color-secondary-high);
+    --color-sensor-main: var(--color-primary-high);
+
+    /* UI Element Tokens */
+
+    /* Button States - Outlined */
+    --button-default-bg: transparent;
+    --button-default-text: var(--color-text);
+    --button-default-border: var(--color-primary-high);
+
+    --button-selected-bg: transparent;
+    --button-selected-text: var(--color-secondary-high);
+    --button-selected-border: var(--color-secondary-high);
+
+    --button-disabled-bg: transparent;
+    --button-disabled-text: var(--color-gray-medium);
+    --button-disabled-border: var(--color-gray-medium);
+    --button-disabled-opacity: 0.6;
+
+    /* Button States - Contained */
+    --button-contained-default-bg: var(--color-primary-high);
+    --button-contained-default-text: var(--color-primary-contrast);
+    --button-contained-default-border: var(--color-primary-main);
+
+    --button-contained-selected-bg: var(--color-secondary-high);
+    --button-contained-selected-text: var(--color-secondary-contrast);
+    --button-contained-selected-border: var(--color-secondary-main);
+
+    --button-contained-disabled-bg: var(--color-gray-subtle);
+    --button-contained-disabled-text: var(--color-gray-faint);
+    --button-contained-disabled-border: var(--color-gray-subtle);
+    --button-contained-disabled-opacity: 0.6;
+
+    /* Panel/Card */
+    --panel-bg: var(--color-background);
+    --panel-border: var(--color-primary-high);
+    --panel-active-border: var(--color-secondary-main);
+    --panel-text: var(--color-text);
+
+    /* Input */
+    --input-default-bg: var(--color-background);
+    --input-default-text: var(--color-text);
+    --input-default-border: var(--color-primary-main);
+
+    --input-focus-bg: var(--color-background);
+    --input-focus-text: var(--color-text);
+    --input-focus-border: var(--color-secondary-main);
+    --input-focus-outline: var(--glow-secondary);
+
+    --input-disabled-bg: var(--color-background);
+    --input-disabled-text: var(--color-gray-medium);
+    --input-disabled-border: var(--color-gray-medium);
+}
+
+/* ============================================
+   CLEAN THEME (Material-inspired Light Mode)
+   ============================================ */
+body[data-theme="clean"] {
+    /* Font Family */
+    --font-family-primary: "Arial", sans-serif;
+    --font-family-fallback: "Helvetica", sans-serif;
+    --font-family-active: var(--font-family-primary);
+
+    /* Base Colors */
+    --color-background: #ffffff;
+    --color-text: #000000;
+
+    /* Primary Color - Blue */
+    --color-primary-main: #0066cc;
+    --color-primary-low: #4488cc; /* Lighter/Less contrast in light mode */
+    --color-primary-high: #004499; /* Darker/Higher contrast in light mode */
+    --color-primary-contrast: #ffffff;
+
+    /* Secondary Color - Green */
+    --color-secondary-main: rgb(0, 170, 85);
+    --color-primary-low: #4cbb7c; /* Lighter/Less contrast in light mode */
+    --color-primary-high: #007744; /* Darker/Higher contrast in light mode */
+    --color-secondary-contrast: #ffffff;
+
+    /* Feedback Colors */
+    --color-error-main: #dd0000;
+    --color-error-low: #e65c5c;
+    --color-error-high: #aa0000;
+    --color-error-contrast: #ffffff;
+
+    --color-warning-main: #ff6600;
+    --color-warning-low: #ff944d;
+    --color-warning-high: #cc5200;
+    --color-warning-contrast: #000000;
+
+    --color-info-main: #ffcc00;
+    --color-info-low: #ffdb4d;
+    --color-info-high: #cca300;
+    --color-info-contrast: #000000;
+
+    --color-success-main: #00aa55; /* Same as secondary */
+    --color-success-low: #4cbb7c;
+    --color-success-high: #007744;
+    --color-success-contrast: #ffffff;
+
+    /* Gray Scale - Contrast based */
+    --color-gray-faint: #f5f5f5; /* Very low contrast with background */
+    --color-gray-subtle: #dddddd; /* Low contrast */
+    --color-gray-medium: #aaaaaa; /* Medium contrast */
+    --color-gray-bold: #666666; /* High contrast */
+    --color-gray-extreme: #333333; /* Very high contrast with background, close to text */
+
+    /* No glow effects in Clean theme */
+    --glow-primary: none;
+    --glow-secondary: none;
+    --glow-error: none;
+    --glow-warning: none;
+    --glow-info: none;
+    --glow-white: none;
+
+    /* Component-specific colors */
+    --color-motor-forward: var(--color-secondary-main);
+    --color-motor-backward: var(--color-info-main);
+    --color-motor-stopped: var(--color-gray-medium);
+
+    --color-timer-main: var(--color-secondary-main);
+    --color-sensor-main: var(--color-primary-main);
+
+    /* UI Element Tokens */
+
+    /* Button States - Outlined */
+    --button-default-bg: transparent;
+    --button-default-text: var(--color-text);
+    --button-default-border: var(--color-primary-main);
+
+    --button-selected-bg: rgba(0, 170, 85, 0.1);
+    --button-selected-text: var(--color-secondary-main);
+    --button-selected-border: var(--color-secondary-main);
+
+    --button-disabled-bg: transparent;
+    --button-disabled-text: var(--color-gray-medium);
+    --button-disabled-border: var(--color-gray-medium);
+
+    /* Button States - Contained */
+    --button-contained-default-bg: var(--color-primary-main);
+    --button-contained-default-text: var(--color-primary-contrast);
+    --button-contained-default-border: var(--color-primary-main);
+
+    --button-contained-selected-bg: var(--color-secondary-main);
+    --button-contained-selected-text: var(--color-secondary-contrast);
+    --button-contained-selected-border: var(--color-secondary-main);
+
+    --button-contained-disabled-bg: var(--color-gray-medium);
+    --button-contained-disabled-text: var(--color-background);
+    --button-contained-disabled-border: var(--color-gray-medium);
+
+    /* Panel/Card */
+    --panel-bg: var(--color-background);
+    --panel-border: var(--color-primary-main);
+    --panel-active-border: var(--color-secondary-main);
+    --panel-text: var(--color-text);
+
+    /* Input */
+    --input-default-bg: var(--color-background);
+    --input-default-text: var(--color-text);
+    --input-default-border: var(--color-primary-main);
+
+    --input-focus-bg: var(--color-background);
+    --input-focus-text: var(--color-text);
+    --input-focus-border: var(--color-secondary-main);
+    --input-focus-outline: 0 0 0 2px rgba(0, 170, 85, 0.2);
+
+    --input-disabled-bg: var(--color-gray-faint);
+    --input-disabled-text: var(--color-gray-medium);
+    --input-disabled-border: var(--color-gray-medium);
+}
+
+/* ============================================
+   PASTEL THEME (Warm, Eye-friendly Light Mode)
+   ============================================ */
+body[data-theme="pastel"] {
+    /* Font Family */
+    --font-family-primary: "Georgia", "Times New Roman", serif;
+    --font-family-fallback: "Times New Roman", serif;
+    --font-family-active: var(--font-family-primary);
+
+    /* Base Colors */
+    --color-background: #fffaf0; /* Warm parchment */
+    --color-text: #3e4551; /* Slate instead of pure black */
+
+    /* Primary Color - Blue */
+    --color-primary-main: #6cc3d5;
+    --color-primary-low: #a5d8e6; /* Lighter/Less contrast in light mode */
+    --color-primary-high: #5a9ba8; /* Darker/Higher contrast in light mode */
+    --color-primary-contrast: #000000;
+
+    /* Secondary Color - Green */
+    --color-secondary-main: #78c2ad;
+    --color-secondary-low: #a5d8c6; /* Lighter/Less contrast in light mode */
+    --color-secondary-high: #5a9b89; /* Darker/Higher contrast in light mode */
+    --color-secondary-contrast: #000000;
+
+    /* Feedback Colors */
+    --color-error-main: #f3969a;
+    --color-error-low: #f7bec0;
+    --color-error-high: #e96a70;
+    --color-error-contrast: #000000;
+
+    --color-warning-main: #ffbb89;
+    --color-warning-low: #ffd9bd;
+    --color-warning-high: #ff9e56;
+    --color-warning-contrast: #000000;
+
+    --color-info-main: #f3dc6d;
+    --color-info-low: #f8e9a6;
+    --color-info-high: #e6cb3e;
+    --color-info-contrast: #000000;
+
+    --color-success-main: #78c2ad; /* Same as secondary */
+    --color-success-low: #a5d8c6;
+    --color-success-high: #5a9b89;
+    --color-success-contrast: #000000;
+
+    /* Gray Scale - Contrast based */
+    --color-gray-faint: #f5f0e5; /* Warm off-white, very low contrast */
+    --color-gray-subtle: #e0d6c5; /* Warm light gray */
+    --color-gray-medium: #bdb19e; /* Warm medium gray */
+    --color-gray-bold: #8a7f6d; /* Warm dark gray */
+    --color-gray-extreme: #5a534a; /* Warm very dark gray, close to text */
+
+    /* No glow effects in Pastel theme */
+    --glow-primary: none;
+    --glow-secondary: none;
+    --glow-error: none;
+    --glow-warning: none;
+    --glow-info: none;
+    --glow-white: none;
+
+    /* Component-specific colors */
+    --color-motor-forward: var(--color-secondary-main);
+    --color-motor-backward: var(--color-info-high);
+    --color-motor-stopped: var(--color-gray-medium);
+
+    --color-timer-main: var(--color-secondary-main);
+    --color-sensor-main: var(--color-primary-main);
+
+    /* UI Element Tokens */
+
+    /* Button States - Outlined */
+    --button-default-bg: transparent;
+    --button-default-text: var(--color-primary-main);
+    --button-default-border: var(--color-primary-main);
+
+    --button-selected-bg: transparent;
+    --button-selected-text: var(--color-secondary-main);
+    --button-selected-border: var(--color-secondary-main);
+
+    --button-disabled-bg: transparent;
+    --button-disabled-text: var(--color-gray-medium);
+    --button-disabled-border: var(--color-gray-medium);
+
+    /* Button States - Contained */
+    --button-contained-default-bg: var(--color-primary-main);
+    --button-contained-default-text: var(--color-primary-contrast);
+    --button-contained-default-border: var(--color-primary-main);
+
+    --button-contained-selected-bg: var(--color-secondary-main);
+    --button-contained-selected-text: var(--color-secondary-contrast);
+    --button-contained-selected-border: var(--color-secondary-main);
+
+    --button-contained-disabled-bg: var(--color-gray-medium);
+    --button-contained-disabled-text: var(--color-background);
+    --button-contained-disabled-border: var(--color-gray-medium);
+
+    /* Panel/Card */
+    --panel-bg: var(--color-background);
+    --panel-border: var(--color-primary-main);
+    --panel-active-border: var(--color-secondary-main);
+    --panel-text: var(--color-text);
+
+    /* Input */
+    --input-default-bg: var(--color-background);
+    --input-default-text: var(--color-text);
+    --input-default-border: var(--color-primary-main);
+
+    --input-focus-bg: var(--color-background);
+    --input-focus-text: var(--color-text);
+    --input-focus-border: var(--color-secondary-main);
+    --input-focus-outline: none;
+
+    --input-disabled-bg: var(--color-gray-faint);
+    --input-disabled-text: var(--color-gray-medium);
+    --input-disabled-border: var(--color-gray-medium);
+}
+
+/* ============================================
+   ACCESSIBILITY ADJUSTMENTS
+   ============================================ */
+
+/* Apply dyslexia font when enabled */
+body.dyslexia-font {
+    --font-family-active: var(--font-family-dyslexic);
+    --font-size-xxs: 0.5rem; /* 12px */
+    --font-size-xs: 0.9rem; /* 12px */
+    --font-size-sm: 1.05rem; /* 14px */
+    --font-size-base: 1.2rem; /* 16px */
+    --font-size-lg: 1.5rem; /* 32 px*/
+    --font-size-xl: 1.875rem; /* 24px */
+    --font-size-2xl: 2.4rem; /* 32px */
+    --font-size-3xl: 3rem; /* 40px */
+}
+
+/* Apply high contrast when enabled */
+body.high-contrast {
+    --color-text: #ffffff;
+    --color-background: #000000;
+    --panel-bg: #000000;
+    --panel-border: #ffffff;
+    --button-default-border: #ffffff;
+    --button-default-text: #ffffff;
+}
+
+/* Larger text when enabled */
+body.large-text {
+    --font-size-base: 1.25rem;
+    --font-size-lg: 1.5rem;
+    --font-size-xl: 1.75rem;
+    --font-size-2xl: 2.25rem;
+    --font-size-3xl: 2.75rem;
+}
+
+/* Placeholder for OpenDyslexic font */
+@font-face {
+    font-family: "OpenDyslexic";
+    src: local("OpenDyslexic"),
+        url(../assets/fonts/OpenDyslexic-Regular.woff) format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* ============================================
+   ANIMATIONS & KEYFRAMES
+   ============================================ */
+@keyframes clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterclockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.wildcat-panel {
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-4);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+}
+
+.wildcat-button {
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    color: var(--button-default-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-large);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    transition: transform var(--transition-standard);
+    transform: var(--button-scale-default);
+}
+
+.wildcat-button:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.wildcat-button:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.wildcat-button.active,
+.wildcat-button.selected {
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+}
+
+.wildcat-button:disabled {
+    border-color: var(--button-disabled-border);
+    color: var(--button-disabled-text);
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: var(--button-scale-default);
+}
+
+/* Contained version */
+.wildcat-button.contained {
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border-color: var(--button-contained-default-border);
+}
+
+.wildcat-button.contained.active,
+.wildcat-button.contained.selected {
+    background-color: var(--button-contained-selected-bg);
+    color: var(--button-contained-selected-text);
+    border-color: var(--button-contained-selected-border);
+}
+
+.wildcat-button.contained:disabled {
+    background-color: var(--button-contained-disabled-bg);
+    color: var(--button-contained-disabled-text);
+    border-color: var(--button-contained-disabled-border);
+}

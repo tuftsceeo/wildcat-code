@@ -4,8 +4,8 @@
  */
 
 // Import JSON files
-import enTranslations from "./en.json";
-import esTranslations from "./es.json";
+import enTranslations from "./en/en.json";
+import esTranslations from "./es/es.json";
 
 // Define available languages with metadata
 export const AVAILABLE_LANGUAGES = {
