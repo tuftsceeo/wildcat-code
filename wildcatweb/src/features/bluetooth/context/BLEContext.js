@@ -57,19 +57,26 @@ export const BLEProvider = ({ children }) => {
             const message = event.detail;
             console.log("Processing device notification:", message);
 
-            // Create a new port states object
-            const newPortStates = {};
+            // Reset port states for new notification
+            const newPortStates = {
+                A: null,
+                B: null,
+                C: null,
+                D: null,
+                E: null,
+                F: null,
+            };
 
             // Process each message in the notification
             message.messages.forEach((msg) => {
-                // Handle motor messages
+                // Handle different device types
                 if (msg.name === "Motor") {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
                     );
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.MOTOR,
-                        type: DEVICE_TYPES.MOTOR, // For backward compatibility
+                        type: DEVICE_TYPES.MOTOR, // Keep both for compatibility
                         connected: true,
                         ...msg.values,
                     };
@@ -77,15 +84,13 @@ export const BLEProvider = ({ children }) => {
                         `BLEContext: Detected Motor on port ${portLetter}`,
                         msg.values,
                     );
-                }
-                // Handle force sensor messages
-                else if (msg.name === "Force") {
+                } else if (msg.name === "Force") {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
                     );
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.FORCE_SENSOR,
-                        type: DEVICE_TYPES.FORCE_SENSOR, // For backward compatibility
+                        type: DEVICE_TYPES.FORCE_SENSOR, // Keep both for compatibility
                         connected: true,
                         pressureDetected: msg.values.pressureDetected === 1,
                         measuredValue: msg.values.measuredValue,
@@ -96,22 +101,11 @@ export const BLEProvider = ({ children }) => {
                         msg.values,
                     );
                 }
-                // Can add handlers for other sensor types here
+                // Handle other device types as needed...
             });
 
-            // Update port states by merging with previous states
-            setPortStates((prevStates) => {
-                const mergedStates = { ...prevStates };
-
-                // Only update ports that have data in this notification
-                Object.entries(newPortStates).forEach(([port, state]) => {
-                    if (state) {
-                        mergedStates[port] = state;
-                    }
-                });
-
-                return mergedStates;
-            });
+            // Replace port states entirely instead of merging
+            setPortStates(newPortStates);
         };
 
         window.addEventListener(
