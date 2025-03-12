@@ -201,8 +201,12 @@ const SingleButtonDash = memo(
  * @param {Array} props.slotData - All slot data for finding configured buttons
  * @returns {JSX.Element} Button dashboard component
  */
-export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
-    // The rest of the component remains unchanged
+export const ButtonDash = ({
+    onUpdate,
+    configuration,
+    slotData,
+    currSlotNumber,
+}) => {
     const { portStates, isConnected, DEVICE_TYPES } = useBLE();
     const [dismissedPorts, setDismissedPorts] = useState(new Set());
 
@@ -210,17 +214,34 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
     const configuredPorts = React.useMemo(() => {
         const configuredSet = new Set();
         if (slotData) {
-            Object.values(slotData).forEach((slot) => {
+            console.log(
+                `ButtonDash: Calculating configuredPorts for slot ${currSlotNumber}`,
+                {
+                    currentSlot: currSlotNumber,
+                },
+            );
+
+            Object.values(slotData).forEach((slot, index) => {
                 if (slot?.type === "input" && slot?.subtype === "button") {
+                    console.log(
+                        `ButtonDash: Checking slot ${index} for button configs`,
+                    );
                     const config = slot.configuration;
                     if (config?.port) {
                         configuredSet.add(config.port);
+                        console.log(
+                            `ButtonDash: Added port ${config.port} from slot ${index}`,
+                        );
                     }
                 }
             });
         }
+        console.log(
+            `ButtonDash: Calculated configuredPorts:`,
+            Array.from(configuredSet),
+        );
         return configuredSet;
-    }, [slotData]);
+    }, [slotData, currSlotNumber]);
 
     // Find connected force sensors
     const connectedForceSensors = React.useMemo(() => {
@@ -234,6 +255,7 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
             });
         }
 
+        console.log("ButtonDash: Connected force sensors:", connected);
         return connected;
     }, [portStates, isConnected, DEVICE_TYPES]);
 
@@ -273,6 +295,12 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
             (port) => !active[port] && !newDismissedPorts.has(port),
         );
 
+        console.log("ButtonDash: Active and disconnected buttons calculated", {
+            activeButtons: Object.keys(active),
+            disconnectedButtons: disconnected,
+            dismissedPorts: Array.from(newDismissedPorts),
+        });
+
         return { activeButtons: active, disconnectedButtons: disconnected };
     }, [portStates, configuredPorts, dismissedPorts, DEVICE_TYPES]);
 
@@ -281,41 +309,69 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
         (port, config) => {
             if (!onUpdate) return;
 
+            console.log(
+                `ButtonDash: handleButtonUpdate called for port ${port}`,
+                {
+                    hasConfig: !!config,
+                    configDetails: config ? JSON.stringify(config) : "null",
+                    currentConfig: JSON.stringify(configuration),
+                },
+            );
+
             if (config) {
+                console.log(
+                    "ButtonDash: Calling onUpdate with config:",
+                    JSON.stringify(config),
+                );
                 onUpdate(config);
             } else {
+                console.log(
+                    "ButtonDash: Calling onUpdate with null (no config)",
+                );
                 onUpdate(null);
             }
         },
-        [onUpdate],
+        [onUpdate, configuration],
     );
 
-    // In handleDismiss function
+    // Handle dismissing a disconnected button
     const handleDismiss = useCallback(
         (port) => {
             console.log(`ButtonDash: Dismissing port ${port}`, {
                 currentConfig: JSON.stringify(configuration),
-                dismissedPorts: Array.from(dismissedPorts),
+                currSlotNumber: currSlotNumber,
             });
 
             // Add to dismissed ports set
-            setDismissedPorts((prev) => new Set([...prev, port]));
+            setDismissedPorts((prev) => {
+                const newSet = new Set([...prev, port]);
+                console.log(
+                    "ButtonDash: Updated dismissedPorts",
+                    Array.from(newSet),
+                );
+                return newSet;
+            });
 
             // Remove the dismissed port from configuration
             if (onUpdate && configuration) {
                 if (configuration?.port === port) {
-                    console.log("ButtonDash: Setting config to null");
+                    console.log("ButtonDash: Calling onUpdate with null");
                     onUpdate(null);
                 } else {
-                    console.log("ButtonDash: Port not in configuration?", {
+                    console.log("ButtonDash: Port not found in configuration", {
+                        port,
                         configPort: configuration?.port,
-                        dismissedPort: port,
                     });
                 }
             }
         },
-        [configuration, onUpdate, dismissedPorts],
+        [configuration, onUpdate, currSlotNumber],
     );
+
+    // Log when currSlotNumber changes
+    useEffect(() => {
+        console.log(`ButtonDash: Current slot changed to ${currSlotNumber}`);
+    }, [currSlotNumber]);
 
     return (
         <div className={styles.buttonDashContainer}>

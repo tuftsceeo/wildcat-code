@@ -391,6 +391,7 @@ export const MotorDash = ({
     onUpdate,
     configuration,
     slotData,
+    currSlotNumber,
     showLabels = true,
 }) => {
     const { portStates, isConnected } = useBLE();
@@ -400,20 +401,42 @@ export const MotorDash = ({
     const configuredPorts = React.useMemo(() => {
         const configuredSet = new Set();
         if (slotData) {
-            Object.values(slotData).forEach((slot) => {
+            console.log(
+                `MotorDash: Calculating configuredPorts for slot ${currSlotNumber}`,
+                {
+                    currentSlot: currSlotNumber,
+                },
+            );
+
+            Object.values(slotData).forEach((slot, index) => {
                 if (slot?.type === "action" && slot?.subtype === "motor") {
+                    console.log(
+                        `MotorDash: Checking slot ${index} for motor configs`,
+                    );
                     if (Array.isArray(slot.configuration)) {
                         slot.configuration.forEach((config) => {
-                            if (config?.port) configuredSet.add(config.port);
+                            if (config?.port) {
+                                configuredSet.add(config.port);
+                                console.log(
+                                    `MotorDash: Added port ${config.port} from slot ${index} array config`,
+                                );
+                            }
                         });
                     } else if (slot.configuration?.port) {
                         configuredSet.add(slot.configuration.port);
+                        console.log(
+                            `MotorDash: Added port ${slot.configuration.port} from slot ${index}`,
+                        );
                     }
                 }
             });
         }
+        console.log(
+            `MotorDash: Calculated configuredPorts:`,
+            Array.from(configuredSet),
+        );
         return configuredSet;
-    }, [slotData]);
+    }, [slotData, currSlotNumber]);
 
     // Get active and disconnected ports
     const { activeMotors, disconnectedPorts } = React.useMemo(() => {
@@ -451,6 +474,12 @@ export const MotorDash = ({
             (port) => !active[port] && !newDismissedPorts.has(port),
         );
 
+        console.log("MotorDash: Active and disconnected ports calculated", {
+            activeMotors: Object.keys(active),
+            disconnectedPorts: disconnected,
+            dismissedPorts: Array.from(newDismissedPorts),
+        });
+
         return { activeMotors: active, disconnectedPorts: disconnected };
     }, [portStates, configuredPorts, dismissedPorts]);
 
@@ -458,6 +487,15 @@ export const MotorDash = ({
     const handleMotorUpdate = useCallback(
         (port, config) => {
             if (!onUpdate) return;
+
+            console.log(
+                `MotorDash: handleMotorUpdate called for port ${port}`,
+                {
+                    hasConfig: !!config,
+                    configDetails: config ? JSON.stringify(config) : "null",
+                    currentConfig: JSON.stringify(configuration),
+                },
+            );
 
             // Get existing configurations
             let currentConfigs = Array.isArray(configuration)
@@ -471,34 +509,54 @@ export const MotorDash = ({
                 );
                 if (existingIndex >= 0) {
                     currentConfigs[existingIndex] = config;
+                    console.log(
+                        `MotorDash: Updated existing config at index ${existingIndex}`,
+                    );
                 } else {
                     currentConfigs.push(config);
+                    console.log(`MotorDash: Added new config for port ${port}`);
                 }
             } else {
                 // Remove configuration for this port if it exists
+                console.log(`MotorDash: Removing config for port ${port}`);
                 currentConfigs = currentConfigs.filter((c) => c.port !== port);
             }
 
             // Only update if we have at least one configuration
             if (currentConfigs.length > 0) {
+                console.log("MotorDash: Calling onUpdate with configs array", {
+                    configCount: currentConfigs.length,
+                    configs: JSON.stringify(currentConfigs),
+                });
                 onUpdate(currentConfigs);
             } else {
+                console.log(
+                    "MotorDash: Calling onUpdate with null (no configs)",
+                );
                 onUpdate(null);
             }
         },
         [onUpdate, configuration],
     );
 
-    // In handleDismiss function
+    // Handle dismissing a disconnected motor
     const handleDismiss = useCallback(
         (port) => {
             console.log(`MotorDash: Dismissing port ${port}`, {
                 currentConfig: JSON.stringify(configuration),
-                dismissedPorts: Array.from(dismissedPorts),
+                configType: Array.isArray(configuration) ? "array" : "single",
+                currSlotNumber: currSlotNumber,
             });
 
             // Add to dismissed ports set
-            setDismissedPorts((prev) => new Set([...prev, port]));
+            setDismissedPorts((prev) => {
+                const newSet = new Set([...prev, port]);
+                console.log(
+                    "MotorDash: Updated dismissedPorts",
+                    Array.from(newSet),
+                );
+                return newSet;
+            });
 
             // Remove the dismissed port from the configuration
             if (onUpdate) {
@@ -506,27 +564,36 @@ export const MotorDash = ({
                     const newConfig = configuration.filter(
                         (c) => c.port !== port,
                     );
-                    console.log(`MotorDash: After filtering config`, {
+                    console.log(`MotorDash: After filtering, new config is`, {
                         newConfig: JSON.stringify(newConfig),
+                        isEmpty: newConfig.length === 0,
                     });
 
                     if (newConfig.length > 0) {
+                        console.log(
+                            "MotorDash: Calling onUpdate with filtered array config",
+                        );
                         onUpdate(newConfig);
                     } else {
                         console.log(
-                            "MotorDash: Setting config to null (empty array)",
+                            "MotorDash: Calling onUpdate with null (empty array)",
                         );
-                        onUpdate(null); // If no configurations left, clear the slot
+                        onUpdate(null);
                     }
                 } else if (configuration?.port === port) {
                     console.log(
-                        "MotorDash: Setting config to null (single port match)",
+                        "MotorDash: Calling onUpdate with null (single port match)",
                     );
                     onUpdate(null);
+                } else {
+                    console.log("MotorDash: Port not found in configuration", {
+                        port,
+                        configPort: configuration?.port,
+                    });
                 }
             }
         },
-        [configuration, onUpdate, dismissedPorts],
+        [configuration, onUpdate, currSlotNumber],
     );
 
     return (

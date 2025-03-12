@@ -84,8 +84,19 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
 
     // Reset state when slot number changes
     useEffect(() => {
+        console.log(`CommandPanel: Slot changed to ${currSlotNumber}`, {
+            hasSlotData: !!slotData?.[currSlotNumber],
+            slotData: JSON.stringify(slotData?.[currSlotNumber]),
+        });
+
         const currentSlotData = slotData?.[currSlotNumber];
         if (currentSlotData && currentSlotData.type) {
+            console.log(`CommandPanel: Loading slot ${currSlotNumber} data`, {
+                type: currentSlotData.type,
+                subtype: currentSlotData.subtype,
+                config: JSON.stringify(currentSlotData.configuration),
+            });
+
             setSelectedType(currentSlotData.type);
             setSelectedSubtype(currentSlotData.subtype);
             setDashboardConfig(currentSlotData.configuration);
@@ -95,6 +106,10 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             setCurrentInstruction(currentSlotData);
         } else {
             // Reset everything when there's no valid slot data
+            console.log(
+                `CommandPanel: No valid data for slot ${currSlotNumber}, resetting state`,
+            );
+
             setSelectedType(null);
             setSelectedSubtype(null);
             setDashboardConfig(null);
@@ -105,13 +120,50 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
 
     // Auto-save when configuration changes
     useEffect(() => {
-        if (!dashboardConfig) return;
+        console.log("CommandPanel: dashboardConfig effect triggered", {
+            hasConfig: !!dashboardConfig,
+            currentSlot: currSlotNumber,
+        });
+
+        if (!dashboardConfig) {
+            console.log(
+                "CommandPanel: No dashboard config, checking if we need to update",
+            );
+
+            // If we had a previous config but it was nullified, we should update the slot
+            if (lastSavedConfig) {
+                console.log(
+                    "CommandPanel: Config was cleared, updating slot to null",
+                );
+
+                if (selectedType && selectedSubtype) {
+                    // Create an instruction with null configuration
+                    const instruction = {
+                        type: selectedType,
+                        subtype: selectedSubtype,
+                        configuration: null,
+                    };
+                    onSlotUpdate(instruction);
+                    setLastSavedConfig(null);
+                    setCurrentInstruction(instruction);
+                } else {
+                    // If no type/subtype, clear the slot entirely
+                    onSlotUpdate(null);
+                    setLastSavedConfig(null);
+                    setCurrentInstruction(null);
+                }
+            }
+            return;
+        }
 
         // Check if the configuration has actually changed
         if (
             JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
         ) {
-            console.log("Configuration changed, auto-saving...");
+            console.log("CommandPanel: Configuration changed, auto-saving...", {
+                from: JSON.stringify(lastSavedConfig),
+                to: JSON.stringify(dashboardConfig),
+            });
 
             if (selectedType && selectedSubtype) {
                 // Create the instruction
@@ -122,6 +174,14 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 };
 
                 // Update slot and set current instruction
+                console.log(
+                    "CommandPanel: Calling onSlotUpdate with instruction",
+                    {
+                        instruction: JSON.stringify(instruction),
+                        slot: currSlotNumber,
+                    },
+                );
+
                 onSlotUpdate(instruction);
                 setLastSavedConfig(dashboardConfig);
                 setCurrentInstruction(instruction);
@@ -133,16 +193,31 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
         selectedType,
         selectedSubtype,
         onSlotUpdate,
+        currSlotNumber,
     ]);
 
     // Handle updates from the dashboard components
-    const handleDashboardUpdate = useCallback((config) => {
-        setDashboardConfig(config);
-    }, []);
+    const handleDashboardUpdate = useCallback(
+        (config) => {
+            console.log("CommandPanel: Dashboard update received", {
+                config: JSON.stringify(config),
+                previousConfig: JSON.stringify(dashboardConfig),
+                selectedType,
+                selectedSubtype,
+            });
+
+            setDashboardConfig(config);
+        },
+        [dashboardConfig, selectedType, selectedSubtype],
+    );
 
     // Handle type selection
     const handleTypeSelect = (type) => {
         if (type !== selectedType) {
+            console.log(
+                `CommandPanel: Type changed from ${selectedType} to ${type}`,
+            );
+
             setSelectedType(type);
             setSelectedSubtype(null);
             setDashboardConfig(null);
@@ -153,6 +228,10 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
 
     // Handle subtype selection
     const handleSubtypeSelect = (subtype) => {
+        console.log(
+            `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype}`,
+        );
+
         setSelectedSubtype(subtype);
         setDashboardConfig(null);
         setLastSavedConfig(null);
@@ -186,6 +265,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                             onUpdate: handleDashboardUpdate,
                             configuration: dashboardConfig,
                             slotData: slotData,
+                            currSlotNumber: currSlotNumber,
                         },
                     )}
                 <div className={styles.saveIndicator}>
