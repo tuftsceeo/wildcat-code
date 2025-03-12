@@ -290,3 +290,26 @@
         opacity: 1;
     }
 }
+
+/* In FunctionDefault.module.css */
+.stopStepIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-6);
+    gap: var(--spacing-4);
+}
+
+.stopIcon {
+    color: var(--color-error-main);
+    animation: pulse 2s infinite;
+}
+
+.stopText {
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-xl);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}

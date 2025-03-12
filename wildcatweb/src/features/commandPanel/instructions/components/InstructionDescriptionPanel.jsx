@@ -2,7 +2,7 @@
  * @file InstructionDescriptionPanel.jsx
  * @description Component for displaying human-readable instruction descriptions
  * with text-to-speech capabilities, supporting multiple languages, complexity levels,
- * robot voice options, and icon display.
+ * robot voice options, and icon display. Updated to handle stop instruction.
  */
 
 import React from "react";
@@ -34,7 +34,7 @@ const InstructionDescriptionPanel = ({
     instruction,
     showAudio = true,
     onPlayAudio,
-    slotNumber = 0, // Default to first slot
+    slotNumber = 0,
 }) => {
     // Get settings from context
     const { language, readingLevel, voice, volume } = useCustomization();
@@ -43,8 +43,17 @@ const InstructionDescriptionPanel = ({
     const complexity =
         COMPLEXITY_LEVELS[readingLevel] || COMPLEXITY_LEVELS.intermediate;
 
+    // Check if this is a stop instruction
+    const isStopInstruction =
+        instruction?.isStopInstruction === true ||
+        (instruction?.type === "special" && instruction?.subtype === "stop");
+
     // Generate description text
-    const descriptionText = instruction
+    const descriptionText = isStopInstruction
+        ? language === "es"
+            ? "El programa ha terminado."
+            : "The program has stopped."
+        : instruction
         ? generateDescription(instruction, language, readingLevel, slotNumber)
         : language === "es"
         ? "Seleccionar una acción o sensor"

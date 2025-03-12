@@ -104,7 +104,7 @@ const generatePythonCode = (slots, portStates = {}) => {
         // Add indentation for the main function
         const indent = "    ";
         let slotCode = [];
-
+        if (slot?.isStopInstruction) return;
         if (slot.type === "action" && slot.subtype === "motor") {
             // Handle both single motor config and multiple motor configs
             const configs = Array.isArray(slot.configuration)
