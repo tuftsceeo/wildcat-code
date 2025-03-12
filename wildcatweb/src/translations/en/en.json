@@ -82,9 +82,9 @@
 
         "text_only": {
             "templates": {
-                "motor_action": "Next, {port} rotates {direction} at {speed} speed.",
-                "motor_stop": "Then, {port} stops rotating.",
-                "wait_action": "Next, the robot waits for {seconds} seconds.",
+                "motor_action": "{port} rotates {direction} at {speed} speed.",
+                "motor_stop": "{port} stops rotating.",
+                "wait_action": "the robot waits for {seconds} seconds.",
                 "button_action": "The robot pauses execution until the button on {port} is {condition}."
             }
         }

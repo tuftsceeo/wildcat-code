@@ -163,6 +163,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             console.log("CommandPanel: Configuration changed, auto-saving...", {
                 from: JSON.stringify(lastSavedConfig),
                 to: JSON.stringify(dashboardConfig),
+                currentSlot: currSlotNumber,
             });
 
             if (selectedType && selectedSubtype) {
@@ -204,18 +205,19 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 previousConfig: JSON.stringify(dashboardConfig),
                 selectedType,
                 selectedSubtype,
+                currentSlot: currSlotNumber,
             });
 
             setDashboardConfig(config);
         },
-        [dashboardConfig, selectedType, selectedSubtype],
+        [dashboardConfig, selectedType, selectedSubtype, currSlotNumber],
     );
 
     // Handle type selection
     const handleTypeSelect = (type) => {
         if (type !== selectedType) {
             console.log(
-                `CommandPanel: Type changed from ${selectedType} to ${type}`,
+                `CommandPanel: Type changed from ${selectedType} to ${type} for slot ${currSlotNumber}`,
             );
 
             setSelectedType(type);
@@ -229,7 +231,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
     // Handle subtype selection
     const handleSubtypeSelect = (subtype) => {
         console.log(
-            `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype}`,
+            `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype} for slot ${currSlotNumber}`,
         );
 
         setSelectedSubtype(subtype);

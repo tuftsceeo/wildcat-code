@@ -2,6 +2,7 @@
  * @file MotorDash.jsx
  * @description Dashboard interface for configuring motor actions with a vertical bar visualization
  * and slider control for speed and direction, designed for students with autism.
+ * Updated to handle slot-specific dismissals and proper component reinitialization.
  */
 
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
@@ -44,14 +45,24 @@ const SingleMotorDash = memo(
         onDismiss,
         showLabels = true,
     }) => {
-        // Use speed as the main state (includes direction via sign)
-        // Extract speed from configuration or use 0 as default
-        const [speed, setSpeed] = useState(
-            validateSpeed(configuration?.speed) || 0,
+        // Track if this motor has been initialized with a command
+        const [isInitialized, setIsInitialized] = useState(
+            configuration?.speed !== undefined,
         );
-        // Track position (0-6) for the UI
+
+        // Use speed as the main state with undefined for uninitialized state
+        // Extract speed from configuration or use undefined as default for uninitialized
+        const [speed, setSpeed] = useState(
+            configuration?.speed !== undefined
+                ? validateSpeed(configuration.speed)
+                : undefined,
+        );
+
+        // Track position (0-6) for the UI, using center (3) as visual default for uninitialized
         const [sliderPosition, setSliderPosition] = useState(
-            speedToSliderPosition(speed),
+            configuration?.speed !== undefined
+                ? speedToSliderPosition(speed || 0)
+                : 3,
         );
 
         // Refs for DOM elements
@@ -61,12 +72,25 @@ const SingleMotorDash = memo(
 
         // Update local state when configuration changes externally
         useEffect(() => {
+            console.log(`SingleMotorDash: Config changed for port ${port}`, {
+                configExists: !!configuration,
+                speedDefined: configuration?.speed !== undefined,
+                speed: configuration?.speed,
+            });
+
             if (configuration?.speed !== undefined) {
+                // Motor has been configured with a speed
                 const validatedSpeed = validateSpeed(configuration.speed);
                 setSpeed(validatedSpeed);
                 setSliderPosition(speedToSliderPosition(validatedSpeed));
+                setIsInitialized(true);
+            } else {
+                // Motor is uninitialized - no configuration or no speed set
+                setSpeed(undefined);
+                setSliderPosition(3); // Center position visually
+                setIsInitialized(false);
             }
-        }, [configuration]);
+        }, [configuration, port]);
 
         // Define bar properties
         const getBars = () => {
@@ -78,32 +102,32 @@ const SingleMotorDash = memo(
                 const actualHeight = height * 20; // Scale heights
 
                 // Determine if the bar should be highlighted based on slider position
+                // For uninitialized motors, no bars should be active
                 let isActive = false;
 
-                if (sliderPosition === 0) {
-                    // backward-fast
-                    isActive = index === 0 || index === 1 || index === 2;
-                } else if (sliderPosition === 1) {
-                    // backward-medium
-                    isActive = index === 1 || index === 2;
-                } else if (sliderPosition === 2) {
-                    // backward-slow
-
-                    isActive = index === 2;
-                } else if (sliderPosition === 3) {
-                    // stop
-
-                    isActive =
-                        index === 3 && configuration?.speed !== undefined; // No bars highlighted
-                } else if (sliderPosition === 4) {
-                    // forward-slow
-                    isActive = index === 4;
-                } else if (sliderPosition === 5) {
-                    // forward-medium
-                    isActive = index === 4 || index === 5;
-                } else if (sliderPosition === 6) {
-                    // forward-fast
-                    isActive = index === 4 || index === 5 || index === 6;
+                if (isInitialized) {
+                    if (sliderPosition === 0) {
+                        // backward-fast
+                        isActive = index === 0 || index === 1 || index === 2;
+                    } else if (sliderPosition === 1) {
+                        // backward-medium
+                        isActive = index === 1 || index === 2;
+                    } else if (sliderPosition === 2) {
+                        // backward-slow
+                        isActive = index === 2;
+                    } else if (sliderPosition === 3) {
+                        // stop
+                        isActive = index === 3 && speed !== undefined;
+                    } else if (sliderPosition === 4) {
+                        // forward-slow
+                        isActive = index === 4;
+                    } else if (sliderPosition === 5) {
+                        // forward-medium
+                        isActive = index === 4 || index === 5;
+                    } else if (sliderPosition === 6) {
+                        // forward-fast
+                        isActive = index === 4 || index === 5 || index === 6;
+                    }
                 }
 
                 // Determine if bar is in backward or forward section
@@ -132,6 +156,9 @@ const SingleMotorDash = memo(
                 // Convert to speed value
                 const newSpeed = sliderPositionToSpeed(validPosition);
                 setSpeed(newSpeed);
+
+                // Mark as initialized since user has set a speed
+                setIsInitialized(true);
 
                 // Only send updates if onUpdate is provided
                 if (onUpdate) {
@@ -261,6 +288,7 @@ const SingleMotorDash = memo(
                     isDisconnected ? styles.disconnected : ""
                 }`}
                 data-port={port}
+                data-initialized={isInitialized}
             >
                 <div className={styles.motorHeader}>
                     <span className={styles.portLabel}>MOTOR {port}</span>
@@ -356,14 +384,18 @@ const SingleMotorDash = memo(
                                 <button
                                     key={index}
                                     className={`${styles.positionIcon} ${
-                                        sliderPosition === index
+                                        sliderPosition === index &&
+                                        isInitialized
                                             ? styles.active
                                             : ""
                                     }`}
                                     onClick={() => handleSliderChange(index)}
                                     disabled={isDisconnected}
                                     aria-label={pos.label}
-                                    aria-pressed={sliderPosition === index}
+                                    aria-pressed={
+                                        sliderPosition === index &&
+                                        isInitialized
+                                    }
                                 >
                                     {pos.icon}
                                 </button>
@@ -395,44 +427,44 @@ export const MotorDash = ({
     showLabels = true,
 }) => {
     const { portStates, isConnected } = useBLE();
-    const [dismissedPorts, setDismissedPorts] = useState(new Set());
 
-    // Get configured ports from slotData
-    const configuredPorts = React.useMemo(() => {
+    // Track dismissed ports by slot number
+    const [dismissedPortsBySlot, setDismissedPortsBySlot] = useState(new Map());
+
+    // Get dismissed ports for the current slot only
+    const dismissedPortsForCurrentSlot = React.useMemo(() => {
+        return dismissedPortsBySlot.get(currSlotNumber) || new Set();
+    }, [dismissedPortsBySlot, currSlotNumber]);
+
+    // When slot changes, log the change and ensure clean state
+    useEffect(() => {
+        console.log(`MotorDash: Slot changed to ${currSlotNumber}`, {
+            dismissedForThisSlot: Array.from(
+                dismissedPortsForCurrentSlot || [],
+            ),
+        });
+    }, [currSlotNumber, dismissedPortsForCurrentSlot]);
+
+    // Get configured ports from the current slot's configuration
+    const configuredPortsForCurrentSlot = React.useMemo(() => {
         const configuredSet = new Set();
-        if (slotData) {
-            console.log(
-                `MotorDash: Calculating configuredPorts for slot ${currSlotNumber}`,
-                {
-                    currentSlot: currSlotNumber,
-                },
-            );
 
-            Object.values(slotData).forEach((slot, index) => {
-                if (slot?.type === "action" && slot?.subtype === "motor") {
-                    console.log(
-                        `MotorDash: Checking slot ${index} for motor configs`,
-                    );
-                    if (Array.isArray(slot.configuration)) {
-                        slot.configuration.forEach((config) => {
-                            if (config?.port) {
-                                configuredSet.add(config.port);
-                                console.log(
-                                    `MotorDash: Added port ${config.port} from slot ${index} array config`,
-                                );
-                            }
-                        });
-                    } else if (slot.configuration?.port) {
-                        configuredSet.add(slot.configuration.port);
-                        console.log(
-                            `MotorDash: Added port ${slot.configuration.port} from slot ${index}`,
-                        );
+        // Extract configured ports for the current slot only
+        const slotConfig = slotData?.[currSlotNumber];
+        if (slotConfig?.type === "action" && slotConfig?.subtype === "motor") {
+            if (Array.isArray(slotConfig.configuration)) {
+                slotConfig.configuration.forEach((config) => {
+                    if (config?.port) {
+                        configuredSet.add(config.port);
                     }
-                }
-            });
+                });
+            } else if (slotConfig.configuration?.port) {
+                configuredSet.add(slotConfig.configuration.port);
+            }
         }
+
         console.log(
-            `MotorDash: Calculated configuredPorts:`,
+            `MotorDash: Configured ports for slot ${currSlotNumber}:`,
             Array.from(configuredSet),
         );
         return configuredSet;
@@ -441,47 +473,34 @@ export const MotorDash = ({
     // Get active and disconnected ports
     const { activeMotors, disconnectedPorts } = React.useMemo(() => {
         const active = {};
-        let dismissedPortsChanged = false;
-        const newDismissedPorts = new Set(dismissedPorts);
 
         // Get connected motors
         Object.entries(portStates || {}).forEach(([port, state]) => {
             if (state && state.type === 0x30) {
                 active[port] = state;
-
-                // If this port was previously dismissed but is now connected,
-                // remove it from the dismissed ports set
-                if (dismissedPorts.has(port)) {
-                    newDismissedPorts.delete(port);
-                    dismissedPortsChanged = true;
-                    console.log(
-                        `MotorDash: Port ${port} reconnected, removing from dismissed list`,
-                    );
-                }
             }
         });
 
-        // Update dismissedPorts state if needed
-        if (dismissedPortsChanged) {
-            // Use setTimeout to avoid state updates during render
-            setTimeout(() => {
-                setDismissedPorts(newDismissedPorts);
-            }, 0);
-        }
-
-        // Get configured but disconnected ports
-        const disconnected = Array.from(configuredPorts).filter(
-            (port) => !active[port] && !newDismissedPorts.has(port),
+        // Only show disconnected ports that:
+        // 1. Are configured for the CURRENT slot AND
+        // 2. Are not currently connected AND
+        // 3. Have not been dismissed for THIS slot
+        const disconnected = Array.from(configuredPortsForCurrentSlot).filter(
+            (port) => !active[port] && !dismissedPortsForCurrentSlot.has(port),
         );
 
-        console.log("MotorDash: Active and disconnected ports calculated", {
+        console.log(`MotorDash: Slot ${currSlotNumber} status:`, {
             activeMotors: Object.keys(active),
             disconnectedPorts: disconnected,
-            dismissedPorts: Array.from(newDismissedPorts),
+            dismissedForThisSlot: Array.from(dismissedPortsForCurrentSlot),
         });
 
         return { activeMotors: active, disconnectedPorts: disconnected };
-    }, [portStates, configuredPorts, dismissedPorts]);
+    }, [
+        portStates,
+        configuredPortsForCurrentSlot,
+        dismissedPortsForCurrentSlot,
+    ]);
 
     // Handle update from a single motor dashboard
     const handleMotorUpdate = useCallback(
@@ -489,7 +508,7 @@ export const MotorDash = ({
             if (!onUpdate) return;
 
             console.log(
-                `MotorDash: handleMotorUpdate called for port ${port}`,
+                `MotorDash: handleMotorUpdate called for port ${port} in slot ${currSlotNumber}`,
                 {
                     hasConfig: !!config,
                     configDetails: config ? JSON.stringify(config) : "null",
@@ -500,6 +519,8 @@ export const MotorDash = ({
             // Get existing configurations
             let currentConfigs = Array.isArray(configuration)
                 ? [...configuration]
+                : configuration
+                ? [configuration]
                 : [];
 
             if (config) {
@@ -524,72 +545,91 @@ export const MotorDash = ({
 
             // Only update if we have at least one configuration
             if (currentConfigs.length > 0) {
-                console.log("MotorDash: Calling onUpdate with configs array", {
-                    configCount: currentConfigs.length,
-                    configs: JSON.stringify(currentConfigs),
-                });
-                onUpdate(currentConfigs);
+                console.log(
+                    `MotorDash: Calling onUpdate with configs array for slot ${currSlotNumber}`,
+                    {
+                        configCount: currentConfigs.length,
+                        configs: JSON.stringify(currentConfigs),
+                    },
+                );
+
+                // If there's only one config, don't wrap in array to maintain backward compatibility
+                if (currentConfigs.length === 1) {
+                    onUpdate(currentConfigs[0]);
+                } else {
+                    onUpdate(currentConfigs);
+                }
             } else {
                 console.log(
-                    "MotorDash: Calling onUpdate with null (no configs)",
+                    `MotorDash: Calling onUpdate with null (no configs) for slot ${currSlotNumber}`,
                 );
                 onUpdate(null);
             }
         },
-        [onUpdate, configuration],
+        [onUpdate, configuration, currSlotNumber],
     );
 
-    // Handle dismissing a disconnected motor
+    // Handle dismissing a disconnected motor - now slot-specific
     const handleDismiss = useCallback(
         (port) => {
-            console.log(`MotorDash: Dismissing port ${port}`, {
-                currentConfig: JSON.stringify(configuration),
-                configType: Array.isArray(configuration) ? "array" : "single",
-                currSlotNumber: currSlotNumber,
-            });
+            console.log(
+                `MotorDash: Dismissing port ${port} from slot ${currSlotNumber}`,
+                {
+                    currentConfig: JSON.stringify(configuration),
+                    configType: Array.isArray(configuration)
+                        ? "array"
+                        : "single",
+                },
+            );
 
-            // Add to dismissed ports set
-            setDismissedPorts((prev) => {
-                const newSet = new Set([...prev, port]);
+            // Add to dismissed ports ONLY for the current slot
+            setDismissedPortsBySlot((prev) => {
+                const newMap = new Map(prev);
+                const slotDismissed = new Set(newMap.get(currSlotNumber) || []);
+                slotDismissed.add(port);
+                newMap.set(currSlotNumber, slotDismissed);
+
                 console.log(
-                    "MotorDash: Updated dismissedPorts",
-                    Array.from(newSet),
+                    `MotorDash: Updated dismissedPortsBySlot for slot ${currSlotNumber}`,
+                    {
+                        dismissedForThisSlot: Array.from(slotDismissed),
+                    },
                 );
-                return newSet;
+
+                return newMap;
             });
 
-            // Remove the dismissed port from the configuration
+            // Remove the dismissed port from the configuration FOR THIS SLOT ONLY
             if (onUpdate) {
                 if (Array.isArray(configuration)) {
                     const newConfig = configuration.filter(
                         (c) => c.port !== port,
                     );
-                    console.log(`MotorDash: After filtering, new config is`, {
-                        newConfig: JSON.stringify(newConfig),
-                        isEmpty: newConfig.length === 0,
-                    });
 
                     if (newConfig.length > 0) {
                         console.log(
-                            "MotorDash: Calling onUpdate with filtered array config",
+                            `MotorDash: Calling onUpdate with filtered array config for slot ${currSlotNumber}`,
                         );
                         onUpdate(newConfig);
                     } else {
                         console.log(
-                            "MotorDash: Calling onUpdate with null (empty array)",
+                            `MotorDash: Calling onUpdate with null (empty array) for slot ${currSlotNumber}`,
                         );
                         onUpdate(null);
                     }
                 } else if (configuration?.port === port) {
                     console.log(
-                        "MotorDash: Calling onUpdate with null (single port match)",
+                        `MotorDash: Calling onUpdate with null (single port match) for slot ${currSlotNumber}`,
                     );
                     onUpdate(null);
                 } else {
-                    console.log("MotorDash: Port not found in configuration", {
-                        port,
-                        configPort: configuration?.port,
-                    });
+                    console.log(
+                        `MotorDash: Port not found in configuration for slot ${currSlotNumber}`,
+                        {
+                            port,
+                            configPort: configuration?.port,
+                        },
+                    );
                 }
             }
         },
@@ -612,29 +652,50 @@ export const MotorDash = ({
             ) : (
                 <>
                     {/* Connected Motors */}
-                    {Object.keys(activeMotors).map((port) => (
-                        <SingleMotorDash
-                            key={port}
-                            port={port}
-                            onUpdate={(config) =>
-                                handleMotorUpdate(port, config)
-                            }
-                            configuration={
-                                Array.isArray(configuration)
-                                    ? configuration.find((c) => c.port === port)
-                                    : configuration?.port === port
-                                    ? configuration
-                                    : null
-                            }
-                            isDisconnected={false}
-                            showLabels={showLabels}
-                        />
-                    ))}
+                    {Object.keys(activeMotors).map((port) => {
+                        // Check if this port is configured for the current slot
+                        const isConfiguredForCurrentSlot =
+                            configuredPortsForCurrentSlot.has(port);
 
-                    {/* Disconnected but configured motors */}
+                        // Find the configuration for this port (if any)
+                        const config = Array.isArray(configuration)
+                            ? configuration.find((c) => c.port === port)
+                            : configuration?.port === port
+                            ? configuration
+                            : null;
+
+                        // Generate a key that forces remount when slot changes or config status changes
+                        const componentKey = `port-${port}-slot-${currSlotNumber}-${
+                            isConfiguredForCurrentSlot ? "configured" : "new"
+                        }`;
+
+                        console.log(
+                            `MotorDash: Rendering motor ${port} for slot ${currSlotNumber}`,
+                            {
+                                isConfiguredForSlot: isConfiguredForCurrentSlot,
+                                hasConfig: !!config,
+                                key: componentKey,
+                            },
+                        );
+
+                        return (
+                            <SingleMotorDash
+                                key={componentKey}
+                                port={port}
+                                onUpdate={(newConfig) =>
+                                    handleMotorUpdate(port, newConfig)
+                                }
+                                configuration={config}
+                                isDisconnected={false}
+                                showLabels={showLabels}
+                            />
+                        );
+                    })}
+
+                    {/* Disconnected but configured motors - only for the current slot */}
                     {disconnectedPorts.map((port) => (
                         <SingleMotorDash
-                            key={`disconnected-${port}`}
+                            key={`disconnected-${port}-slot${currSlotNumber}`}
                             port={port}
                             onUpdate={(config) =>
                                 handleMotorUpdate(port, config)
