@@ -489,9 +489,14 @@ export const MotorDash = ({
         [onUpdate, configuration],
     );
 
-    // Handle dismissing a disconnected motor
+    // In handleDismiss function
     const handleDismiss = useCallback(
         (port) => {
+            console.log(`MotorDash: Dismissing port ${port}`, {
+                currentConfig: JSON.stringify(configuration),
+                dismissedPorts: Array.from(dismissedPorts),
+            });
+
             // Add to dismissed ports set
             setDismissedPorts((prev) => new Set([...prev, port]));
 
@@ -501,17 +506,27 @@ export const MotorDash = ({
                     const newConfig = configuration.filter(
                         (c) => c.port !== port,
                     );
+                    console.log(`MotorDash: After filtering config`, {
+                        newConfig: JSON.stringify(newConfig),
+                    });
+
                     if (newConfig.length > 0) {
                         onUpdate(newConfig);
                     } else {
+                        console.log(
+                            "MotorDash: Setting config to null (empty array)",
+                        );
                         onUpdate(null); // If no configurations left, clear the slot
                     }
                 } else if (configuration?.port === port) {
+                    console.log(
+                        "MotorDash: Setting config to null (single port match)",
+                    );
                     onUpdate(null);
                 }
             }
         },
-        [configuration, onUpdate],
+        [configuration, onUpdate, dismissedPorts],
     );
 
     return (

@@ -240,17 +240,37 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
     // Find active and disconnected buttons
     const { activeButtons, disconnectedButtons } = React.useMemo(() => {
         const active = {};
+        let dismissedPortsChanged = false;
+        const newDismissedPorts = new Set(dismissedPorts);
 
         // Find connected buttons
         Object.entries(portStates || {}).forEach(([port, state]) => {
             if (state && state.deviceType === DEVICE_TYPES.FORCE_SENSOR) {
                 active[port] = state;
+
+                // If this port was previously dismissed but is now connected,
+                // remove it from the dismissed ports set
+                if (dismissedPorts.has(port)) {
+                    newDismissedPorts.delete(port);
+                    dismissedPortsChanged = true;
+                    console.log(
+                        `ButtonDash: Port ${port} reconnected, removing from dismissed list`,
+                    );
+                }
             }
         });
 
+        // Update dismissedPorts state if needed
+        if (dismissedPortsChanged) {
+            // Use setTimeout to avoid state updates during render
+            setTimeout(() => {
+                setDismissedPorts(newDismissedPorts);
+            }, 0);
+        }
+
         // Find configured but disconnected buttons
         const disconnected = Array.from(configuredPorts).filter(
-            (port) => !active[port] && !dismissedPorts.has(port),
+            (port) => !active[port] && !newDismissedPorts.has(port),
         );
 
         return { activeButtons: active, disconnectedButtons: disconnected };
@@ -270,20 +290,31 @@ export const ButtonDash = ({ onUpdate, configuration, slotData }) => {
         [onUpdate],
     );
 
-    // Handle dismissing a disconnected button
+    // In handleDismiss function
     const handleDismiss = useCallback(
         (port) => {
+            console.log(`ButtonDash: Dismissing port ${port}`, {
+                currentConfig: JSON.stringify(configuration),
+                dismissedPorts: Array.from(dismissedPorts),
+            });
+
             // Add to dismissed ports set
             setDismissedPorts((prev) => new Set([...prev, port]));
 
             // Remove the dismissed port from configuration
             if (onUpdate && configuration) {
                 if (configuration?.port === port) {
+                    console.log("ButtonDash: Setting config to null");
                     onUpdate(null);
+                } else {
+                    console.log("ButtonDash: Port not in configuration?", {
+                        configPort: configuration?.port,
+                        dismissedPort: port,
+                    });
                 }
             }
         },
-        [configuration, onUpdate],
+        [configuration, onUpdate, dismissedPorts],
     );
 
     return (
