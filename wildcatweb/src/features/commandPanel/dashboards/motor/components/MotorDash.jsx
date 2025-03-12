@@ -418,17 +418,37 @@ export const MotorDash = ({
     // Get active and disconnected ports
     const { activeMotors, disconnectedPorts } = React.useMemo(() => {
         const active = {};
+        let dismissedPortsChanged = false;
+        const newDismissedPorts = new Set(dismissedPorts);
 
         // Get connected motors
         Object.entries(portStates || {}).forEach(([port, state]) => {
             if (state && state.type === 0x30) {
                 active[port] = state;
+
+                // If this port was previously dismissed but is now connected,
+                // remove it from the dismissed ports set
+                if (dismissedPorts.has(port)) {
+                    newDismissedPorts.delete(port);
+                    dismissedPortsChanged = true;
+                    console.log(
+                        `MotorDash: Port ${port} reconnected, removing from dismissed list`,
+                    );
+                }
             }
         });
 
+        // Update dismissedPorts state if needed
+        if (dismissedPortsChanged) {
+            // Use setTimeout to avoid state updates during render
+            setTimeout(() => {
+                setDismissedPorts(newDismissedPorts);
+            }, 0);
+        }
+
         // Get configured but disconnected ports
         const disconnected = Array.from(configuredPorts).filter(
-            (port) => !active[port] && !dismissedPorts.has(port),
+            (port) => !active[port] && !newDismissedPorts.has(port),
         );
 
         return { activeMotors: active, disconnectedPorts: disconnected };
