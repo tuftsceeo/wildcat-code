@@ -4,7 +4,7 @@
  * with separate visualizations for programmed condition and live sensor state.
  */
 
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
 import {
     Disc,
@@ -42,21 +42,36 @@ const SingleButtonDash = memo(
 
         // Get BLE context to access live button state
         const { portStates, DEVICE_TYPES } = useBLE();
+        
+        // Use a ref to track if initial update was sent
+        const initialUpdateSent = useRef(false);
 
-        // Update configuration when parameters change
+        // Only update when configuration changes externally
         useEffect(() => {
-            if (onUpdate && port) {
-                onUpdate({ port, waitCondition });
+            if (configuration?.waitCondition !== undefined && 
+                configuration.waitCondition !== waitCondition) {
+                setWaitCondition(configuration.waitCondition);
             }
-        }, [port, waitCondition, onUpdate]);
+            
+            // Send initial configuration if needed
+            if (!initialUpdateSent.current && onUpdate && port && 
+                !configuration?.waitCondition) {
+                onUpdate({ port, waitCondition });
+                initialUpdateSent.current = true;
+            }
+        }, [configuration, waitCondition, port]);
 
         /**
          * Handle changing the wait condition
+         * Now calls onUpdate directly to avoid effect-based update loops
          */
         const handleWaitConditionChange = () => {
-            setWaitCondition(
-                waitCondition === "pressed" ? "released" : "pressed",
-            );
+            const newWaitCondition = waitCondition === "pressed" ? "released" : "pressed";
+            setWaitCondition(newWaitCondition);
+            
+            if (onUpdate && port) {
+                onUpdate({ port, waitCondition: newWaitCondition });
+            }
         };
 
         // Get current sensor state if connected

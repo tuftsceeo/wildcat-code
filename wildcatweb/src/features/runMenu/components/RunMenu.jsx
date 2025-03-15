@@ -1,8 +1,7 @@
 /**
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
- * running individual slots or the complete program. Refactored to use
- * consistent design tokens for styling.
+ * running individual slots or the complete program. Updated to handle special Stop step.
  * @author Jennifer Cross with support from Claude
  * @created March 2025
  */
@@ -16,7 +15,12 @@ import {
     ClearSlotRequest,
     ClearSlotResponse,
 } from "../../../features/bluetooth/ble_resources/messages";
-import { AlertTriangle, AlertOctagon } from "lucide-react";
+import { AlertTriangle, AlertOctagon, Octagon } from "lucide-react";
+
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
 
 /**
  * RunMenu component for navigating and executing code
@@ -127,7 +131,10 @@ export const RunMenu = ({
      * @param {number} stepIndex - Index of the clicked step
      */
     const handleStepClick = (stepIndex) => {
-        console.log("RunMenu: Clicked on step", stepIndex + 1);
+        console.log(
+            "RunMenu: Clicked on step",
+            slotData[stepIndex]?.isStopInstruction ? "Stop" : stepIndex + 1,
+        );
         setCurrSlotNumber(stepIndex);
     };
 
@@ -146,18 +153,18 @@ export const RunMenu = ({
         console.log("RunMenu: Rendering", missionSteps, "step buttons");
 
         const buttons = [];
-        // Create exactly missionSteps buttons (from 0 to missionSteps-1)
-        for (let i = 0; i < missionSteps; i++) {
+        // Create regular step buttons (excluding the stop step)
+        for (let i = 0; i < missionSteps - 1; i++) {
             buttons.push(
                 <button
                     key={i}
                     className={`${styles.stepButton} ${
-                        slotData?.[i]?.type ? styles.configured : ""
-                    } ${i === currSlotNumber ? styles.current : ""} ${
                         isConnected &&
                         checkDisconnectedMotors([slotData?.[i]]).length > 0
                             ? styles.warning
                             : ""
+                    } ${slotData?.[i]?.type ? styles.configured : ""} ${
+                        i === currSlotNumber ? styles.current : ""
                     }`}
                     onClick={() => handleStepClick(i)}
                     aria-label={`Step ${i + 1}${
@@ -169,6 +176,28 @@ export const RunMenu = ({
                 </button>,
             );
         }
+
+        // Add the special Stop button
+        const stopStepIndex = missionSteps - 1;
+        buttons.push(
+            <button
+                key="stop"
+                className={`${styles.stepButton} ${styles.stopButton} ${
+                    currSlotNumber === stopStepIndex ? styles.current : ""
+                }`}
+                onClick={() => handleStepClick(stopStepIndex)}
+                aria-label="Stop"
+                aria-current={currSlotNumber === stopStepIndex ? "step" : false}
+            >
+               
+                Stop 
+                <FilledOctagon
+                    size={30}
+                    className={styles.stopIcon}
+                />
+            </button>,
+        );
+
         return buttons;
     };
 

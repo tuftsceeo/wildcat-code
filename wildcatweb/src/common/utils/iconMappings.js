@@ -52,6 +52,10 @@ export function getIconForConcept(concept, props = {}) {
     );
   }
   
+  const FilledOctagon = (props) => {
+    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+  };
+
   const lowerConcept = concept.toLowerCase();
   
   // Map concepts to appropriate Lucide icons
@@ -70,8 +74,13 @@ export function getIconForConcept(concept, props = {}) {
     case 'slow':
       return <Turtle {...props} />;
     case 'stop':
+      return <FilledOctagon color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
+  
     case 'stops':
-      return <Octagon {...props} />;
+      return <FilledOctagon color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
+  
+    case 'stopped':
+      return <FilledOctagon color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
     
     // Button state icons
     case 'pressed':
@@ -83,8 +92,6 @@ export function getIconForConcept(concept, props = {}) {
     case 'wait':
     case 'waits':
       return <TimerReset {...props} />;
-    case 'seconds':
-      return <Clock {...props} />;
     
     // Port icons - just return the port letter
     default:

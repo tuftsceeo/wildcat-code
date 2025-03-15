@@ -164,6 +164,10 @@
     color: var(--color-primary-main);
 }
 
+.stopIcon {
+    color: var(--color-error-main);
+}
+
 /* Audio button */
 .audioButton {
     background: none;
@@ -207,9 +211,7 @@ body[data-theme="retro"] .separatorIcon {
     color: var(--color-text);
 }
 
-body[data-theme="retro"] .conceptIcon {
-    color: var(--color-primary-main);
-}
+
 
 body[data-theme="pastel"] .panel {
     background-color: var(--color-background);
@@ -219,10 +221,6 @@ body[data-theme="pastel"] .panel {
 body[data-theme="pastel"] .iconOnlyIcon,
 body[data-theme="pastel"] .separatorIcon {
     color: var(--color-text);
-}
-
-body[data-theme="pastel"] .conceptIcon {
-    color: var(--color-primary-main);
 }
 
 body[data-theme="clean"] .panel {
@@ -236,6 +234,3 @@ body[data-theme="clean"] .separatorIcon {
     color: var(--color-text);
 }
 
-body[data-theme="clean"] .conceptIcon {
-    color: var(--color-primary-main);
-}

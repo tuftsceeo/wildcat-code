@@ -84,8 +84,8 @@
             "templates": {
                 "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
                 "motor_stop": "{port} para de girar.",
-                "wait_action": "el robot espera {seconds} segundos.",
-                "button_action": "el robot pausa la ejecución hasta que el botón en {port} esté {condition}."
+                "wait_action": "El robot espera {seconds} segundos.",
+                "button_action": "El robot pausa la ejecución hasta que el botón en {port} esté {condition}."
             }
         }
     }

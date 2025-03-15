@@ -1,7 +1,7 @@
 /**
  * @file App.js
  * @description Main application component with support for reading level and step count.
- * Fixed to properly propagate step count changes to child components.
+ * Updated to handle special Stop step at the end of code.
  */
 
 import React, { useState, useEffect } from "react";
@@ -24,6 +24,7 @@ import { preloadVoices } from "./common/utils/speechUtils";
 import logo from "./assets/images/logo.svg";
 import "./common/styles/App.css";
 import reportWebVitals from "./common/utils/reportWebVitals";
+
 /**
  * The top-level App component with all providers
  * Manages the missionSteps state and handles changes from CustomizationContext
@@ -101,11 +102,28 @@ function AppContent({ missionSteps }) {
         configuration: [], // Array of configurations for this slot
     });
 
+    /**
+     * Creates a special stop instruction for the end slot
+     * @returns {Object} Stop instruction data
+     */
+    const createStopInstruction = () => ({
+        type: "special",
+        subtype: "stop",
+        configuration: { isEnd: true },
+        isStopInstruction: true, // Flag to identify this as a stop instruction
+    });
+
     // Initialize slot data array with empty slots
     const [slotData, setSlotData] = useState(
         Array(missionSteps)
             .fill(null)
-            .map(() => createEmptySlot()),
+            .map((_, index) => {
+                // Make the last slot a stop instruction
+                if (index === missionSteps - 1) {
+                    return createStopInstruction();
+                }
+                return createEmptySlot();
+            }),
     );
 
     // Update slotData when missionSteps changes
@@ -126,14 +144,37 @@ function AppContent({ missionSteps }) {
 
                 // If expanding, add new empty slots
                 if (prev.length < missionSteps) {
-                    const additionalSlots = Array(missionSteps - prev.length)
+                    // Keep all existing slots except the last one (which may be the stop instruction)
+                    const regularSlots = prev.slice(0, prev.length - 1);
+
+                    // Calculate how many new empty slots to add
+                    const additionalSlotsCount = missionSteps - prev.length;
+
+                    // Create new empty slots
+                    const additionalSlots = Array(additionalSlotsCount)
                         .fill(null)
                         .map(() => createEmptySlot());
-                    return [...prev, ...additionalSlots];
+
+                    // Add a stop instruction at the end
+                    return [
+                        ...regularSlots,
+                        ...additionalSlots,
+                        createStopInstruction(),
+                    ];
                 }
 
-                // If contracting, trim the array
-                return prev.slice(0, missionSteps);
+                // If contracting, trim the array but preserve the stop instruction
+                // Get all slots up to the new length minus 1 (to leave room for stop)
+                const trimmedSlots = prev.slice(0, missionSteps - 1);
+
+                // Add the stop instruction at the end
+                return [...trimmedSlots, createStopInstruction()];
+            }
+
+            // Ensure the last slot is always the stop instruction
+            const result = [...prev];
+            if (!result[result.length - 1]?.isStopInstruction) {
+                result[result.length - 1] = createStopInstruction();
             }
 
             // Length is already correct
@@ -146,10 +187,11 @@ function AppContent({ missionSteps }) {
         const newPyCode = generatePythonCode(slotData);
         setPyCode(newPyCode);
         console.log("App.js: Generated Python Code: ", newPyCode);
-        // Enable run if all slots have configurations
-        const isComplete = slotData.every(
-            (slot) => slot.type && slot.subtype && slot.configuration,
-        );
+
+        // Enable run if all regular slots have configurations (excluding stop step)
+        const isComplete = slotData
+            .slice(0, -1)
+            .every((slot) => slot.type && slot.subtype && slot.configuration);
         setCanRun(isComplete);
     }, [slotData]);
 
@@ -168,7 +210,12 @@ function AppContent({ missionSteps }) {
     // Generate Python code from slot configurations
     const generatePythonCode = (slots) => {
         let code = [];
+
+        // Process all slots except the stop instruction
         slots.forEach((slot, index) => {
+            // Skip the stop step which would be at the end
+            if (slot.isStopInstruction) return;
+
             if (slot.type === "action" && slot.subtype === "motor") {
                 const { buttonType, knobAngle, port } =
                     slot.configuration || {};
@@ -184,6 +231,15 @@ function AppContent({ missionSteps }) {
                 }
             }
         });
+
+        // Add explicit stop commands at the end
+        code.push("# Stop all motors");
+        code.push("for p in [port.A, port.B, port.C, port.D, port.E, port.F]:");
+        code.push("    try:");
+        code.push("        motor.stop(p)");
+        code.push("    except:");
+        code.push("        pass");
+
         return code.join("\n");
     };
 
@@ -227,6 +283,7 @@ function AppContent({ missionSteps }) {
                     currSlotNumber={currSlotNumber}
                     onSlotUpdate={handleSlotUpdate}
                     slotData={slotData}
+                    missionSteps={missionSteps}
                 />
             </div>
 
