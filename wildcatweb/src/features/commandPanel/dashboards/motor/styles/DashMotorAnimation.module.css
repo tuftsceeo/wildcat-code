@@ -1,0 +1,168 @@
+/**
+ * @file DashMotorAnimation.module.css
+ * @description CSS module for dashboard motor animation component.
+ * Duplicated from MotorAnimation styling with adjustments for dashboard context.
+ */
+
+/* Base animation container */
+.motorAnimation {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--color-background);
+    overflow: hidden;
+}
+
+/* Motor border with theme-aware color */
+.motorBorder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--color-motor-forward);
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--color-panel-bg);
+}
+
+/* Rotating rotor element */
+.motorRotor {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    transition: opacity 0.3s ease;
+}
+
+/* Pattern of dots within the rotor */
+.motorPattern {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* Individual pattern dots - positioned using theme tokens */
+.patternDot {
+    position: absolute;
+    width: 20%;
+    height: 20%;
+    background-color: var(--color-motor-forward);
+    border-radius: 50%;
+}
+
+.patternDot.top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.patternDot.right {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+.patternDot.bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.patternDot.left {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.patternDot.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 25%;
+    height: 25%;
+}
+
+/* Animation for rotation - PRESERVED FROM ORIGINAL */
+.clockwise {
+    animation-name: clockwise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.counterclockwise {
+    animation-name: counterclockwise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterclockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+/* Status overlay for speed indication */
+.statusOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.glowEffect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.slowGlow {
+    background-color: var(--color-motor-main);
+    opacity: 0.3;
+}
+
+.mediumGlow {
+    background-color: var(--color-motor-main);
+    opacity: 0.5;
+}
+
+.fastGlow {
+    background-color: var(--color-motor-main);
+    opacity: 0.7;
+    animation: pulsate 2s infinite;
+}
+
+@keyframes pulsate {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
