@@ -22,6 +22,12 @@ import {
 } from "lucide-react";
 import styles from "../styles/InstructionDisplay.module.css";
 
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<FilledOctagon />, { fill: "currentColor", ...props });
+      };
+
+
 /**
  * Component to display instructions with configurable complexity
  *
@@ -152,11 +158,11 @@ const SingleMotorDisplay = ({ config, complexity, language }) => {
                 {complexity.id !== "text_only" && (
                     <div className={styles.iconContainer}>
                         <div
-                            className={`${styles.icon} ${
+                            className={`${styles.iconStop} ${
                                 styles[getIconSizeClass(complexity)]
                             }`}
                         >
-                            <Octagon size={24} />
+                            <FilledOctagon size={24} color={'var(--color-error-main)'} />
                         </div>
                     </div>
                 )}
@@ -269,7 +275,7 @@ function getDirectionIcon(direction, level) {
         if (level === "slow") return <Turtle size={24} />;
         if (level === "medium") return <ChevronRight size={24} />;
         return <Rabbit size={24} />;
-    } else {
+    } else if (direction === "backward") {
         if (level === "slow")
             return (
                 <Turtle
@@ -284,6 +290,9 @@ function getDirectionIcon(direction, level) {
                 style={{ transform: "scaleX(-1)" }}
             />
         );
+    } else {
+        // This is for 'stop' case
+        return <FilledOctagon size={24} color="var(--color-error-main)" />;
     }
 }
 

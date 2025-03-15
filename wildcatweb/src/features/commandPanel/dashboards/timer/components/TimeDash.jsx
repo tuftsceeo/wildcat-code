@@ -6,8 +6,13 @@
  * @author Jennifer Cross with support from Claude
  * @created March 2025
  */
+/**
+ * @file TimeDash.jsx
+ * @description Dashboard interface for configuring time wait actions with visual pie clock
+ * and numeric controls for selecting duration. Fixed to avoid infinite update loops.
+ */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import styles from "../styles/TimeDash.module.css";
 
@@ -26,30 +31,53 @@ export const TimeDash = ({ onUpdate, configuration }) => {
 
     // Track if configuration is complete
     const [isConfigured, setIsConfigured] = useState(!!configuration?.seconds);
-
-    // Update configuration when seconds changes
+    
+    // Use a ref to track if we've sent the initial configuration
+    const initialUpdateSent = useRef(false);
+    
+    // Only send an update when the component mounts or when configuration changes externally
     useEffect(() => {
-        if (onUpdate) {
+        // If configuration exists but doesn't match our state, update our state
+        if (configuration?.seconds !== undefined && configuration.seconds !== seconds) {
+            setSeconds(configuration.seconds);
+            return; // Exit early to avoid sending an update for this change
+        }
+        
+        // Only send initial update if we haven't already and if needed
+        if (!initialUpdateSent.current && onUpdate && !configuration?.seconds) {
             onUpdate({ seconds });
             setIsConfigured(true);
+            initialUpdateSent.current = true;
         }
-    }, [seconds, onUpdate]);
+    }, [configuration, seconds, onUpdate]);
 
     /**
      * Increase seconds (max 60)
+     * Directly calls onUpdate to avoid effect-based update loop
      */
     const increaseSeconds = () => {
         if (seconds < 60) {
-            setSeconds(seconds + 1);
+            const newSeconds = seconds + 1;
+            setSeconds(newSeconds);
+            if (onUpdate) {
+                onUpdate({ seconds: newSeconds });
+                setIsConfigured(true);
+            }
         }
     };
 
     /**
      * Decrease seconds (min 1)
+     * Directly calls onUpdate to avoid effect-based update loop
      */
     const decreaseSeconds = () => {
         if (seconds > 1) {
-            setSeconds(seconds - 1);
+            const newSeconds = seconds - 1;
+            setSeconds(newSeconds);
+            if (onUpdate) {
+                onUpdate({ seconds: newSeconds });
+                setIsConfigured(true);
+            }
         }
     };
 

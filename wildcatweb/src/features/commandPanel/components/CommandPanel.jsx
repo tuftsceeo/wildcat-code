@@ -30,6 +30,11 @@ import SubtypeSelector from "./SubtypeSelector";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
 // Define the control types and their configurations
 const CONTROL_TYPES = {
     action: {
@@ -66,7 +71,7 @@ const CONTROL_TYPES = {
         stop: {
             name: "Stop",
             component: null,
-            icon: <Octagon size={32} />,
+            icon: <FilledOctagon size={32} />,
         },
     },
 };
@@ -337,8 +342,12 @@ export const CommandPanel = ({
                 />
             ) : (
                 <div className={styles.stopStepIndicator}>
-                    <Octagon
-                        size={48}
+                    <TypeSelector
+                    selectedType={selectedType}
+                    onTypeChange={handleTypeSelect}
+                />
+                    <FilledOctagon
+                        size={80}
                         className={styles.stopIcon}
                     />
                     <h2 className={styles.stopText}>Stop</h2>

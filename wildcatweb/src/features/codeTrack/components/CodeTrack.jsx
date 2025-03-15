@@ -53,6 +53,10 @@ const CodeTrack = ({
     // Get the current instruction from slotData
     const currentInstruction = slotData?.[currSlotNumber];
 
+      const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
     // Check if current slot is the stop step
     const isStopStep = currentInstruction?.isStopInstruction === true;
 
@@ -141,7 +145,7 @@ const CodeTrack = ({
                 >
                     {isStopStep ? (
                         <div className={styles.stopVisualization}>
-                            <Octagon
+                            <FilledOctagon
                                 size={100}
                                 className={styles.stopIcon}
                             />

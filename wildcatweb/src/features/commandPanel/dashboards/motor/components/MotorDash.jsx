@@ -23,6 +23,11 @@ import {
     MoveRight,
 } from "lucide-react";
 
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
 /**
  * Component for a single motor control dashboard
  *
@@ -276,7 +281,7 @@ const SingleMotorDash = memo(
                 ),
                 label: "Slow Backward",
             },
-            { icon: <Octagon size={16} />, label: "Stop" },
+            { icon: <FilledOctagon size={16} />, label: "Stop" },
             { icon: <Turtle size={20} />, label: "Slow Forward" },
             { icon: <MoveRight size={20} />, label: "Medium Forward" },
             { icon: <Rabbit size={20} />, label: "Fast Forward" },
@@ -334,7 +339,7 @@ const SingleMotorDash = memo(
                                     positionIcons[bar.index].label
                                 }`}
                             >
-                                {bar.height === 30 ? <Octagon /> : ""}
+                                {bar.height === 30 ? <FilledOctagon /> : ""}
                             </button>
                         ))}
                     </div>

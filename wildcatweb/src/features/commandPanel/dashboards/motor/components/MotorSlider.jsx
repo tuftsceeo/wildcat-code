@@ -18,7 +18,7 @@ import {
     ChevronsRight,
     ChevronLeft,
     ChevronRight,
-    Square,
+    Square, Octagon,
 } from "lucide-react";
 import styles from "../styles/MotorSlider.module.css";
 
@@ -85,7 +85,7 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
         { icon: <SkipBack size={16} />, label: "Fast" },
         { icon: <ChevronsLeft size={16} />, label: "Medium" },
         { icon: <ChevronLeft size={16} />, label: "Slow" },
-        { icon: <Square size={14} />, label: "Stop" },
+        { icon: <Octagon color="var(--color-error-main)" fill="var(--color-error-main)" size={14} />, label: "Stop" },
         { icon: <ChevronRight size={16} />, label: "Slow" },
         { icon: <ChevronsRight size={16} />, label: "Medium" },
         { icon: <SkipForward size={16} />, label: "Fast" },

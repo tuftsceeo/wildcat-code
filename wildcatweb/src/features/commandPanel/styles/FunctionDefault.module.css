@@ -46,6 +46,7 @@
     margin-bottom: var(--spacing-4);
     position: relative;
     z-index: 1;
+    width:100%;
 }
 
 .actionButton,
@@ -297,14 +298,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-6);
-    gap: var(--spacing-4);
+    gap: var(--spacing-6);
+    height: 100%;
 }
 
 .stopIcon {
     color: var(--color-error-main);
     animation: pulse 2s infinite;
+    flex: .25;
+    align-content: flex-end;
 }
+
 
 .stopText {
     color: var(--panel-text);
@@ -312,4 +316,6 @@
     font-size: var(--font-size-xl);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
+    flex: .75;
+    align-content: flex-start;
 }

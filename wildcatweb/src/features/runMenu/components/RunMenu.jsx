@@ -17,6 +17,11 @@ import {
 } from "../../../features/bluetooth/ble_resources/messages";
 import { AlertTriangle, AlertOctagon, Octagon } from "lucide-react";
 
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
 /**
  * RunMenu component for navigating and executing code
  *
@@ -184,11 +189,12 @@ export const RunMenu = ({
                 aria-label="Stop"
                 aria-current={currSlotNumber === stopStepIndex ? "step" : false}
             >
-                <Octagon
-                    size={16}
+               
+                Stop 
+                <FilledOctagon
+                    size={30}
                     className={styles.stopIcon}
                 />
-                Stop
             </button>,
         );
 
