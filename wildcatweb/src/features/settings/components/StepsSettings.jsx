@@ -8,8 +8,10 @@
 import React, { useState, useEffect } from "react";
 import { Minus, Plus, AlertTriangle } from "lucide-react";
 import { useCustomization } from "../../../context/CustomizationContext";
+
 import Portal from "../../../common/components/Portal";
 import styles from "../styles/StepsSettings.module.css";
+
 
 /**
  * Settings component for step count configuration
@@ -104,27 +106,30 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
         applyStepCountChange();
     };
 
-    /**
-     * Apply the step count change after confirmation (if needed)
-     */
-    const applyStepCountChange = () => {
-        // Ensure the step count is within valid range
-        const validStepCount = Math.max(
-            MIN_STEPS,
-            Math.min(MAX_STEPS, tempStepCount),
-        );
+  /**
+ * Apply the step count change after confirmation (if needed)
+ */
+const applyStepCountChange = () => {
+    // Ensure the step count is within valid range
+    const validStepCount = Math.max(
+        MIN_STEPS,
+        Math.min(MAX_STEPS, tempStepCount),
+    );
 
-        // Update the context
-        setStepCount(validStepCount);
+    console.log("StepSettings: Applying step count change to", validStepCount);
 
-        // Notify parent component if callback provided
-        if (onUpdateMissionSteps) {
-            onUpdateMissionSteps(validStepCount);
-        }
+    // Update the context
+    setStepCount(validStepCount);
 
-        // Hide confirmation dialog if it was showing
-        setShowConfirmation(false);
-    };
+    // Notify parent component if callback provided
+    if (onUpdateMissionSteps) {
+        console.log("StepSettings: Calling onUpdateMissionSteps with", validStepCount);
+        onUpdateMissionSteps(validStepCount);
+    }
+
+    // Hide confirmation dialog if it was showing
+    setShowConfirmation(false);
+};
 
     /**
      * Cancel the step count change
@@ -186,39 +191,35 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
             </div>
 
             {/* Confirmation Dialog */}
+            {/* Confirmation Dialog - Now rendered inline */}
             {showConfirmation && (
-                <Portal>
-                    <div className={styles.confirmationOverlay}>
-                        <div className={styles.confirmationDialog}>
-                            <div className={styles.confirmationHeader}>
-                                <AlertTriangle
-                                    size={24}
-                                    color="var(--color-warning-main)"
-                                />
-                                <h3>Warning: Code Will Be Deleted</h3>
-                            </div>
+                <div className={styles.confirmationOverlay}>
+                    <div className={styles.confirmationDialog}>
+                        <div className={styles.confirmationHeader}>
+                            <AlertTriangle size={24} color="var(--color-warning-main)" />
+                            <h3>Warning: Code Will Be Deleted</h3>
+                        </div>
 
-                            <div className={styles.confirmationMessage}>
-                                {confirmationMessage}
-                            </div>
+                        <div className={styles.confirmationMessage}>
+                            {confirmationMessage}
+                        </div>
 
-                            <div className={styles.confirmationButtons}>
-                                <button
-                                    className={styles.cancelButton}
-                                    onClick={handleCancelChange}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    className={styles.confirmButton}
-                                    onClick={applyStepCountChange}
-                                >
-                                    Confirm
-                                </button>
-                            </div>
+                        <div className={styles.confirmationButtons}>
+                            <button
+                                className={styles.cancelButton}
+                                onClick={handleCancelChange}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className={styles.confirmButton}
+                                onClick={applyStepCountChange}
+                            >
+                                Confirm
+                            </button>
                         </div>
                     </div>
-                </Portal>
+                </div>
             )}
         </div>
     );
