@@ -93,7 +93,7 @@
     position: absolute;
     left: 50%;
     top: 0; /* Position at top */
-    transform: translate(-50%, -55%); /* Pull it up so it's partially hidden */
+    transform: translate(-50%, -52%); /* Pull it up so it's partially hidden */
     z-index: 1;
 }
 
@@ -129,14 +129,14 @@
 .barIcon {
     position: absolute;
     bottom: 2px;
-    color: var(--panel-text);
+    color: var(--color-background);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .bar:hover:not(:disabled) {
-    transform: var(--button-scale-hover);
+    transform: scale(var(--button-scale-hover));
 }
 
 .bar:focus-visible {
@@ -148,12 +148,27 @@
 }
 
 .stopBar {
-    background-color: transparent;
-    color: var(--color-gray-subtle);
+    background-color: var(--color-gray-subtle);
+}
+
+.stopBar svg{
+    stroke: var(--color-error-main);
+    fill: var(--color-error-main);
 }
 
 .stopBar.active {
-    color: var(--color-error-main);
+    background-color: rgba(var(--color-error-main-rgb),.6);
+    transform: scale(1.2);
+    box-shadow: var(--glow-error);
+}
+
+.stopBar.active:hover {
+    transform: scale(0,1.2);
+}
+
+.stopBar.active svg{
+    stroke: white;
+    fill: var(--color-error-main);
 }
 
 .forwardBar.active {
