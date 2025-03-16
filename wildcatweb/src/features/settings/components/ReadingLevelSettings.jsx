@@ -68,7 +68,12 @@ const ReadingLevelSettings = () => {
                         onClick={() => handleLevelSelect(level.id)}
                         aria-pressed={readingLevel === level.id}
                     >
-                        <div className={styles.optionIcon}>{level.icon}</div>
+                        <div className={styles.optionIcon}>
+                            {React.createElement(level.icon, {
+                                className: styles.complexityIcon,
+                                'aria-hidden': 'true'
+                            })}
+                        </div>
                         <span className={styles.optionLabel}>
                             {level.name[language] || level.name.en}
                         </span>

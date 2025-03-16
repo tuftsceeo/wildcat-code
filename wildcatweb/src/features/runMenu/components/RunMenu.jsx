@@ -2,7 +2,7 @@
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
  * running individual slots or the complete program. Enhanced with command-specific
- * names and icons for completed steps.
+ * names and icons for completed steps. Now respects user preferences for step navigation.
  * @author Jennifer Cross with support from Claude
  * @created March 2025
  */
@@ -11,6 +11,7 @@ import React, { useEffect } from "react";
 import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
+import { useCustomization } from "../../../context/CustomizationContext";
 import { Buffer } from "buffer";
 import { ReactComponent as QuestionMarkIcon } from "../../../assets/images/question-mark.svg";
 import {
@@ -87,6 +88,9 @@ export const RunMenu = ({
     console.log("RunMenu: Rendering with missionSteps =", missionSteps);
 
     const { ble, isConnected, portStates } = useBLE();
+    
+    // Get user preferences from CustomizationContext
+    const { requireSequentialCompletion, useCommandLabels } = useCustomization();
 
     // Log any inconsistencies between missionSteps and slotData length
     useEffect(() => {
@@ -110,12 +114,17 @@ export const RunMenu = ({
     };
 
     /**
-     * Check if a step is accessible based on previous steps completion
+     * Check if a step is accessible based on user preferences and previous steps completion
      * 
      * @param {number} index - Step index to check
      * @returns {boolean} Whether the step is accessible
      */
     const isStepAccessible = (index) => {
+        // If sequential completion is disabled, all steps are accessible
+        if (!requireSequentialCompletion) {
+            return true;
+        }
+        
         // First step is always accessible
         if (index === 0) return true;
         
@@ -133,13 +142,13 @@ export const RunMenu = ({
     };
 
     /**
-     * Get display info (name and icon) for a step
+     * Get display info (name and icon) for a step based on user preferences
      * 
      * @param {number} index - Step index
      * @returns {Object} Object with name and icon for the step
      */
     const getStepDisplayInfo = (index) => {
-        // If the step is not completed but is accessible, return with question mark icon
+        // If the step is not completed
         if (!isStepCompleted(index)) {
             return {
                 name: `Step ${index + 1}`,
@@ -150,14 +159,23 @@ export const RunMenu = ({
         // Get the type and subtype from the slot data
         const { type, subtype } = slotData[index];
         
-        // If it's a special case like the stop step, handle it directly
+        // The stop step is always labeled as "Stop" regardless of preference
         if (type === "special" && subtype === "stop") {
             return {
                 name: "Stop",
                 icon: <FilledOctagon size={24} className={styles.commandIcon} />
             };
         }
-
+        
+        // If command labels are disabled, use "Step X" format even for completed steps
+        if (!useCommandLabels) {
+            return {
+                name: `Step ${index + 1}`,
+                icon: <QuestionMarkIcon className={styles.commandIcon} fill="currentColor" width={30} height={30} />
+            };
+        }
+        
+        // Special case for button instruction
         if (type === "input" && subtype === "button") {
             return {
                 name: INSTRUCTION_DISPLAY[type][subtype].name,

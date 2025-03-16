@@ -9,7 +9,15 @@ import React, { useState, useEffect } from "react";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { AVAILABLE_LANGUAGES, getUIText } from "../../../translations/loader";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
+import { ReactComponent as EnIcon } from "../../../assets/images/lang-en.svg";
+import { ReactComponent as EsIcon } from "../../../assets/images/lang-es.svg";
 import styles from "../styles/LanguageSettings.module.css";
+
+// Map of language codes to their SVG components
+const LANGUAGE_ICONS = {
+    en: EnIcon,
+    es: EsIcon
+};
 
 /**
  * Language selection component with preview
@@ -91,28 +99,33 @@ const LanguageSettings = () => {
             <h2 className={styles.title}>{getTitleText()}</h2>
 
             <div className={styles.languageOptions}>
-                {languagesArray.map((lang) => (
-                    <button
-                        key={lang.id}
-                        className={`${styles.languageOption} ${
-                            selectedLanguage === lang.id
-                                ? styles.activeLanguage
-                                : ""
-                        }`}
-                        onClick={() => setSelectedLanguage(lang.id)}
-                        aria-pressed={selectedLanguage === lang.id}
-                    >
-                        <div className={styles.languageIcon}>{lang.icon}</div>
-                        <div className={styles.languageDetail}>
-                            <span className={styles.languageName}>
-                                {lang.name}
-                            </span>
-                            <span className={styles.nativeName}>
-                                {lang.nativeName}
-                            </span>
-                        </div>
-                    </button>
-                ))}
+                {languagesArray.map((lang) => {
+                    const IconComponent = LANGUAGE_ICONS[lang.id];
+                    return (
+                        <button
+                            key={lang.id}
+                            className={`${styles.languageOption} ${
+                                selectedLanguage === lang.id
+                                    ? styles.activeLanguage
+                                    : ""
+                            }`}
+                            onClick={() => setSelectedLanguage(lang.id)}
+                            aria-pressed={selectedLanguage === lang.id}
+                        >
+                            <div className={styles.languageIcon}>
+                                <IconComponent className={styles.langIcon} />
+                            </div>
+                            <div className={styles.languageDetail}>
+                                <span className={styles.languageName}>
+                                    {lang.name}
+                                </span>
+                                <span className={styles.nativeName}>
+                                    {lang.nativeName}
+                                </span>
+                            </div>
+                        </button>
+                    );
+                })}
             </div>
 
             {/* <div className={styles.previewContainer}>

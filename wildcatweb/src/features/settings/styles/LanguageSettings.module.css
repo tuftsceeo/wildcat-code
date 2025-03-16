@@ -58,8 +58,31 @@
 }
 
 .languageIcon {
-    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-right: var(--spacing-4);
+    min-width: 48px;
+}
+
+.langIcon {
+    width: 60px;
+    height: 48px;
+    color: var(--button-default-text);
+}
+
+.langIcon path {
+    stroke: currentColor;
+}
+
+.langIcon text {
+    fill: currentColor;
+    font-family: var(--font-family-dyslexic);
+}
+
+/* Ensure the SVG inherits the button's text color */
+.activeLanguage .langIcon {
+    color: var(--button-selected-text);
 }
 
 .languageDetail {

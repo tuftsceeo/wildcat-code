@@ -15,9 +15,10 @@ import {
     Lightbulb,
     RotateCw,
     Volume,
-    TimerReset,
+    Timer,
     Clock9,
     Octagon,
+    ArchiveRestore, 
 } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
@@ -58,13 +59,13 @@ const CONTROL_TYPES = {
         time: {
             name: "Wait",
             component: TimeDash,
-            icon: <Clock9 size={32} />,
+            icon: <Timer size={32} />,
         },
         button: {
             // Updated - Kept subtype name but changed display name
             name: "Button", // Changed from "Force Sensor" to "Button"
             component: ButtonDash,
-            icon: <Disc size={32} />, // Using Disc icon for button
+            icon: <ArchiveRestore size={32} />, // Using Disc icon for button
         },
     },
     special: {

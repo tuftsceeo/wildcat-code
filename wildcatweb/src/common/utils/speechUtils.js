@@ -12,7 +12,7 @@ export const VOICE_PRESETS = [
     color: '#00AAFF',
     description: 'Friendly robot with clear voice',
     settings: {
-      rate: 0.9,
+      rate: 0.8,
       pitch: 0.5,
       useWordPauses: true,
       wordPauseChar: '.',
@@ -25,8 +25,8 @@ export const VOICE_PRESETS = [
     color: '#FFAA00',
     description: 'Energetic robot with fast voice',
     settings: {
-      rate: 1.1,
-      pitch: 0.3,
+      rate: 1.3,
+      pitch: 1,
       useWordPauses: false,
       distortion: 'high',
     }
@@ -39,7 +39,7 @@ export const VOICE_PRESETS = [
     description: 'High-pitched robot with pauses',
     settings: {
       rate: 0.8,
-      pitch: 1.5,
+      pitch: 1.7,
       useWordPauses: true,
       wordPauseChar: ' - ',
     }

@@ -1,7 +1,7 @@
 /**
  * @file CustomizationContext.js
  * @description Context provider for managing and persisting user customization settings
- * across the application. Now with enhanced support for reading complexity and languages.
+ * across the application. Enhanced with navigation preference options.
  */
 
 import React, { createContext, useState, useContext, useEffect } from "react";
@@ -51,6 +51,10 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
     // Accessibility
     const [highContrast, setHighContrast] = useState(false);
     const [largeText, setLargeText] = useState(false);
+    
+    // Navigation preferences - new settings
+    const [requireSequentialCompletion, setRequireSequentialCompletion] = useState(true);
+    const [useCommandLabels, setUseCommandLabels] = useState(true);
 
     // Load settings from localStorage on mount
     useEffect(() => {
@@ -76,6 +80,18 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                 setStepCount(validStepCount);
                 setHighContrast(parsed.highContrast || false);
                 setLargeText(parsed.largeText || false);
+                
+                // Load navigation preferences with default values if not found
+                setRequireSequentialCompletion(
+                    parsed.requireSequentialCompletion !== undefined 
+                    ? parsed.requireSequentialCompletion 
+                    : true
+                );
+                setUseCommandLabels(
+                    parsed.useCommandLabels !== undefined 
+                    ? parsed.useCommandLabels 
+                    : true
+                );
             }
         } catch (error) {
             console.error("Error loading settings from localStorage:", error);
@@ -95,6 +111,8 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                 stepCount,
                 highContrast,
                 largeText,
+                requireSequentialCompletion,
+                useCommandLabels,
             };
             localStorage.setItem(
                 "customizationSettings",
@@ -113,6 +131,8 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         stepCount,
         highContrast,
         largeText,
+        requireSequentialCompletion,
+        useCommandLabels,
     ]);
 
     // Apply theme and accessibility settings to document
@@ -201,6 +221,8 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         setStepCount(MIN_STEPS);
         setHighContrast(false);
         setLargeText(false);
+        setRequireSequentialCompletion(true);
+        setUseCommandLabels(true);
     };
 
     // Context value with all settings and setters
@@ -238,6 +260,12 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         setHighContrast,
         largeText,
         setLargeText,
+        
+        // Navigation preferences
+        requireSequentialCompletion,
+        setRequireSequentialCompletion,
+        useCommandLabels,
+        setUseCommandLabels,
 
         // Utility functions
         resetSettings,
