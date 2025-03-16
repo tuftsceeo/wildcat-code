@@ -93,7 +93,7 @@
     position: absolute;
     left: 50%;
     top: 0; /* Position at top */
-    transform: translate(-50%, -50%); /* Pull it up so it's partially hidden */
+    transform: translate(-50%, -55%); /* Pull it up so it's partially hidden */
     z-index: 1;
 }
 
@@ -102,9 +102,8 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    height: 80px;
+    height: 60px;
     width: 100%;
-    transform: translate(0, -20px);
     margin-bottom: var(--spacing-1);
     padding: 0 var(--spacing-1);
 }
@@ -119,6 +118,21 @@
     transition: all var(--transition-normal);
     padding: 0;
     transform: var(--button-scale-default);
+    position: relative; /* For positioning the icon */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Icon at the bottom of bar */
+.barIcon {
+    position: absolute;
+    bottom: 2px;
+    color: var(--panel-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .bar:hover:not(:disabled) {

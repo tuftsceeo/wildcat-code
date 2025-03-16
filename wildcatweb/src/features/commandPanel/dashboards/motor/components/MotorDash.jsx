@@ -1,4 +1,4 @@
-/**
+/*
  * @file MotorDash.jsx
  * @description Dashboard interface for configuring motor actions with a vertical bar visualization
  * for speed and direction, designed for students with autism.
@@ -92,39 +92,38 @@ const SingleMotorDash = memo(
 
             return barHeights.map((height, index) => {
                 // The fourth bar (index 3) should have zero height (invisible)
-                const actualHeight = height * 25; // Scale heights
+                const actualHeight = height * 20; // Scale heights
 
-                // Determine if the bar should be highlighted based on slider position
-                // For uninitialized motors, no bars should be active
+                // Determine which bars should be active based on the slider position
                 let isActive = false;
 
                 if (isInitialized) {
                     if (sliderPosition === 0) {
-                        // backward-fast
-                        isActive = index === 0 || index === 1 || index === 2;
+                        // Visual activation on left side when clicked
+                        isActive = index === 6 || index === 5 || index === 4;
                     } else if (sliderPosition === 1) {
-                        // backward-medium
-                        isActive = index === 1 || index === 2;
+                        // Visual activation on left side when clicked
+                        isActive = index === 5 || index === 4;
                     } else if (sliderPosition === 2) {
-                        // backward-slow
-                        isActive = index === 2;
+                        // Visual activation on left side when clicked
+                        isActive = index === 4;
                     } else if (sliderPosition === 3) {
-                        // stop
+                        // stop (center)
                         isActive = index === 3 && speed !== undefined;
                     } else if (sliderPosition === 4) {
-                        // forward-slow
-                        isActive = index === 4;
+                        // Visual activation on right side when clicked
+                        isActive = index === 2;
                     } else if (sliderPosition === 5) {
-                        // forward-medium
-                        isActive = index === 4 || index === 5;
+                        // Visual activation on right side when clicked
+                        isActive = index === 2 || index === 1;
                     } else if (sliderPosition === 6) {
-                        // forward-fast
-                        isActive = index === 4 || index === 5 || index === 6;
+                        // Visual activation on right side when clicked
+                        isActive = index === 0 || index === 1 || index === 2;
                     }
                 }
 
-                // Determine if bar is in backward or forward section
-                const isForward = index < 3;
+                // Keep the visual appearance of forward/backward the same
+                const isForward = index > 3; // Right side is still visually forward
                 const isVisible = index !== 3;
 
                 return {
@@ -169,10 +168,12 @@ const SingleMotorDash = memo(
             (position) => {
                 if (isDisconnected) return;
 
-                // Map bar indices to slider positions
-                // bar0 = position 0, bar1 = position 1, bar2 = position 2
-                // bar4 = position 4, bar5 = position 5, bar6 = position 6
-                handlePositionChange(position);
+                // Reverse the bar position to get the expected speed
+                // This way, position 0 (left-most bar) will produce the speed that 
+                // position 6 (right-most bar) used to produce, and vice versa
+                const reversedPosition = position === 3 ? 3 : (6 - position);
+                
+                handlePositionChange(reversedPosition);
             },
             [handlePositionChange, isDisconnected],
         );
@@ -268,7 +269,9 @@ const SingleMotorDash = memo(
                                     positionIcons[bar.index].label
                                 }`}
                             >
-                                {bar.height === 30 ? <FilledOctagon /> : ""}
+                                <div className={styles.barIcon}>
+                                    {positionIcons[bar.index].icon}
+                                </div>
                             </button>
                         ))}
                     </div>
