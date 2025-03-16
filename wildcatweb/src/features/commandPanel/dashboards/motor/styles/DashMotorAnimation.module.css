@@ -1,7 +1,7 @@
 /**
  * @file DashMotorAnimation.module.css
  * @description CSS module for dashboard motor animation component.
- * Duplicated from MotorAnimation styling with adjustments for dashboard context.
+ * Optimized for integration with the horizontal bar layout design.
  */
 
 /* Base animation container */
@@ -88,7 +88,7 @@
     height: 25%;
 }
 
-/* Animation for rotation - PRESERVED FROM ORIGINAL */
+/* Animation for rotation */
 .clockwise {
     animation-name: clockwise;
     animation-timing-function: linear;

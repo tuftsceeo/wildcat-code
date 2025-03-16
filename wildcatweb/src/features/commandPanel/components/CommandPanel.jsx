@@ -307,27 +307,7 @@ export const CommandPanel = ({
                     slotData: slotData,
                     currSlotNumber: currSlotNumber,
                 })}
-                <div className={styles.saveIndicator}>
-                    {dashboardConfig &&
-                        (JSON.stringify(dashboardConfig) ===
-                        JSON.stringify(lastSavedConfig) ? (
-                            <div className={styles.savedState}>
-                                <Check
-                                    className={styles.checkIcon}
-                                    size={24}
-                                    color="var(--color-secondary-main)"
-                                />
-                            </div>
-                        ) : (
-                            <div className={styles.unsavedState}>
-                                <Plus
-                                    className={styles.plusIcon}
-                                    size={24}
-                                    color="var(--color-gray-subtle)"
-                                />
-                            </div>
-                        ))}
-                </div>
+              
             </div>
         );
     };

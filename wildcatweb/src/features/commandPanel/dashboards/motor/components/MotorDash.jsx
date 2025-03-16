@@ -2,7 +2,7 @@
  * @file MotorDash.jsx
  * @description Dashboard interface for configuring motor actions with circular visualization
  * and horizontal bars for speed and direction control, designed for students with autism.
- * Updated to use a more intuitive visual relationship between the bars and the animation.
+ * Updated to match the screenshot layout with bars on left, motor on right.
  */
 
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
@@ -108,62 +108,62 @@ const SingleMotorDash = memo(({
         }
     }, [port, onUpdate]);
 
-    // Configuration for the 7 position bars
+    // Configuration for the 7 position bars with varied widths
     const barConfigs = [
         // Fast CCW - position 0
         {
             position: 0,
-            width: '65%',
+            width: '85%',
             type: 'counterclockwise',
-            icon: <Rabbit className={styles.flippedHorizontally} size={12} />,
+            icon: <Rabbit className={styles.flippedHorizontally} size={10} />,
             label: "Fast Counterclockwise"
         },
         // Medium CCW - position 1
         {
             position: 1,
-            width: '62%',
+            width: '75%',
             type: 'counterclockwise',
-            icon: <MoveLeft size={12} />,
+            icon: <MoveLeft size={10} />,
             label: "Medium Counterclockwise"
         },
         // Slow CCW - position 2
         {
             position: 2,
-            width: '60%',
+            width: '65%',
             type: 'counterclockwise',
-            icon: <Turtle className={styles.flippedHorizontally} size={12} />,
+            icon: <Turtle className={styles.flippedHorizontally} size={10} />,
             label: "Slow Counterclockwise"
         },
         // Stop - position 3
         {
             position: 3,
-            width: '58%',
+            width: '45%',
             type: 'stop',
-            icon: <Octagon size={12} />,
+            icon: <Octagon size={10} />,
             label: "Stop"
         },
         // Slow CW - position 4
         {
             position: 4,
-            width: '60%',
+            width: '65%',
             type: 'clockwise',
-            icon: <Turtle size={12} />,
+            icon: <Turtle size={10} />,
             label: "Slow Clockwise"
         },
         // Medium CW - position 5
         {
             position: 5,
-            width: '62%',
+            width: '75%',
             type: 'clockwise',
-            icon: <MoveRight size={12} />,
+            icon: <MoveRight size={10} />,
             label: "Medium Clockwise"
         },
         // Fast CW - position 6
         {
             position: 6,
-            width: '65%',
+            width: '85%',
             type: 'clockwise',
-            icon: <Rabbit size={12} />,
+            icon: <Rabbit size={10} />,
             label: "Fast Clockwise"
         }
     ];
@@ -176,6 +176,7 @@ const SingleMotorDash = memo(({
             data-port={port}
             data-initialized={isInitialized}
         >
+            {/* Header with port information */}
             <div className={styles.motorHeader}>
                 <span className={styles.portLabel}>MOTOR {port}</span>
                 {isDisconnected && (
@@ -194,17 +195,9 @@ const SingleMotorDash = memo(({
                 )}
             </div>
 
+            {/* Main control layout with left-aligned bars and right-side animation */}
             <div className={styles.motorControlContainer}>
-                {/* Motor animation overlapping the bars */}
-                <div className={styles.motorAnimationWrapper}>
-                    <DashMotorAnimation
-                        speed={speed || 0}
-                        active={!isDisconnected}
-                        port={port}
-                    />
-                </div>
-                
-                {/* Horizontal bars container */}
+                {/* Bars container - positioned on the left */}
                 <div className={styles.barsContainer}>
                     {/* Render the 7 position bars */}
                     {barConfigs.map((bar) => (
@@ -216,10 +209,7 @@ const SingleMotorDash = memo(({
                             onClick={() => handleBarClick(bar.position)}
                             disabled={isDisconnected}
                             aria-label={bar.label}
-                            style={{
-                                top: `${bar.position * 26}px`, // Vertical spacing
-                                width: bar.width
-                            }}
+                            style={{ width: bar.width }}
                         >
                             <div className={styles.barIconContainer}>
                                 {bar.icon}
@@ -227,15 +217,17 @@ const SingleMotorDash = memo(({
                         </button>
                     ))}
                 </div>
-
-                {/* Direction labels if enabled */}
-                {showLabels && (
-                    <div className={styles.directionLabels}>
-                        <div className={styles.counterclockwiseLabel}>COUNTERCLOCKWISE</div>
-                        <div className={styles.clockwiseLabel}>CLOCKWISE</div>
-                    </div>
-                )}
+                
+                {/* Motor animation on the right side */}
+                <div className={styles.motorAnimationWrapper}>
+                    <DashMotorAnimation
+                        speed={speed || 0}
+                        active={!isDisconnected}
+                        port={port}
+                    />
+                </div>
             </div>
+
         </div>
     );
 });
@@ -391,8 +383,12 @@ export const MotorDash = ({
         [configuration, onUpdate, currSlotNumber]
     );
 
+    // Calculate grid layout based on number of motors to display
+    const totalMotors = Object.keys(activeMotors).length + disconnectedPorts.length;
+    const useGridLayout = totalMotors > 2;
+    
     return (
-        <div className={styles.motorDashContainer}>
+        <div className={`${styles.motorDashContainer} ${useGridLayout ? styles.gridLayout : ''}`}>
             {!isConnected ? (
                 <div className={styles.noConnection}>
                     <span>Connect robot</span>

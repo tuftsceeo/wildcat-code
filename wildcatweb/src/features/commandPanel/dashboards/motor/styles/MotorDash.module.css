@@ -1,7 +1,7 @@
 /**
  * @file MotorDash.module.css
- * @description Styling for the Motor Dashboard with horizontal bar layout,
- * using CSS design tokens for theme consistency.
+ * @description Styling for the Motor Dashboard with left-aligned horizontal bars
+ * and right-side motor animation, following the correct layout from screenshot.
  */
 
 /* Container for all motor dashboards */
@@ -10,8 +10,14 @@
     flex-direction: column;
     gap: var(--spacing-2);
     width: 100%;
-    max-width: 400px;
     margin: 0 auto;
+}
+
+/* Grid layout for when we have multiple motors */
+.gridLayout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: var(--spacing-2);
 }
 
 /* Individual motor dashboard */
@@ -34,7 +40,7 @@
 .motorHeader {
     display: flex;
     align-items: center;
-    margin-bottom: var(--spacing-3);
+    margin-bottom: var(--spacing-1);
 }
 
 .portLabel {
@@ -78,55 +84,61 @@
     transform: var(--button-scale-active);
 }
 
-/* Main control layout */
+/* Main control layout - matching the screenshot */
 .motorControlContainer {
     position: relative;
-    padding: var(--spacing-1);
-    height: 190px; /* Fixed height to ensure three dashboards fit without scrolling */
-    overflow: hidden;
+    height: 100px; /* Reduced height from screenshot */
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 
-/* Motor animation wrapper */
+/* Motor animation wrapper - positioned on the right side */
 .motorAnimationWrapper {
     position: absolute;
-    left: 20%;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 90px;  /* Slightly smaller than in demo to fit dashboard */
-    height: 90px;
-    z-index: 3;
-    background-color: var(--panel-bg);
+    width: 80px; /* Smaller animation size per screenshot */
+    height: 80px;
+    z-index: 2;
 }
 
 /* Container for horizontal bars */
 .barsContainer {
     position: absolute;
     left: 0;
-    right: 0;
     top: 0;
     bottom: 0;
+    width: calc(100% - 40px); /* Allow bars to overlap with animation */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
     z-index: 1;
 }
 
-/* Individual horizontal bar button */
+/* Individual horizontal bar button - left-aligned with varying widths */
 .horizontalBar {
-    height: 16px; /* Thin bars like in the image */
+    position: relative;
+    height: 12px; /* Thinner bars */
     background-color: var(--button-default-bg);
     border: var(--border-width-thin) solid var(--button-default-border);
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; /* Rounded only on right */
+    padding: 0;
     cursor: pointer;
     transition: all var(--transition-normal);
-    margin: 3px 0;
-    position: absolute;
-    right: 0;
+    margin: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
 }
 
 .horizontalBar:hover:not(:disabled) {
     filter: brightness(1.2);
-    transform: translateX(5px);
+}
+
+.horizontalBar:active:not(:disabled) {
+    filter: brightness(0.9);
 }
 
 .horizontalBar:focus-visible {
@@ -142,6 +154,7 @@
     background-color: var(--color-motor-forward);
     box-shadow: var(--glow-secondary);
     border-color: var(--button-selected-border);
+    z-index: 3; /* Active bars appear above others */
 }
 
 .counterclockwiseBar {
@@ -152,6 +165,7 @@
     background-color: var(--color-motor-backward);
     box-shadow: var(--glow-warning);
     border-color: var(--button-selected-border);
+    z-index: 3;
 }
 
 .stopBar {
@@ -163,18 +177,21 @@
     background-color: var(--button-selected-bg);
     color: var(--color-error-main);
     border-color: var(--color-error-main);
+    z-index: 3;
 }
 
-/* Icon inside the bar */
+/* Icon inside the bar - positioned at right edge */
 .barIconContainer {
+    position: absolute;
+    right: 5px; /* Slight padding from right edge */
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
     width: 16px;
     height: 16px;
     color: var(--color-panel-text);
-    position: absolute;
-    left: 5px;
 }
 
 .active .barIconContainer {
@@ -183,15 +200,11 @@
 
 /* Direction labels */
 .directionLabels {
-    position: absolute;
-    right: var(--spacing-2);
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    height: 80%;
-    top: 10%;
+    margin-top: var(--spacing-1);
     font-size: var(--font-size-xxs);
-    color: var(--color-panel-text);
+    padding: 0 var(--spacing-4);
 }
 
 .counterclockwiseLabel {
@@ -220,6 +233,7 @@
     border-radius: var(--radius-md);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
+    height: 100px; /* Match the normal height */
 }
 
 .noConnection {
@@ -232,30 +246,4 @@
     background-color: rgba(var(--color-warning-main-rgb), 0.1);
     color: var(--color-warning-main);
     border: var(--border-width-standard) solid var(--color-warning-main);
-}
-
-/* Theme-specific adjustments */
-:global(body[data-theme="pastel"]) .motorAnimationWrapper {
-    background-color: var(--color-panel-bg);
-}
-
-:global(body[data-theme="clean"]) .motorAnimationWrapper {
-    background-color: var(--color-panel-bg);
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-    .motorAnimationWrapper {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .horizontalBar {
-        height: 14px;
-    }
-    
-    .barIconContainer {
-        width: 14px;
-        height: 14px;
-    }
 }
