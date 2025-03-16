@@ -74,7 +74,12 @@
 
 /* Command icon styling - now on the right side */
 .commandIcon {
-    color: var(--color-success-high);
+    color: var(--button-default-text);
+}
+
+.stepButton.current .commandIcon,
+.stepButton.active .commandIcon {
+    color: var(--button-selected-text);
 }
 
 /* Container for the command icon */

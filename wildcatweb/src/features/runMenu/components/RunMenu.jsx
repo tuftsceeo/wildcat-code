@@ -12,6 +12,7 @@ import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
 import { Buffer } from "buffer";
+import { ReactComponent as QuestionMarkIcon } from "../../../assets/images/question-mark.svg";
 import {
     ClearSlotRequest,
     ClearSlotResponse,
@@ -138,11 +139,11 @@ export const RunMenu = ({
      * @returns {Object} Object with name and icon for the step
      */
     const getStepDisplayInfo = (index) => {
-        // If the step is not completed, return default info
+        // If the step is not completed but is accessible, return with question mark icon
         if (!isStepCompleted(index)) {
             return {
                 name: `Step ${index + 1}`,
-                icon: null // No icon for incomplete steps
+                icon: isStepAccessible(index) ? <QuestionMarkIcon className={styles.commandIcon} fill="currentColor" width={30} height={30} /> : null
             };
         }
 
