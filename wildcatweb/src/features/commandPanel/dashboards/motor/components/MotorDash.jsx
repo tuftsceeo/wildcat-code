@@ -22,6 +22,11 @@ import {
 } from "lucide-react";
 import DashMotorAnimation from "./DashMotorAnimation";
 
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
 /**
  * Component for a single motor control dashboard
  *
@@ -41,7 +46,6 @@ const SingleMotorDash = memo(({
     configuration,
     isDisconnected,
     onDismiss,
-    showLabels = true,
 }) => {
     // Track if this motor has been initialized with a command
     const [isInitialized, setIsInitialized] = useState(
@@ -112,59 +116,59 @@ const SingleMotorDash = memo(({
     const barConfigs = [
         // Fast CCW - position 0
         {
-            position: 0,
-            width: '85%',
-            type: 'counterclockwise',
-            icon: <Rabbit className={styles.flippedHorizontally} size={10} />,
-            label: "Fast Counterclockwise"
+            position: 6,
+            width: '100%',
+            type: 'clockwise',
+            icon: <Rabbit size={10} />,
+            label: "Fast clockwise"
         },
         // Medium CCW - position 1
         {
-            position: 1,
-            width: '75%',
-            type: 'counterclockwise',
-            icon: <MoveLeft size={10} />,
-            label: "Medium Counterclockwise"
+            position: 5,
+            width: '70%',
+            type: 'clockwise',
+            icon: <MoveRight size={10} />,
+            label: "Medium clockwise"
         },
         // Slow CCW - position 2
         {
-            position: 2,
-            width: '65%',
-            type: 'counterclockwise',
-            icon: <Turtle className={styles.flippedHorizontally} size={10} />,
-            label: "Slow Counterclockwise"
+            position: 4,
+            width: '50%',
+            type: 'clockwise',
+            icon: <Turtle size={10} />,
+            label: "Slow clockwise"
         },
         // Stop - position 3
         {
             position: 3,
-            width: '45%',
+            width: '33%',
             type: 'stop',
-            icon: <Octagon size={10} />,
+            icon: <FilledOctagon size={10} />,
             label: "Stop"
         },
         // Slow CW - position 4
         {
-            position: 4,
-            width: '65%',
-            type: 'clockwise',
+            position: 2,
+            width: '50%',
+            type: 'counterclockwise',
             icon: <Turtle size={10} />,
-            label: "Slow Clockwise"
+            label: "Slow Counterclockwise"
         },
         // Medium CW - position 5
         {
-            position: 5,
-            width: '75%',
-            type: 'clockwise',
+            position: 1,
+            width: '70%',
+            type: 'counterclockwise',
             icon: <MoveRight size={10} />,
-            label: "Medium Clockwise"
+            label: "Medium Counterclockwise"
         },
         // Fast CW - position 6
         {
-            position: 6,
-            width: '85%',
-            type: 'clockwise',
+            position: 0,
+            width: '100%',
+            type: 'counterclockwise',
             icon: <Rabbit size={10} />,
-            label: "Fast Clockwise"
+            label: "Fast Counterclockwise"
         }
     ];
 
