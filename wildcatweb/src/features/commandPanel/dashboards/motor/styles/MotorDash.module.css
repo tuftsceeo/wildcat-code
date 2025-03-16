@@ -1,55 +1,46 @@
-/**
- * @file MotorDash.module.css
- * @description Styling for the Motor Dashboard with left-aligned horizontal bars
- * and right-side motor animation, following the correct layout from screenshot.
- */
+/* MotorDash.module.css - Refactored with design tokens */
 
-/* Container for all motor dashboards */
 .motorDashContainer {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2);
     width: 100%;
+    max-width: 400px;
     margin: 0 auto;
 }
 
-/* Grid layout for when we have multiple motors */
-.gridLayout {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-gap: var(--spacing-2);
-}
-
-/* Individual motor dashboard */
 .singleMotorDash {
     background-color: var(--panel-bg);
     border: var(--border-width-standard) solid var(--color-transparent);
     border-radius: var(--radius-md);
     padding: var(--spacing-2);
-    width: 50%;
+    width: 100%;
     transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden; /* Hide overflow for the motor animation */
 }
 
-/* Styling for disconnected state */
 .singleMotorDash.disconnected {
     border-color: rgba(var(--color-error-main-rgb), 0.15);
     background-color: rgba(var(--color-error-main-rgb), 0.1);
 }
 
-/* Header with port information */
 .motorHeader {
     display: flex;
     align-items: center;
-    margin-bottom: var(--spacing-1);
+    margin-bottom: var(--spacing-3);
+    z-index: 2;
 }
 
 .portLabel {
+    background-color: rgba(var(--color-background-rgb),.9);
     color: var(--color-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
-    flex-grow: 1;
+    flex-grow: 0;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
+    z-index: 2;
 }
 
 .disconnectedLabel {
@@ -60,6 +51,7 @@
     background-color: rgba(var(--color-error-main-rgb), 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
+    z-index: 2;
 }
 
 .dismissButton {
@@ -72,150 +64,107 @@
     margin-left: var(--spacing-1);
     border-radius: var(--radius-sm);
     transition: all var(--transition-normal);
+    z-index: 2;
 }
 
 .dismissButton:hover {
     background-color: var(--color-error-main);
     color: var(--color-background);
     transform: var(--button-scale-hover);
+    z-index: 2;
 }
 
 .dismissButton:active {
     transform: var(--button-scale-active);
-}
-
-/* Main control layout - matching the screenshot */
-.motorControlContainer {
-    position: relative;
-    height: 90px; /* Reduced height from screenshot */
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-/* Motor animation wrapper - positioned on the right side */
-.motorAnimationWrapper {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 80px; /* Smaller animation size per screenshot */
-    height: 80px;
     z-index: 2;
 }
 
-/* Container for horizontal bars */
-.barsContainer {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: calc(100% - 40px); /* Allow bars to overlap with animation */
+/* Container for motor controls to ensure proper alignment */
+.motorControlContainer {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    gap: var(--spacing-1);
+}
+
+.motorAnimationWrapper {
+    width: 80%;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1; /* Maintain a perfect circle */
+    position: absolute;
+    left: 50%;
+    top: 0; /* Position at top */
+    transform: translate(-50%, -50%); /* Pull it up so it's partially hidden */
     z-index: 1;
 }
 
-/* Individual horizontal bar button - left-aligned with varying widths */
-.horizontalBar {
-    position: relative;
-    border-radius: var(--radius-sm);
+/* Bar visualization styles */
+.barVisualization {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 80px;
+    width: 100%;
+    transform: translate(0, -20px);
+    margin-bottom: var(--spacing-1);
+    padding: 0 var(--spacing-1);
+}
+
+.bar {
+    flex: 1;
+    margin: 0 2px;
+    border-radius: 2px 2px 0 0;
     background-color: var(--color-gray-subtle);
     cursor: pointer;
     border: none;
     transition: all var(--transition-normal);
     padding: 0;
     transform: var(--button-scale-default);
-    height: 10px; /* Thinner bars */
-    cursor: pointer;
-    margin: 0;
-    display: flex;
-    align-items: center;
 }
 
-.horizontalBar:hover:not(:disabled) {
-    filter: brightness(1.2);
+.bar:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
 }
 
-.horizontalBar:active:not(:disabled) {
-    filter: brightness(0.9);
-}
-
-.horizontalBar:focus-visible {
+.bar:focus-visible {
     outline: var(--border-width-standard) solid var(--panel-border);
 }
 
-/* Bar color styles based on type */
-.clockwiseBar {
+.forwardBar {
     background-color: var(--color-gray-subtle);
-}
-
-.clockwiseBar.active {
-    background-color: var(--color-motor-forward);
-    box-shadow: var(--glow-secondary);
-    z-index: 3; /* Active bars appear above others */
-}
-
-.counterclockwiseBar {
-    background-color: var(--color-gray-subtle);
-}
-
-.counterclockwiseBar.active {
-    background-color: var(--color-motor-forward);
-    box-shadow: var(--glow-warning);
-    z-index: 3;
 }
 
 .stopBar {
-    background-color: var(--color-gray-subtle);
+    background-color: transparent;
+    color: var(--color-gray-subtle);
 }
 
 .stopBar.active {
-    background-color:  var(--color-error-main);
     color: var(--color-error-main);
-    z-index: 3;
 }
 
-/* Icon inside the bar - positioned at right edge */
-.barIconContainer {
-    position: absolute;
-    right: 5px; /* Slight padding from right edge */
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    color: var(--color-panel-text);
+.forwardBar.active {
+    background-color: var(--color-motor-forward);
+    box-shadow: var(--glow-secondary);
 }
 
-.active .barIconContainer {
-    color: var(--color-background);
+.backwardBar {
+    background-color: var(--color-gray-subtle);
 }
 
-/* Direction labels */
-.directionLabels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: var(--spacing-1);
-    font-size: var(--font-size-xxs);
-    padding: 0 var(--spacing-4);
+.backwardBar.active {
+    background-color: var(--color-motor-backward);
+    box-shadow: var(--glow-warning);
 }
 
-.counterclockwiseLabel {
-    color: var(--color-motor-backward);
-}
-
-.clockwiseLabel {
-    color: var(--color-motor-forward);
-}
-
-/* Utility for flipping icons horizontally */
+/* For icons that need to be flipped horizontally */
 .flippedHorizontally {
     transform: scaleX(-1);
+}
+
+/* Styling for disabled/disconnected state */
+.disconnected .bar {
+    cursor: not-allowed;
+    opacity: 0.4;
 }
 
 /* No connection/No motors messages */
@@ -231,7 +180,6 @@
     border-radius: var(--radius-md);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
-    height: 100px; /* Match the normal height */
 }
 
 .noConnection {
@@ -244,4 +192,21 @@
     background-color: rgba(var(--color-warning-main-rgb), 0.1);
     color: var(--color-warning-main);
     border: var(--border-width-standard) solid var(--color-warning-main);
+}
+
+.noConnection svg,
+.noMotors svg {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
 }

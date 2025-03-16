@@ -1,11 +1,11 @@
 /**
  * @file MotorDash.jsx
- * @description Dashboard interface for configuring motor actions with circular visualization
- * and horizontal bars for speed and direction control, designed for students with autism.
- * Updated to match the screenshot layout with bars on left, motor on right.
+ * @description Dashboard interface for configuring motor actions with a vertical bar visualization
+ * for speed and direction, designed for students with autism.
+ * Updated to include motor animation above the bars.
  */
 
-import React, { useState, useEffect, useCallback, useRef, memo } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
 import styles from "../styles/MotorDash.module.css";
 import {
@@ -14,6 +14,8 @@ import {
     speedToSliderPosition,
 } from "../utils/motorSpeedUtils";
 import {
+    BluetoothSearching,
+    RefreshCwOff,
     Rabbit,
     Turtle,
     Octagon,
@@ -23,41 +25,9 @@ import {
 import DashMotorAnimation from "./DashMotorAnimation";
 
 
-
-/**
- * Determines if a bar should be active based on current slider position
- * For higher speeds, multiple bars will be active to show increasing intensity
- *
- * @param {number} barPosition - The position of the current bar (0-6)
- * @param {number} sliderPosition - The current position of the slider (0-6)
- * @param {boolean} isInitialized - Whether the motor has been initialized
- * @returns {boolean} Whether the bar should be active
- */
-const isBarActive = (barPosition, sliderPosition, isInitialized) => {
-    if (!isInitialized) return false;
-    
-    if (sliderPosition === 0) { // backward-fast
-        return barPosition <= 2; // Positions 0, 1, 2
-    } else if (sliderPosition === 1) { // backward-medium
-        return barPosition >= 1 && barPosition <= 2; // Positions 1, 2
-    } else if (sliderPosition === 2) { // backward-slow
-        return barPosition === 2; // Position 2
-    } else if (sliderPosition === 3) { // stop
-        return barPosition === 3; // Position 3
-    } else if (sliderPosition === 4) { // forward-slow
-        return barPosition === 4; // Position 4
-    } else if (sliderPosition === 5) { // forward-medium
-        return barPosition >= 4 && barPosition <= 5; // Positions 4, 5
-    } else if (sliderPosition === 6) { // forward-fast
-        return barPosition >= 4 && barPosition <= 6; // Positions 4, 5, 6
-    }
-    
-    return false;
+const FilledOctagon = (props) => {
+  return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
 };
-
- const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
-      };
 
 /**
  * Component for a single motor control dashboard
@@ -69,204 +39,244 @@ const isBarActive = (barPosition, sliderPosition, isInitialized) => {
  * @param {Object} props.configuration - Current motor configuration
  * @param {boolean} props.isDisconnected - Whether the motor is disconnected
  * @param {Function} props.onDismiss - Callback to dismiss a disconnected motor
- * @param {boolean} props.showLabels - Whether to show text labels (for accessibility)
  * @returns {JSX.Element} Single motor control dashboard
  */
-const SingleMotorDash = memo(({
-    port,
-    onUpdate,
-    configuration,
-    isDisconnected,
-    onDismiss,
-}) => {
-    // Track if this motor has been initialized with a command
-    const [isInitialized, setIsInitialized] = useState(
-        configuration?.speed !== undefined
-    );
+const SingleMotorDash = memo(
+    ({
+        port,
+        onUpdate,
+        configuration,
+        isDisconnected,
+        onDismiss
+    }) => {
+        // Track if this motor has been initialized with a command
+        const [isInitialized, setIsInitialized] = useState(
+            configuration?.speed !== undefined,
+        );
 
-    // Use speed as the main state with undefined for uninitialized state
-    const [speed, setSpeed] = useState(
-        configuration?.speed !== undefined
-            ? validateSpeed(configuration.speed)
-            : undefined
-    );
+        // Use speed as the main state with undefined for uninitialized state
+        // Extract speed from configuration or use undefined as default for uninitialized
+        const [speed, setSpeed] = useState(
+            configuration?.speed !== undefined
+                ? validateSpeed(configuration.speed)
+                : undefined,
+        );
 
-    // Track position (0-6) for the UI, using center (3) as visual default for uninitialized
-    const [sliderPosition, setSliderPosition] = useState(
-        configuration?.speed !== undefined
-            ? speedToSliderPosition(speed || 0)
-            : 3
-    );
+        // Track position (0-6) for the UI, using center (3) as visual default for uninitialized
+        const [sliderPosition, setSliderPosition] = useState(
+            configuration?.speed !== undefined
+                ? speedToSliderPosition(speed || 0)
+                : 3,
+        );
 
-    // Update local state when configuration changes externally
-    useEffect(() => {
-        if (configuration?.speed !== undefined) {
-            // Motor has been configured with a speed
-            const validatedSpeed = validateSpeed(configuration.speed);
-            setSpeed(validatedSpeed);
-            setSliderPosition(speedToSliderPosition(validatedSpeed));
-            setIsInitialized(true);
-        } else {
-            // Motor is uninitialized - no configuration or no speed set
-            setSpeed(undefined);
-            setSliderPosition(3); // Center position visually
-            setIsInitialized(false);
-        }
-    }, [configuration, port]);
+        // Update local state when configuration changes externally
+        useEffect(() => {
+            if (configuration?.speed !== undefined) {
+                // Motor has been configured with a speed
+                const validatedSpeed = validateSpeed(configuration.speed);
+                setSpeed(validatedSpeed);
+                setSliderPosition(speedToSliderPosition(validatedSpeed));
+                setIsInitialized(true);
+            } else {
+                // Motor is uninitialized - no configuration or no speed set
+                setSpeed(undefined);
+                setSliderPosition(3); // Center position visually
+                setIsInitialized(false);
+            }
+        }, [configuration, port]);
 
-    // Handle clicking on a bar
-    const handleBarClick = useCallback((position) => {
-        if (isDisconnected) return;
-        handleSpeedChange(position);
-    }, [isDisconnected]);
+        // Define bar properties
+        const getBars = () => {
+            // Create the 7 bars with their relative heights (3-2-1-0-1-2-3)
+            const barHeights = [3, 2, 1, 1.5, 1, 2, 3];
 
-    // Update speed based on position
-    const handleSpeedChange = useCallback((newPosition) => {
-        // Validate position (0-6)
-        const validPosition = Math.max(0, Math.min(6, newPosition));
-        
-        // Update position state
-        setSliderPosition(validPosition);
-        
-        // Convert to speed value
-        const newSpeed = sliderPositionToSpeed(validPosition);
-        setSpeed(newSpeed);
-        
-        // Mark as initialized since user has set a speed
-        setIsInitialized(true);
-        
-        // Only send updates if onUpdate is provided
-        if (onUpdate) {
-            onUpdate({
-                port,
-                speed: newSpeed,
+            return barHeights.map((height, index) => {
+                // The fourth bar (index 3) should have zero height (invisible)
+                const actualHeight = height * 25; // Scale heights
+
+                // Determine if the bar should be highlighted based on slider position
+                // For uninitialized motors, no bars should be active
+                let isActive = false;
+
+                if (isInitialized) {
+                    if (sliderPosition === 0) {
+                        // backward-fast
+                        isActive = index === 0 || index === 1 || index === 2;
+                    } else if (sliderPosition === 1) {
+                        // backward-medium
+                        isActive = index === 1 || index === 2;
+                    } else if (sliderPosition === 2) {
+                        // backward-slow
+                        isActive = index === 2;
+                    } else if (sliderPosition === 3) {
+                        // stop
+                        isActive = index === 3 && speed !== undefined;
+                    } else if (sliderPosition === 4) {
+                        // forward-slow
+                        isActive = index === 4;
+                    } else if (sliderPosition === 5) {
+                        // forward-medium
+                        isActive = index === 4 || index === 5;
+                    } else if (sliderPosition === 6) {
+                        // forward-fast
+                        isActive = index === 4 || index === 5 || index === 6;
+                    }
+                }
+
+                // Determine if bar is in backward or forward section
+                const isForward = index < 3;
+                const isVisible = index !== 3;
+
+                return {
+                    index,
+                    height: actualHeight,
+                    isActive,
+                    isForward,
+                    isVisible, // Bar 4 isn't visible
+                };
             });
-        }
-    }, [port, onUpdate]);
+        };
 
-    // Configuration for the 7 position bars with varied widths
-    const barConfigs = [
-        // Fast CCW - position 0
-        {
-            position: 6,
-            width: '100%',
-            type: 'clockwise',
-            icon: <Rabbit size={10} />,
-            label: "Fast clockwise"
-        },
-        // Medium CCW - position 1
-        {
-            position: 5,
-            width: '70%',
-            type: 'clockwise',
-            icon: <MoveRight size={10} />,
-            label: "Medium clockwise"
-        },
-        // Slow CCW - position 2
-        {
-            position: 4,
-            width: '50%',
-            type: 'clockwise',
-            icon: <Turtle size={10} />,
-            label: "Slow clockwise"
-        },
-        // Stop - position 3
-        {
-            position: 3,
-            width: '33%',
-            type: 'stop',
-            icon: <FilledOctagon size={10} />,
-            label: "Stop"
-        },
-        // Slow CW - position 4
-        {
-            position: 2,
-            width: '50%',
-            type: 'counterclockwise',
-            icon: <Turtle size={10} />,
-            label: "Slow Counterclockwise"
-        },
-        // Medium CW - position 5
-        {
-            position: 1,
-            width: '70%',
-            type: 'counterclockwise',
-            icon: <MoveRight size={10} />,
-            label: "Medium Counterclockwise"
-        },
-        // Fast CW - position 6
-        {
-            position: 0,
-            width: '100%',
-            type: 'counterclockwise',
-            icon: <Rabbit size={10} />,
-            label: "Fast Counterclockwise"
-        }
-    ];
+        // Handle position changes
+        const handlePositionChange = useCallback(
+            (newPosition) => {
+                // Validate position (0-6)
+                const validPosition = Math.max(0, Math.min(6, newPosition));
 
-    return (
-        <div
-            className={`${styles.singleMotorDash} ${
-                isDisconnected ? styles.disconnected : ""
-            }`}
-            data-port={port}
-            data-initialized={isInitialized}
-        >
-            {/* Header with port information */}
-            <div className={styles.motorHeader}>
-                <span className={styles.portLabel}>MOTOR {port}</span>
-                {isDisconnected && (
-                    <>
-                        <span className={styles.disconnectedLabel}>
-                            Disconnected
-                        </span>
-                        <button
-                            className={styles.dismissButton}
-                            onClick={() => onDismiss?.(port)}
-                            aria-label={`Dismiss disconnected Motor ${port}`}
-                        >
-                            ✕
-                        </button>
-                    </>
-                )}
-            </div>
+                // Update position state
+                setSliderPosition(validPosition);
 
-            {/* Main control layout with left-aligned bars and right-side animation */}
-            <div className={styles.motorControlContainer}>
-                {/* Bars container - positioned on the left */}
-                <div className={styles.barsContainer}>
-                    {/* Render the 7 position bars */}
-                    {barConfigs.map((bar) => (
-                        <button
-                            key={`bar-${bar.position}`}
-                            className={`${styles.horizontalBar} 
-                                ${styles[`${bar.type}Bar`]} 
-                                ${isBarActive(bar.position, sliderPosition, isInitialized) ? styles.active : ""}`}
-                            onClick={() => handleBarClick(bar.position)}
-                            disabled={isDisconnected}
-                            aria-label={bar.label}
-                            style={{ width: bar.width }}
-                        >
-                            <div className={styles.barIconContainer}>
-                                {bar.icon}
-                            </div>
-                        </button>
-                    ))}
-                </div>
-                
-                {/* Motor animation on the right side */}
-                <div className={styles.motorAnimationWrapper}>
-                    <DashMotorAnimation
-                        speed={speed || 0}
-                        active={!isDisconnected}
-                        port={port}
+                // Convert to speed value
+                const newSpeed = sliderPositionToSpeed(validPosition);
+                setSpeed(newSpeed);
+
+                // Mark as initialized since user has set a speed
+                setIsInitialized(true);
+
+                // Only send updates if onUpdate is provided
+                if (onUpdate) {
+                    onUpdate({
+                        port,
+                        speed: newSpeed,
+                    });
+                }
+            },
+            [port, onUpdate],
+        );
+
+        // Handle clicking on a bar
+        const handleBarClick = useCallback(
+            (position) => {
+                if (isDisconnected) return;
+
+                // Map bar indices to slider positions
+                // bar0 = position 0, bar1 = position 1, bar2 = position 2
+                // bar4 = position 4, bar5 = position 5, bar6 = position 6
+                handlePositionChange(position);
+            },
+            [handlePositionChange, isDisconnected],
+        );
+
+        // Get bars for rendering
+        const bars = getBars();
+
+        // The icons for each position
+        const positionIcons = [
+            {
+                icon: (
+                    <Rabbit
+                        className={styles.flippedHorizontally}
+                        size={20}
                     />
+                ),
+                label: "Fast Backward",
+            },
+            { icon: <MoveLeft size={20} />, label: "Medium Backward" },
+            {
+                icon: (
+                    <Turtle
+                        className={styles.flippedHorizontally}
+                        size={20}
+                    />
+                ),
+                label: "Slow Backward",
+            },
+            { icon: <FilledOctagon size={16} />, label: "Stop" },
+            { icon: <Turtle size={20} />, label: "Slow Forward" },
+            { icon: <MoveRight size={20} />, label: "Medium Forward" },
+            { icon: <Rabbit size={20} />, label: "Fast Forward" },
+        ];
+
+        return (
+            <div
+                className={`${styles.singleMotorDash} ${
+                    isDisconnected ? styles.disconnected : ""
+                }`}
+                data-port={port}
+                data-initialized={isInitialized}
+            >
+                <div className={styles.motorHeader}>
+                    <span className={styles.portLabel}>MOTOR {port}</span>
+                    {isDisconnected && (
+                        <>
+                            <span className={styles.disconnectedLabel}>
+                                Disconnected
+                            </span>
+                            <button
+                                className={styles.dismissButton}
+                                onClick={() => onDismiss?.(port)}
+                                aria-label={`Dismiss disconnected Motor ${port}`}
+                            >
+                                ✕
+                            </button>
+                        </>
+                    )}
+                </div>
+
+                <div className={styles.motorControlContainer}>
+                    {/* Motor Animation added above the bars */}
+                    <div className={styles.motorAnimationWrapper}>
+                        <DashMotorAnimation
+                            speed={speed || 0}
+                            active={!isDisconnected}
+                            port={port}
+                        />
+                    </div>
+                    
+                    {/* Bar visualization */}
+                    <div className={styles.barVisualization}>
+                        {bars.map((bar) => (
+                            <button
+                                key={`bar-${bar.index}`}
+                                className={`${styles.bar} 
+                                ${
+                                    bar.isVisible
+                                        ? `${
+                                              bar.isForward
+                                                  ? styles.forwardBar
+                                                  : styles.backwardBar
+                                          }`
+                                        : styles.stopBar
+                                } 
+                                
+                                ${bar.isActive ? styles.active : ""} 
+                                `}
+                                style={{ height: `${bar.height}px` }}
+                                onClick={() => handleBarClick(bar.index)}
+                                disabled={isDisconnected}
+                                aria-label={`Set speed to ${
+                                    positionIcons[bar.index].label
+                                }`}
+                            >
+                                {bar.height === 30 ? <FilledOctagon /> : ""}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
-
-        </div>
-    );
-});
+        );
+    },
+);
 
 /**
  * Main component for motor dashboard with multiple motors
@@ -277,17 +287,15 @@ const SingleMotorDash = memo(({
  * @param {Object|Array} props.configuration - Current configuration for one or more motors
  * @param {Array} props.slotData - Data for all slots
  * @param {number} props.currSlotNumber - Current active slot number
- * @param {boolean} props.showLabels - Whether to show text labels
  * @returns {JSX.Element} Motor dashboard component
  */
 export const MotorDash = ({
     onUpdate,
     configuration,
     slotData,
-    currSlotNumber,
-    showLabels = true,
+    currSlotNumber
 }) => {
-    const { portStates, isConnected, DEVICE_TYPES } = useBLE();
+    const { portStates, isConnected } = useBLE();
 
     // Track dismissed ports by slot number
     const [dismissedPortsBySlot, setDismissedPortsBySlot] = useState(new Map());
@@ -314,7 +322,7 @@ export const MotorDash = ({
                 configuredSet.add(slotConfig.configuration.port);
             }
         }
-        
+
         return configuredSet;
     }, [slotData, currSlotNumber]);
 
@@ -324,7 +332,7 @@ export const MotorDash = ({
 
         // Get connected motors
         Object.entries(portStates || {}).forEach(([port, state]) => {
-            if (state && (state.type === 0x30 || state.deviceType === DEVICE_TYPES.MOTOR)) {
+            if (state && state.type === 0x30) {
                 active[port] = state;
             }
         });
@@ -342,14 +350,13 @@ export const MotorDash = ({
         portStates,
         configuredPortsForCurrentSlot,
         dismissedPortsForCurrentSlot,
-        DEVICE_TYPES
     ]);
 
     // Handle update from a single motor dashboard
     const handleMotorUpdate = useCallback(
         (port, config) => {
             if (!onUpdate) return;
-            
+
             // Get existing configurations
             let currentConfigs = Array.isArray(configuration)
                 ? [...configuration]
@@ -360,7 +367,7 @@ export const MotorDash = ({
             if (config) {
                 // Find and update or add configuration for this port
                 const existingIndex = currentConfigs.findIndex(
-                    (c) => c.port === port
+                    (c) => c.port === port,
                 );
                 if (existingIndex >= 0) {
                     currentConfigs[existingIndex] = config;
@@ -384,10 +391,10 @@ export const MotorDash = ({
                 onUpdate(null);
             }
         },
-        [onUpdate, configuration]
+        [onUpdate, configuration],
     );
 
-    // Handle dismissing a disconnected motor - slot-specific
+    // Handle dismissing a disconnected motor - now slot-specific
     const handleDismiss = useCallback(
         (port) => {
             // Add to dismissed ports ONLY for the current slot
@@ -396,6 +403,7 @@ export const MotorDash = ({
                 const slotDismissed = new Set(newMap.get(currSlotNumber) || []);
                 slotDismissed.add(port);
                 newMap.set(currSlotNumber, slotDismissed);
+
                 return newMap;
             });
 
@@ -416,22 +424,20 @@ export const MotorDash = ({
                 }
             }
         },
-        [configuration, onUpdate, currSlotNumber]
+        [configuration, onUpdate, currSlotNumber],
     );
 
-    // Calculate grid layout based on number of motors to display
-    const totalMotors = Object.keys(activeMotors).length + disconnectedPorts.length;
-    const useGridLayout = totalMotors > 2;
-    
     return (
-        <div className={`${styles.motorDashContainer} ${useGridLayout ? styles.gridLayout : ''}`}>
+        <div className={styles.motorDashContainer}>
             {!isConnected ? (
                 <div className={styles.noConnection}>
+                    <BluetoothSearching size={24} />
                     <span>Connect robot</span>
                 </div>
             ) : Object.keys(activeMotors).length === 0 &&
               disconnectedPorts.length === 0 ? (
                 <div className={styles.noMotors}>
+                    <RefreshCwOff size={24} />
                     <span>Connect motor</span>
                 </div>
             ) : (
@@ -457,7 +463,6 @@ export const MotorDash = ({
                                 }
                                 configuration={config}
                                 isDisconnected={false}
-                                showLabels={showLabels}
                             />
                         );
                     })}
@@ -479,7 +484,6 @@ export const MotorDash = ({
                             }
                             isDisconnected={true}
                             onDismiss={handleDismiss}
-                            showLabels={showLabels}
                         />
                     ))}
                 </>
