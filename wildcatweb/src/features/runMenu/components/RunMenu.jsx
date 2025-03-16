@@ -1,8 +1,8 @@
 /**
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
- * running individual slots or the complete program. Updated to handle special Stop step
- * and sequential step completion requirement.
+ * running individual slots or the complete program. Enhanced with command-specific
+ * names and icons for completed steps.
  * @author Jennifer Cross with support from Claude
  * @created March 2025
  */
@@ -16,11 +16,50 @@ import {
     ClearSlotRequest,
     ClearSlotResponse,
 } from "../../../features/bluetooth/ble_resources/messages";
-import { AlertTriangle, AlertOctagon, Octagon, Check } from "lucide-react";
-
+import { 
+    AlertTriangle, 
+    AlertOctagon, 
+    Octagon, 
+    HelpCircle, 
+    RotateCw, 
+    Clock9, 
+    Disc,
+    ArchiveRestore, 
+    Timer,
+} from "lucide-react";
 
 const FilledOctagon = (props) => {
     return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+};
+
+
+/**
+ * Mapping from instruction type/subtype to display info
+ * Provides the name and icon to show on completed step buttons
+ */
+const INSTRUCTION_DISPLAY = {
+    action: {
+        motor: {
+            name: "Speed",
+            icon: <RotateCw size={24} />
+        }
+    },
+    input: {
+        time: {
+            name: "Wait",
+            icon: <Timer size={24} />
+        },
+        button: {
+            name: "Button",
+            icon: <ArchiveRestore size={24} />
+        }
+    },
+    special: {
+        stop: {
+            name: "Stop",
+            icon: <FilledOctagon size={24} />
+        }
+    }
 };
 
 /**
@@ -90,6 +129,56 @@ export const RunMenu = ({
         }
         
         return true;
+    };
+
+    /**
+     * Get display info (name and icon) for a step
+     * 
+     * @param {number} index - Step index
+     * @returns {Object} Object with name and icon for the step
+     */
+    const getStepDisplayInfo = (index) => {
+        // If the step is not completed, return default info
+        if (!isStepCompleted(index)) {
+            return {
+                name: `Step ${index + 1}`,
+                icon: null // No icon for incomplete steps
+            };
+        }
+
+        // Get the type and subtype from the slot data
+        const { type, subtype } = slotData[index];
+        
+        // If it's a special case like the stop step, handle it directly
+        if (type === "special" && subtype === "stop") {
+            return {
+                name: "Stop",
+                icon: <FilledOctagon size={24} className={styles.commandIcon} />
+            };
+        }
+
+        if (type === "input" && subtype === "button") {
+            return {
+                name: INSTRUCTION_DISPLAY[type][subtype].name,
+                icon: <ArchiveRestore size={24} className={styles.commandIcon + " " + styles.flippedVertically} />
+            };
+        }
+        
+        // Try to get the display info from our mapping
+        if (INSTRUCTION_DISPLAY[type]?.[subtype]) {
+            return {
+                name: INSTRUCTION_DISPLAY[type][subtype].name,
+                icon: React.cloneElement(INSTRUCTION_DISPLAY[type][subtype].icon, {
+                    className: styles.commandIcon
+                })
+            };
+        }
+        
+        // Fallback for unknown types
+        return {
+            name: `${type} ${subtype}`,
+            icon: <HelpCircle size={16} className={styles.commandIcon} />
+        };
     };
 
     /**
@@ -194,6 +283,7 @@ export const RunMenu = ({
         for (let i = 0; i < missionSteps - 1; i++) {
             const completed = isStepCompleted(i);
             const accessible = isStepAccessible(i);
+            const { name, icon } = getStepDisplayInfo(i);
             
             buttons.push(
                 <button
@@ -205,11 +295,11 @@ export const RunMenu = ({
                               ${i === currSlotNumber ? styles.current : ""}`}
                     onClick={() => handleStepClick(i)}
                     disabled={!accessible}
-                    aria-label={`Step ${i + 1}${i === currSlotNumber ? " (current)" : ""}${completed ? " (completed)" : ""}`}
+                    aria-label={`${name}${i === currSlotNumber ? " (current)" : ""}${completed ? " (completed)" : ""}`}
                     aria-current={i === currSlotNumber ? "step" : false}
                 >
-                    Step {i + 1}
-                    {completed && <Check className={styles.checkIcon} size={16} />}
+                    <span className={styles.stepName}>{name}</span>
+                    {icon && <span className={styles.iconContainer}>{icon}</span>}
                 </button>
             );
         }
@@ -229,10 +319,9 @@ export const RunMenu = ({
                 aria-label="Stop"
                 aria-current={currSlotNumber === stopStepIndex ? "step" : false}
             >
-               
-                Stop 
+                <span className={styles.stepName}>Stop</span>
                 <FilledOctagon
-                    size={30}
+                    size={24}
                     className={styles.stopIcon}
                 />
             </button>

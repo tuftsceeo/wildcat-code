@@ -1,4 +1,4 @@
-/* RunMenu.module.css - Refactored with design token system */
+/* RunMenu.module.css - Revised with icons instead of checkmarks */
 
 .menuBackground {
     height: 100%;
@@ -49,7 +49,12 @@
     width: 100%;
     transition: transform var(--transition-normal);
     transform: var(--button-scale-default);
-    position: relative; /* Added for checkmark positioning */
+    position: relative;
+    
+    /* Layout for content */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .stepButton:hover:not(:disabled) {
@@ -67,6 +72,25 @@
     background-color: var(--button-selected-bg);
 }
 
+/* Command icon styling - now on the right side */
+.commandIcon {
+    color: var(--color-success-high);
+}
+
+/* Container for the command icon */
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Step name text */
+.stepName {
+    flex: 1;
+    text-align: center;
+    padding-right: var(--spacing-2); /* Space for icon on right */
+}
+
 /* Inactive steps */
 .stepButton.configured:not(.current) {
     border-color: var(--button-default-border);
@@ -76,19 +100,6 @@
 /* Warning styling when needed */
 .stepButton.warning {
     border-color: var(--color-warning-main);
-}
-
-/* Checkmark icon styling for completed steps */
-.stepButton.completed {
-    padding-right: calc(var(--spacing-3) + 24px); /* Add space for checkmark */
-}
-
-.checkIcon {
-    position: absolute;
-    right: var(--spacing-3);
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-success-high);
 }
 
 /* Disabled step styling */
@@ -164,8 +175,7 @@
     color: var(--color-error-low);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--spacing-2);
+    justify-content: space-between;
 }
 
 .stopButton.current {
@@ -175,4 +185,8 @@
 
 .stopIcon {
     color: currentColor;
+}
+
+.flippedVertically {
+    transform: scaleY(-1);
 }

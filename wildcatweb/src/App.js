@@ -182,18 +182,20 @@ function AppContent({ missionSteps }) {
         });
     }, [missionSteps]);
 
-    // Update Python code whenever slot data changes
-    useEffect(() => {
-        const newPyCode = generatePythonCode(slotData);
-        setPyCode(newPyCode);
-        console.log("App.js: Generated Python Code: ", newPyCode);
+  // Update Python code whenever slot data changes
+useEffect(() => {
+    const newPyCode = generatePythonCode(slotData);
+    setPyCode(newPyCode);
+    console.log("App.js: Generated Python Code: ", newPyCode);
 
-        // Enable run if all regular slots have configurations (excluding stop step)
-        const isComplete = slotData
-            .slice(0, -1)
-            .every((slot) => slot.type && slot.subtype && slot.configuration);
-        setCanRun(isComplete);
-    }, [slotData]);
+    // Enable run if AT LEAST ONE regular slot has a complete configuration
+    // (excluding the stop step which is always at the end)
+    const hasAtLeastOneInstruction = slotData
+        .slice(0, -1) // Exclude the stop step
+        .some((slot) => slot.type && slot.subtype && slot.configuration);
+    
+    setCanRun(hasAtLeastOneInstruction);
+}, [slotData]);
 
     // Handle updates to slot configuration
     const handleSlotUpdate = (slotConfig) => {
