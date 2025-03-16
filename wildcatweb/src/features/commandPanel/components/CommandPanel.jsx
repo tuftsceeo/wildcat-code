@@ -39,7 +39,7 @@ import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 const CONTROL_TYPES = {
     action: {
         motor: {
-            name: "Motor Control",
+            name: "Speed",
             component: MotorDash,
             icon: <RotateCw size={32} />,
         },
@@ -56,7 +56,7 @@ const CONTROL_TYPES = {
     },
     input: {
         time: {
-            name: "Wait Time",
+            name: "Wait",
             component: TimeDash,
             icon: <Clock9 size={32} />,
         },
@@ -307,27 +307,7 @@ export const CommandPanel = ({
                     slotData: slotData,
                     currSlotNumber: currSlotNumber,
                 })}
-                <div className={styles.saveIndicator}>
-                    {dashboardConfig &&
-                        (JSON.stringify(dashboardConfig) ===
-                        JSON.stringify(lastSavedConfig) ? (
-                            <div className={styles.savedState}>
-                                <Check
-                                    className={styles.checkIcon}
-                                    size={24}
-                                    color="var(--color-secondary-main)"
-                                />
-                            </div>
-                        ) : (
-                            <div className={styles.unsavedState}>
-                                <Plus
-                                    className={styles.plusIcon}
-                                    size={24}
-                                    color="var(--color-gray-subtle)"
-                                />
-                            </div>
-                        ))}
-                </div>
+              
             </div>
         );
     };

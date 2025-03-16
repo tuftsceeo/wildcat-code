@@ -7,13 +7,13 @@
  * @created March 2025
  */
 /**
- * @file TimeDash.jsx
+ * @file TimeDash.
  * @description Dashboard interface for configuring time wait actions with visual pie clock
  * and numeric controls for selecting duration. Fixed to avoid infinite update loops.
  */
 
 import React, { useState, useEffect, useRef } from "react";
-import { Check } from "lucide-react";
+import { Timer } from "lucide-react";
 import styles from "../styles/TimeDash.module.css";
 
 /**

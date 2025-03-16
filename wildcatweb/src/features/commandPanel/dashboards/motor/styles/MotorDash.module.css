@@ -16,6 +16,8 @@
     padding: var(--spacing-2);
     width: 100%;
     transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden; /* Hide overflow for the motor animation */
 }
 
 .singleMotorDash.disconnected {
@@ -27,15 +29,18 @@
     display: flex;
     align-items: center;
     margin-bottom: var(--spacing-3);
+    z-index: 2;
 }
 
 .portLabel {
+    background-color: rgba(var(--color-background-rgb),.9);
     color: var(--color-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
-    flex-grow: 1;
+    flex-grow: 0;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
+    z-index: 2;
 }
 
 .disconnectedLabel {
@@ -46,6 +51,7 @@
     background-color: rgba(var(--color-error-main-rgb), 0.2);
     border-radius: var(--radius-sm);
     letter-spacing: var(--letter-spacing-wide);
+    z-index: 2;
 }
 
 .dismissButton {
@@ -58,16 +64,19 @@
     margin-left: var(--spacing-1);
     border-radius: var(--radius-sm);
     transition: all var(--transition-normal);
+    z-index: 2;
 }
 
 .dismissButton:hover {
     background-color: var(--color-error-main);
     color: var(--color-background);
     transform: var(--button-scale-hover);
+    z-index: 2;
 }
 
 .dismissButton:active {
     transform: var(--button-scale-active);
+    z-index: 2;
 }
 
 /* Container for motor controls to ensure proper alignment */
@@ -75,6 +84,17 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-1);
+}
+
+.motorAnimationWrapper {
+    width: 80%;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1; /* Maintain a perfect circle */
+    position: absolute;
+    left: 50%;
+    top: 0; /* Position at top */
+    transform: translate(-50%, -52%); /* Pull it up so it's partially hidden */
+    z-index: 1;
 }
 
 /* Bar visualization styles */
@@ -98,10 +118,25 @@
     transition: all var(--transition-normal);
     padding: 0;
     transform: var(--button-scale-default);
+    position: relative; /* For positioning the icon */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Icon at the bottom of bar */
+.barIcon {
+    position: absolute;
+    bottom: 2px;
+    color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .bar:hover:not(:disabled) {
-    transform: var(--button-scale-hover);
+    transform: scale(var(--button-scale-hover));
 }
 
 .bar:focus-visible {
@@ -113,12 +148,27 @@
 }
 
 .stopBar {
-    background-color: transparent;
-    color: var(--color-gray-subtle);
+    background-color: var(--color-gray-subtle);
+}
+
+.stopBar svg{
+    stroke: var(--color-error-main);
+    fill: var(--color-error-main);
 }
 
 .stopBar.active {
-    color: var(--color-error-main);
+    background-color: rgba(var(--color-error-main-rgb),.6);
+    transform: scale(1.2);
+    box-shadow: var(--glow-error);
+}
+
+.stopBar.active:hover {
+    transform: scale(0,1.2);
+}
+
+.stopBar.active svg{
+    stroke: white;
+    fill: var(--color-error-main);
 }
 
 .forwardBar.active {
@@ -135,135 +185,13 @@
     box-shadow: var(--glow-warning);
 }
 
-/* Slider control styles */
-.sliderControl {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-1);
-}
-
-/* Container for slider and labels */
-.sliderWithLabels {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-}
-
-/* Direction labels */
-.backwardLabel,
-.forwardLabel {
-    font-size: var(--font-size-xxs);
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.backwardLabel {
-    color: var(--color-motor-backward);
-}
-
-.forwardLabel {
-    color: var(--color-motor-forward);
-}
-
-/* Slider track */
-.sliderTrack {
-    flex: 1;
-    position: relative;
-    height: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    background: linear-gradient(
-        to right,
-        var(--color-motor-backward) 0%,
-        var(--color-motor-backward) 10%,
-        var(--color-gray-subtle) 38%,
-        var(--color-gray-subtle) 62%,
-        var(--color-motor-forward) 90%,
-        var(--color-motor-forward) 100%
-    );
-    border: var(--border-width-thin) solid var(--color-gray-medium);
-    outline: none;
-}
-
-.sliderTrack:focus-visible {
-    box-shadow: var(--glow-primary);
-}
-
-/* Slider thumb */
-.sliderThumb {
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background-color: var(--color-background);
-    border: var(--border-width-standard) solid var(--color-text);
-    transform: translateX(-50%);
-    box-shadow: var(--glow-white);
-    z-index: 2;
-    transition: left var(--transition-normal);
-    top: -3px;
-    cursor: grab;
-}
-
-.sliderThumb:active {
-    cursor: grabbing;
-    transform: translateX(-50%) scale(0.95);
-}
-
-/* Position icons below the slider */
-.positionIcons {
-    display: flex;
-    justify-content: space-between;
-    padding: 0;
-}
-
-.positionIcon {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: all var(--transition-normal);
-    padding: var(--spacing-1);
-    color: var(--color-text);
-    width: 30px;
-    height: 30px;
-    transform: var(--button-scale-default);
-}
-
-.positionIcon:hover:not(:disabled) {
-    opacity: 1;
-    color: var(--panel-text);
-    transform: var(--button-scale-hover);
-}
-
-.positionIcon:active:not(:disabled) {
-    transform: var(--button-scale-active);
-}
-
-.positionIcon:focus-visible {
-    outline: var(--border-width-standard) solid var(--panel-border);
-    border-radius: var(--radius-sm);
-}
-
-.positionIcon.active {
-    opacity: 1;
-    transform: var(--button-scale-hover);
-    color: var(--panel-text);
-}
-
 /* For icons that need to be flipped horizontally */
 .flippedHorizontally {
     transform: scaleX(-1);
 }
 
 /* Styling for disabled/disconnected state */
-.disconnected .bar,
-.disconnected .sliderTrack,
-.disconnected .sliderThumb,
-.disconnected .positionIcon {
+.disconnected .bar {
     cursor: not-allowed;
     opacity: 0.4;
 }
