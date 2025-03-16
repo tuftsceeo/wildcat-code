@@ -49,13 +49,14 @@
     width: 100%;
     transition: transform var(--transition-normal);
     transform: var(--button-scale-default);
+    position: relative; /* Added for checkmark positioning */
 }
 
-.stepButton:hover {
+.stepButton:hover:not(:disabled) {
     transform: var(--button-scale-hover);
 }
 
-.stepButton:active {
+.stepButton:active:not(:disabled) {
     transform: var(--button-scale-active);
 }
 
@@ -75,6 +76,29 @@
 /* Warning styling when needed */
 .stepButton.warning {
     border-color: var(--color-warning-main);
+}
+
+/* Checkmark icon styling for completed steps */
+.stepButton.completed {
+    padding-right: calc(var(--spacing-3) + 24px); /* Add space for checkmark */
+}
+
+.checkIcon {
+    position: absolute;
+    right: var(--spacing-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-success-high);
+}
+
+/* Disabled step styling */
+.stepButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--button-disabled-bg, var(--button-default-bg));
+    color: var(--button-disabled-text, var(--color-gray-medium));
+    border-color: var(--button-disabled-border, var(--color-gray-medium));
+    transform: var(--button-scale-default);
 }
 
 /* Play button - uses blue accent color */

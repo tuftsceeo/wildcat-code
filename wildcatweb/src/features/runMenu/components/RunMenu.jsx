@@ -1,7 +1,8 @@
 /**
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
- * running individual slots or the complete program. Updated to handle special Stop step.
+ * running individual slots or the complete program. Updated to handle special Stop step
+ * and sequential step completion requirement.
  * @author Jennifer Cross with support from Claude
  * @created March 2025
  */
@@ -15,12 +16,12 @@ import {
     ClearSlotRequest,
     ClearSlotResponse,
 } from "../../../features/bluetooth/ble_resources/messages";
-import { AlertTriangle, AlertOctagon, Octagon } from "lucide-react";
+import { AlertTriangle, AlertOctagon, Octagon, Check } from "lucide-react";
 
 
- const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
-      };
+const FilledOctagon = (props) => {
+    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+};
 
 /**
  * RunMenu component for navigating and executing code
@@ -57,6 +58,39 @@ export const RunMenu = ({
             );
         }
     }, [missionSteps, slotData]);
+
+    /**
+     * Check if a step is completed (has instructions assigned)
+     * 
+     * @param {number} index - Step index to check
+     * @returns {boolean} Whether the step is completed
+     */
+    const isStepCompleted = (index) => {
+        return !!(slotData && slotData[index]?.type && slotData[index]?.subtype);
+    };
+
+    /**
+     * Check if a step is accessible based on previous steps completion
+     * 
+     * @param {number} index - Step index to check
+     * @returns {boolean} Whether the step is accessible
+     */
+    const isStepAccessible = (index) => {
+        // First step is always accessible
+        if (index === 0) return true;
+        
+        // The stop step is a special case - it's accessible if the second-to-last step is completed
+        if (index === missionSteps - 1) {
+            return isStepCompleted(missionSteps - 2);
+        }
+        
+        // A regular step is accessible if all previous steps are completed
+        for (let i = 0; i < index; i++) {
+            if (!isStepCompleted(i)) return false;
+        }
+        
+        return true;
+    };
 
     /**
      * Check for disconnected motors in configurations
@@ -131,11 +165,14 @@ export const RunMenu = ({
      * @param {number} stepIndex - Index of the clicked step
      */
     const handleStepClick = (stepIndex) => {
-        console.log(
-            "RunMenu: Clicked on step",
-            slotData[stepIndex]?.isStopInstruction ? "Stop" : stepIndex + 1,
-        );
-        setCurrSlotNumber(stepIndex);
+        // Only allow clicking on accessible steps
+        if (isStepAccessible(stepIndex)) {
+            console.log(
+                "RunMenu: Clicked on step",
+                slotData[stepIndex]?.isStopInstruction ? "Stop" : stepIndex + 1,
+            );
+            setCurrSlotNumber(stepIndex);
+        }
     };
 
     // Check for any disconnected motors in the current configuration
@@ -155,30 +192,32 @@ export const RunMenu = ({
         const buttons = [];
         // Create regular step buttons (excluding the stop step)
         for (let i = 0; i < missionSteps - 1; i++) {
+            const completed = isStepCompleted(i);
+            const accessible = isStepAccessible(i);
+            
             buttons.push(
                 <button
                     key={i}
-                    className={`${styles.stepButton} ${
-                        isConnected &&
-                        checkDisconnectedMotors([slotData?.[i]]).length > 0
-                            ? styles.warning
-                            : ""
-                    } ${slotData?.[i]?.type ? styles.configured : ""} ${
-                        i === currSlotNumber ? styles.current : ""
-                    }`}
+                    className={`${styles.stepButton} 
+                              ${isConnected && checkDisconnectedMotors([slotData?.[i]]).length > 0 ? styles.warning : ""} 
+                              ${completed ? styles.completed : ""}
+                              ${slotData?.[i]?.type ? styles.configured : ""} 
+                              ${i === currSlotNumber ? styles.current : ""}`}
                     onClick={() => handleStepClick(i)}
-                    aria-label={`Step ${i + 1}${
-                        i === currSlotNumber ? " (current)" : ""
-                    }`}
+                    disabled={!accessible}
+                    aria-label={`Step ${i + 1}${i === currSlotNumber ? " (current)" : ""}${completed ? " (completed)" : ""}`}
                     aria-current={i === currSlotNumber ? "step" : false}
                 >
                     Step {i + 1}
-                </button>,
+                    {completed && <Check className={styles.checkIcon} size={16} />}
+                </button>
             );
         }
 
         // Add the special Stop button
         const stopStepIndex = missionSteps - 1;
+        const stopAccessible = isStepAccessible(stopStepIndex);
+        
         buttons.push(
             <button
                 key="stop"
@@ -186,6 +225,7 @@ export const RunMenu = ({
                     currSlotNumber === stopStepIndex ? styles.current : ""
                 }`}
                 onClick={() => handleStepClick(stopStepIndex)}
+                disabled={!stopAccessible}
                 aria-label="Stop"
                 aria-current={currSlotNumber === stopStepIndex ? "step" : false}
             >
@@ -195,7 +235,7 @@ export const RunMenu = ({
                     size={30}
                     className={styles.stopIcon}
                 />
-            </button>,
+            </button>
         );
 
         return buttons;

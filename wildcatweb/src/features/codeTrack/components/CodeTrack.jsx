@@ -2,7 +2,7 @@
  * @file CodeTrack.jsx
  * @description Main component for displaying the coding track with instructions,
  * including navigation controls and instruction visualization.
- * Updated to handle special Stop step.
+ * Updated to handle special Stop step and pass currentInstruction to NavigationControls.
  * @author Jennifer Cross with support from Claude
  */
 
@@ -53,9 +53,9 @@ const CodeTrack = ({
     // Get the current instruction from slotData
     const currentInstruction = slotData?.[currSlotNumber];
 
-      const FilledOctagon = (props) => {
+    const FilledOctagon = (props) => {
         return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
-      };
+    };
 
     // Check if current slot is the stop step
     const isStopStep = currentInstruction?.isStopInstruction === true;
@@ -170,12 +170,13 @@ const CodeTrack = ({
                     </button>
                 )}
 
-                {/* Navigation controls */}
+                {/* Navigation controls - now passing currentInstruction */}
                 <NavigationControls
                     currSlotNumber={currSlotNumber}
                     missionSteps={missionSteps}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
+                    currentInstruction={currentInstruction}
                 />
             </div>
         </div>
