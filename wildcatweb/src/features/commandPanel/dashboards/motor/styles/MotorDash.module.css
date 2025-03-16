@@ -87,7 +87,7 @@
 /* Main control layout - matching the screenshot */
 .motorControlContainer {
     position: relative;
-    height: 100px; /* Reduced height from screenshot */
+    height: 90px; /* Reduced height from screenshot */
     width: 100%;
     display: flex;
     align-items: center;
@@ -128,7 +128,7 @@
     transition: all var(--transition-normal);
     padding: 0;
     transform: var(--button-scale-default);
-    height: 12px; /* Thinner bars */
+    height: 10px; /* Thinner bars */
     cursor: pointer;
     margin: 0;
     display: flex;

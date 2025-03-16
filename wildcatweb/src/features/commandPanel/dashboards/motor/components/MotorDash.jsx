@@ -23,6 +23,38 @@ import {
 import DashMotorAnimation from "./DashMotorAnimation";
 
 
+
+/**
+ * Determines if a bar should be active based on current slider position
+ * For higher speeds, multiple bars will be active to show increasing intensity
+ *
+ * @param {number} barPosition - The position of the current bar (0-6)
+ * @param {number} sliderPosition - The current position of the slider (0-6)
+ * @param {boolean} isInitialized - Whether the motor has been initialized
+ * @returns {boolean} Whether the bar should be active
+ */
+const isBarActive = (barPosition, sliderPosition, isInitialized) => {
+    if (!isInitialized) return false;
+    
+    if (sliderPosition === 0) { // backward-fast
+        return barPosition <= 2; // Positions 0, 1, 2
+    } else if (sliderPosition === 1) { // backward-medium
+        return barPosition >= 1 && barPosition <= 2; // Positions 1, 2
+    } else if (sliderPosition === 2) { // backward-slow
+        return barPosition === 2; // Position 2
+    } else if (sliderPosition === 3) { // stop
+        return barPosition === 3; // Position 3
+    } else if (sliderPosition === 4) { // forward-slow
+        return barPosition === 4; // Position 4
+    } else if (sliderPosition === 5) { // forward-medium
+        return barPosition >= 4 && barPosition <= 5; // Positions 4, 5
+    } else if (sliderPosition === 6) { // forward-fast
+        return barPosition >= 4 && barPosition <= 6; // Positions 4, 5, 6
+    }
+    
+    return false;
+};
+
  const FilledOctagon = (props) => {
         return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
       };
@@ -209,7 +241,7 @@ const SingleMotorDash = memo(({
                             key={`bar-${bar.position}`}
                             className={`${styles.horizontalBar} 
                                 ${styles[`${bar.type}Bar`]} 
-                                ${sliderPosition === bar.position && isInitialized ? styles.active : ""}`}
+                                ${isBarActive(bar.position, sliderPosition, isInitialized) ? styles.active : ""}`}
                             onClick={() => handleBarClick(bar.position)}
                             disabled={isDisconnected}
                             aria-label={bar.label}
