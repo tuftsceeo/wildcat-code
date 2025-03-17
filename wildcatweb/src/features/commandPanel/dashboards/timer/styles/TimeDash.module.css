@@ -178,3 +178,18 @@
     border-radius: 2px;
     margin-top: 1px;
 }
+
+/* Timer display styles */
+.timerValue {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--color-text);
+    font-size: var(--font-size-xl);
+}
+
+.timerIcon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-text);
+}

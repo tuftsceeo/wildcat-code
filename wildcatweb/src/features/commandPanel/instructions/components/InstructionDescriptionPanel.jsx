@@ -9,7 +9,7 @@ import React from "react";
 import { Volume2 } from "lucide-react";
 import { useCustomization } from "../../../../context/CustomizationContext";
 import { generateDescription } from "../../../../code-generation/InstructionDescriptionGenerator";
-import { COMPLEXITY_LEVELS } from "../../../../translations/loader";
+import { COMPLEXITY_LEVELS, getTranslatedText } from "../../../../translations/loader";
 import { speakWithRobotVoice } from "../../../../common/utils/speechUtils";
 import {
     getIconForConcept,
@@ -48,16 +48,12 @@ const InstructionDescriptionPanel = ({
         instruction?.isStopInstruction === true ||
         (instruction?.type === "special" && instruction?.subtype === "stop");
 
-    // Generate description text
+    // Generate description text using translations for special cases
     const descriptionText = isStopInstruction
-        ? language === "es"
-            ? "El programa ha terminado."
-            : "The program has stopped."
+        ? getTranslatedText("stop_message", language, readingLevel)
         : instruction
         ? generateDescription(instruction, language, readingLevel, slotNumber)
-        : language === "es"
-        ? "Seleccionar una acción o sensor"
-        : "Select an action or sensor";
+        : getTranslatedText("default_message", language, readingLevel);
 
     // Check if this is a multi-instruction description (with periods)
     const isMultiInstruction = descriptionText.split(". ").length > 1;

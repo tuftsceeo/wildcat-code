@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
+import { Timer } from "lucide-react";
 import styles from "../../../../codeTrack/styles/CodingTrack.module.css";
 
 /**
@@ -68,7 +69,10 @@ const TimerAnimation = ({ seconds = 3, active = true }) => {
     return (
         <div className={styles.timerVisualization}>
             {/* Time display */}
-            <div className={styles.timerValue}>{seconds}</div>
+            <div className={styles.timerValue}>
+                <Timer className={styles.timerIcon} />
+                {seconds}
+            </div>
             
             {/* Block tower visualization */}
             <div className={styles.blockTower}>

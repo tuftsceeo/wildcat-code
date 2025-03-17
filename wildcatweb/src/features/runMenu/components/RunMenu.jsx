@@ -249,8 +249,7 @@ export const RunMenu = ({
             );
 
             if (!clearResponse.success) {
-                console.warn("Failed to clear program slot");
-                return;
+                console.warn("Failed to clear program slot"); // Warning ok, sometimes the program slot is empty
             }
 
             // Upload and transfer the program
