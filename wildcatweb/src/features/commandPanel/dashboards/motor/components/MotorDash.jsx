@@ -92,7 +92,7 @@ const SingleMotorDash = memo(
 
             return barHeights.map((height, index) => {
                 // The fourth bar (index 3) should have zero height (invisible)
-                const actualHeight = height * 30; // Scale heights
+                const actualHeight = 90; // height * 30; // Scale heights
 
                 // Determine which bars should be active based on the slider position
                 let isActive = false;

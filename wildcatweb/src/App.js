@@ -33,7 +33,7 @@ import reportWebVitals from "./common/utils/reportWebVitals";
  */
 function App() {
     // Move missionSteps state to the top level component
-    const [missionSteps, setMissionSteps] = useState(2);
+    const [missionSteps, setMissionSteps] = useState(3);
 
     return (
         <CustomizationProvider

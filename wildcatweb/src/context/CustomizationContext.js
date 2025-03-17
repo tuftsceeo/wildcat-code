@@ -11,7 +11,7 @@ import { AVAILABLE_LANGUAGES, COMPLEXITY_LEVELS } from "../translations/loader";
 const CustomizationContext = createContext();
 
 // Constants for min/max steps
-export const MIN_STEPS = 2;
+export const MIN_STEPS = 3;
 export const MAX_STEPS = 10;
 
 /**

@@ -1,9 +1,9 @@
 /**
  * @file BluetoothUI.jsx
- * @description Bluetooth connection interface with settings button
+ * @description Bluetooth connection interface with settings button and connection overlay
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/BluetoothUI.module.css";
 import bluetoothDefault from "../../../assets/images/bluetooth-med.svg";
 import bluetoothConnected from "../../../assets/images/bluetooth-connected-correct.svg";
@@ -11,6 +11,7 @@ import settings from "../../../assets/images/settings.svg";
 import questionMark from "../../../assets/images/question-mark.svg";
 import HelpDialog from "../../../common/components/HelpDialog";
 import { useBLE } from "../../bluetooth/context/BLEContext";
+import BluetoothConnectionOverlay from "./BluetoothConnectionOverlay";
 
 /**
  * Interface for Bluetooth connection and settings access
@@ -23,7 +24,28 @@ import { useBLE } from "../../bluetooth/context/BLEContext";
  */
 export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
     const [showHelpDialog, setShowHelpDialog] = useState(false);
+    // State to control the visibility of the connection overlay
+    const [showConnectionModal, setShowConnectionModal] = useState(false);
     const { ble, isConnected, setIsConnected } = useBLE();
+
+    // Show connection overlay after a delay when disconnected
+    useEffect(() => {
+        let timer;
+        if (!isConnected) {
+            // Show overlay after 2 seconds if still disconnected
+            timer = setTimeout(() => {
+                setShowConnectionModal(true);
+            }, 2000);
+        } else {
+            // Hide overlay when connected
+            setShowConnectionModal(false);
+        }
+        
+        return () => {
+            // Clean up timer on unmount
+            clearTimeout(timer);
+        };
+    }, [isConnected]);
 
     /**
      * Handle Bluetooth connection toggle
@@ -35,6 +57,7 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
                 const connectionSuccess = await ble.connect();
                 if (connectionSuccess) {
                     setIsConnected(true);
+                    setShowConnectionModal(false);
                 } else {
                     console.error("Failed to connect to the Bluetooth device");
                 }
@@ -66,6 +89,15 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
      */
     const closeHelpDialog = () => {
         setShowHelpDialog(false);
+    };
+
+    /**
+     * Developer escape method for the connection overlay
+     * Only used for development/testing
+     */
+    const devEscapeOverlay = () => {
+        console.log("Developer escape activated");
+        setShowConnectionModal(false);
     };
 
     return (
@@ -115,6 +147,14 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
                 <HelpDialog
                     currSlotNumber={currSlotNumber}
                     close={closeHelpDialog}
+                />
+            )}
+            
+            {/* Bluetooth Connection Overlay */}
+            {showConnectionModal && !isConnected && (
+                <BluetoothConnectionOverlay 
+                    onConnect={handleBluetoothToggle}
+                    onClose={devEscapeOverlay}
                 />
             )}
         </>

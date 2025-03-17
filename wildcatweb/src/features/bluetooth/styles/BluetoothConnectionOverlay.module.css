@@ -1,0 +1,270 @@
+/* Animations - kept subtle for users with autism */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}/* BluetoothConnectionOverlay.module.css */
+/* Simplified styles for the Bluetooth connection overlay using design tokens */
+
+.overlayContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Darkened background for more emphasis */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: var(--z-index-modal);
+    animation: fadeIn 0.3s ease-in-out;
+    /* Make sure the overlay container captures all clicks */
+    pointer-events: all;
+}
+
+.overlay {
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    width: 90%;
+    max-width: 380px; /* Increased from 340px */
+    box-shadow: var(--glow-primary);
+    animation: slideIn 0.3s ease-in-out;
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    position: relative;
+    /* Remove pointer-events completely - this makes it persistent */
+    pointer-events: all;
+}
+
+.overlayHeader {
+    position: absolute;
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+    z-index: 2;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: var(--panel-text);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    background-color: var(--panel-bg);
+}
+
+.closeButton:hover {
+    background-color: var(--color-gray-bold);
+    transform: var(--button-scale-hover);
+}
+
+.closeButton:active {
+    transform: var(--button-scale-active);
+}
+
+.overlayContent {
+    padding: var(--spacing-8); /* Increased from spacing-6 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.bluetoothIcon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-primary-high);
+    animation: pulse 2s infinite;
+}
+
+.overlayTitle {
+    margin: 0 0 var(--spacing-4) 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--panel-text);
+}
+
+/* Buttons container for main view */
+.buttonsContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+}
+
+.connectButton {
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.connectButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.connectButton:active {
+    transform: var(--button-scale-active);
+}
+
+.helpButton {
+    width: 40px;
+    height: 40px;
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--button-default-text);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+}
+
+.helpButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.helpButton:active {
+    transform: var(--button-scale-active);
+}
+
+/* Help instructions styles */
+.helpInstructions {
+    width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.helpTitle {
+    font-size: var(--font-size-lg);
+    margin: 0 0 var(--spacing-6) 0; /* Increased from spacing-4 */
+    font-weight: var(--font-weight-bold);
+    color: var(--panel-text);
+}
+
+.stepsList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-6) 0; /* Increased from spacing-4 */
+    text-align: left;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-5); /* Increased from spacing-3 */
+    gap: var(--spacing-3);
+}
+
+.stepIcon {
+    width: 24px;
+    height: 24px;
+    background-color: var(--color-primary-high);
+    color: var(--color-primary-contrast);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
+}
+
+.stepContent {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-xs); /* Reduced from font-size-sm */
+    line-height: var(--line-height-relaxed);
+    flex-wrap: wrap; /* Allow content to wrap on narrow screens */
+}
+
+.stepIconWrapper {
+    display: flex;
+    color: var(--color-primary-high);
+}
+
+.backButton {
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    color: var(--panel-text);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-4);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    margin-top: var(--spacing-4); /* Increased from spacing-2 */
+}
+
+.backButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.backButton:active {
+    transform: var(--button-scale-active);
+}
+
+.backIcon {
+    transform: rotate(180deg);
+}
+
+/* Add this at the end of your CSS file */
+/* Inline Connect Button */
+.inlineConnectButton {
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    font-family: var(--font-family-active);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    margin: 0 var(--spacing-1);
+}
+
+.inlineConnectButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.inlineConnectButton:active {
+    transform: var(--button-scale-active);
+}
