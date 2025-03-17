@@ -7,12 +7,47 @@
     margin: 0 auto;
 }
 
+
+
+/* Motor Visualization */
+.motorVisualization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4);
+}
+
+.directionArrow {
+    position: absolute;
+    top: -25%;  /* Adjust position to account for larger size */
+    left: -25%;
+    width: 150%;  /* Make container itself 110% */
+    height: 150%;
+    border-radius: 50%;
+    color: var(--color-text);
+    opacity: .3;  /* Slightly increased opacity for better visibility */
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.directionArrow svg {
+    width: 100%;
+    height: 100%;
+}
+
 .motorBorder {
     position: absolute;
+    /* background-color: var(--color-background); */
+    border: 3px solid var(--color-background);
+    border-radius: 50%;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 1;
 }
 
 .motorRotor {
@@ -22,6 +57,7 @@
     width: 100%;
     height: 100%;
     transition: opacity 0.3s ease;
+    z-index: 2;
 }
 
 /* Animation classes for rotation - PRESERVED EXACTLY AS ORIGINAL */

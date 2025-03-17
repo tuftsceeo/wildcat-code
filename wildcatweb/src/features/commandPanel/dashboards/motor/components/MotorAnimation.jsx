@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { RefreshCw, RefreshCcw } from "lucide-react";
 import styles from "../styles/MotorAnimation.module.css";
 import {
     validateSpeed,
@@ -65,6 +66,13 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
 
     return (
         <div className={styles.motorAnimation}>
+            {/* Direction Arrow */}
+            <div className={styles.directionArrow}>
+                {validatedSpeed !== 0 && (
+                    isClockwise ? <RefreshCw size={160} strokeWidth={.5}/> : <RefreshCcw size={160} strokeWidth={.5}/>
+                )}
+            </div>
+
             {/* Static border */}
             <svg
                 className={styles.motorBorder}
