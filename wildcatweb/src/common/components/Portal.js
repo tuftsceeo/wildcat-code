@@ -1,20 +1,22 @@
 /**
  * @file Portal.js
- * @description Utility component for rendering content in a portal outside the normal
- * DOM hierarchy, used for modals and dialogs.
- * @author Jennifer Cross with support from Claude
- * @created February 2025
+ * @description Fixed Portal component that safely handles multiple portals
+ * @author [Your Name]
  */
 
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
+// Keep track of portals using the root element
+let portalCount = 0;
+
 const Portal = ({ children }) => {
     const [portalRoot, setPortalRoot] = useState(null);
-
+    
     // Create or find portal root element
     useEffect(() => {
         console.log("Portal component initializing");
+        portalCount++;
 
         // Find or create the portal-root element
         let element = document.getElementById("portal-root");
@@ -38,12 +40,21 @@ const Portal = ({ children }) => {
 
         setPortalRoot(element);
 
-        // Cleanup on unmount
+        // Improved cleanup on unmount
         return () => {
             console.log("Portal component cleanup");
-            if (element && element.childNodes.length === 0) {
-                console.log("Removing empty portal-root element");
-                document.body.removeChild(element);
+            portalCount--;
+            
+            // Only remove if this is the last portal using the root
+            if (portalCount === 0 && element && document.body.contains(element)) {
+                console.log("Removing portal-root element - last portal unmounted");
+                try {
+                    document.body.removeChild(element);
+                } catch (e) {
+                    console.warn("Portal cleanup error:", e);
+                }
+            } else {
+                console.log(`Not removing portal-root, ${portalCount} portals still active`);
             }
         };
     }, []);

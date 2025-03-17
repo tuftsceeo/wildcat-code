@@ -17,6 +17,10 @@ import {
     MoveRight,
 } from "lucide-react";
 
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
 /**
  * Motor visualization component with vertical bars and animal icons
  *
@@ -216,13 +220,15 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
 
                 {/* Stop (Octagon) */}
                 <div
-                    className={`${styles.animalIcon} ${
-                        speed === 0 ? styles.active : ""
-                    }`}
-                >
-                    <Octagon size={20} />
-                </div>
-
+    className={`${styles.animalIcon} ${
+        speed === 0 ? styles.active : ""
+    }`}
+>
+    <FilledOctagon 
+        size={20} 
+        color="var(--color-error-main)" 
+    />
+</div>
                 {/* Slow Forward (Turtle) */}
                 <div
                     className={`${styles.animalIcon} ${

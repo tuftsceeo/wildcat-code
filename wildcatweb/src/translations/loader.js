@@ -6,6 +6,13 @@
 // Import JSON files
 import enTranslations from "./en/en.json";
 import esTranslations from "./es/es.json";
+import { ReactComponent as EnIcon } from '../assets/images/lang-en.svg';
+import { ReactComponent as EsIcon } from '../assets/images/lang-es.svg';
+import { ReactComponent as IconOnlyIcon } from '../assets/images/complexity-icon-only.svg';
+import { ReactComponent as BeginnerIcon } from '../assets/images/complexity-beginner.svg';
+import { ReactComponent as IntermediateIcon } from '../assets/images/complexity-intermediate.svg';
+import { ReactComponent as AdvancedIcon } from '../assets/images/complexity-advanced.svg';
+import { ReactComponent as TextOnlyIcon } from '../assets/images/complexity-text-only.svg';
 
 // Define available languages with metadata
 export const AVAILABLE_LANGUAGES = {
@@ -13,14 +20,14 @@ export const AVAILABLE_LANGUAGES = {
         id: "en",
         name: "English",
         nativeName: "English",
-        icon: "🇺🇸",
+        icon: EnIcon,
         translations: enTranslations,
     },
     es: {
         id: "es",
         name: "Spanish",
         nativeName: "Español",
-        icon: "🇪🇸",
+        icon: EsIcon,
         translations: esTranslations,
     },
     // Add more languages here as needed
@@ -30,8 +37,8 @@ export const AVAILABLE_LANGUAGES = {
 export const COMPLEXITY_LEVELS = {
     icon_only: {
         id: "icon_only",
-        icon: "🖼️",
-        name: { en: "Icon Only", es: "Solo Íconos" },
+        icon: IconOnlyIcon,
+        name: { en: "Icon", es: "Íconos" },
         description: {
             en: "Icons without words",
             es: "Íconos sin palabras",
@@ -41,7 +48,7 @@ export const COMPLEXITY_LEVELS = {
     },
     beginner: {
         id: "beginner",
-        icon: "🔤",
+        icon: BeginnerIcon,
         name: { en: "Beginner", es: "Principiante" },
         description: {
             en: "Simple words with icons",
@@ -52,7 +59,7 @@ export const COMPLEXITY_LEVELS = {
     },
     intermediate: {
         id: "intermediate",
-        icon: "📝",
+        icon: IntermediateIcon,
         name: { en: "Intermediate", es: "Intermedio" },
         description: {
             en: "Simple sentences with icons",
@@ -63,22 +70,22 @@ export const COMPLEXITY_LEVELS = {
     },
     advanced: {
         id: "advanced",
-        icon: "📚",
+        icon: AdvancedIcon,
         name: { en: "Advanced", es: "Avanzado" },
         description: {
-            en: "Complete sentences with icons",
-            es: "Oraciones completas con íconos",
+            en: "Only text, no icons",
+            es: "Solo texto, sin íconos",
         },
         textRatio: 3,
         iconSize: "xs",
     },
     text_only: {
         id: "text_only",
-        icon: "📄",
-        name: { en: "Text Only", es: "Solo Texto" },
+        icon: TextOnlyIcon,
+        name: { en: "Complex", es: "Complejo" },
         description: {
-            en: "Only text, no icons",
-            es: "Solo texto, sin íconos",
+            en: "Complex sentences, no icons",
+            es: "Frases complejas, sin íconos",
         },
         textRatio: 4,
         iconSize: "none",

@@ -139,3 +139,57 @@
     color: var(--color-success-high);
     font-size: var(--font-size-xl);
 }
+
+/* Add these styles to the TimeDash.module.css file */
+
+/* Block tower visualization styles */
+.blockTowerContainer {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: var(--spacing-2) 0;
+}
+
+.blockTower {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.blockRow {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2px;
+}
+
+.timeBlock {
+    margin: 0 1px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.blockBase {
+    height: 4px;
+    background-color: var(--color-gray-medium);
+    border-radius: 2px;
+    margin-top: 1px;
+}
+
+/* Timer display styles */
+.timerValue {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--color-text);
+    font-size: var(--font-size-xl);
+}
+
+.timerIcon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-text);
+}

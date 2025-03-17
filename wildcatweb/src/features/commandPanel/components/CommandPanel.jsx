@@ -2,7 +2,7 @@
  * @file CommandPanel.jsx
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
- * Updated to use the InstructionDescriptionPanel for multilingual support.
+ * Updated to handle special stop step.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -15,8 +15,10 @@ import {
     Lightbulb,
     RotateCw,
     Volume,
-    TimerReset,
+    Timer,
     Clock9,
+    Octagon,
+    ArchiveRestore, 
 } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
@@ -29,11 +31,16 @@ import SubtypeSelector from "./SubtypeSelector";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 
+
+ const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+      };
+
 // Define the control types and their configurations
 const CONTROL_TYPES = {
     action: {
         motor: {
-            name: "Motor Control",
+            name: "Speed",
             component: MotorDash,
             icon: <RotateCw size={32} />,
         },
@@ -50,15 +57,22 @@ const CONTROL_TYPES = {
     },
     input: {
         time: {
-            name: "Wait Time",
+            name: "Wait",
             component: TimeDash,
-            icon: <Clock9 size={32} />,
+            icon: <Timer size={32} />,
         },
         button: {
             // Updated - Kept subtype name but changed display name
             name: "Button", // Changed from "Force Sensor" to "Button"
             component: ButtonDash,
-            icon: <Disc size={32} />, // Using Disc icon for button
+            icon: <ArchiveRestore size={32} />, // Using Disc icon for button
+        },
+    },
+    special: {
+        stop: {
+            name: "Stop",
+            component: null,
+            icon: <FilledOctagon size={32} />,
         },
     },
 };
@@ -71,9 +85,15 @@ const CONTROL_TYPES = {
  * @param {number} props.currSlotNumber - Current active slot number
  * @param {Function} props.onSlotUpdate - Callback function when slot configuration changes
  * @param {Array} props.slotData - Array of slot configurations
+ * @param {number} props.missionSteps - Total number of steps including stop step
  * @returns {JSX.Element} Complete command panel interface
  */
-export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
+export const CommandPanel = ({
+    currSlotNumber,
+    onSlotUpdate,
+    slotData,
+    missionSteps,
+}) => {
     const [selectedType, setSelectedType] = useState(null);
     const [selectedSubtype, setSelectedSubtype] = useState(null);
     const [dashboardConfig, setDashboardConfig] = useState(null);
@@ -82,11 +102,16 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
     // Current instruction for the description panel
     const [currentInstruction, setCurrentInstruction] = useState(null);
 
+    // Determine if the current slot is the special stop step
+    const isStopStep =
+        slotData && slotData[currSlotNumber]?.isStopInstruction === true;
+
     // Reset state when slot number changes
     useEffect(() => {
         console.log(`CommandPanel: Slot changed to ${currSlotNumber}`, {
             hasSlotData: !!slotData?.[currSlotNumber],
             slotData: JSON.stringify(slotData?.[currSlotNumber]),
+            isStopStep: isStopStep,
         });
 
         const currentSlotData = slotData?.[currSlotNumber];
@@ -116,7 +141,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             setLastSavedConfig(null);
             setCurrentInstruction(null);
         }
-    }, [currSlotNumber, slotData]);
+    }, [currSlotNumber, slotData, isStopStep]);
 
     // Auto-save when configuration changes
     useEffect(() => {
@@ -163,7 +188,6 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
             console.log("CommandPanel: Configuration changed, auto-saving...", {
                 from: JSON.stringify(lastSavedConfig),
                 to: JSON.stringify(dashboardConfig),
-                currentSlot: currSlotNumber,
             });
 
             if (selectedType && selectedSubtype) {
@@ -205,19 +229,18 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 previousConfig: JSON.stringify(dashboardConfig),
                 selectedType,
                 selectedSubtype,
-                currentSlot: currSlotNumber,
             });
 
             setDashboardConfig(config);
         },
-        [dashboardConfig, selectedType, selectedSubtype, currSlotNumber],
+        [dashboardConfig, selectedType, selectedSubtype],
     );
 
     // Handle type selection
     const handleTypeSelect = (type) => {
         if (type !== selectedType) {
             console.log(
-                `CommandPanel: Type changed from ${selectedType} to ${type} for slot ${currSlotNumber}`,
+                `CommandPanel: Type changed from ${selectedType} to ${type}`,
             );
 
             setSelectedType(type);
@@ -231,7 +254,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
     // Handle subtype selection
     const handleSubtypeSelect = (subtype) => {
         console.log(
-            `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype} for slot ${currSlotNumber}`,
+            `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype}`,
         );
 
         setSelectedSubtype(subtype);
@@ -251,7 +274,26 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
 
     // Render the dashboard based on selected subtype
     const renderDashboard = () => {
-        if (!selectedSubtype) {
+        // Basic checks to avoid accessing undefined objects
+        if (!selectedType || !selectedSubtype) {
+            return <div className={styles.dashboardPlaceholder}></div>;
+        }
+
+        // Additional safety check for the CONTROL_TYPES structure
+        if (
+            !CONTROL_TYPES[selectedType] ||
+            !CONTROL_TYPES[selectedType][selectedSubtype]
+        ) {
+            console.error(
+                `Invalid control type: ${selectedType}/${selectedSubtype}`,
+            );
+            return <div className={styles.dashboardPlaceholder}></div>;
+        }
+
+        // Check if the component exists before trying to render it
+        const componentToRender =
+            CONTROL_TYPES[selectedType][selectedSubtype].component;
+        if (!componentToRender) {
             return <div className={styles.dashboardPlaceholder}></div>;
         }
 
@@ -260,51 +302,41 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 className={styles.dashboardContainer}
                 data-control-type={selectedSubtype || "default"}
             >
-                {CONTROL_TYPES[selectedType][selectedSubtype].component &&
-                    React.createElement(
-                        CONTROL_TYPES[selectedType][selectedSubtype].component,
-                        {
-                            onUpdate: handleDashboardUpdate,
-                            configuration: dashboardConfig,
-                            slotData: slotData,
-                            currSlotNumber: currSlotNumber,
-                        },
-                    )}
-                <div className={styles.saveIndicator}>
-                    {dashboardConfig &&
-                        (JSON.stringify(dashboardConfig) ===
-                        JSON.stringify(lastSavedConfig) ? (
-                            <div className={styles.savedState}>
-                                <Check
-                                    className={styles.checkIcon}
-                                    size={24}
-                                    color="var(--color-secondary-main)"
-                                />
-                            </div>
-                        ) : (
-                            <div className={styles.unsavedState}>
-                                <Plus
-                                    className={styles.plusIcon}
-                                    size={24}
-                                    color="var(--color-gray-subtle)"
-                                />
-                            </div>
-                        ))}
-                </div>
+                {React.createElement(componentToRender, {
+                    onUpdate: handleDashboardUpdate,
+                    configuration: dashboardConfig,
+                    slotData: slotData,
+                    currSlotNumber: currSlotNumber,
+                })}
+              
             </div>
         );
     };
 
     return (
         <div className={styles.hubTopBackground}>
-            {/* Type Selector (ACTION/SENSE) */}
-            <TypeSelector
-                selectedType={selectedType}
-                onTypeChange={handleTypeSelect}
-            />
+            {/* Type Selector (ACTION/SENSE) or Stop indicator for stop step */}
+            {!isStopStep ? (
+                <TypeSelector
+                    selectedType={selectedType}
+                    onTypeChange={handleTypeSelect}
+                />
+            ) : (
+                <div className={styles.stopStepIndicator}>
+                    <TypeSelector
+                    selectedType={selectedType}
+                    onTypeChange={handleTypeSelect}
+                />
+                    <FilledOctagon
+                        size={80}
+                        className={styles.stopIcon}
+                    />
+                    <h2 className={styles.stopText}>Stop</h2>
+                </div>
+            )}
 
-            {/* Content area with two-column layout */}
-            {selectedType && (
+            {/* Content area with two-column layout - only show for non-stop steps */}
+            {selectedType && !isStopStep && (
                 <div className={styles.contentContainer}>
                     {/* Left column - ACTION subtype or SENSE dashboard */}
                     <div className={styles.leftColumn}>
@@ -336,7 +368,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData }) => {
                 </div>
             )}
 
-            {/* Instruction Description Panel at bottom - Now passing the currSlotNumber */}
+            {/* Instruction Description Panel at bottom */}
             <InstructionDescriptionPanel
                 instruction={currentInstruction}
                 onPlayAudio={handlePlayAudio}

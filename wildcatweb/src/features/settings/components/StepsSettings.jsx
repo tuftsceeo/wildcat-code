@@ -2,17 +2,53 @@
  * @file StepsSettings.jsx
  * @description Component for controlling the number of coding steps available in the application
  * with safeguards against accidentally deleting steps that contain code.
+ * Now includes toggle switches for controlling step navigation behavior.
  * @author Jennifer Cross with support from Claude
  */
 
 import React, { useState, useEffect } from "react";
 import { Minus, Plus, AlertTriangle } from "lucide-react";
 import { useCustomization } from "../../../context/CustomizationContext";
+
 import Portal from "../../../common/components/Portal";
 import styles from "../styles/StepsSettings.module.css";
 
 /**
+ * Toggle switch component for boolean settings
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.label - Label text for the toggle
+ * @param {string} props.description - Description text explaining the toggle functionality
+ * @param {boolean} props.value - Current toggle value
+ * @param {Function} props.onChange - Function called when toggle changes
+ * @returns {JSX.Element} Toggle switch UI component
+ */
+const ToggleSwitch = ({ label, description, value, onChange }) => {
+    return (
+        <div className={styles.toggleOption}>
+            <label className={styles.toggleLabel}>
+                <div className={styles.toggleLabelText}>{label}</div>
+                <div className={styles.toggleSwitch}>
+                    <input
+                        type="checkbox"
+                        checked={value}
+                        onChange={() => onChange(!value)}
+                        className={styles.toggleInput}
+                    />
+                    <span className={styles.toggleSlider}></span>
+                </div>
+            </label>
+            {description && (
+                <div className={styles.toggleDescription}>{description}</div>
+            )}
+        </div>
+    );
+};
+
+/**
  * Settings component for step count configuration
+ * and step behavior preferences
  *
  * @component
  * @param {Object} props - Component props
@@ -21,9 +57,17 @@ import styles from "../styles/StepsSettings.module.css";
  * @returns {JSX.Element} Step settings interface
  */
 const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
-    // Get step count from context
-    const { stepCount, setStepCount, MIN_STEPS, MAX_STEPS } =
-        useCustomization();
+    // Get step count and preferences from context
+    const { 
+        stepCount, 
+        setStepCount, 
+        MIN_STEPS, 
+        MAX_STEPS,
+        requireSequentialCompletion,
+        setRequireSequentialCompletion,
+        useCommandLabels,
+        setUseCommandLabels
+    } = useCustomization();
 
     // Local state for step count (before applying)
     const [tempStepCount, setTempStepCount] = useState(stepCount);
@@ -114,11 +158,14 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
             Math.min(MAX_STEPS, tempStepCount),
         );
 
+        console.log("StepSettings: Applying step count change to", validStepCount);
+
         // Update the context
         setStepCount(validStepCount);
 
         // Notify parent component if callback provided
         if (onUpdateMissionSteps) {
+            console.log("StepSettings: Calling onUpdateMissionSteps with", validStepCount);
             onUpdateMissionSteps(validStepCount);
         }
 
@@ -133,6 +180,24 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
         // Reset temp count and hide confirmation
         setTempStepCount(stepCount);
         setShowConfirmation(false);
+    };
+
+    /**
+     * Handle toggle change for sequential completion requirement
+     * 
+     * @param {boolean} newValue - New toggle value
+     */
+    const handleSequentialToggle = (newValue) => {
+        setRequireSequentialCompletion(newValue);
+    };
+
+    /**
+     * Handle toggle change for command labels
+     * 
+     * @param {boolean} newValue - New toggle value
+     */
+    const handleCommandLabelsToggle = (newValue) => {
+        setUseCommandLabels(newValue);
     };
 
     return (
@@ -178,47 +243,61 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
                 </button>
             </div>
 
+            {/* New toggle section for step behavior options */}
+            <div className={styles.toggleSection}>
+                <div className={styles.toggleSectionTitle}>Step Navigation Options</div>
+                
+                <ToggleSwitch 
+                    label="Require Sequential Completion"
+                    description="When enabled, each step can only be accessed after previous steps are completed"
+                    value={requireSequentialCompletion}
+                    onChange={handleSequentialToggle}
+                />
+                
+                <ToggleSwitch 
+                    label="Use Command Labels"
+                    description="When enabled, completed steps show command names instead of 'Step 1', 'Step 2', etc."
+                    value={useCommandLabels}
+                    onChange={handleCommandLabelsToggle}
+                />
+            </div>
+
             <div className={styles.description}>
                 <p>
-                    Use this setting to adjust how many code steps are available
-                    in the application.
+                    Use these settings to adjust how many code steps are available
+                    and how they behave in the application.
                 </p>
             </div>
 
             {/* Confirmation Dialog */}
             {showConfirmation && (
-                <Portal>
-                    <div className={styles.confirmationOverlay}>
-                        <div className={styles.confirmationDialog}>
-                            <div className={styles.confirmationHeader}>
-                                <AlertTriangle
-                                    size={24}
-                                    color="var(--color-warning-main)"
-                                />
-                                <h3>Warning: Code Will Be Deleted</h3>
-                            </div>
+                <div className={styles.confirmationOverlay}>
+                    <div className={styles.confirmationDialog}>
+                        <div className={styles.confirmationHeader}>
+                            <AlertTriangle size={24} color="var(--color-warning-main)" />
+                            <h3>Warning: Code Will Be Deleted</h3>
+                        </div>
 
-                            <div className={styles.confirmationMessage}>
-                                {confirmationMessage}
-                            </div>
+                        <div className={styles.confirmationMessage}>
+                            {confirmationMessage}
+                        </div>
 
-                            <div className={styles.confirmationButtons}>
-                                <button
-                                    className={styles.cancelButton}
-                                    onClick={handleCancelChange}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    className={styles.confirmButton}
-                                    onClick={applyStepCountChange}
-                                >
-                                    Confirm
-                                </button>
-                            </div>
+                        <div className={styles.confirmationButtons}>
+                            <button
+                                className={styles.cancelButton}
+                                onClick={handleCancelChange}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className={styles.confirmButton}
+                                onClick={applyStepCountChange}
+                            >
+                                Confirm
+                            </button>
                         </div>
                     </div>
-                </Portal>
+                </div>
             )}
         </div>
     );

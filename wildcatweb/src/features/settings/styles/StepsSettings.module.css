@@ -254,3 +254,159 @@
         transform: translateY(0);
     }
 }
+
+.confirmationOverlay {
+    position: absolute; /* Change from fixed to absolute */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    pointer-events: auto;
+}
+
+/* NEW TOGGLE SECTION STYLES */
+/* ========================= */
+
+/* Toggle section styling */
+.toggleSection {
+    margin-top: var(--spacing-8);
+    margin-bottom: var(--spacing-8);
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    animation: fadeIn 0.3s ease;
+}
+
+.toggleSectionTitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: var(--spacing-4);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+.toggleOption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    background-color: var(--panel-bg);
+    border: var(--border-width-thin) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3);
+    transition: all var(--transition-normal);
+}
+
+.toggleOption:hover {
+    border-color: var(--button-default-border);
+}
+
+.toggleLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggleLabelText {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+}
+
+.toggleDescription {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-bold);
+    font-family: var(--font-family-active);
+    line-height: var(--line-height-relaxed);
+    margin-top: var(--spacing-1);
+}
+
+/* Toggle switch styling */
+.toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.toggleInput {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-gray-medium);
+    border-radius: 24px;
+    transition: all var(--transition-normal);
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--color-background);
+    border-radius: 50%;
+    transition: all var(--transition-normal);
+}
+
+.toggleInput:checked + .toggleSlider {
+    background-color: var(--color-secondary-main);
+}
+
+.toggleInput:checked + .toggleSlider:before {
+    transform: translateX(24px);
+}
+
+/* For high-contrast theme */
+body.high-contrast .toggleSlider {
+    border: 1px solid var(--color-text);
+}
+
+body.high-contrast .toggleInput:checked + .toggleSlider {
+    background-color: var(--color-text);
+}
+
+body.high-contrast .toggleSlider:before {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-text);
+}
+
+/* Animation */
+@keyframes slideRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(24px);
+    }
+}
+
+@keyframes slideLeft {
+    from {
+        transform: translateX(24px);
+    }
+    to {
+        transform: translateX(0);
+    }
+}

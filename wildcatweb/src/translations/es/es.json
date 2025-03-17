@@ -9,8 +9,8 @@
         "motorF": "Motor F",
 
         "direction": "Dirección",
-        "forward": "adelante",
-        "backward": "atrás",
+        "forward": "horario",
+        "backward": "antihorario",
         "stopped": "parado",
 
         "speed": "velocidad",
@@ -49,7 +49,9 @@
                 "motor_action": "{port} {direction} {speed}",
                 "motor_stop": "{port} para",
                 "wait_action": "Esperar {seconds}",
-                "button_action": "{port} {condition}"
+                "button_action": "{port} {condition}",
+                "default_message": "Seleccionar acción o sensor",
+                "stop_message": "Parar programa"
             }
         },
 
@@ -58,7 +60,9 @@
                 "motor_action": "{port} gira {direction} {speed}",
                 "motor_stop": "{port} para",
                 "wait_action": "Esperar {seconds} segundos",
-                "button_action": "{port} espera {condition}"
+                "button_action": "{port} espera {condition}",
+                "default_message": "Seleccionar una acción o sensor",
+                "stop_message": "Programa parado"
             }
         },
 
@@ -67,7 +71,9 @@
                 "motor_action": "{port} gira hacia {direction} {speed}.",
                 "motor_stop": "{port} deja de girar.",
                 "wait_action": "Robot espera {seconds} segundos.",
-                "button_action": "Esperar hasta que {port} esté {condition}."
+                "button_action": "Esperar hasta que {port} esté {condition}.",
+                "default_message": "Seleccionar una acción o sensor",
+                "stop_message": "El programa ha terminado."
             }
         },
 
@@ -76,7 +82,9 @@
                 "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
                 "motor_stop": "{port} para de girar.",
                 "wait_action": "El robot espera {seconds} segundos.",
-                "button_action": "El robot espera hasta que {port} esté {condition}."
+                "button_action": "El robot espera hasta que {port} esté {condition}.",
+                "default_message": "Seleccionar una acción o sensor",
+                "stop_message": "El programa ha terminado."
             }
         },
 
@@ -84,8 +92,10 @@
             "templates": {
                 "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
                 "motor_stop": "{port} para de girar.",
-                "wait_action": "el robot espera {seconds} segundos.",
-                "button_action": "el robot pausa la ejecución hasta que el botón en {port} esté {condition}."
+                "wait_action": "El robot espera {seconds} segundos.",
+                "button_action": "El robot pausa la ejecución hasta que el botón en {port} esté {condition}.",
+                "default_message": "Seleccionar una acción o sensor",
+                "stop_message": "El programa ha terminado."
             }
         }
     }

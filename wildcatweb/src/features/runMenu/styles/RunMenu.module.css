@@ -1,4 +1,4 @@
-/* RunMenu.module.css - Refactored with design token system */
+/* RunMenu.module.css - Revised with icons instead of checkmarks */
 
 .menuBackground {
     height: 100%;
@@ -49,13 +49,19 @@
     width: 100%;
     transition: transform var(--transition-normal);
     transform: var(--button-scale-default);
+    position: relative;
+    
+    /* Layout for content */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.stepButton:hover {
+.stepButton:hover:not(:disabled) {
     transform: var(--button-scale-hover);
 }
 
-.stepButton:active {
+.stepButton:active:not(:disabled) {
     transform: var(--button-scale-active);
 }
 
@@ -64,6 +70,30 @@
     border-color: var(--button-selected-border);
     color: var(--button-selected-text);
     background-color: var(--button-selected-bg);
+}
+
+/* Command icon styling - now on the right side */
+.commandIcon {
+    color: var(--button-default-text);
+}
+
+.stepButton.current .commandIcon,
+.stepButton.active .commandIcon {
+    color: var(--button-selected-text);
+}
+
+/* Container for the command icon */
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Step name text */
+.stepName {
+    flex: 1;
+    text-align: center;
+    padding-right: var(--spacing-2); /* Space for icon on right */
 }
 
 /* Inactive steps */
@@ -75,6 +105,16 @@
 /* Warning styling when needed */
 .stepButton.warning {
     border-color: var(--color-warning-main);
+}
+
+/* Disabled step styling */
+.stepButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--button-disabled-bg, var(--button-default-bg));
+    color: var(--button-disabled-text, var(--color-gray-medium));
+    border-color: var(--button-disabled-border, var(--color-gray-medium));
+    transform: var(--button-scale-default);
 }
 
 /* Play button - uses blue accent color */
@@ -131,4 +171,27 @@
     100% {
         opacity: 0.7;
     }
+}
+
+/* In RunMenu.module.css */
+.stopButton {
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--color-error-low);
+    color: var(--color-error-low);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stopButton.current {
+    border-color: var(--color-error-main);
+    color: var(--color-error-main);
+}
+
+.stopIcon {
+    color: currentColor;
+}
+
+.flippedVertically {
+    transform: scaleY(-1);
 }

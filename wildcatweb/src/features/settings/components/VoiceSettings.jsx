@@ -29,8 +29,8 @@ const VoiceSettings = () => {
 
     // Language-specific default preview text
     const defaultPreviewText = isSpanish
-        ? "¡Así es como hablará tu robot! Haz clic en una voz para escuchar la diferencia."
-        : "This is how your robot will talk. Click a voice to hear the difference.";
+        ? "¡Así es como hablará tu robot!"
+        : "This is how your robot will talk.";
 
     // Preview text state and current voice preset state
     const [previewText, setPreviewText] = useState(defaultPreviewText);

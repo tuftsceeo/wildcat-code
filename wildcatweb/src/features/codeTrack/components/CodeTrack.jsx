@@ -2,6 +2,7 @@
  * @file CodeTrack.jsx
  * @description Main component for displaying the coding track with instructions,
  * including navigation controls and instruction visualization.
+ * Updated to handle special Stop step and pass currentInstruction to NavigationControls.
  * @author Jennifer Cross with support from Claude
  */
 
@@ -17,6 +18,7 @@ import {
 } from "../../bluetooth/ble_resources/messages";
 import { generateSlotCode } from "../../../code-generation/codeGenerator";
 import { Buffer } from "buffer";
+import { Octagon } from "lucide-react";
 
 /**
  * Main component for displaying the coding track with instructions
@@ -48,7 +50,16 @@ const CodeTrack = ({
         }
     }, [currSlotNumber, missionSteps, setCurrSlotNumber]);
 
+    // Get the current instruction from slotData
     const currentInstruction = slotData?.[currSlotNumber];
+
+    const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+    };
+
+    // Check if current slot is the stop step
+    const isStopStep = currentInstruction?.isStopInstruction === true;
+
     const { ble, isConnected, portStates } = useBLE();
 
     /**
@@ -132,25 +143,40 @@ const CodeTrack = ({
                         flexGrow: 1,
                     }}
                 >
-                    <InstructionVisualizer instruction={currentInstruction} />
+                    {isStopStep ? (
+                        <div className={styles.stopVisualization}>
+                            <FilledOctagon
+                                size={100}
+                                className={styles.stopIcon}
+                            />
+                            <div className={styles.stopLabel}>STOP</div>
+                        </div>
+                    ) : (
+                        <InstructionVisualizer
+                            instruction={currentInstruction}
+                        />
+                    )}
                 </div>
 
-                {/* Test button */}
-                <button
-                    className={styles.testButton}
-                    onClick={handleTest}
-                    disabled={!isConnected || !currentInstruction?.type}
-                    aria-label="Test current instruction"
-                >
-                    Test
-                </button>
+                {/* Test button - only show for non-stop steps */}
+                {!isStopStep && (
+                    <button
+                        className={styles.testButton}
+                        onClick={handleTest}
+                        disabled={!isConnected || !currentInstruction?.type}
+                        aria-label="Test current instruction"
+                    >
+                        Test
+                    </button>
+                )}
 
-                {/* Navigation controls */}
+                {/* Navigation controls - now passing currentInstruction */}
                 <NavigationControls
                     currSlotNumber={currSlotNumber}
                     missionSteps={missionSteps}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
+                    currentInstruction={currentInstruction}
                 />
             </div>
         </div>

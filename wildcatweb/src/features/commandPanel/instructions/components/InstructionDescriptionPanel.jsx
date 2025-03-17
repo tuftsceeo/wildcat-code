@@ -2,14 +2,14 @@
  * @file InstructionDescriptionPanel.jsx
  * @description Component for displaying human-readable instruction descriptions
  * with text-to-speech capabilities, supporting multiple languages, complexity levels,
- * robot voice options, and icon display.
+ * robot voice options, and icon display. Updated to handle stop instruction.
  */
 
 import React from "react";
 import { Volume2 } from "lucide-react";
 import { useCustomization } from "../../../../context/CustomizationContext";
 import { generateDescription } from "../../../../code-generation/InstructionDescriptionGenerator";
-import { COMPLEXITY_LEVELS } from "../../../../translations/loader";
+import { COMPLEXITY_LEVELS, getTranslatedText } from "../../../../translations/loader";
 import { speakWithRobotVoice } from "../../../../common/utils/speechUtils";
 import {
     getIconForConcept,
@@ -34,7 +34,7 @@ const InstructionDescriptionPanel = ({
     instruction,
     showAudio = true,
     onPlayAudio,
-    slotNumber = 0, // Default to first slot
+    slotNumber = 0,
 }) => {
     // Get settings from context
     const { language, readingLevel, voice, volume } = useCustomization();
@@ -43,12 +43,17 @@ const InstructionDescriptionPanel = ({
     const complexity =
         COMPLEXITY_LEVELS[readingLevel] || COMPLEXITY_LEVELS.intermediate;
 
-    // Generate description text
-    const descriptionText = instruction
+    // Check if this is a stop instruction
+    const isStopInstruction =
+        instruction?.isStopInstruction === true ||
+        (instruction?.type === "special" && instruction?.subtype === "stop");
+
+    // Generate description text using translations for special cases
+    const descriptionText = isStopInstruction
+        ? getTranslatedText("stop_message", language, readingLevel)
+        : instruction
         ? generateDescription(instruction, language, readingLevel, slotNumber)
-        : language === "es"
-        ? "Seleccionar una acción o sensor"
-        : "Select an action or sensor";
+        : getTranslatedText("default_message", language, readingLevel);
 
     // Check if this is a multi-instruction description (with periods)
     const isMultiInstruction = descriptionText.split(". ").length > 1;

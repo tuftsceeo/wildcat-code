@@ -9,8 +9,8 @@
         "motorF": "Motor F",
 
         "direction": "Direction",
-        "forward": "forward",
-        "backward": "backward",
+        "forward": "clockwise",
+        "backward": "counterclockwise",
         "stopped": "stopped",
 
         "speed": "speed",
@@ -49,7 +49,9 @@
                 "motor_action": "{port} {direction} {speed}",
                 "motor_stop": "{port} stops",
                 "wait_action": "Wait {seconds}",
-                "button_action": "{port} {condition}"
+                "button_action": "{port} {condition}",
+                "default_message": "Select action or sensor",
+                "stop_message": "Stop program"
             }
         },
 
@@ -58,7 +60,9 @@
                 "motor_action": "{port} turns {direction} {speed}",
                 "motor_stop": "{port} stops",
                 "wait_action": "Wait {seconds} seconds",
-                "button_action": "{port} wait {condition}"
+                "button_action": "{port} wait {condition}",
+                "default_message": "Select action or sensor",
+                "stop_message": "Program stopped"
             }
         },
 
@@ -67,7 +71,9 @@
                 "motor_action": "{port} turns {direction} at {speed} speed.",
                 "motor_stop": "{port} stops turning.",
                 "wait_action": "Robot waits {seconds} seconds.",
-                "button_action": "Wait until {port} is {condition}."
+                "button_action": "Wait until {port} is {condition}.",
+                "default_message": "Select an action or sensor",
+                "stop_message": "The program has stopped."
             }
         },
 
@@ -76,7 +82,9 @@
                 "motor_action": "{port} rotates {direction} at {speed} speed.",
                 "motor_stop": "{port} stops rotating.",
                 "wait_action": "The robot waits for {seconds} seconds.",
-                "button_action": "The robot waits until {port} is {condition}."
+                "button_action": "The robot waits until {port} is {condition}.",
+                "default_message": "Select an action or sensor",
+                "stop_message": "The program has stopped."
             }
         },
 
@@ -84,8 +92,10 @@
             "templates": {
                 "motor_action": "{port} rotates {direction} at {speed} speed.",
                 "motor_stop": "{port} stops rotating.",
-                "wait_action": "the robot waits for {seconds} seconds.",
-                "button_action": "The robot pauses execution until the button on {port} is {condition}."
+                "wait_action": "The robot waits for {seconds} seconds.",
+                "button_action": "The robot pauses execution until the button on {port} is {condition}.",
+                "default_message": "Select an action or sensor",
+                "stop_message": "The program has stopped."
             }
         }
     }

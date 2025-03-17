@@ -14,9 +14,10 @@ import {
   Octagon,           // For stop
   MousePointerClick, // For pressed
   Ban,               // For released
-  TimerReset,        // For wait/timer operations
+  Timer,        // For wait/timer operations
   Clock,             // For seconds
-  EllipsisVertical   // For separating phrases in icon-only mode
+  EllipsisVertical,  // For separating phrases in icon-only mode
+  MousePointer,      // For select action
 } from 'lucide-react';
 
 /**
@@ -52,14 +53,22 @@ export function getIconForConcept(concept, props = {}) {
     );
   }
   
+  const FilledOctagon = (props) => {
+    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+  };
+
   const lowerConcept = concept.toLowerCase();
   
   // Map concepts to appropriate Lucide icons
   switch (lowerConcept) {
     // Direction icons
     case 'forward':
+    case 'clockwise':
+    case 'horario':
       return <RefreshCw {...props} />;
     case 'backward':
+    case 'counterclockwise':
+    case 'antihorario':
       return <RefreshCcw {...props} />;
     
     // Speed icons
@@ -71,7 +80,10 @@ export function getIconForConcept(concept, props = {}) {
       return <Turtle {...props} />;
     case 'stop':
     case 'stops':
-      return <Octagon {...props} />;
+    case 'stopped':
+    case 'parado':
+    case 'para':
+      return <FilledOctagon color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
     
     // Button state icons
     case 'pressed':
@@ -82,9 +94,28 @@ export function getIconForConcept(concept, props = {}) {
     // Timer icons
     case 'wait':
     case 'waits':
-      return <TimerReset {...props} />;
-    case 'seconds':
-      return <Clock {...props} />;
+      return <Timer {...props} />;
+    
+    // Selection icons
+    case 'select':
+    case 'seleccionar':
+      return <MousePointer {...props} />;
+
+    // Choice icons
+    case 'or':
+    case 'o':  // Spanish "or"
+      return (
+        <span
+          style={{
+            fontWeight: 'bold',
+            fontSize: '1.5em',
+            ...(props.style || {})
+          }}
+          {...props}
+        >
+          ?
+        </span>
+      );
     
     // Port icons - just return the port letter
     default:
@@ -93,7 +124,7 @@ export function getIconForConcept(concept, props = {}) {
         return <span 
           style={{
             fontWeight: 'bold',
-            fontSize: '1.2em',
+            fontSize: '1.5em',
             ...(props.style || {})
           }}
           {...props}
@@ -134,14 +165,15 @@ export function segmentDescriptionText(text, includeBreaks = false) {
     let numberValue = null;
     
     // Direction words
-    if (lowerWord === 'forward') iconType = 'forward';
-    else if (lowerWord === 'backward') iconType = 'backward';
+    if (lowerWord === 'forward' || lowerWord === 'clockwise' || lowerWord === 'horario') iconType = 'forward';
+    else if (lowerWord === 'backward' || lowerWord === 'counterclockwise' || lowerWord === 'antihorario') iconType = 'backward';
     
     // Speed words
     else if (lowerWord === 'fast') iconType = 'fast';
     else if (lowerWord === 'medium') iconType = 'medium';
     else if (lowerWord === 'slow') iconType = 'slow';
-    else if (lowerWord === 'stop' || lowerWord === 'stops') iconType = 'stop';
+    else if (lowerWord === 'stop' || lowerWord === 'stops' || lowerWord === 'stopped' || 
+             lowerWord === 'parado' || lowerWord === 'para') iconType = 'stop';
     
     // Button-related words
     else if (lowerWord === 'pressed') iconType = 'pressed';
@@ -150,6 +182,12 @@ export function segmentDescriptionText(text, includeBreaks = false) {
     // Timer-related words
     else if (lowerWord === 'wait' || lowerWord === 'waits') iconType = 'wait';
     else if (lowerWord === 'seconds') iconType = 'seconds';
+    
+    // Selection words
+    else if (lowerWord === 'select' || lowerWord === 'seleccionar') iconType = 'select';
+    
+    // Choice words
+    else if (lowerWord === 'or' || lowerWord === 'o') iconType = 'or';
     
     // Port letters
     else if (/^[A-F]$/.test(cleanWord)) iconType = cleanWord;
@@ -175,7 +213,9 @@ export function segmentDescriptionText(text, includeBreaks = false) {
     segments.push({
       text: word,
       iconType: iconType,
-      numberValue: numberValue
+      numberValue: numberValue,
+      // Add a flag for words that should always show in icon-only mode
+      isImportantWord: iconType === 'or' || iconType === 'stop' || iconType === 'select'
     });
     
     // If this is a period and we're including breaks, add a separator
@@ -205,7 +245,11 @@ export function segmentDescriptionText(text, includeBreaks = false) {
  * @returns {Array} - Filtered array with only segments that have icons
  */
 export function filterIconSegments(segments) {
-  return segments.filter(segment => segment.iconType);
+  return segments.filter(segment => 
+    segment.iconType || 
+    segment.isSeparator || 
+    segment.isImportantWord
+  );
 }
 
 /**
