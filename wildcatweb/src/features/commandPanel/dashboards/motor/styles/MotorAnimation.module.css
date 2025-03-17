@@ -7,8 +7,6 @@
     margin: 0 auto;
 }
 
-
-
 /* Motor Visualization */
 .motorVisualization {
     display: flex;
@@ -20,13 +18,13 @@
 
 .directionArrow {
     position: absolute;
-    top: -25%;  /* Adjust position to account for larger size */
-    left: -25%;
-    width: 150%;  /* Make container itself 110% */
-    height: 150%;
+    top: -20%; /* Adjust position to account for larger size */
+    left: -20%;
+    width: 140%; /* Make container itself 110% */
+    height: 140%;
     border-radius: 50%;
     color: var(--color-text);
-    opacity: .3;  /* Slightly increased opacity for better visibility */
+    opacity: 0.3; /* Slightly increased opacity for better visibility */
     z-index: 0;
     display: flex;
     align-items: center;
@@ -41,7 +39,7 @@
 .motorBorder {
     position: absolute;
     /* background-color: var(--color-background); */
-    border: 3px solid var(--color-background);
+    /* border: 3px solid var(--color-background); */
     border-radius: 50%;
     top: 0;
     left: 0;
