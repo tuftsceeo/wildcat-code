@@ -71,9 +71,9 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
             <div className={styles.directionArrow}>
                 {validatedSpeed !== 0 &&
                     (isClockwise ? (
-                        <MotorCw fill="currentColor" />
+                        <MotorCw fill="currentColor" stroke="currentColor" />
                     ) : (
-                        <MotorCcw fill="currentColor" />
+                        <MotorCcw fill="currentColor" stroke="currentColor" />
                     ))}
             </div>
 

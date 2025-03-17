@@ -16,6 +16,17 @@
     margin-bottom: var(--spacing-4);
 }
 
+.motorLabel {
+    text-align: center;
+    width: 100%;
+    margin-top: var(--spacing-2);
+    margin-bottom: var(--spacing-4);
+    color: var(--color-text);
+    font-family: var(--font-family-active);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
 .directionArrow {
     position: absolute;
     top: -20%; /* Adjust position to account for larger size */

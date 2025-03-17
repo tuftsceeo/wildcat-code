@@ -25,33 +25,27 @@ import BluetoothConnectionOverlay from "./BluetoothConnectionOverlay";
 export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
     const [showHelpDialog, setShowHelpDialog] = useState(false);
     // State to control the visibility of the connection overlay
-    const [showConnectionOverlay, setShowConnectionOverlay] = useState(false);
-    // State to track if the user has dismissed the overlay
-    const [overlayDismissed, setOverlayDismissed] = useState(false);
+    const [showConnectionModal, setShowConnectionModal] = useState(false);
     const { ble, isConnected, setIsConnected } = useBLE();
 
     // Show connection overlay after a delay when disconnected
     useEffect(() => {
         let timer;
-        if (!isConnected && !overlayDismissed) {
+        if (!isConnected) {
             // Show overlay after 2 seconds if still disconnected
             timer = setTimeout(() => {
-                setShowConnectionOverlay(true);
+                setShowConnectionModal(true);
             }, 2000);
         } else {
             // Hide overlay when connected
-            setShowConnectionOverlay(false);
-            // Reset dismissed state when connected
-            if (isConnected) {
-                setOverlayDismissed(false);
-            }
+            setShowConnectionModal(false);
         }
         
         return () => {
             // Clean up timer on unmount
             clearTimeout(timer);
         };
-    }, [isConnected, overlayDismissed]);
+    }, [isConnected]);
 
     /**
      * Handle Bluetooth connection toggle
@@ -63,7 +57,7 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
                 const connectionSuccess = await ble.connect();
                 if (connectionSuccess) {
                     setIsConnected(true);
-                    setShowConnectionOverlay(false);
+                    setShowConnectionModal(false);
                 } else {
                     console.error("Failed to connect to the Bluetooth device");
                 }
@@ -98,11 +92,12 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
     };
 
     /**
-     * Handle closing the connection overlay
+     * Developer escape method for the connection overlay
+     * Only used for development/testing
      */
-    const closeConnectionOverlay = () => {
-        setShowConnectionOverlay(false);
-        setOverlayDismissed(true); // Mark as dismissed so it doesn't reappear immediately
+    const devEscapeOverlay = () => {
+        console.log("Developer escape activated");
+        setShowConnectionModal(false);
     };
 
     return (
@@ -156,10 +151,10 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
             )}
             
             {/* Bluetooth Connection Overlay */}
-            {showConnectionOverlay && !isConnected && (
+            {showConnectionModal && !isConnected && (
                 <BluetoothConnectionOverlay 
                     onConnect={handleBluetoothToggle}
-                    onClose={closeConnectionOverlay}
+                    onClose={devEscapeOverlay}
                 />
             )}
         </>

@@ -1,20 +1,19 @@
 /**
  * @file BluetoothConnectionOverlay.jsx
- * @description A simplified overlay prompt for Bluetooth connection with minimal text
+ * @description A persistent overlay prompt for Bluetooth connection with minimal text
  * and a help option for additional instructions. Optimized for children with autism
- * using icons for better comprehension.
+ * using icons for better comprehension. Can only be dismissed by connecting to a robot
+ * or using a hidden developer shortcut (holding ESC for 5 seconds).
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  X, 
   BluetoothSearching, 
-  HelpCircle, 
   Bluetooth, 
-  Laptop, 
   Check, 
   ArrowRight 
 } from 'lucide-react';
+import { ReactComponent as QuestionMark } from '../../../assets/images/question-mark.svg';
 import Portal from '../../../common/components/Portal';
 import styles from '../styles/BluetoothConnectionOverlay.module.css';
 
@@ -24,12 +23,62 @@ import styles from '../styles/BluetoothConnectionOverlay.module.css';
  * @component
  * @param {Object} props - Component props
  * @param {Function} props.onConnect - Callback function when connect button is clicked
- * @param {Function} props.onClose - Callback function when close button is clicked
+ * @param {Function} props.onClose - Callback function when close button is clicked (developer escape)
  * @returns {JSX.Element} Overlay component
  */
 const BluetoothConnectionOverlay = ({ onConnect, onClose }) => {
     // State to track if help instructions are showing
     const [showHelp, setShowHelp] = useState(false);
+    // State to track ESC key press time for hidden developer exit
+    const [escKeyPressed, setEscKeyPressed] = useState(false);
+    const [escHoldTimer, setEscHoldTimer] = useState(null);
+    
+    // Set up event listeners for hidden developer escape method
+    useEffect(() => {
+        // Function to handle key down event
+        const handleKeyDown = (e) => {
+            // Check if Escape key is pressed
+            if (e.key === 'Escape' && !escKeyPressed) {
+                setEscKeyPressed(true);
+                
+                // Start a timer - if ESC is held for 5 seconds, close the overlay
+                const timer = setTimeout(() => {
+                    console.log('Developer escape activated');
+                    onClose();
+                }, 5000);
+                
+                setEscHoldTimer(timer);
+            }
+        };
+        
+        // Function to handle key up event
+        const handleKeyUp = (e) => {
+            if (e.key === 'Escape') {
+                setEscKeyPressed(false);
+                
+                // Clear the timer if ESC is released before 5 seconds
+                if (escHoldTimer) {
+                    clearTimeout(escHoldTimer);
+                    setEscHoldTimer(null);
+                }
+            }
+        };
+        
+        // Add event listeners
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        
+        // Clean up event listeners
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+            
+            // Clear timer if component unmounts
+            if (escHoldTimer) {
+                clearTimeout(escHoldTimer);
+            }
+        };
+    }, [escKeyPressed, escHoldTimer, onClose]);
 
     /**
      * Toggle help instructions visibility
@@ -37,24 +86,24 @@ const BluetoothConnectionOverlay = ({ onConnect, onClose }) => {
     const toggleHelp = () => {
         setShowHelp(!showHelp);
     };
+    
+    /**
+     * Prevent clicks from propagating outside the overlay
+     * @param {Event} e - Click event
+     */
+    const preventPropagation = (e) => {
+        e.stopPropagation();
+    };
 
     return (
         <Portal>
-            <div className={styles.overlayContainer}>
+            <div className={styles.overlayContainer} onClick={preventPropagation}>
                 <div 
                     className={styles.overlay} 
                     role="dialog" 
                     aria-labelledby="bluetooth-overlay-title"
                 >
-                    <div className={styles.overlayHeader}>
-                        <button 
-                            className={styles.closeButton} 
-                            onClick={onClose}
-                            aria-label="Close"
-                        >
-                            <X size={24} />
-                        </button>
-                    </div>
+                    {/* Removed header with close button */}
                     
                     <div className={styles.overlayContent}>
                         <div className={styles.bluetoothIcon}>
@@ -82,7 +131,7 @@ const BluetoothConnectionOverlay = ({ onConnect, onClose }) => {
                                         onClick={toggleHelp}
                                         aria-label="Show connection help"
                                     >
-                                        <HelpCircle size={20} />
+                                        <QuestionMark width={20} height={20} />
                                     </button>
                                 </div>
                             </>

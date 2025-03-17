@@ -22,12 +22,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7); /* Darkened background for more emphasis */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: var(--z-index-modal);
     animation: fadeIn 0.3s ease-in-out;
+    /* Make sure the overlay container captures all clicks */
+    pointer-events: all;
 }
 
 .overlay {
@@ -41,6 +43,8 @@
     color: var(--panel-text);
     font-family: var(--font-family-active);
     position: relative;
+    /* Remove pointer-events completely - this makes it persistent */
+    pointer-events: all;
 }
 
 .overlayHeader {
