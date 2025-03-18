@@ -2,7 +2,7 @@
  * @file CodeTrack.jsx
  * @description Main component for displaying the coding track with instructions,
  * including navigation controls and instruction visualization.
- * Updated to handle special Stop step and pass currentInstruction to NavigationControls.
+ * Updated to handle mission validation and show test prompts.
  * @author Jennifer Cross with support from Claude
  */
 
@@ -12,6 +12,7 @@ import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
 import { useBLE } from "../../bluetooth/context/BLEContext";
+import { useMission } from "../../../context/MissionContext"; // Import mission hook
 import {
     ClearSlotRequest,
     ClearSlotResponse,
@@ -41,6 +42,18 @@ const CodeTrack = ({
     setPyCode,
     setCanRun,
 }) => {
+    // Get mission context
+    const { 
+        isMissionMode, 
+        currentMission, 
+        currentStepIndex, 
+        markStepTested, 
+        completeStep, 
+        validateStepConfiguration,
+        setOverlayContent,
+        setShowMissionOverlay
+    } = useMission();
+
     // Ensure current slot is valid based on missionSteps
     useEffect(() => {
         // If currSlotNumber is beyond the valid range, reset it to the max allowed
@@ -79,6 +92,29 @@ const CodeTrack = ({
     };
 
     /**
+     * Check if the current instruction matches mission requirements
+     * 
+     * @returns {Object} Validation result
+     */
+    const validateCurrentInstruction = () => {
+        // Only validate in mission mode and when on the current mission step
+        if (!isMissionMode || !currentMission || currSlotNumber !== currentStepIndex) {
+            return { isValid: true };
+        }
+        
+        // If no instruction, it's not valid
+        if (!currentInstruction || !currentInstruction.type) {
+            return { 
+                isValid: false, 
+                message: "Please configure this step according to the mission instructions."
+            };
+        }
+        
+        // Validate against mission requirements
+        return validateStepConfiguration(currentInstruction);
+    };
+
+    /**
      * Handle test button click to run current instruction
      */
     const handleTest = async () => {
@@ -100,6 +136,44 @@ const CodeTrack = ({
             if (!currentInstruction || !currentInstruction.type) {
                 console.warn("No valid instruction in current slot to test");
                 return;
+            }
+
+            // In mission mode, validate the instruction against mission requirements
+            if (isMissionMode && currSlotNumber === currentStepIndex) {
+                const validation = validateCurrentInstruction();
+                if (!validation.isValid) {
+                    console.warn("Instruction doesn't meet mission requirements:", validation.message);
+                    
+                    // Show mission overlay with validation error
+                    setOverlayContent({
+                        type: 'error',
+                        title: "Not Quite Right",
+                        message: validation.message,
+                        hint: currentMission.steps[currentStepIndex].instructions?.hints?.[0]
+                    });
+                    setShowMissionOverlay(true);
+                    return;
+                }
+                
+                // Mark the step as tested
+                markStepTested(currentStepIndex);
+                
+                // If the step has a success message, prepare to show it
+                const missionStep = currentMission.steps[currentStepIndex];
+                if (missionStep.instructions?.successMessage) {
+                    // Queue success message to show after test runs
+                    setTimeout(() => {
+                        setOverlayContent({
+                            type: 'success',
+                            title: "Great Job!",
+                            message: missionStep.instructions.successMessage
+                        });
+                        setShowMissionOverlay(true);
+                        
+                        // Mark the step as completed
+                        completeStep(currentStepIndex, currentInstruction.configuration);
+                    }, 3000); // Show after 3 seconds to let the test run
+                }
             }
 
             // Generate code specifically for this single instruction
@@ -177,6 +251,9 @@ const CodeTrack = ({
                     onPrevious={handlePrevious}
                     onNext={handleNext}
                     currentInstruction={currentInstruction}
+                    // Pass mission validation for button state
+                    validInMission={validateCurrentInstruction().isValid}
+                    isMissionMode={isMissionMode && currSlotNumber === currentStepIndex}
                 />
             </div>
         </div>

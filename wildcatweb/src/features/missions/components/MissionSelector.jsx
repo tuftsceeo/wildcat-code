@@ -5,10 +5,10 @@
  */
 
 import React, { useState } from "react";
-import { useMission } from "../../context/MissionContext";
-import Portal from "../../common/components/Portal";
+import { useMission } from "../../../context/MissionContext.js";
+import Portal from "../../../common/components/Portal.js";
 import { Rocket, Play, Gamepad2, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
-import styles from "./styles/MissionSelector.module.css";
+import styles from "../styles/MissionSelector.module.css";
 
 /**
  * Mission selector component showing available missions

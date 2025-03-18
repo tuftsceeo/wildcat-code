@@ -414,138 +414,129 @@ export const MissionProvider = ({ children }) => {
   }, [isMissionMode, currentMission, currentStepIndex]);
 
   /**
-   * Validate if the current configuration meets the mission requirements
-   * 
-   * @param {Object} configuration - Configuration to validate
-   * @returns {Object} Validation result with status and message
-   */
-  const validateStepConfiguration = useCallback((configuration) => {
-    if (!isMissionMode || !currentMission) {
+ * Validate if the current configuration meets the mission requirements
+ * Modified to check number of motors rather than specific ports
+ * 
+ * @param {Object} configuration - Configuration to validate
+ * @returns {Object} Validation result with status and message
+ */
+const validateStepConfiguration = useCallback((configuration) => {
+  if (!isMissionMode || !currentMission) {
       return { isValid: true };
-    }
-    
-    const stepData = currentMission.steps[currentStepIndex];
-    if (!stepData) {
+  }
+  
+  const stepData = currentMission.steps[currentStepIndex];
+  if (!stepData) {
       return { isValid: true };
-    }
-    
-    // Check required type
-    if (stepData.requiredType && configuration.type !== stepData.requiredType) {
+  }
+  
+  // Check required type
+  if (stepData.requiredType && configuration.type !== stepData.requiredType) {
       return {
-        isValid: false,
-        message: `This step requires ${stepData.requiredType} type.`
+          isValid: false,
+          message: `This step requires ${stepData.requiredType} type.`
       };
-    }
-    
-    // Check required subtype
-    if (stepData.requiredSubtype && configuration.subtype !== stepData.requiredSubtype) {
+  }
+  
+  // Check required subtype
+  if (stepData.requiredSubtype && configuration.subtype !== stepData.requiredSubtype) {
       return {
-        isValid: false,
-        message: `This step requires ${stepData.requiredSubtype} subtype.`
+          isValid: false,
+          message: `This step requires ${stepData.requiredSubtype} subtype.`
       };
-    }
-    
-    // Motor specific validations
-    if (configuration.type === 'action' && configuration.subtype === 'motor') {
+  }
+  
+  // Motor specific validations
+  if (configuration.type === 'action' && configuration.subtype === 'motor') {
       const motorConfig = Array.isArray(configuration.configuration) 
-        ? configuration.configuration 
-        : [configuration.configuration];
+          ? configuration.configuration 
+          : [configuration.configuration];
       
       // Check required motor count
-      if (stepData.allowedConfigurations?.requiredMotorCount) {
-        const requiredCount = stepData.allowedConfigurations.requiredMotorCount;
-        if (motorConfig.length !== requiredCount) {
-          return {
-            isValid: false,
-            message: `This step requires exactly ${requiredCount} motor(s).`
-          };
-        }
+      if (stepData.allowedConfigurations?.requiredMotorCount !== undefined) {
+          const requiredCount = stepData.allowedConfigurations.requiredMotorCount;
+          if (motorConfig.length !== requiredCount) {
+              return {
+                  isValid: false,
+                  message: `This step requires exactly ${requiredCount} motor(s).`
+              };
+          }
       }
       
-      // Check allowed ports
-      if (stepData.allowedConfigurations?.allowedPorts?.length > 0) {
-        const allowedPorts = stepData.allowedConfigurations.allowedPorts;
-        const hasInvalidPort = motorConfig.some(motor => !allowedPorts.includes(motor.port));
-        
-        if (hasInvalidPort) {
-          return {
-            isValid: false,
-            message: `This step only allows motors on ports ${allowedPorts.join(', ')}.`
-          };
-        }
-      }
+      // We no longer check for specific allowed ports
+      // This allows students to use whatever ports they have available
       
       // Check speed range
       if (stepData.allowedConfigurations?.speedRange) {
-        const [minSpeed, maxSpeed] = stepData.allowedConfigurations.speedRange;
-        
-        const hasInvalidSpeed = motorConfig.some(motor => {
-          const absSpeed = Math.abs(motor.speed || 0);
-          return absSpeed < minSpeed || absSpeed > maxSpeed;
-        });
-        
-        if (hasInvalidSpeed) {
-          return {
-            isValid: false,
-            message: `Speed must be between ${minSpeed} and ${maxSpeed}.`
-          };
-        }
+          const [minSpeed, maxSpeed] = stepData.allowedConfigurations.speedRange;
+          
+          const hasInvalidSpeed = motorConfig.some(motor => {
+              const absSpeed = Math.abs(motor.speed || 0);
+              return absSpeed < minSpeed || absSpeed > maxSpeed;
+          });
+          
+          if (hasInvalidSpeed) {
+              return {
+                  isValid: false,
+                  message: `Speed must be between ${minSpeed} and ${maxSpeed}.`
+              };
+          }
       }
       
       // Check direction constraints
       if (stepData.allowedConfigurations?.allowedDirections?.length > 0) {
-        const allowedDirections = stepData.allowedConfigurations.allowedDirections;
-        
-        const hasInvalidDirection = motorConfig.some(motor => {
-          const direction = (motor.speed || 0) >= 0 ? "forward" : "backward";
-          return !allowedDirections.includes(direction);
-        });
-        
-        if (hasInvalidDirection) {
-          return {
-            isValid: false,
-            message: `Only ${allowedDirections.join(', ')} direction is allowed.`
-          };
-        }
+          const allowedDirections = stepData.allowedConfigurations.allowedDirections;
+          
+          const hasInvalidDirection = motorConfig.some(motor => {
+              const direction = (motor.speed || 0) >= 0 ? "forward" : "backward";
+              return !allowedDirections.includes(direction);
+          });
+          
+          if (hasInvalidDirection) {
+              return {
+                  isValid: false,
+                  message: `Only ${allowedDirections.join(', ')} direction is allowed.`
+              };
+          }
       }
-    }
-    
-    // Timer specific validations
-    if (configuration.type === 'input' && configuration.subtype === 'time') {
+  }
+  
+  // Timer specific validations
+  if (configuration.type === 'input' && configuration.subtype === 'time') {
       const { seconds } = configuration.configuration || {};
       
       // Check time range
       if (stepData.allowedConfigurations?.timeRange) {
-        const [minTime, maxTime] = stepData.allowedConfigurations.timeRange;
-        
-        if (seconds < minTime || seconds > maxTime) {
-          return {
-            isValid: false,
-            message: `Wait time must be between ${minTime} and ${maxTime} seconds.`
-          };
-        }
+          const [minTime, maxTime] = stepData.allowedConfigurations.timeRange;
+          
+          if (seconds < minTime || seconds > maxTime) {
+              return {
+                  isValid: false,
+                  message: `Wait time must be between ${minTime} and ${maxTime} seconds.`
+              };
+          }
       }
       
       // Check fixed time
       if (stepData.allowedConfigurations?.fixedTime !== null && 
           stepData.allowedConfigurations?.fixedTime !== undefined) {
-        const fixedTime = stepData.allowedConfigurations.fixedTime;
-        
-        if (seconds !== fixedTime) {
-          return {
-            isValid: false,
-            message: `This step requires exactly ${fixedTime} seconds.`
-          };
-        }
+          const fixedTime = stepData.allowedConfigurations.fixedTime;
+          
+          if (seconds !== fixedTime) {
+              return {
+                  isValid: false,
+                  message: `This step requires exactly ${fixedTime} seconds.`
+              };
+          }
       }
-    }
-    
-    // If all checks pass, the configuration is valid
-    return { 
+  }
+  
+  // If all checks pass, the configuration is valid
+  return { 
       isValid: true,
       message: "Configuration is valid." 
-    };
-  }, [isMissionMode, currentMission, currentStepIndex]);
+  };
+}, [isMissionMode, currentMission, currentStepIndex]);
 
   /**
    * Check if the required hardware is connected for the mission

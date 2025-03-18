@@ -2,7 +2,7 @@
  * @file CommandPanel.jsx
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
- * Updated to handle special stop step.
+ * Updated to respect mission constraints and pre-fill values.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -30,11 +30,12 @@ import InstructionDescriptionPanel from "../instructions/components/InstructionD
 import SubtypeSelector from "./SubtypeSelector";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
+import { useMission } from "../../../context/MissionContext"; // Import the mission hook
 
 
- const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
-      };
+const FilledOctagon = (props) => {
+    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+};
 
 // Define the control types and their configurations
 const CONTROL_TYPES = {
@@ -102,9 +103,31 @@ export const CommandPanel = ({
     // Current instruction for the description panel
     const [currentInstruction, setCurrentInstruction] = useState(null);
 
+    // Mission context for constraints
+    const { 
+        isMissionMode, 
+        currentMission, 
+        currentStepIndex, 
+        isComponentVisible, 
+        isComponentEnabled, 
+        getPrefilledValue,
+        isValueLocked,
+        validateStepConfiguration,
+        setShowTestPrompt
+    } = useMission();
+
     // Determine if the current slot is the special stop step
     const isStopStep =
         slotData && slotData[currSlotNumber]?.isStopInstruction === true;
+
+    // Determine if we should apply mission constraints to this slot
+    const shouldApplyMissionConstraints = isMissionMode && 
+        currentMission && 
+        currSlotNumber === currentStepIndex;
+
+    // Get mission step data if applicable
+    const missionStepData = shouldApplyMissionConstraints ? 
+        currentMission.steps[currentStepIndex] : null;
 
     // Reset state when slot number changes
     useEffect(() => {
@@ -129,6 +152,18 @@ export const CommandPanel = ({
 
             // Set current instruction for description
             setCurrentInstruction(currentSlotData);
+        } else if (shouldApplyMissionConstraints && missionStepData) {
+            // Apply mission preset type/subtype if available
+            if (missionStepData.requiredType) {
+                console.log(`CommandPanel: Applying mission preset type: ${missionStepData.requiredType}`);
+                setSelectedType(missionStepData.requiredType);
+                
+                // If subtype is also specified, apply it too
+                if (missionStepData.requiredSubtype) {
+                    console.log(`CommandPanel: Applying mission preset subtype: ${missionStepData.requiredSubtype}`);
+                    setSelectedSubtype(missionStepData.requiredSubtype);
+                }
+            }
         } else {
             // Reset everything when there's no valid slot data
             console.log(
@@ -141,7 +176,7 @@ export const CommandPanel = ({
             setLastSavedConfig(null);
             setCurrentInstruction(null);
         }
-    }, [currSlotNumber, slotData, isStopStep]);
+    }, [currSlotNumber, slotData, isStopStep, shouldApplyMissionConstraints, missionStepData]);
 
     // Auto-save when configuration changes
     useEffect(() => {
@@ -198,6 +233,16 @@ export const CommandPanel = ({
                     configuration: dashboardConfig,
                 };
 
+                // In mission mode, validate against mission requirements
+                if (shouldApplyMissionConstraints) {
+                    const validation = validateStepConfiguration(instruction);
+                    if (!validation.isValid) {
+                        console.warn(`CommandPanel: Configuration doesn't meet mission requirements: ${validation.message}`);
+                        // We could add UI feedback here about the invalid configuration
+                        // For now, we'll still allow it but could restrict it if needed
+                    }
+                }
+
                 // Update slot and set current instruction
                 console.log(
                     "CommandPanel: Calling onSlotUpdate with instruction",
@@ -210,6 +255,12 @@ export const CommandPanel = ({
                 onSlotUpdate(instruction);
                 setLastSavedConfig(dashboardConfig);
                 setCurrentInstruction(instruction);
+
+                // Check if we should show the test prompt for this mission step
+                if (shouldApplyMissionConstraints && 
+                    missionStepData?.testPrompt?.showPrompt) {
+                    setShowTestPrompt(true);
+                }
             }
         }
     }, [
@@ -219,6 +270,10 @@ export const CommandPanel = ({
         selectedSubtype,
         onSlotUpdate,
         currSlotNumber,
+        shouldApplyMissionConstraints,
+        missionStepData,
+        validateStepConfiguration,
+        setShowTestPrompt
     ]);
 
     // Handle updates from the dashboard components
@@ -238,6 +293,15 @@ export const CommandPanel = ({
 
     // Handle type selection
     const handleTypeSelect = (type) => {
+        // Check if this selection is allowed in mission mode
+        if (shouldApplyMissionConstraints && 
+            missionStepData?.requiredType && 
+            type !== missionStepData.requiredType) {
+            // Type is restricted in this mission step
+            console.warn(`CommandPanel: Type ${type} is not allowed in this mission step. Required: ${missionStepData.requiredType}`);
+            return; // Don't allow changing to an invalid type
+        }
+
         if (type !== selectedType) {
             console.log(
                 `CommandPanel: Type changed from ${selectedType} to ${type}`,
@@ -253,6 +317,15 @@ export const CommandPanel = ({
 
     // Handle subtype selection
     const handleSubtypeSelect = (subtype) => {
+        // Check if this selection is allowed in mission mode
+        if (shouldApplyMissionConstraints && 
+            missionStepData?.requiredSubtype && 
+            subtype !== missionStepData.requiredSubtype) {
+            // Subtype is restricted in this mission step
+            console.warn(`CommandPanel: Subtype ${subtype} is not allowed in this mission step. Required: ${missionStepData.requiredSubtype}`);
+            return; // Don't allow changing to an invalid subtype
+        }
+
         console.log(
             `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype}`,
         );
@@ -261,6 +334,16 @@ export const CommandPanel = ({
         setDashboardConfig(null);
         setLastSavedConfig(null);
         setCurrentInstruction(null);
+
+        // Apply prefilled values from mission if available
+        if (shouldApplyMissionConstraints && 
+            missionStepData?.uiRestrictions?.prefilledValues) {
+            const prefills = missionStepData.uiRestrictions.prefilledValues;
+            if (Object.keys(prefills).length > 0) {
+                // Create a basic configuration with prefilled values
+                setDashboardConfig(prefills);
+            }
+        }
     };
 
     // Get voice settings from context
@@ -307,6 +390,11 @@ export const CommandPanel = ({
                     configuration: dashboardConfig,
                     slotData: slotData,
                     currSlotNumber: currSlotNumber,
+                    // Pass mission-related props
+                    isMissionMode: shouldApplyMissionConstraints,
+                    missionStep: missionStepData,
+                    getPrefilledValue: getPrefilledValue,
+                    isValueLocked: isValueLocked
                 })}
               
             </div>
@@ -320,12 +408,14 @@ export const CommandPanel = ({
                 <TypeSelector
                     selectedType={selectedType}
                     onTypeChange={handleTypeSelect}
+                    disabled={shouldApplyMissionConstraints && missionStepData?.uiRestrictions?.hideTypeSelection}
                 />
             ) : (
                 <div className={styles.stopStepIndicator}>
                     <TypeSelector
                     selectedType={selectedType}
                     onTypeChange={handleTypeSelect}
+                    disabled={true} // Always disabled for stop step
                 />
                     <FilledOctagon
                         size={80}
@@ -346,6 +436,7 @@ export const CommandPanel = ({
                                 selectedType={selectedType}
                                 selectedSubtype={selectedSubtype}
                                 onSubtypeSelect={handleSubtypeSelect}
+                                disabled={shouldApplyMissionConstraints && missionStepData?.uiRestrictions?.hideSubtypeSelection}
                             />
                         ) : (
                             renderDashboard()
@@ -362,6 +453,7 @@ export const CommandPanel = ({
                                 selectedType={selectedType}
                                 selectedSubtype={selectedSubtype}
                                 onSubtypeSelect={handleSubtypeSelect}
+                                disabled={shouldApplyMissionConstraints && missionStepData?.uiRestrictions?.hideSubtypeSelection}
                             />
                         )}
                     </div>
@@ -373,6 +465,8 @@ export const CommandPanel = ({
                 instruction={currentInstruction}
                 onPlayAudio={handlePlayAudio}
                 slotNumber={currSlotNumber}
+                // Add mission-specific instructions if available
+                missionInstructions={shouldApplyMissionConstraints ? missionStepData?.instructions : null}
             />
         </div>
     );

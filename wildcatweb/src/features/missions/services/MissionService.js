@@ -2,6 +2,7 @@
  * @file MissionService.js
  * @description Service for loading, validating, and managing mission data.
  * Handles retrieving mission definitions from local storage or files.
+ * Updated for port-independent mission definitions.
  */
 
 /**
@@ -30,7 +31,7 @@ const DEFAULT_MISSIONS = [
         allowedConfigurations: {
           allowMultipleMotors: false,
           requiredMotorCount: 1,
-          allowedPorts: ["A", "B", "C"],
+          // No longer specifying allowedPorts
           speedRange: [300, 1000],
           allowedDirections: ["forward"]
         },
@@ -42,7 +43,7 @@ const DEFAULT_MISSIONS = [
           }
         },
         instructions: {
-          instruction: "Connect your motor to port A and make it spin forward.",
+          instruction: "Connect your motor to any port and make it spin forward.",
           hints: [
             "Click on the motor in the dashboard",
             "Drag the speed slider to the right"
@@ -85,94 +86,96 @@ const DEFAULT_MISSIONS = [
   },
   {
     missionId: "mission2",
-    title: "Button Control",
-    description: "Learn to use a button to control your program",
-    difficultyLevel: "beginner",
+    title: "Two Motors Challenge",
+    description: "Learn to control multiple motors in your program",
+    difficultyLevel: "intermediate",
     totalMissionSteps: 3,
     steps: [
       {
         stepNumber: 1,
-        stepTitle: "Add a Button",
-        stepDescription: "Wait for a button press",
-        requiredType: "input",
-        requiredSubtype: "button",
+        stepTitle: "Add Two Motors",
+        stepDescription: "Configure two motors to spin forward",
+        requiredType: "action",
+        requiredSubtype: "motor",
         testPrompt: {
           showPrompt: true,
-          message: "Try testing your button! Connect a force sensor and click Test.",
+          message: "Try testing your motors! Connect two motors and click Test.",
           requiredForProgress: false
         },
         allowedConfigurations: {
-          allowedPorts: ["A", "B", "C", "D", "E", "F"],
-          allowedButtonStates: ["pressed"]
+          allowMultipleMotors: true,
+          requiredMotorCount: 2,
+          // No specific port requirements
+          speedRange: [500, 1000],
+          allowedDirections: ["forward"]
         },
         uiRestrictions: {
           hideTypeSelection: true,
-          hideSubtypeSelection: true,
-          prefilledValues: {
-            waitCondition: "pressed"
-          }
+          hideSubtypeSelection: true
         },
         instructions: {
-          instruction: "Connect a force sensor to any port and wait for it to be pressed.",
+          instruction: "Connect two motors to any available ports and make them spin forward.",
           hints: [
-            "Connect a force sensor to port A",
-            "Make sure 'pressed' is selected"
+            "Click Add Motor to add a second motor",
+            "Select available ports for your motors",
+            "Set both speeds to positive values"
           ],
-          successMessage: "Great! Your program will now wait for a button press."
+          successMessage: "Great! You've configured two motors successfully."
         }
       },
       {
         stepNumber: 2,
-        stepTitle: "Add a Motor",
-        stepDescription: "Make your motor spin when the button is pressed",
-        requiredType: "action",
-        requiredSubtype: "motor",
+        stepTitle: "Add a Wait Step",
+        stepDescription: "Make your program wait for 2 seconds",
+        requiredType: "input",
+        requiredSubtype: "time",
         allowedConfigurations: {
-          allowMultipleMotors: false,
-          requiredMotorCount: 1,
-          allowedPorts: ["A", "B", "C", "D", "E", "F"],
-          speedRange: [500, 1000],
-          allowedDirections: ["forward", "backward"]
+          timeRange: [1, 3]
         },
         uiRestrictions: {
           hideTypeSelection: false,
           hideSubtypeSelection: false
         },
         instructions: {
-          instruction: "After the button is pressed, make a motor spin.",
+          instruction: "Now add a wait step after your motors start spinning.",
           hints: [
-            "Click on ACTION",
-            "Select the Motor option",
-            "Set a speed for your motor"
+            "Click on SENSE",
+            "Select the Wait option",
+            "Set the time to 2 seconds"
           ]
         }
       },
       {
         stepNumber: 3,
-        stepTitle: "Add a Wait Step",
-        stepDescription: "Make your program wait before stopping",
-        requiredType: "input",
-        requiredSubtype: "time",
+        stepTitle: "Reverse Direction",
+        stepDescription: "Make your motors spin backward",
+        requiredType: "action",
+        requiredSubtype: "motor",
         allowedConfigurations: {
-          timeRange: [2, 5]
+          allowMultipleMotors: true,
+          requiredMotorCount: 2,
+          // No specific port requirements
+          speedRange: [500, 1000],
+          allowedDirections: ["backward"]
         },
         uiRestrictions: {
           hideTypeSelection: false,
           hideSubtypeSelection: false
         },
         instructions: {
-          instruction: "Now add a wait step after the motor starts spinning.",
+          instruction: "Add another motor step to make your motors spin backward.",
           hints: [
-            "Click on SENSE",
-            "Select the Wait option",
-            "Set the time to 3 seconds"
+            "Click on ACTION",
+            "Select the Motor option",
+            "Configure both motors to spin backward (negative speed)",
+            "Use the same ports as your first motor step"
           ]
         }
       }
     ],
     runPrompt: {
       showPrompt: true,
-      message: "Great job! Now run your program and press the button to see what happens.",
+      message: "Great job! Now run your program to see both motors run forward, pause, then backward.",
       showAfterStep: 3,
       requiredForCompletion: true
     }

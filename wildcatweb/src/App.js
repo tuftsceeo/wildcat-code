@@ -1,7 +1,7 @@
 /**
  * @file App.js
- * @description Main application component with support for reading level and step count.
- * Updated to handle special Stop step at the end of code.
+ * @description Main application component with support for reading level, step count, and missions.
+ * Updated to include MissionProvider and handle first-time setup.
  */
 
 import React, { useState, useEffect } from "react";
@@ -12,9 +12,12 @@ import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
 import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
 import { KnobProvider } from "./context/KnobContext.js";
 import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
+import { MissionProvider } from "./context/MissionContext.js"; // Import MissionProvider
 import "./common/styles/App.css";
 import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";
 import CustomizationPage from "./features/settings/components/CustomizationPage.jsx";
+import MissionSelector from "./features/missions/components/MissionSelector.jsx"; // Import MissionSelector
+import MissionOverlay from "./features/missions/components/MissionOverlay.jsx"; // Import MissionOverlay
 
 import {
     CustomizationProvider,
@@ -45,12 +48,14 @@ function App() {
         >
             <BLEProvider>
                 <KnobProvider>
-                    <DndProvider backend={HTML5Backend}>
-                        {/* Pass missionSteps as a prop to the AppWithCustomizationContext */}
-                        <AppWithCustomizationContext
-                            missionSteps={missionSteps}
-                        />
-                    </DndProvider>
+                    <MissionProvider> {/* Add MissionProvider here */}
+                        <DndProvider backend={HTML5Backend}>
+                            {/* Pass missionSteps as a prop to the AppWithCustomizationContext */}
+                            <AppWithCustomizationContext
+                                missionSteps={missionSteps}
+                            />
+                        </DndProvider>
+                    </MissionProvider>
                 </KnobProvider>
             </BLEProvider>
         </CustomizationProvider>
@@ -89,6 +94,18 @@ function AppContent({ missionSteps }) {
     const [canRun, setCanRun] = useState(false);
     const [currSlotNumber, setCurrSlotNumber] = useState(0);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isFirstLaunch, setIsFirstLaunch] = useState(false);
+
+    // Check if this is the first app launch
+    useEffect(() => {
+        // Check localStorage for a first launch flag
+        const hasLaunched = localStorage.getItem("hasLaunched");
+        if (!hasLaunched) {
+            setIsFirstLaunch(true);
+            // Set the flag for future launches
+            localStorage.setItem("hasLaunched", "true");
+        }
+    }, []);
 
     // Log when missionSteps change
     useEffect(() => {
@@ -182,20 +199,20 @@ function AppContent({ missionSteps }) {
         });
     }, [missionSteps]);
 
-  // Update Python code whenever slot data changes
-useEffect(() => {
-    const newPyCode = generatePythonCode(slotData);
-    setPyCode(newPyCode);
-    console.log("App.js: Generated Python Code: ", newPyCode);
+    // Update Python code whenever slot data changes
+    useEffect(() => {
+        const newPyCode = generatePythonCode(slotData);
+        setPyCode(newPyCode);
+        console.log("App.js: Generated Python Code: ", newPyCode);
 
-    // Enable run if AT LEAST ONE regular slot has a complete configuration
-    // (excluding the stop step which is always at the end)
-    const hasAtLeastOneInstruction = slotData
-        .slice(0, -1) // Exclude the stop step
-        .some((slot) => slot.type && slot.subtype && slot.configuration);
-    
-    setCanRun(hasAtLeastOneInstruction);
-}, [slotData]);
+        // Enable run if AT LEAST ONE regular slot has a complete configuration
+        // (excluding the stop step which is always at the end)
+        const hasAtLeastOneInstruction = slotData
+            .slice(0, -1) // Exclude the stop step
+            .some((slot) => slot.type && slot.subtype && slot.configuration);
+        
+        setCanRun(hasAtLeastOneInstruction);
+    }, [slotData]);
 
     // Handle updates to slot configuration
     const handleSlotUpdate = (slotConfig) => {
@@ -243,6 +260,13 @@ useEffect(() => {
         code.push("        pass");
 
         return code.join("\n");
+    };
+
+    /**
+     * Handler for closing the first launch mission selector
+     */
+    const handleCloseFirstLaunch = () => {
+        setIsFirstLaunch(false);
     };
 
     return (
@@ -303,6 +327,18 @@ useEffect(() => {
                     }}
                 />
             )}
+
+            {/* First launch mission selector */}
+            {isFirstLaunch && (
+                <MissionSelector 
+                    isOpen={true} 
+                    onClose={handleCloseFirstLaunch} 
+                    initialSetup={true}
+                />
+            )}
+
+            {/* Mission overlay component for instructions, success messages, etc. */}
+            <MissionOverlay />
         </div>
     );
 }

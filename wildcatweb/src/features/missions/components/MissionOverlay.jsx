@@ -6,12 +6,11 @@
  */
 
 import React, { useEffect } from "react";
-import Portal from "../../common/components/Portal";
-import { useMission } from "../../context/MissionContext";
-import { useCustomization } from "../../context/CustomizationContext";
+import Portal from "../../../common/components/Portal";
+import { useMission } from "../../../context/MissionContext.js";
+import { useCustomization } from "../../../context/CustomizationContext.js";
 import { Rocket, Award, Play, ArrowRight, CheckCircle2, X } from "lucide-react";
-import styles from "./styles/MissionOverlay.module.css";
-
+import styles from "../styles/MissionOverlay.module.css";
 /**
  * Component that displays mission overlays with different content types
  * 
