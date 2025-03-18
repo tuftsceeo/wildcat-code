@@ -1,0 +1,488 @@
+/* MissionOverlay.module.css - Styled with design token system */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal);
+  animation: fadeIn 0.3s ease;
+}
+
+.overlayContainer {
+  position: relative;
+  width: 80%;
+  max-width: 700px;
+  max-height: 90vh;
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--panel-border);
+  border-radius: var(--radius-md);
+  overflow-y: auto;
+  padding: var(--spacing-6);
+  font-family: var(--font-family-active);
+  color: var(--panel-text);
+  box-shadow: var(--glow-primary);
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Complexity-based sizing */
+.complexity-icon_only {
+  padding: var(--spacing-6);
+}
+
+.complexity-beginner {
+  padding: var(--spacing-6);
+}
+
+.complexity-intermediate {
+  padding: var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+.complexity-advanced {
+  padding: var(--spacing-6);
+  font-size: var(--font-size-sm);
+}
+
+.complexity-text_only {
+  padding: var(--spacing-6);
+  font-size: var(--font-size-sm);
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--panel-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-normal);
+  z-index: 2;
+}
+
+.closeButton:hover {
+  background-color: var(--color-gray-bold);
+}
+
+/* Intro overlay styles */
+.introContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.missionIcon {
+  color: var(--color-primary-main);
+  margin-bottom: var(--spacing-4);
+  animation: float 3s ease-in-out infinite;
+}
+
+.missionTitle {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-secondary-main);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.missionDescription {
+  margin-bottom: var(--spacing-6);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-lg);
+  max-width: 600px;
+}
+
+.missionImage {
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+  background-color: var(--color-gray-faint);
+  margin-bottom: var(--spacing-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.missionImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.startButton {
+  background-color: var(--color-secondary-main);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-active);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.startButton:hover {
+  transform: var(--button-scale-hover);
+  background-color: var(--color-secondary-high);
+}
+
+.startButton:active {
+  transform: var(--button-scale-active);
+}
+
+.exitButton {
+  background: none;
+  border: none;
+  color: var(--color-gray-bold);
+  padding: var(--spacing-2);
+  cursor: pointer;
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+}
+
+.exitButton:hover {
+  color: var(--panel-text);
+  text-decoration: underline;
+}
+
+/* Step transition styles */
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stepNumber {
+  background-color: var(--color-primary-main);
+  color: var(--color-text);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-4);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.stepTitle {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-secondary-main);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.stepDescription {
+  margin-bottom: var(--spacing-6);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-base);
+  max-width: 600px;
+}
+
+.instructionBox {
+  background-color: var(--color-gray-faint);
+  border: var(--border-width-thin) solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+  width: 100%;
+}
+
+.instruction {
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+  color: var(--panel-text);
+  font-size: var(--font-size-base);
+}
+
+.continueButton {
+  background-color: var(--color-primary-main);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-active);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.continueButton:hover {
+  transform: var(--button-scale-hover);
+  background-color: var(--color-primary-high);
+}
+
+.continueButton:active {
+  transform: var(--button-scale-active);
+}
+
+/* Success styles */
+.successContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.successIcon {
+  margin-bottom: var(--spacing-4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.successTitle {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-secondary-main);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.successMessage {
+  margin-bottom: var(--spacing-6);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-base);
+  max-width: 600px;
+}
+
+/* Mission complete styles */
+.completeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.awardIcon {
+  margin-bottom: var(--spacing-4);
+  animation: shine 3s ease-in-out infinite;
+}
+
+.completeTitle {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-secondary-main);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.completeDescription {
+  margin-bottom: var(--spacing-6);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-lg);
+  max-width: 600px;
+}
+
+.completeImage {
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+  background-color: var(--color-gray-faint);
+  margin-bottom: var(--spacing-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.completeImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.completeButtons {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.nextMissionButton {
+  background-color: var(--color-secondary-main);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-active);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.nextMissionButton:hover {
+  transform: var(--button-scale-hover);
+  background-color: var(--color-secondary-high);
+}
+
+.nextMissionButton:active {
+  transform: var(--button-scale-active);
+}
+
+/* Hardware warning styles */
+.hardwareWarning {
+  background-color: rgba(var(--color-warning-main-rgb), 0.1);
+  border: var(--border-width-thin) solid var(--color-warning-main);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+  width: 100%;
+}
+
+.warningText {
+  margin: 0;
+  color: var(--color-warning-main);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-sm);
+}
+
+/* Prompt overlays */
+.promptOverlay {
+  position: fixed;
+  bottom: var(--spacing-6);
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: var(--z-index-toast);
+  pointer-events: none;
+  animation: slideUp 0.5s ease;
+}
+
+.prompt {
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--color-primary-main);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-6);
+  max-width: 600px;
+  box-shadow: var(--glow-primary);
+  position: relative;
+  pointer-events: auto;
+}
+
+.testPrompt {
+  border-color: var(--color-secondary-main);
+  box-shadow: var(--glow-secondary);
+}
+
+.runPrompt {
+  border-color: var(--color-primary-main);
+  box-shadow: var(--glow-primary);
+}
+
+.promptText {
+  margin: 0;
+  padding-right: var(--spacing-6);
+  line-height: var(--line-height-relaxed);
+  font-family: var(--font-family-active);
+}
+
+.closePromptButton {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  color: var(--panel-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-normal);
+}
+
+.closePromptButton:hover {
+  background-color: var(--color-gray-bold);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes shine {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px var(--color-secondary-main));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px var(--color-secondary-main));
+  }
+}
