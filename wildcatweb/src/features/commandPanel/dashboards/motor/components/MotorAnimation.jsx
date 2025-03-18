@@ -10,6 +10,8 @@ import {
     validateSpeed,
     getSpeedDescription,
 } from "../../motor/utils/motorSpeedUtils";
+import { ReactComponent as MotorCw } from "../../../../../assets/images/motor-cw.svg";
+import { ReactComponent as MotorCcw } from "../../../../../assets/images/motor-ccw.svg";
 
 /**
  * Animated visualization of a motor
@@ -65,6 +67,16 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
 
     return (
         <div className={styles.motorAnimation}>
+            {/* Direction Arrow */}
+            <div className={styles.directionArrow}>
+                {validatedSpeed !== 0 &&
+                    (isClockwise ? (
+                        <MotorCw fill="currentColor" stroke="currentColor" />
+                    ) : (
+                        <MotorCcw fill="currentColor" stroke="currentColor" />
+                    ))}
+            </div>
+
             {/* Static border */}
             <svg
                 className={styles.motorBorder}

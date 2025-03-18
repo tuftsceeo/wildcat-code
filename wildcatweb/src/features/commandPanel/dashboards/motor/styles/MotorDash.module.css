@@ -87,13 +87,13 @@
 }
 
 .motorAnimationWrapper {
-    width: 80%;
+    width: 65%;
     border-radius: 50%;
     aspect-ratio: 1 / 1; /* Maintain a perfect circle */
     position: absolute;
     left: 50%;
     top: 0; /* Position at top */
-    transform: translate(-50%, -52%); /* Pull it up so it's partially hidden */
+    transform: translate(-50%, -50%); /* Pull it up so it's partially hidden */
     z-index: 1;
 }
 
