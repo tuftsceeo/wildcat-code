@@ -1,0 +1,517 @@
+/* MissionSelector.module.css - Styled with design token system */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal);
+  animation: fadeIn 0.3s ease;
+}
+
+.missionSelector {
+  position: relative;
+  width: 80%;
+  max-width: 800px;
+  max-height: 90vh;
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--panel-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family-active);
+  color: var(--panel-text);
+  box-shadow: var(--glow-primary);
+  animation: slideIn 0.3s ease;
+}
+
+/* Header section */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-bold);
+  position: relative;
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  margin: 0;
+  padding: 0;
+}
+
+.closeButton {
+  position: absolute;
+  right: var(--spacing-4);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--panel-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+}
+
+.closeButton:hover {
+  background-color: var(--color-gray-bold);
+}
+
+/* Main content area */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+/* Mode selection (sandbox or mission) */
+.modeSelection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.modeOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-4);
+  border: var(--border-width-standard) solid var(--button-default-border);
+  border-radius: var(--radius-md);
+  width: 200px;
+  height: 200px;
+  justify-content: space-between;
+  transition: all var(--transition-normal);
+}
+
+.modeOption:hover {
+  transform: var(--button-scale-hover);
+  border-color: var(--button-selected-border);
+  box-shadow: var(--glow-secondary);
+}
+
+.modeIcon {
+  color: var(--panel-text);
+  margin-bottom: var(--spacing-2);
+}
+
+.modeButton {
+  background-color: var(--button-contained-default-bg);
+  color: var(--button-contained-default-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2) var(--spacing-4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.modeButton:hover {
+  transform: var(--button-scale-hover);
+}
+
+.modeButton:active {
+  transform: var(--button-scale-active);
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  color: var(--color-gray-bold);
+}
+
+.separator span {
+  padding: 0 var(--spacing-2);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Mission display */
+.missionContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.navButton {
+  background: none;
+  border: none;
+  color: var(--panel-text);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.navButton:hover {
+  background-color: var(--color-gray-bold);
+  transform: var(--button-scale-hover);
+}
+
+.navButton:active {
+  transform: var(--button-scale-active);
+}
+
+.missionCard {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  border: var(--border-width-standard) solid var(--button-default-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--button-default-bg);
+}
+
+.missionHeader {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3);
+  gap: var(--spacing-2);
+  background-color: var(--button-selected-bg);
+}
+
+.missionIcon {
+  color: var(--color-secondary-main);
+}
+
+.missionTitle {
+  font-size: var(--font-size-lg);
+  margin: 0;
+  flex: 1;
+}
+
+.missionThumbnail {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-gray-faint);
+  border-top: 1px solid var(--color-gray-medium);
+  border-bottom: 1px solid var(--color-gray-medium);
+}
+
+.missionThumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholderThumbnail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-gray-subtle);
+  background-color: var(--color-gray-faint);
+}
+
+.missionInfo {
+  padding: var(--spacing-3);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.missionDescription {
+  margin-top: 0;
+  margin-bottom: var(--spacing-2);
+  line-height: var(--line-height-relaxed);
+}
+
+.missionDetails {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.missionDetail {
+  font-size: var(--font-size-sm);
+}
+
+.detailLabel {
+  font-weight: var(--font-weight-bold);
+  margin-right: var(--spacing-1);
+}
+
+.detailValue {
+  color: var(--panel-text);
+  text-transform: capitalize;
+}
+
+.startButton {
+  background-color: var(--color-secondary-main);
+  color: var(--color-text);
+  border: none;
+  padding: var(--spacing-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-active);
+  font-weight: var(--font-weight-bold);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.startButton:hover {
+  background-color: var(--color-secondary-high);
+  transform: var(--button-scale-hover);
+}
+
+.startButton:active {
+  transform: var(--button-scale-active);
+}
+
+/* Mission indicator dots */
+.missionIndicator {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+}
+
+.indicatorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-gray-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.activeDot {
+  background-color: var(--color-secondary-main);
+  transform: scale(1.2);
+}
+
+.indicatorDot:hover:not(.activeDot) {
+  background-color: var(--color-gray-bold);
+}
+
+/* Sandbox option at the bottom */
+.sandboxOption {
+  padding: var(--spacing-3);
+  border-top: 1px solid var(--color-gray-bold);
+  display: flex;
+  justify-content: center;
+}
+
+.sandboxButton {
+  background: none;
+  border: var(--border-width-thin) solid var(--button-default-border);
+  color: var(--panel-text);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.sandboxButton:hover {
+  border-color: var(--button-default-border);
+  background-color: var(--color-gray-faint);
+  transform: var(--button-scale-hover);
+}
+
+.sandboxButton:active {
+  transform: var(--button-scale-active);
+}
+
+/* Warning modal for missing hardware */
+.warningModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: calc(var(--z-index-modal) + 1);
+  animation: fadeIn 0.3s ease;
+}
+
+.warningContent {
+  width: 400px;
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--color-warning-main);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--glow-warning);
+  animation: shakeIn 0.5s ease;
+}
+
+.warningIcon {
+  color: var(--color-warning-main);
+  margin-bottom: var(--spacing-4);
+}
+
+.warningTitle {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-3);
+  color: var(--color-warning-main);
+}
+
+.warningText {
+  text-align: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.hardwareList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-4) 0;
+  text-align: center;
+}
+
+.hardwareItem {
+  margin-bottom: var(--spacing-2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-warning-main);
+}
+
+.warningButtons {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-2);
+}
+
+.cancelButton {
+  background-color: var(--button-default-bg);
+  border: var(--border-width-standard) solid var(--button-default-border);
+  color: var(--panel-text);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.cancelButton:hover {
+  transform: var(--button-scale-hover);
+}
+
+.cancelButton:active {
+  transform: var(--button-scale-active);
+}
+
+.continueButton {
+  background-color: var(--color-warning-main);
+  color: var(--color-background);
+  border: none;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.continueButton:hover {
+  transform: var(--button-scale-hover);
+}
+
+.continueButton:active {
+  transform: var(--button-scale-active);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shakeIn {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% {
+    transform: translateX(-10px);
+    opacity: 0.5;
+  }
+  20% {
+    transform: translateX(10px);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateX(-10px);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translateX(10px);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(-5px);
+    opacity: 1;
+  }
+  60% {
+    transform: translateX(5px);
+  }
+  70% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
