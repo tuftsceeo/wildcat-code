@@ -1,112 +1,236 @@
-/* InstructionDescriptionPanel.module.css - Refactored with design token system and mission support */
+/* InstructionDescriptionPanel.module.css - Refactored with design token system */
 
+/* Base panel styles */
 .panel {
-    width: 100%;
-    margin-top: auto;
-    padding: var(--spacing-3) var(--spacing-4);
     background-color: var(--color-background);
     border-radius: var(--radius-md);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3);
-    transition: all var(--transition-normal);
-}
-
-/* Special styling for mission panels */
-.missionPanel {
-    border-top: 1px solid var(--color-secondary-main);
-    background-color: var(--button-selected-bg);
-    box-shadow: 0 -2px 8px rgba(var(--color-secondary-main-rgb), 0.2);
-}
-
-/* Mission-specific instruction elements */
-.missionInstructions {
-    padding: var(--spacing-3);
-    border-radius: var(--radius-md);
-    background-color: rgba(var(--color-secondary-main-rgb), 0.1);
-    border: 1px solid var(--color-secondary-main);
-    animation: fadeIn 0.3s ease;
-}
-
-.missionStepTitle {
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-2);
-    color: var(--color-secondary-main);
-    font-weight: var(--font-weight-medium);
+    padding: var(--spacing-2);
+    margin-top: auto;
+    color: var(--color-text);
     font-family: var(--font-family-active);
-}
-
-.missionInstruction {
     font-size: var(--font-size-base);
-    line-height: var(--line-height-relaxed);
-    font-family: var(--font-family-active);
-    margin-bottom: var(--spacing-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all var(--transition-normal);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-height: 60px; /* Base height */
 }
 
-/* Hint styling */
-.missionHints {
-    margin-top: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-3);
-    background-color: rgba(var(--color-primary-main-rgb), 0.1);
-    border-radius: var(--radius-sm);
-    border-left: 3px solid var(--color-primary-main);
+/* Panel with increased height for icon display */
+.panelWithIcons {
+    min-height: 130px; /* Increased height for larger icons */
+    padding-top: var(--spacing-2);
+    padding-bottom: var(--spacing-2);
 }
 
-.hintLabel {
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-1);
-    color: var(--color-primary-main);
-    font-size: var(--font-size-sm);
-}
-
-.hintText {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
-    color: var(--panel-text);
-}
-
-/* Normal instruction description */
-.descriptionContainer {
+/* Content wrapper */
+.contentWrapper {
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 40px;
+    justify-content: center;
+    margin-right: var(--spacing-1);
+    overflow: visible; /* Allow overflow to ensure proper display */
 }
 
+/* Basic description text */
 .descriptionText {
     flex: 1;
-    margin: 0;
-    padding-right: var(--spacing-3);
-    font-size: var(--font-size-base);
     line-height: var(--line-height-relaxed);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+}
+
+/* Reading level classes - directly applied to text */
+.iconOnlyText {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+.beginnerText {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-tight);
+}
+
+.intermediateText {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+}
+
+.advancedText {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+}
+
+.textOnlyText {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+}
+
+/* Icon container for icon-only mode */
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2);
+    width: 100%;
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    position: relative;
+}
+
+/* Separator styling */
+.separatorWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    min-height: 40px;
+    margin: 0 var(--spacing-1);
+}
+
+.separatorIcon {
     color: var(--panel-text);
-    font-family: var(--font-family-active);
 }
 
-.audioIcon {
+.iconSeparator {
+    margin: 0 var(--spacing-2);
+    font-size: 24px;
     color: var(--color-primary-main);
-    cursor: pointer;
-    transition: transform var(--transition-normal);
-    flex-shrink: 0;
 }
 
-.audioIcon:hover {
-    transform: scale(1.1);
+/* Icon-only specific styling - using default text color */
+.iconOnlyIcon {
+    color: var(--panel-text);
+}
+
+/* Text and icon display for beginner and intermediate modes */
+.textIconContainer {
+    display: flex;
+    align-items: flex-start; /* Align items at the top */
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-3) 0;
+    width: 100%;
+}
+
+.textIconPair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 var(--spacing-1);
+    min-width: 30px; /* Minimum width for the pair */
+}
+
+.pairText {
+    line-height: 1.5;
+    text-align: center;
+    padding-bottom: var(--spacing-1);
+    white-space: nowrap;
+    height: 24px; /* Fixed height to ensure alignment */
+    display: flex;
+    align-items: center;
+}
+
+.pairIcon {
+    height: 28px; /* Fixed height for icon area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconPlaceholder {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
+/* Icon styling for mixed text/icon modes */
+.conceptIcon {
+    color: var(--color-primary-main);
+}
+
+.stopIcon {
+    color: var(--color-error-main);
+}
+
+/* Audio button */
+.audioButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text);
+    margin-left: var(--spacing-1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    flex-shrink: 0;
+    transform: var(--button-scale-default);
+}
+
+.audioButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.audioButton:active {
+    transform: var(--button-scale-active);
+}
+
+/* Theme-specific adjustments */
+body[data-theme="retro"] .panel {
+    border: var(--border-width-standard) solid var(--panel-border);
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+body[data-theme="retro"] .descriptionText,
+body[data-theme="retro"] .pairText,
+body[data-theme="retro"] .audioButton {
+    color: var(--color-text);
+}
+
+body[data-theme="retro"] .iconOnlyIcon,
+body[data-theme="retro"] .separatorIcon {
+    color: var(--color-text);
+}
+
+body[data-theme="retro"]  .conceptIcon {
     color: var(--color-primary-high);
 }
 
-.audioIcon:active {
-    transform: scale(0.95);
+body[data-theme="pastel"] .panel {
+    background-color: var(--color-background);
+    border: var(--border-width-standard) solid var(--panel-border);
 }
 
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+body[data-theme="pastel"] .iconOnlyIcon,
+body[data-theme="pastel"] .separatorIcon {
+    color: var(--color-text);
 }
+
+body[data-theme="clean"] .panel {
+    background-color: var(--color-background);
+    border: var(--border-width-thin) solid var(--panel-border);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body[data-theme="clean"] .iconOnlyIcon,
+body[data-theme="clean"] .separatorIcon {
+    color: var(--color-text);
+}
+

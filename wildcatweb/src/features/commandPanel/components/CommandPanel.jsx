@@ -2,7 +2,7 @@
  * @file CommandPanel.jsx
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
- * Updated to respect mission constraints and pre-fill values.
+ * Updated to respect mission constraints and support task instructions.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -28,9 +28,10 @@ import { ButtonDash } from "../dashboards/button/components/ButtonDash.jsx";
 import TypeSelector from "./TypeSelector";
 import InstructionDescriptionPanel from "../instructions/components/InstructionDescriptionPanel";
 import SubtypeSelector from "./SubtypeSelector";
+import TaskInstructionPanel from "../../missions/components/TaskInstructionPanel";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
-import { useMission } from "../../../context/MissionContext"; // Import the mission hook
+import { useMission } from "../../../context/MissionContext.js";
 
 
 const FilledOctagon = (props) => {
@@ -103,7 +104,7 @@ export const CommandPanel = ({
     // Current instruction for the description panel
     const [currentInstruction, setCurrentInstruction] = useState(null);
 
-    // Mission context for constraints
+    // Mission context for constraints and task tracking
     const { 
         isMissionMode, 
         currentMission, 
@@ -113,8 +114,22 @@ export const CommandPanel = ({
         getPrefilledValue,
         isValueLocked,
         validateStepConfiguration,
-        setShowTestPrompt
+        setShowTestPrompt,
+        // Task-level state and functions
+        currentTaskIndex,
+        getCurrentTask,
+        isTaskCompleted,
+        completeTask,
+        requestHint,
+        validateTaskCompletion
     } = useMission();
+
+    // Get current task for the mission
+    const currentTask = getCurrentTask();
+    const isCurrentTaskCompleted = currentTask ? isTaskCompleted(currentTaskIndex) : false;
+    
+    // Determine if we should show the task panel
+    const showTaskPanel = isMissionMode && currentMission && currentTask;
 
     // Determine if the current slot is the special stop step
     const isStopStep =
@@ -261,6 +276,32 @@ export const CommandPanel = ({
                     missionStepData?.testPrompt?.showPrompt) {
                     setShowTestPrompt(true);
                 }
+                
+                // Check if this matches a task to complete
+                if (showTaskPanel && currentTask) {
+                    if (currentTask.taskType === 'motor_speed' && 
+                        selectedType === 'action' && 
+                        selectedSubtype === 'motor') {
+                        
+                        // Check if motor speed is set to non-zero
+                        const hasNonZeroSpeed = Array.isArray(dashboardConfig) 
+                            ? dashboardConfig.some(config => config.speed !== 0)
+                            : dashboardConfig.speed !== 0;
+                            
+                        if (hasNonZeroSpeed && !isCurrentTaskCompleted) {
+                            // Mark task as completed
+                            completeTask(currentTaskIndex, { speed: Array.isArray(dashboardConfig) ? dashboardConfig[0].speed : dashboardConfig.speed });
+                        }
+                    } else if (currentTask.taskType === 'timer_value' && 
+                        selectedType === 'input' && 
+                        selectedSubtype === 'time') {
+                        
+                        // Check if timer has a value
+                        if (dashboardConfig.seconds > 0 && !isCurrentTaskCompleted) {
+                            completeTask(currentTaskIndex, { seconds: dashboardConfig.seconds });
+                        }
+                    }
+                }
             }
         }
     }, [
@@ -273,7 +314,12 @@ export const CommandPanel = ({
         shouldApplyMissionConstraints,
         missionStepData,
         validateStepConfiguration,
-        setShowTestPrompt
+        setShowTestPrompt,
+        showTaskPanel,
+        currentTask,
+        isCurrentTaskCompleted,
+        completeTask,
+        currentTaskIndex
     ]);
 
     // Handle updates from the dashboard components
@@ -312,6 +358,13 @@ export const CommandPanel = ({
             setDashboardConfig(null);
             setLastSavedConfig(null);
             setCurrentInstruction(null);
+            
+            // Check if this matches a task to complete
+            if (showTaskPanel && currentTask && 
+                currentTask.taskType === 'select_input_type' && 
+                type === 'input' && !isCurrentTaskCompleted) {
+                completeTask(currentTaskIndex, { type });
+            }
         }
     };
 
@@ -344,6 +397,14 @@ export const CommandPanel = ({
                 setDashboardConfig(prefills);
             }
         }
+        
+        // Check if this matches a task to complete
+        if (showTaskPanel && currentTask && 
+            currentTask.taskType === 'select_timer' && 
+            selectedType === 'input' && 
+            subtype === 'time' && !isCurrentTaskCompleted) {
+            completeTask(currentTaskIndex, { subtype });
+        }
     };
 
     // Get voice settings from context
@@ -353,6 +414,13 @@ export const CommandPanel = ({
     const handlePlayAudio = (text) => {
         const languageCode = language === "es" ? "es-ES" : "en-US";
         speakWithRobotVoice(text, voice, volume, languageCode);
+    };
+    
+    // Handle requesting a hint
+    const handleHintRequest = () => {
+        if (requestHint) {
+            requestHint();
+        }
     };
 
     // Render the dashboard based on selected subtype
@@ -403,6 +471,16 @@ export const CommandPanel = ({
 
     return (
         <div className={styles.hubTopBackground}>
+            {/* Add TaskInstructionPanel at the top if in mission mode */}
+            {showTaskPanel && (
+                <TaskInstructionPanel 
+                    task={currentTask}
+                    taskIndex={currentTaskIndex}
+                    isCompleted={isCurrentTaskCompleted}
+                    onRequestHint={handleHintRequest}
+                />
+            )}
+            
             {/* Type Selector (ACTION/SENSE) or Stop indicator for stop step */}
             {!isStopStep ? (
                 <TypeSelector

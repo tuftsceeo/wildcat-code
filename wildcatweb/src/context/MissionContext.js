@@ -1,8 +1,8 @@
 /**
  * @file MissionContext.js
  * @description Context provider for managing mission state in the WildCat application.
- * Handles mission selection, progression, and validation for guided learning experiences.
- * Interacts with CustomizationContext to override settings when in mission mode.
+ * Handles mission selection, progression, validation, and task-level tracking
+ * for guided learning experiences. Interacts with CustomizationContext for settings.
  */
 
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
@@ -32,7 +32,6 @@ const SAMPLE_MISSIONS = [
         allowedConfigurations: {
           allowMultipleMotors: false,
           requiredMotorCount: 1,
-          allowedPorts: ["A", "B", "C"],
           speedRange: [300, 1000],
           allowedDirections: ["forward"]
         },
@@ -50,7 +49,22 @@ const SAMPLE_MISSIONS = [
             "Drag the speed slider to the right"
           ],
           successMessage: "Great job! Your motor is spinning forward."
-        }
+        },
+        // Task-level definitions - new structure for granular guidance
+        tasks: [
+          {
+            taskType: "motor_speed",
+            instruction: "Connect your motor and make it spin forward",
+            stepTitle: "Set Motor Speed",
+            hints: ["Click on the motor speed bar to set a forward speed"]
+          },
+          {
+            taskType: "test_button",
+            instruction: "Test your motor by clicking the Test button",
+            stepTitle: "Test Motor",
+            hints: ["Click the Test button at the bottom of the screen"]
+          }
+        ]
       },
       {
         stepNumber: 2,
@@ -75,7 +89,34 @@ const SAMPLE_MISSIONS = [
             "Select the Wait option",
             "Set the time to 3 seconds"
           ]
-        }
+        },
+        // Task-level definitions - new structure for granular guidance
+        tasks: [
+          {
+            taskType: "navigation",
+            instruction: "Click the Next button to move to the second step",
+            stepTitle: "Go to Step 2",
+            hints: ["Click the downward arrow at the bottom of the screen"]
+          },
+          {
+            taskType: "select_input_type",
+            instruction: "Click on SENSE to select input options",
+            stepTitle: "Select SENSE",
+            hints: ["Click the SENSE button at the top of the panel"]
+          },
+          {
+            taskType: "select_timer",
+            instruction: "Select the Wait option",
+            stepTitle: "Select Wait",
+            hints: ["Click on the Wait button in the right panel"]
+          },
+          {
+            taskType: "timer_value",
+            instruction: "Set the timer to 3 seconds",
+            stepTitle: "Set Timer",
+            hints: ["Use the + button to increase the timer value to 3"]
+          }
+        ]
       }
     ],
     runPrompt: {
@@ -116,6 +157,11 @@ export const MissionProvider = ({ children }) => {
   const [showTestPrompt, setShowTestPrompt] = useState(false);
   const [showRunPrompt, setShowRunPrompt] = useState(false);
   
+  // Task-level state tracking - new additions
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+  const [taskProgress, setTaskProgress] = useState({});
+  const [showHint, setShowHint] = useState(false);
+  
   // Access other contexts
   const { setStepCount } = useCustomization();
   const { isConnected, portStates } = useBLE();
@@ -147,6 +193,24 @@ export const MissionProvider = ({ children }) => {
     }
   }, []);
 
+  // Load task progress from localStorage
+  useEffect(() => {
+    try {
+      const savedTaskProgress = localStorage.getItem("missionTaskProgress");
+      if (savedTaskProgress && currentMission) {
+        const parsed = JSON.parse(savedTaskProgress);
+        
+        // Only restore if for the current mission
+        if (parsed.missionId === currentMission.missionId) {
+          setTaskProgress(parsed.taskProgress || {});
+          setCurrentTaskIndex(parsed.currentTaskIndex || 0);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading task progress from localStorage:", error);
+    }
+  }, [currentMission]);
+
   // Save mission mode preference when it changes
   useEffect(() => {
     try {
@@ -176,6 +240,21 @@ export const MissionProvider = ({ children }) => {
     }
   }, [currentMission, missionProgress]);
 
+  // Save task progress to localStorage
+  useEffect(() => {
+    if (isMissionMode && currentMission && Object.keys(taskProgress).length > 0) {
+      try {
+        localStorage.setItem("missionTaskProgress", JSON.stringify({
+          missionId: currentMission.missionId,
+          taskProgress,
+          currentTaskIndex
+        }));
+      } catch (error) {
+        console.error("Error saving task progress to localStorage:", error);
+      }
+    }
+  }, [isMissionMode, currentMission, taskProgress, currentTaskIndex]);
+
   /**
    * Start a mission by ID
    * 
@@ -187,6 +266,7 @@ export const MissionProvider = ({ children }) => {
     if (mission) {
       setCurrentMission(mission);
       setCurrentStepIndex(0);
+      setCurrentTaskIndex(0);
       setIsMissionMode(true);
       
       // Initialize progress for this mission
@@ -197,6 +277,9 @@ export const MissionProvider = ({ children }) => {
         testedSteps: {},
         missionRun: false
       });
+      
+      // Reset task progress
+      setTaskProgress({});
       
       // Show mission intro overlay
       setOverlayContent({
@@ -218,11 +301,14 @@ export const MissionProvider = ({ children }) => {
     setIsMissionMode(false);
     setCurrentMission(null);
     setCurrentStepIndex(0);
+    setCurrentTaskIndex(0);
     setMissionProgress({});
+    setTaskProgress({});
     
     // Clear mission data from localStorage
     try {
       localStorage.removeItem("missionProgress");
+      localStorage.removeItem("missionTaskProgress");
     } catch (error) {
       console.error("Error clearing mission progress from localStorage:", error);
     }
@@ -249,6 +335,7 @@ export const MissionProvider = ({ children }) => {
     // Check if next step should be shown
     if (stepIndex === currentStepIndex && stepIndex < currentMission.steps.length - 1) {
       setCurrentStepIndex(stepIndex + 1);
+      setCurrentTaskIndex(0);
       
       // Update progress with new step index
       setMissionProgress(prev => ({
@@ -414,129 +501,125 @@ export const MissionProvider = ({ children }) => {
   }, [isMissionMode, currentMission, currentStepIndex]);
 
   /**
- * Validate if the current configuration meets the mission requirements
- * Modified to check number of motors rather than specific ports
- * 
- * @param {Object} configuration - Configuration to validate
- * @returns {Object} Validation result with status and message
- */
-const validateStepConfiguration = useCallback((configuration) => {
-  if (!isMissionMode || !currentMission) {
-      return { isValid: true };
-  }
-  
-  const stepData = currentMission.steps[currentStepIndex];
-  if (!stepData) {
-      return { isValid: true };
-  }
-  
-  // Check required type
-  if (stepData.requiredType && configuration.type !== stepData.requiredType) {
-      return {
-          isValid: false,
-          message: `This step requires ${stepData.requiredType} type.`
-      };
-  }
-  
-  // Check required subtype
-  if (stepData.requiredSubtype && configuration.subtype !== stepData.requiredSubtype) {
-      return {
-          isValid: false,
-          message: `This step requires ${stepData.requiredSubtype} subtype.`
-      };
-  }
-  
-  // Motor specific validations
-  if (configuration.type === 'action' && configuration.subtype === 'motor') {
-      const motorConfig = Array.isArray(configuration.configuration) 
-          ? configuration.configuration 
-          : [configuration.configuration];
-      
-      // Check required motor count
-      if (stepData.allowedConfigurations?.requiredMotorCount !== undefined) {
-          const requiredCount = stepData.allowedConfigurations.requiredMotorCount;
-          if (motorConfig.length !== requiredCount) {
-              return {
-                  isValid: false,
-                  message: `This step requires exactly ${requiredCount} motor(s).`
-              };
-          }
-      }
-      
-      // We no longer check for specific allowed ports
-      // This allows students to use whatever ports they have available
-      
-      // Check speed range
-      if (stepData.allowedConfigurations?.speedRange) {
-          const [minSpeed, maxSpeed] = stepData.allowedConfigurations.speedRange;
-          
-          const hasInvalidSpeed = motorConfig.some(motor => {
-              const absSpeed = Math.abs(motor.speed || 0);
-              return absSpeed < minSpeed || absSpeed > maxSpeed;
-          });
-          
-          if (hasInvalidSpeed) {
-              return {
-                  isValid: false,
-                  message: `Speed must be between ${minSpeed} and ${maxSpeed}.`
-              };
-          }
-      }
-      
-      // Check direction constraints
-      if (stepData.allowedConfigurations?.allowedDirections?.length > 0) {
-          const allowedDirections = stepData.allowedConfigurations.allowedDirections;
-          
-          const hasInvalidDirection = motorConfig.some(motor => {
-              const direction = (motor.speed || 0) >= 0 ? "forward" : "backward";
-              return !allowedDirections.includes(direction);
-          });
-          
-          if (hasInvalidDirection) {
-              return {
-                  isValid: false,
-                  message: `Only ${allowedDirections.join(', ')} direction is allowed.`
-              };
-          }
-      }
-  }
-  
-  // Timer specific validations
-  if (configuration.type === 'input' && configuration.subtype === 'time') {
-      const { seconds } = configuration.configuration || {};
-      
-      // Check time range
-      if (stepData.allowedConfigurations?.timeRange) {
-          const [minTime, maxTime] = stepData.allowedConfigurations.timeRange;
-          
-          if (seconds < minTime || seconds > maxTime) {
-              return {
-                  isValid: false,
-                  message: `Wait time must be between ${minTime} and ${maxTime} seconds.`
-              };
-          }
-      }
-      
-      // Check fixed time
-      if (stepData.allowedConfigurations?.fixedTime !== null && 
-          stepData.allowedConfigurations?.fixedTime !== undefined) {
-          const fixedTime = stepData.allowedConfigurations.fixedTime;
-          
-          if (seconds !== fixedTime) {
-              return {
-                  isValid: false,
-                  message: `This step requires exactly ${fixedTime} seconds.`
-              };
-          }
-      }
-  }
-  
-  // If all checks pass, the configuration is valid
-  return { 
-      isValid: true,
-      message: "Configuration is valid." 
-  };
-}, [isMissionMode, currentMission, currentStepIndex]);
+   * Validate if the current configuration meets the mission requirements
+   * 
+   * @param {Object} configuration - Configuration to validate
+   * @returns {Object} Validation result with status and message
+   */
+  const validateStepConfiguration = useCallback((configuration) => {
+    if (!isMissionMode || !currentMission) {
+        return { isValid: true };
+    }
+    
+    const stepData = currentMission.steps[currentStepIndex];
+    if (!stepData) {
+        return { isValid: true };
+    }
+    
+    // Check required type
+    if (stepData.requiredType && configuration.type !== stepData.requiredType) {
+        return {
+            isValid: false,
+            message: `This step requires ${stepData.requiredType} type.`
+        };
+    }
+    
+    // Check required subtype
+    if (stepData.requiredSubtype && configuration.subtype !== stepData.requiredSubtype) {
+        return {
+            isValid: false,
+            message: `This step requires ${stepData.requiredSubtype} subtype.`
+        };
+    }
+    
+    // Motor specific validations
+    if (configuration.type === 'action' && configuration.subtype === 'motor') {
+        const motorConfig = Array.isArray(configuration.configuration) 
+            ? configuration.configuration 
+            : [configuration.configuration];
+        
+        // Check required motor count
+        if (stepData.allowedConfigurations?.requiredMotorCount !== undefined) {
+            const requiredCount = stepData.allowedConfigurations.requiredMotorCount;
+            if (motorConfig.length !== requiredCount) {
+                return {
+                    isValid: false,
+                    message: `This step requires exactly ${requiredCount} motor(s).`
+                };
+            }
+        }
+        
+        // Check speed range
+        if (stepData.allowedConfigurations?.speedRange) {
+            const [minSpeed, maxSpeed] = stepData.allowedConfigurations.speedRange;
+            
+            const hasInvalidSpeed = motorConfig.some(motor => {
+                const absSpeed = Math.abs(motor.speed || 0);
+                return absSpeed < minSpeed || absSpeed > maxSpeed;
+            });
+            
+            if (hasInvalidSpeed) {
+                return {
+                    isValid: false,
+                    message: `Speed must be between ${minSpeed} and ${maxSpeed}.`
+                };
+            }
+        }
+        
+        // Check direction constraints
+        if (stepData.allowedConfigurations?.allowedDirections?.length > 0) {
+            const allowedDirections = stepData.allowedConfigurations.allowedDirections;
+            
+            const hasInvalidDirection = motorConfig.some(motor => {
+                const direction = (motor.speed || 0) >= 0 ? "forward" : "backward";
+                return !allowedDirections.includes(direction);
+            });
+            
+            if (hasInvalidDirection) {
+                return {
+                    isValid: false,
+                    message: `Only ${allowedDirections.join(', ')} direction is allowed.`
+                };
+            }
+        }
+    }
+    
+    // Timer specific validations
+    if (configuration.type === 'input' && configuration.subtype === 'time') {
+        const { seconds } = configuration.configuration || {};
+        
+        // Check time range
+        if (stepData.allowedConfigurations?.timeRange) {
+            const [minTime, maxTime] = stepData.allowedConfigurations.timeRange;
+            
+            if (seconds < minTime || seconds > maxTime) {
+                return {
+                    isValid: false,
+                    message: `Wait time must be between ${minTime} and ${maxTime} seconds.`
+                };
+            }
+        }
+        
+        // Check fixed time
+        if (stepData.allowedConfigurations?.fixedTime !== null && 
+            stepData.allowedConfigurations?.fixedTime !== undefined) {
+            const fixedTime = stepData.allowedConfigurations.fixedTime;
+            
+            if (seconds !== fixedTime) {
+                return {
+                    isValid: false,
+                    message: `This step requires exactly ${fixedTime} seconds.`
+                };
+            }
+        }
+    }
+    
+    // If all checks pass, the configuration is valid
+    return { 
+        isValid: true,
+        message: "Configuration is valid." 
+    };
+  }, [isMissionMode, currentMission, currentStepIndex]);
 
   /**
    * Check if the required hardware is connected for the mission
@@ -624,6 +707,142 @@ const validateStepConfiguration = useCallback((configuration) => {
     };
   }, [isMissionMode, currentMission, currentStepIndex, isMissionComplete]);
 
+  /**
+   * Get current task data
+   * 
+   * @returns {Object|null} Current task object or null
+   */
+  const getCurrentTask = useCallback(() => {
+    if (!isMissionMode || !currentMission || !currentMission.steps) return null;
+    
+    // Get the mission step for the current task
+    const missionStep = currentMission.steps[currentStepIndex];
+    if (!missionStep || !missionStep.tasks) return null;
+    
+    // Get the specific task from the step
+    return missionStep.tasks[currentTaskIndex] || null;
+  }, [isMissionMode, currentMission, currentStepIndex, currentTaskIndex]);
+
+  /**
+   * Check if a task is completed
+   * 
+   * @param {number} taskIndex - Index of the task to check
+   * @returns {boolean} Whether the task is completed
+   */
+  const isTaskCompleted = useCallback((taskIndex) => {
+    if (!currentMission) return false;
+    
+    const missionId = currentMission.missionId;
+    const stepId = `${missionId}-step-${currentStepIndex}`;
+    
+    return !!(taskProgress[stepId] && taskProgress[stepId][taskIndex]);
+  }, [currentMission, currentStepIndex, taskProgress]);
+
+  /**
+   * Mark a task as completed
+   * 
+   * @param {number} taskIndex - Index of the task to mark as completed
+   * @param {Object} data - Optional data to store with completion
+   */
+  const completeTask = useCallback((taskIndex, data = {}) => {
+    if (!currentMission) return;
+    
+    const missionId = currentMission.missionId;
+    const stepId = `${missionId}-step-${currentStepIndex}`;
+    
+    setTaskProgress(prev => {
+      // Create step entry if it doesn't exist
+      const stepProgress = prev[stepId] || {};
+      
+      // Update task completion data
+      return {
+        ...prev,
+        [stepId]: {
+          ...stepProgress,
+          [taskIndex]: {
+            completedAt: Date.now(),
+            ...data
+          }
+        }
+      };
+    });
+    
+    // Play completion sound
+    const audio = new Audio('/assets/sounds/marimba-bloop.mp3');
+    audio.play().catch(error => {
+      console.error('Error playing completion sound:', error);
+    });
+  }, [currentMission, currentStepIndex]);
+
+  /**
+   * Move to the next task
+   * 
+   * @returns {boolean} Whether the operation was successful
+   */
+  const moveToNextTask = useCallback(() => {
+    if (!currentMission) return false;
+    
+    const missionStep = currentMission.steps[currentStepIndex];
+    if (!missionStep || !missionStep.tasks) return false;
+    
+    // Check if we're at the last task
+    if (currentTaskIndex >= missionStep.tasks.length - 1) {
+      // Move to next step if available
+      if (currentStepIndex < currentMission.steps.length - 1) {
+        setCurrentStepIndex(currentStepIndex + 1);
+        setCurrentTaskIndex(0);
+        return true;
+      }
+      return false;
+    }
+    
+    // Move to next task
+    setCurrentTaskIndex(currentTaskIndex + 1);
+    return true;
+  }, [currentMission, currentStepIndex, currentTaskIndex]);
+
+  /**
+   * Request a hint for the current task
+   */
+  const requestHint = useCallback(() => {
+    setShowHint(true);
+    
+    // Auto-hide hint after 5 seconds
+    setTimeout(() => {
+      setShowHint(false);
+    }, 5000);
+  }, []);
+
+  /**
+   * Validate if a task is completable based on current state
+   * 
+   * @param {string} taskType - Type of task to validate
+   * @param {Object} data - Current state data
+   * @returns {boolean} Whether the task can be completed
+   */
+  const validateTaskCompletion = useCallback((taskType, data) => {
+    switch (taskType) {
+      case 'motor_speed':
+        // Motor task is complete when speed is non-zero
+        return data && data.speed !== 0 && data.speed !== undefined;
+        
+      case 'test_button':
+        // Test button task is always completable
+        return true;
+        
+      case 'timer_value':
+        // Timer task is complete when seconds is non-zero
+        return data && data.seconds && data.seconds > 0;
+        
+      case 'navigation':
+        // Navigation task is complete when slot changes
+        return data && data.targetSlot !== undefined;
+        
+      default:
+        return false;
+    }
+  }, []);
+
   // Provide context values
   const contextValue = {
     // Mission mode state
@@ -663,7 +882,18 @@ const validateStepConfiguration = useCallback((configuration) => {
     showTestPrompt,
     setShowTestPrompt,
     showRunPrompt,
-    setShowRunPrompt
+    setShowRunPrompt,
+    
+    // Task level state and functions
+    currentTaskIndex,
+    taskProgress,
+    showHint,
+    getCurrentTask,
+    isTaskCompleted,
+    completeTask,
+    moveToNextTask,
+    requestHint,
+    validateTaskCompletion
   };
   
   return (
