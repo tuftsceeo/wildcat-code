@@ -1,4 +1,4 @@
-/* MissionSelector.module.css - Styled with design token system */
+/* MissionSelector.module.css - Redesigned for side-by-side options with minimal text */
 
 .overlay {
   position: fixed;
@@ -6,7 +6,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,7 +31,7 @@
   animation: slideIn 0.3s ease;
 }
 
-/* Header section */
+/* Header section - simplified */
 .header {
   display: flex;
   justify-content: center;
@@ -77,43 +77,72 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--spacing-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-6);
 }
 
-/* Mode selection (sandbox or mission) */
-.modeSelection {
+/* Side by side options for mode selection */
+.sideByOptions {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: var(--spacing-6);
-  margin-bottom: var(--spacing-4);
+  gap: var(--spacing-8);
+  width: 100%;
 }
 
-.modeOption {
+.modeCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: var(--spacing-4);
-  border: var(--border-width-standard) solid var(--button-default-border);
+  width: 250px;
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--panel-border);
   border-radius: var(--radius-md);
-  width: 200px;
-  height: 200px;
-  justify-content: space-between;
+  padding: var(--spacing-6);
+  text-align: center;
   transition: all var(--transition-normal);
+  cursor: pointer;
 }
 
-.modeOption:hover {
+.modeCard:hover {
   transform: var(--button-scale-hover);
   border-color: var(--button-selected-border);
   box-shadow: var(--glow-secondary);
 }
 
-.modeIcon {
+.modeIconLarge {
   color: var(--panel-text);
-  margin-bottom: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+.modeTitle {
+  font-size: var(--font-size-lg);
+  margin: var(--spacing-2) 0 var(--spacing-4);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.missionPreview {
+  width: 100%;
+  height: 100px;
+  margin-bottom: var(--spacing-4);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background-color: var(--color-gray-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.missionImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-subtle);
 }
 
 .modeButton {
@@ -129,6 +158,9 @@
   font-family: var(--font-family-active);
   transition: all var(--transition-normal);
   transform: var(--button-scale-default);
+  font-size: var(--font-size-lg);
+  width: 100%;
+  justify-content: center;
 }
 
 .modeButton:hover {
@@ -137,17 +169,6 @@
 
 .modeButton:active {
   transform: var(--button-scale-active);
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  color: var(--color-gray-bold);
-}
-
-.separator span {
-  padding: 0 var(--spacing-2);
-  font-weight: var(--font-weight-bold);
 }
 
 /* Mission display */
@@ -183,7 +204,7 @@
 }
 
 .missionCard {
-  width: 400px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   border: var(--border-width-standard) solid var(--button-default-border);
@@ -208,6 +229,7 @@
   font-size: var(--font-size-lg);
   margin: 0;
   flex: 1;
+  text-transform: uppercase;
 }
 
 .missionThumbnail {
@@ -243,30 +265,27 @@
   flex-direction: column;
 }
 
-.missionDescription {
-  margin-top: 0;
-  margin-bottom: var(--spacing-2);
-  line-height: var(--line-height-relaxed);
-}
-
-.missionDetails {
-  margin-top: auto;
+.missionMetadata {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
 }
 
-.missionDetail {
-  font-size: var(--font-size-sm);
-}
-
-.detailLabel {
+.missionDifficulty,
+.missionSteps {
+  font-size: var(--font-size-lg);
+  text-transform: uppercase;
   font-weight: var(--font-weight-bold);
-  margin-right: var(--spacing-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.detailValue {
-  color: var(--panel-text);
-  text-transform: capitalize;
+.difficultyValue,
+.stepsValue {
+  color: var(--color-secondary-main);
+  font-size: var(--font-size-lg);
 }
 
 .startButton {
@@ -281,6 +300,8 @@
   gap: var(--spacing-2);
   font-family: var(--font-family-active);
   font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  text-transform: uppercase;
   transition: all var(--transition-normal);
   transform: var(--button-scale-default);
 }
@@ -294,12 +315,20 @@
   transform: var(--button-scale-active);
 }
 
-/* Mission indicator dots */
+/* Mission indicator dots and reset button */
 .missionIndicator {
   display: flex;
   justify-content: center;
-  gap: var(--spacing-2);
+  align-items: center;
+  gap: var(--spacing-4);
   padding: var(--spacing-3);
+  position: relative;
+}
+
+.dotContainer {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-2);
 }
 
 .indicatorDot {
@@ -320,12 +349,100 @@
   background-color: var(--color-gray-bold);
 }
 
-/* Sandbox option at the bottom */
+/* Reset option button in mode cards */
+.resetOptionButton {
+  margin-top: var(--spacing-2);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  background-color: transparent;
+  color: var(--panel-text);
+  font-family: var(--font-family-active);
+  font-size: var(--font-size-sm);
+  border: var(--border-width-thin) solid var(--color-primary-main);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-1) var(--spacing-2);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+  width: 100%;
+  justify-content: center;
+}
+
+.resetOptionButton:hover {
+  background-color: var(--color-primary-low);
+  transform: var(--button-scale-hover);
+}
+
+.resetOptionButton:hover .resetIcon {
+  transform: rotate(180deg);
+}
+
+/* Reset button under the Start Mission button */
+.resetMissionButton {
+  background-color: transparent;
+  color: var(--panel-text);
+  border: var(--border-width-thin) solid var(--color-primary-main);
+  padding: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  justify-content: center;
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
+.resetMissionButton:hover {
+  background-color: var(--color-primary-low);
+  transform: var(--button-scale-hover);
+}
+
+.resetMissionButton:hover .resetIcon {
+  transform: rotate(180deg);
+}
+
+/* Reset button in sandbox option */
+.resetSandboxButton {
+  background: none;
+  border: var(--border-width-thin) solid var(--color-primary-main);
+  color: var(--panel-text);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+  margin-left: var(--spacing-2);
+}
+
+.resetSandboxButton:hover {
+  background-color: var(--color-primary-low);
+  transform: var(--button-scale-hover);
+}
+
+.resetSandboxButton:hover .resetIcon {
+  transform: rotate(180deg);
+}
+
+.resetIcon {
+  transition: transform 0.5s ease;
+}
+
+/* Sandbox option at the bottom with reset button side by side */
 .sandboxOption {
   padding: var(--spacing-3);
   border-top: 1px solid var(--color-gray-bold);
   display: flex;
   justify-content: center;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
 }
 
 .sandboxButton {
@@ -369,11 +486,11 @@
 }
 
 .warningContent {
-  width: 400px;
+  width: 300px;
   background-color: var(--panel-bg);
   border: var(--border-width-standard) solid var(--color-warning-main);
   border-radius: var(--radius-md);
-  padding: var(--spacing-6);
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -381,26 +498,73 @@
   animation: shakeIn 0.5s ease;
 }
 
+/* Reset confirmation styles */
+.resetContent {
+  width: 300px;
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--color-primary-main);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--glow-primary);
+  animation: bounceIn 0.5s ease;
+}
+
+.resetDialogIcon {
+  color: var(--color-primary-main);
+  margin-bottom: var(--spacing-2);
+  animation: spin 2s infinite linear;
+}
+
+.resetTitle {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-2);
+  color: var(--panel-text);
+  text-transform: uppercase;
+}
+
+.resetMessage {
+  text-align: center;
+  margin-bottom: var(--spacing-4);
+  color: var(--panel-text);
+  font-size: var(--font-size-base);
+}
+
+.resetButtons {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.resetConfirmButton {
+  background-color: var(--color-primary-main);
+  color: var(--panel-text);
+  border: none;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-active);
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+}
+
 .warningIcon {
   color: var(--color-warning-main);
-  margin-bottom: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
 }
 
 .warningTitle {
   font-size: var(--font-size-lg);
-  margin-bottom: var(--spacing-3);
+  margin-bottom: var(--spacing-2);
   color: var(--color-warning-main);
-}
-
-.warningText {
-  text-align: center;
-  margin-bottom: var(--spacing-3);
+  text-transform: uppercase;
 }
 
 .hardwareList {
   list-style-type: none;
   padding: 0;
-  margin: 0 0 var(--spacing-4) 0;
+  margin: var(--spacing-2) 0;
   text-align: center;
 }
 
@@ -408,6 +572,7 @@
   margin-bottom: var(--spacing-2);
   font-weight: var(--font-weight-bold);
   color: var(--color-warning-main);
+  font-size: var(--font-size-lg);
 }
 
 .warningButtons {
@@ -513,5 +678,58 @@
   }
   100% {
     transform: translateX(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Media Queries for Responsive Layout */
+@media (max-width: 768px) {
+  .sideByOptions {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+  
+  .modeCard {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .missionContainer {
+    flex-direction: column;
+  }
+  
+  .navButton {
+    margin: var(--spacing-2) 0;
+  }
+  
+  .missionCard {
+    width: 90%;
   }
 }

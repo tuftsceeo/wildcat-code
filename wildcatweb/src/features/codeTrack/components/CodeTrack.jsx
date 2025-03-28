@@ -50,9 +50,32 @@ const CodeTrack = ({
         markStepTested, 
         completeStep, 
         validateStepConfiguration,
-        setOverlayContent,
-        setShowMissionOverlay
+        getCurrentTask,
+        completeTask,
+        currentTaskIndex
     } = useMission();
+
+    // Track previous slot for navigation task completion
+    const [prevSlotNumber, setPrevSlotNumber] = React.useState(currSlotNumber);
+
+    // Check for navigation task completion when slot changes
+    useEffect(() => {
+        // Only check if we're in mission mode and slot actually changed
+        if (isMissionMode && currSlotNumber !== prevSlotNumber) {
+            const currentTask = getCurrentTask();
+            
+            // Check if current task is a navigation task
+            if (currentTask?.taskType === 'navigation') {
+                // Complete the navigation task
+                completeTask(currentTaskIndex, {
+                    targetSlot: currSlotNumber
+                });
+            }
+            
+            // Update previous slot
+            setPrevSlotNumber(currSlotNumber);
+        }
+    }, [currSlotNumber, isMissionMode, getCurrentTask, completeTask, currentTaskIndex, prevSlotNumber]);
 
     // Ensure current slot is valid based on missionSteps
     useEffect(() => {
@@ -143,36 +166,16 @@ const CodeTrack = ({
                 const validation = validateCurrentInstruction();
                 if (!validation.isValid) {
                     console.warn("Instruction doesn't meet mission requirements:", validation.message);
-                    
-                    // Show mission overlay with validation error
-                    setOverlayContent({
-                        type: 'error',
-                        title: "Not Quite Right",
-                        message: validation.message,
-                        hint: currentMission.steps[currentStepIndex].instructions?.hints?.[0]
-                    });
-                    setShowMissionOverlay(true);
                     return;
                 }
                 
                 // Mark the step as tested
                 markStepTested(currentStepIndex);
                 
-                // If the step has a success message, prepare to show it
+                // If the step has a success message, mark it as completed
                 const missionStep = currentMission.steps[currentStepIndex];
                 if (missionStep.instructions?.successMessage) {
-                    // Queue success message to show after test runs
-                    setTimeout(() => {
-                        setOverlayContent({
-                            type: 'success',
-                            title: "Great Job!",
-                            message: missionStep.instructions.successMessage
-                        });
-                        setShowMissionOverlay(true);
-                        
-                        // Mark the step as completed
-                        completeStep(currentStepIndex, currentInstruction.configuration);
-                    }, 3000); // Show after 3 seconds to let the test run
+                    completeStep(currentStepIndex, currentInstruction.configuration);
                 }
             }
 

@@ -1,4 +1,4 @@
-/* BluetoothUI.module.css - With theme variables */
+/* BluetoothUI.module.css - Updated with mission button styling */
 
 .menu {
     display: flex;
@@ -9,7 +9,8 @@
 /* Style for all buttons using the theme */
 .connectButton,
 .settingsButton,
-.helpButton {
+.helpButton,
+.missionButton {
     width: var(--bluetooth-button-size);
     height: var(--bluetooth-button-size);
     background-color: transparent;
@@ -31,6 +32,15 @@
     transform: scale(1);
 }
 
+/* Mission icon styling */
+.missionIcon {
+    color: var(--panel-text);
+    transition: transform var(--transition-normal),
+        filter var(--transition-normal),
+        color var(--transition-normal);
+    transform: scale(1);
+}
+
 /* Hover state: slightly scale up and add a glow */
 .connectButton:hover img,
 .settingsButton:hover img,
@@ -38,10 +48,19 @@
     transform: scale(1.2);
 }
 
+.missionButton:hover .missionIcon {
+    transform: scale(1.2);
+    color: var(--color-secondary-main);
+}
+
 /* Active (pressed) state: scale down a bit and reduce the glow */
 .connectButton:active img,
 .settingsButton:active img,
 .helpButton:active img {
+    transform: scale(0.95);
+}
+
+.missionButton:active .missionIcon {
     transform: scale(0.95);
 }
 
@@ -76,13 +95,15 @@
 /* Theme-aware filter for clean theme (dark icons on light background) */
 body[data-theme="clean"] .connectButton img,
 body[data-theme="clean"] .settingsButton img,
-body[data-theme="clean"] .helpButton img {
+body[data-theme="clean"] .helpButton img,
+body[data-theme="clean"] .missionIcon {
     filter: brightness(0);
 }
 
 body[data-theme="pastel"] .connectButton img,
 body[data-theme="pastel"] .settingsButton img,
-body[data-theme="pastel"] .helpButton img {
+body[data-theme="pastel"] .helpButton img,
+body[data-theme="pastel"] .missionIcon {
     filter: brightness(0);
 }
 
@@ -115,5 +136,12 @@ body[data-theme="pastel"] .helpButton img {
     100% {
         opacity: 0.7;
         transform: scale(1);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .menu {
+        gap: var(--spacing-1);
     }
 }
