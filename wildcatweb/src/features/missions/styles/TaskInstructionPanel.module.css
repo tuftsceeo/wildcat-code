@@ -1,295 +1,296 @@
 /* TaskInstructionPanel.module.css - Styled with design token system */
 
 .taskInstructionContainer {
-  width: 100%;
-  padding: var(--spacing-4);
-  margin-bottom: var(--spacing-4);
-  border-radius: var(--radius-md);
-  background-color: var(--color-background);
-  border: var(--border-width-standard) solid var(--color-secondary-main);
-  color: var(--panel-text);
-  animation: slideIn 0.3s ease;
-  box-shadow: var(--glow-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
+    width: 100%;
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+    border-radius: var(--radius-md);
+    background-color: var(--color-background);
+    border: var(--border-width-standard) solid var(--color-secondary-main);
+    color: var(--panel-text);
+    animation: slideIn 0.3s ease;
+    box-shadow: var(--glow-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
 }
 
 /* Task header with title and completion status */
 .taskHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .taskIdentifier {
-  display: flex;
-  align-items: baseline;
-  gap: var(--spacing-2);
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-2);
 }
 
 .taskNumber {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-secondary-main);
-  font-family: var(--font-family-active);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-secondary-main);
+    font-family: var(--font-family-active);
 }
 
 .taskTitle {
-  font-size: var(--font-size-base);
-  color: var(--panel-text);
-  font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
 }
 
 /* Completion indicator */
 .completionIndicator {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  color: var(--color-secondary-main);
-  animation: fadeIn 0.5s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--color-secondary-main);
+    animation: fadeIn 0.5s ease;
 }
 
 .completionIcon {
-  color: var(--color-secondary-main);
+    color: var(--color-secondary-main);
 }
 
 .completionText {
-  font-size: var(--font-size-sm);
-  font-family: var(--font-family-active);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family-active);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 /* Instruction content */
 .instructionContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--spacing-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-3);
 }
 
 .instruction {
-  flex: 1;
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-relaxed);
-  color: var(--panel-text);
-  font-family: var(--font-family-active);
-  margin: 0;
+    flex: 1;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    margin: 0;
 }
 
 /* Support buttons container */
 .supportButtons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-  flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    flex-shrink: 0;
 }
 
 /* Style for audio and hint buttons */
 .supportButton {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: var(--border-width-thin) solid var(--button-default-border);
-  background-color: var(--button-default-bg);
-  color: var(--button-default-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  transform: var(--button-scale-default);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: var(--border-width-thin) solid var(--button-default-border);
+    background-color: var(--button-default-bg);
+    color: var(--button-default-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
 }
 
 .supportButton:hover:not(:disabled) {
-  border-color: var(--color-secondary-main);
-  color: var(--color-secondary-main);
-  transform: var(--button-scale-hover);
-  box-shadow: var(--glow-secondary);
+    border-color: var(--color-secondary-main);
+    color: var(--color-secondary-main);
+    transform: var(--button-scale-hover);
+    box-shadow: var(--glow-secondary);
 }
 
 .supportButton:active:not(:disabled) {
-  transform: var(--button-scale-active);
+    transform: var(--button-scale-active);
 }
 
 .supportButton.active {
-  background-color: var(--color-secondary-main);
-  color: var(--color-background);
-  border-color: var(--color-secondary-main);
-  animation: pulse 2s infinite;
+    background-color: var(--color-secondary-main);
+    color: var(--color-background);
+    border-color: var(--color-secondary-main);
+    animation: pulse 2s infinite;
 }
 
 .supportButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Hint container */
 .hintContainer {
-  background-color: rgba(var(--color-primary-main-rgb), 0.1);
-  border-left: 3px solid var(--color-primary-main);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-3);
-  margin-top: var(--spacing-2);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-2);
-  position: relative;
-  animation: fadeIn 0.5s ease;
+    background-color: rgba(var(--color-primary-main-rgb), 0.1);
+    border-left: 3px solid var(--color-primary-main);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-3);
+    margin-top: var(--spacing-2);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+    position: relative;
+    animation: fadeIn 0.5s ease;
 }
 
 .hintIcon {
-  color: var(--color-primary-main);
-  flex-shrink: 0;
+    color: var(--color-primary-main);
+    flex-shrink: 0;
 }
 
 .hintText {
-  flex: 1;
-  margin: 0;
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-relaxed);
-  color: var(--panel-text);
-  font-family: var(--font-family-active);
+    flex: 1;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
 }
 
 .dismissHintButton {
-  position: absolute;
-  top: var(--spacing-1);
-  right: var(--spacing-1);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: none;
-  background-color: var(--color-background);
-  color: var(--color-primary-main);
-  font-size: 16px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: all var(--transition-normal);
+    position: absolute;
+    top: var(--spacing-1);
+    right: var(--spacing-1);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--color-background);
+    color: var(--color-primary-main);
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all var(--transition-normal);
 }
 
 .dismissHintButton:hover {
-  opacity: 1;
-  transform: var(--button-scale-hover);
+    opacity: 1;
+    transform: var(--button-scale-hover);
 }
 
 /* Next button styling */
 .nextButtonContainer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--spacing-3);
-  animation: fadeIn 0.5s ease;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--spacing-3);
+    animation: fadeIn 0.5s ease;
 }
 
 .nextButton {
-  background-color: var(--color-secondary-main);
-  color: var(--color-text);
-  border: none;
-  border-radius: var(--radius-md);
-  padding: var(--spacing-2) var(--spacing-4);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  font-size: var(--font-size-base);
-  font-family: var(--font-family-active);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  transform: var(--button-scale-default);
-  box-shadow: var(--glow-secondary);
-  animation: pulse 2s infinite, slideInRight 0.5s ease;
+    background-color: var(--color-secondary-main);
+    color: var(--color-text);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-4);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-active);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    box-shadow: var(--glow-secondary);
+    animation: pulse 2s infinite, slideInRight 0.5s ease;
 }
 
 .nextButton:hover {
-  transform: var(--button-scale-hover);
-  background-color: var(--color-secondary-high);
+    transform: var(--button-scale-hover);
+    background-color: var(--color-secondary-high);
 }
 
 .nextButton:active {
-  transform: var(--button-scale-active);
+    transform: var(--button-scale-active);
 }
 
 /* Animations */
 @keyframes slideIn {
-  from {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 @keyframes slideInRight {
-  from {
-    transform: translateX(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .taskInstructionContainer {
-    padding: var(--spacing-3);
-  }
+    .taskInstructionContainer {
+        padding: var(--spacing-3);
+    }
 
-  .instructionContent {
-    flex-direction: column;
-  }
+    .instructionContent {
+        flex-direction: column;
+    }
 
-  .supportButtons {
-    flex-direction: row;
-    width: 100%;
-    justify-content: flex-end;
-    margin-top: var(--spacing-2);
-  }
+    .supportButtons {
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: var(--spacing-2);
+    }
 }
 
 /* High contrast theme support */
 body.high-contrast .taskInstructionContainer {
-  border-color: var(--color-text);
-  background-color: var(--color-background);
+    border-color: var(--color-text);
+    background-color: var(--color-background);
 }
 
 body.high-contrast .completionIndicator,
 body.high-contrast .completionIcon {
-  color: var(--color-text);
+    color: var(--color-text);
 }
 
 body.high-contrast .taskNumber {
-  color: var(--color-text);
+    color: var(--color-text);
 }
 
 body.high-contrast .nextButton {
-  background-color: var(--color-text);
-  color: var(--color-background);
+    background-color: var(--color-text);
+    color: var(--color-background);
 }
