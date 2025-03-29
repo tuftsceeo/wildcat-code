@@ -128,7 +128,8 @@ export const CommandPanel = ({
         : false;
 
     // Determine if we should show the task panel
-    const showTaskPanel = isMissionMode && currentMission && currentTask;
+    // Simply check if currentTask exists
+    const showTaskPanel = currentTask !== null;
 
     // Determine if the current slot is the special stop step
     const isStopStep =

@@ -17,10 +17,8 @@ import HintSystem from "./features/missions/components/HintSystem";
 import "./common/styles/App.css";
 import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";
 import CustomizationPage from "./features/settings/components/CustomizationPage.jsx";
-import MissionSelector from "./features/missions/components/MissionSelector.jsx"; // Import MissionSelector
-import MissionOverlay from "./features/missions/components/MissionOverlay.jsx"; // Import MissionOverlay
-
-
+import MissionSelector from "./features/missions/components/MissionSelector.jsx";
+import MissionOverlay from "./features/missions/components/MissionOverlay.jsx";
 
 import {
     CustomizationProvider,
@@ -31,40 +29,30 @@ import logo from "./assets/images/logo.svg";
 import "./common/styles/App.css";
 import reportWebVitals from "./common/utils/reportWebVitals";
 
-/*
+/**
  * The top-level App component with all providers
- * Manages the missionSteps state and handles changes from CustomizationContext
  *
  * @returns {JSX.Element} Main application component
  */
 function App() {
-    // Move missionSteps state to the top level component
-    const [missionSteps, setMissionSteps] = useState(3);
     return (
-    <CustomizationProvider
-      onStepCountChange={(newStepCount) => {
-        setMissionSteps(newStepCount);
-      }}
-    >
-      <BLEProvider>
-        <KnobProvider>
-          <MissionProvider>
-            <DndProvider backend={HTML5Backend}>
-              <AppWithCustomizationContext />
-            </DndProvider>
-          </MissionProvider>
-        </KnobProvider>
-      </BLEProvider>
-    </CustomizationProvider>
-  );
+        <CustomizationProvider>
+            <BLEProvider>
+                <KnobProvider>
+                    <MissionProvider>
+                        <DndProvider backend={HTML5Backend}>
+                            <AppWithCustomizationContext />
+                        </DndProvider>
+                    </MissionProvider>
+                </KnobProvider>
+            </BLEProvider>
+        </CustomizationProvider>
+    );
 }
-
 
 /**
  * Main application wrapper that provides context providers and applies settings
  *
- * @param {Object} props - Component props
- * @param {number} props.missionSteps - Number of mission steps passed from parent
  * @returns {JSX.Element} Main application content component
  */
 function AppWithCustomizationContext() {
@@ -74,31 +62,38 @@ function AppWithCustomizationContext() {
   
     // Apply reading level to body data attribute
     useEffect(() => {
-      document.body.dataset.readingLevel = readingLevel;
-      document.body.dataset.language = language;
+        document.body.dataset.readingLevel = readingLevel;
+        document.body.dataset.language = language;
     }, [readingLevel, language]);
   
     return (
-      <>
-        <AppContent />
-        {/* Add the HintSystem component to apply visual hints */}
-        <HintSystem activeHint={activeHint} />
-      </>
+        <>
+            <AppContent />
+            {/* Add the HintSystem component to apply visual hints */}
+            <HintSystem activeHint={activeHint} />
+        </>
     );
-  }
+}
+
 /**
  * Main application content
  *
- * @param {Object} props - Component props
- * @param {number} props.missionSteps - Number of mission steps passed from parent
  * @returns {JSX.Element} Application UI components
  */
-function AppContent({ missionSteps }) {
+function AppContent() {
+    // Get step count directly from CustomizationContext
+    const { stepCount: missionSteps } = useCustomization();
+    
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [currSlotNumber, setCurrSlotNumber] = useState(0);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
+
+    // Log when missionSteps change for debugging
+    useEffect(() => {
+        console.log("App.js: missionSteps changed to", missionSteps);
+    }, [missionSteps]);
 
     // Check if this is the first app launch
     useEffect(() => {
@@ -110,11 +105,6 @@ function AppContent({ missionSteps }) {
             localStorage.setItem("hasLaunched", "true");
         }
     }, []);
-
-    // Log when missionSteps change
-    useEffect(() => {
-        console.log("App.js: missionSteps changed to", missionSteps);
-    }, [missionSteps]);
 
     // Define interface for slot data
     const createEmptySlot = () => ({
@@ -135,12 +125,13 @@ function AppContent({ missionSteps }) {
     });
 
     // Initialize slot data array with empty slots
+    // Use a default of 3 if missionSteps is undefined
     const [slotData, setSlotData] = useState(
-        Array(missionSteps)
+        Array(missionSteps || 3)
             .fill(null)
             .map((_, index) => {
                 // Make the last slot a stop instruction
-                if (index === missionSteps - 1) {
+                if (index === (missionSteps || 3) - 1) {
                     return createStopInstruction();
                 }
                 return createEmptySlot();
@@ -149,10 +140,17 @@ function AppContent({ missionSteps }) {
 
     // Update slotData when missionSteps changes
     useEffect(() => {
+        // Guard against undefined missionSteps
+        if (!missionSteps) {
+            console.warn("App.js: missionSteps is undefined, using default value");
+            return;
+        }
+
         console.log(
             "App.js: Updating slotData based on missionSteps",
-            missionSteps,
+            missionSteps
         );
+        
         setSlotData((prev) => {
             // Only update if the length needs to change
             if (prev.length !== missionSteps) {
@@ -160,7 +158,7 @@ function AppContent({ missionSteps }) {
                     "App.js: Adjusting slotData length from",
                     prev.length,
                     "to",
-                    missionSteps,
+                    missionSteps
                 );
 
                 // If expanding, add new empty slots
@@ -199,7 +197,7 @@ function AppContent({ missionSteps }) {
             }
 
             // Length is already correct
-            return prev;
+            return result;
         });
     }, [missionSteps]);
 
@@ -213,7 +211,7 @@ function AppContent({ missionSteps }) {
         // (excluding the stop step which is always at the end)
         const hasAtLeastOneInstruction = slotData
             .slice(0, -1) // Exclude the stop step
-            .some((slot) => slot.type && slot.subtype && slot.configuration);
+            .some((slot) => slot?.type && slot?.subtype && slot?.configuration);
         
         setCanRun(hasAtLeastOneInstruction);
     }, [slotData]);
@@ -237,9 +235,9 @@ function AppContent({ missionSteps }) {
         // Process all slots except the stop instruction
         slots.forEach((slot, index) => {
             // Skip the stop step which would be at the end
-            if (slot.isStopInstruction) return;
+            if (slot?.isStopInstruction) return;
 
-            if (slot.type === "action" && slot.subtype === "motor") {
+            if (slot?.type === "action" && slot?.subtype === "motor") {
                 const { buttonType, knobAngle, port } =
                     slot.configuration || {};
                 if (buttonType === "GO") {
@@ -247,7 +245,7 @@ function AppContent({ missionSteps }) {
                 } else if (buttonType === "STOP") {
                     code.push(`motor.stop(port.${port})`);
                 }
-            } else if (slot.type === "input" && slot.subtype === "time") {
+            } else if (slot?.type === "input" && slot?.subtype === "time") {
                 const { seconds } = slot.configuration || {};
                 if (seconds) {
                     code.push(`time.sleep(${seconds})`);
@@ -322,12 +320,11 @@ function AppContent({ missionSteps }) {
                 <CustomizationPage
                     close={() => setIsSettingsOpen(false)}
                     slotData={slotData}
-                    updateMissionSteps={(newStepCount) => {
+                    onUpdateMissionSteps={(newStepCount) => {
                         console.log(
                             "CustomizationPage requested update to",
                             newStepCount,
                         );
-                        // This is redundant now as the actual update happens via context
                     }}
                 />
             )}

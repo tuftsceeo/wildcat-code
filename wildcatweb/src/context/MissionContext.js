@@ -805,18 +805,44 @@ export const MissionProvider = ({ children }) => {
   }, [currentMission, currentTaskIndex]);
 
   /**
-   * Get current task data
-   *
-   * @returns {Object|null} Current task object or null
-   */
-  const getCurrentTask = useCallback(() => {
-    if (!isMissionMode || !currentMission) return null;
-
-    // Don't return task during intro sequence
-    if (!isIntroSequenceComplete) return null;
-
-    return currentMission.tasks[currentTaskIndex] || null;
-  }, [isMissionMode, currentMission, isIntroSequenceComplete, currentTaskIndex]);
+ * Get current task data
+ *
+ * @returns {Object|null} Current task object or null
+ */
+const getCurrentTask = useCallback(() => {
+    if (!isMissionMode || !currentMission) {
+      console.log("getCurrentTask: No mission mode or current mission");
+      return null;
+    }
+  
+    // Handle both intro and guided task phases
+    // For intro tasks, show them only during the intro sequence
+    // For guided tasks, show them after the intro sequence
+    const currentTask = currentMission.tasks[currentTaskIndex];
+    
+    if (!currentTask) {
+      console.log("getCurrentTask: No task found at index", currentTaskIndex);
+      return null;
+    }
+    
+    // Check if this is an intro phase task
+    const isIntroTask = isIntroductionPhaseTask(currentTask.type);
+    
+    // Only show intro tasks during intro sequence
+    if (isIntroTask && isIntroSequenceComplete) {
+      console.log("getCurrentTask: Intro task after intro sequence - not showing");
+      return null;
+    }
+    
+    // Only show guided tasks after intro sequence
+    if (!isIntroTask && !isIntroSequenceComplete) {
+      console.log("getCurrentTask: Guided task during intro sequence - not showing");
+      return null;
+    }
+    
+    console.log("getCurrentTask: Returning task", currentTask);
+    return currentTask;
+  }, [isMissionMode, currentMission, currentTaskIndex, isIntroSequenceComplete]);
 
   /**
    * Check if a component should be visible based on mission constraints
