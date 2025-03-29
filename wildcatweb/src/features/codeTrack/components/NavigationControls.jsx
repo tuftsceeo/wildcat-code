@@ -1,8 +1,7 @@
 /**
  * @file NavigationControls.jsx
  * @description Navigation controls for moving between slots in the coding track.
- * Updated to disable Next button until current step is completed.
- * @author Jennifer Cross with support from Claude
+ * Updated to support mission validation and flat task structure.
  */
 
 import React from "react";
@@ -18,6 +17,8 @@ import styles from "../styles/CodingTrack.module.css";
  * @param {Function} props.onPrevious - Callback for previous button
  * @param {Function} props.onNext - Callback for next button
  * @param {Object} props.currentInstruction - Current instruction data
+ * @param {boolean} props.validInMission - Whether current configuration meets mission requirements
+ * @param {boolean} props.isMissionMode - Whether we're currently in a mission
  * @returns {JSX.Element} Navigation controls
  */
 const NavigationControls = ({
@@ -26,17 +27,25 @@ const NavigationControls = ({
     onPrevious,
     onNext,
     currentInstruction,
+    validInMission = true,
+    isMissionMode = false,
 }) => {
     // Check if current step is completed (has an instruction configured)
-    const isCurrentStepCompleted = !!(currentInstruction?.type && currentInstruction?.subtype);
-    
+    const isCurrentStepCompleted = !!(
+        currentInstruction?.type && currentInstruction?.subtype
+    );
+
     // missionSteps is the COUNT, so max index is missionSteps-1
     const isPrevButtonDisabled = currSlotNumber <= 0;
-    
+
     // Disable Next button if:
     // 1. We're at the last step OR
-    // 2. Current step isn't completed
-    const isNextButtonDisabled = currSlotNumber >= missionSteps - 1 || !isCurrentStepCompleted;
+    // 2. Current step isn't completed OR
+    // 3. In mission mode and configuration doesn't meet requirements
+    const isNextButtonDisabled =
+        currSlotNumber >= missionSteps - 1 ||
+        !isCurrentStepCompleted ||
+        (isMissionMode && !validInMission);
 
     return (
         <div className={styles.navigationControls}>
@@ -51,7 +60,9 @@ const NavigationControls = ({
                 }
             />
             <button
-                className={`${styles.navButton} ${styles.nextButton}`}
+                className={`${styles.navButton} ${styles.nextButton} ${
+                    isMissionMode && validInMission ? styles.validInMission : ""
+                }`}
                 disabled={isNextButtonDisabled}
                 onClick={onNext}
                 aria-label={

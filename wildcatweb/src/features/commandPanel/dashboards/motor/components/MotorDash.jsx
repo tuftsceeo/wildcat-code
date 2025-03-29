@@ -296,7 +296,9 @@ export const MotorDash = ({
     onUpdate,
     configuration,
     slotData,
-    currSlotNumber
+    currSlotNumber,
+    isMissionMode = false,
+    dispatchTaskEvent = null
 }) => {
     const { portStates, isConnected } = useBLE();
 

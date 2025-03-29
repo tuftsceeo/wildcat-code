@@ -2,7 +2,7 @@
  * @file CommandPanel.jsx
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
- * Updated to respect mission constraints and support task instructions.
+ * Updated to work with the Task Registry Mission System and dispatch events.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -18,7 +18,7 @@ import {
     Timer,
     Clock9,
     Octagon,
-    ArchiveRestore, 
+    ArchiveRestore,
 } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
@@ -32,7 +32,6 @@ import TaskInstructionPanel from "../../missions/components/TaskInstructionPanel
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 import { useMission } from "../../../context/MissionContext.js";
-
 
 const FilledOctagon = (props) => {
     return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
@@ -105,29 +104,29 @@ export const CommandPanel = ({
     const [currentInstruction, setCurrentInstruction] = useState(null);
 
     // Mission context for constraints and task tracking
-    const { 
-        isMissionMode, 
-        currentMission, 
-        currentStepIndex, 
-        isComponentVisible, 
-        isComponentEnabled, 
+    const {
+        isMissionMode,
+        currentMission,
+        currentTaskIndex,
+        isComponentVisible,
+        isComponentEnabled,
         getPrefilledValue,
         isValueLocked,
         validateStepConfiguration,
+        dispatchTaskEvent,
         setShowTestPrompt,
         // Task-level state and functions
-        currentTaskIndex,
         getCurrentTask,
         isTaskCompleted,
-        completeTask,
         requestHint,
-        validateTaskCompletion
     } = useMission();
 
     // Get current task for the mission
     const currentTask = getCurrentTask();
-    const isCurrentTaskCompleted = currentTask ? isTaskCompleted(currentTaskIndex) : false;
-    
+    const isCurrentTaskCompleted = currentTask
+        ? isTaskCompleted(currentTaskIndex)
+        : false;
+
     // Determine if we should show the task panel
     const showTaskPanel = isMissionMode && currentMission && currentTask;
 
@@ -136,13 +135,10 @@ export const CommandPanel = ({
         slotData && slotData[currSlotNumber]?.isStopInstruction === true;
 
     // Determine if we should apply mission constraints to this slot
-    const shouldApplyMissionConstraints = isMissionMode && 
-        currentMission && 
-        currSlotNumber === currentStepIndex;
-
-    // Get mission step data if applicable
-    const missionStepData = shouldApplyMissionConstraints ? 
-        currentMission.steps[currentStepIndex] : null;
+    const shouldApplyMissionConstraints =
+        isMissionMode &&
+        currentMission &&
+        currentTask?.targetSlot === currSlotNumber;
 
     // Reset state when slot number changes
     useEffect(() => {
@@ -167,16 +163,20 @@ export const CommandPanel = ({
 
             // Set current instruction for description
             setCurrentInstruction(currentSlotData);
-        } else if (shouldApplyMissionConstraints && missionStepData) {
+        } else if (shouldApplyMissionConstraints && currentTask) {
             // Apply mission preset type/subtype if available
-            if (missionStepData.requiredType) {
-                console.log(`CommandPanel: Applying mission preset type: ${missionStepData.requiredType}`);
-                setSelectedType(missionStepData.requiredType);
-                
+            if (currentTask.requiredType) {
+                console.log(
+                    `CommandPanel: Applying mission preset type: ${currentTask.requiredType}`,
+                );
+                setSelectedType(currentTask.requiredType);
+
                 // If subtype is also specified, apply it too
-                if (missionStepData.requiredSubtype) {
-                    console.log(`CommandPanel: Applying mission preset subtype: ${missionStepData.requiredSubtype}`);
-                    setSelectedSubtype(missionStepData.requiredSubtype);
+                if (currentTask.requiredSubtype) {
+                    console.log(
+                        `CommandPanel: Applying mission preset subtype: ${currentTask.requiredSubtype}`,
+                    );
+                    setSelectedSubtype(currentTask.requiredSubtype);
                 }
             }
         } else {
@@ -191,7 +191,13 @@ export const CommandPanel = ({
             setLastSavedConfig(null);
             setCurrentInstruction(null);
         }
-    }, [currSlotNumber, slotData, isStopStep, shouldApplyMissionConstraints, missionStepData]);
+    }, [
+        currSlotNumber,
+        slotData,
+        isStopStep,
+        shouldApplyMissionConstraints,
+        currentTask,
+    ]);
 
     // Auto-save when configuration changes
     useEffect(() => {
@@ -252,7 +258,9 @@ export const CommandPanel = ({
                 if (shouldApplyMissionConstraints) {
                     const validation = validateStepConfiguration(instruction);
                     if (!validation.isValid) {
-                        console.warn(`CommandPanel: Configuration doesn't meet mission requirements: ${validation.message}`);
+                        console.warn(
+                            `CommandPanel: Configuration doesn't meet mission requirements: ${validation.message}`,
+                        );
                         // We could add UI feedback here about the invalid configuration
                         // For now, we'll still allow it but could restrict it if needed
                     }
@@ -272,35 +280,22 @@ export const CommandPanel = ({
                 setCurrentInstruction(instruction);
 
                 // Check if we should show the test prompt for this mission step
-                if (shouldApplyMissionConstraints && 
-                    missionStepData?.testPrompt?.showPrompt) {
+                if (
+                    shouldApplyMissionConstraints &&
+                    currentTask?.testPrompt?.showPrompt
+                ) {
                     setShowTestPrompt(true);
                 }
-                
-                // Check if this matches a task to complete
-                if (showTaskPanel && currentTask) {
-                    if (currentTask.taskType === 'motor_speed' && 
-                        selectedType === 'action' && 
-                        selectedSubtype === 'motor') {
-                        
-                        // Check if motor speed is set to non-zero
-                        const hasNonZeroSpeed = Array.isArray(dashboardConfig) 
-                            ? dashboardConfig.some(config => config.speed !== 0)
-                            : dashboardConfig.speed !== 0;
-                            
-                        if (hasNonZeroSpeed && !isCurrentTaskCompleted) {
-                            // Mark task as completed
-                            completeTask(currentTaskIndex, { speed: Array.isArray(dashboardConfig) ? dashboardConfig[0].speed : dashboardConfig.speed });
-                        }
-                    } else if (currentTask.taskType === 'timer_value' && 
-                        selectedType === 'input' && 
-                        selectedSubtype === 'time') {
-                        
-                        // Check if timer has a value
-                        if (dashboardConfig.seconds > 0 && !isCurrentTaskCompleted) {
-                            completeTask(currentTaskIndex, { seconds: dashboardConfig.seconds });
-                        }
-                    }
+
+                // Dispatch configuration changed event for mission tracking
+                if (isMissionMode) {
+                    dispatchTaskEvent("CONFIGURATION_CHANGED", {
+                        slotIndex: currSlotNumber,
+                        configType: selectedType,
+                        configSubtype: selectedSubtype,
+                        configuration: dashboardConfig,
+                        currentSlot: currSlotNumber,
+                    });
                 }
             }
         }
@@ -312,14 +307,11 @@ export const CommandPanel = ({
         onSlotUpdate,
         currSlotNumber,
         shouldApplyMissionConstraints,
-        missionStepData,
+        currentTask,
         validateStepConfiguration,
         setShowTestPrompt,
-        showTaskPanel,
-        currentTask,
-        isCurrentTaskCompleted,
-        completeTask,
-        currentTaskIndex
+        isMissionMode,
+        dispatchTaskEvent,
     ]);
 
     // Handle updates from the dashboard components
@@ -340,11 +332,15 @@ export const CommandPanel = ({
     // Handle type selection
     const handleTypeSelect = (type) => {
         // Check if this selection is allowed in mission mode
-        if (shouldApplyMissionConstraints && 
-            missionStepData?.requiredType && 
-            type !== missionStepData.requiredType) {
+        if (
+            shouldApplyMissionConstraints &&
+            currentTask?.requiredType &&
+            type !== currentTask.requiredType
+        ) {
             // Type is restricted in this mission step
-            console.warn(`CommandPanel: Type ${type} is not allowed in this mission step. Required: ${missionStepData.requiredType}`);
+            console.warn(
+                `CommandPanel: Type ${type} is not allowed in this mission step. Required: ${currentTask.requiredType}`,
+            );
             return; // Don't allow changing to an invalid type
         }
 
@@ -358,12 +354,19 @@ export const CommandPanel = ({
             setDashboardConfig(null);
             setLastSavedConfig(null);
             setCurrentInstruction(null);
-            
-            // Check if this matches a task to complete
-            if (showTaskPanel && currentTask && 
-                currentTask.taskType === 'select_input_type' && 
-                type === 'input' && !isCurrentTaskCompleted) {
-                completeTask(currentTaskIndex, { type });
+
+            // Dispatch type selection event for mission tracking
+            if (isMissionMode) {
+                dispatchTaskEvent(
+                    type === "action"
+                        ? "ACTION_TYPE_SELECTED"
+                        : "INPUT_TYPE_SELECTED",
+                    {
+                        slotIndex: currSlotNumber,
+                        type: type,
+                        currentSlot: currSlotNumber,
+                    },
+                );
             }
         }
     };
@@ -371,11 +374,15 @@ export const CommandPanel = ({
     // Handle subtype selection
     const handleSubtypeSelect = (subtype) => {
         // Check if this selection is allowed in mission mode
-        if (shouldApplyMissionConstraints && 
-            missionStepData?.requiredSubtype && 
-            subtype !== missionStepData.requiredSubtype) {
+        if (
+            shouldApplyMissionConstraints &&
+            currentTask?.requiredSubtype &&
+            subtype !== currentTask.requiredSubtype
+        ) {
             // Subtype is restricted in this mission step
-            console.warn(`CommandPanel: Subtype ${subtype} is not allowed in this mission step. Required: ${missionStepData.requiredSubtype}`);
+            console.warn(
+                `CommandPanel: Subtype ${subtype} is not allowed in this mission step. Required: ${currentTask.requiredSubtype}`,
+            );
             return; // Don't allow changing to an invalid subtype
         }
 
@@ -389,21 +396,25 @@ export const CommandPanel = ({
         setCurrentInstruction(null);
 
         // Apply prefilled values from mission if available
-        if (shouldApplyMissionConstraints && 
-            missionStepData?.uiRestrictions?.prefilledValues) {
-            const prefills = missionStepData.uiRestrictions.prefilledValues;
+        if (
+            shouldApplyMissionConstraints &&
+            currentTask?.uiRestrictions?.prefilledValues
+        ) {
+            const prefills = currentTask.uiRestrictions.prefilledValues;
             if (Object.keys(prefills).length > 0) {
                 // Create a basic configuration with prefilled values
                 setDashboardConfig(prefills);
             }
         }
-        
-        // Check if this matches a task to complete
-        if (showTaskPanel && currentTask && 
-            currentTask.taskType === 'select_timer' && 
-            selectedType === 'input' && 
-            subtype === 'time' && !isCurrentTaskCompleted) {
-            completeTask(currentTaskIndex, { subtype });
+
+        // Dispatch subtype selection event for mission tracking
+        if (isMissionMode) {
+            dispatchTaskEvent("SUBTYPE_SELECTED", {
+                slotIndex: currSlotNumber,
+                type: selectedType,
+                subtype: subtype,
+                currentSlot: currSlotNumber,
+            });
         }
     };
 
@@ -415,7 +426,7 @@ export const CommandPanel = ({
         const languageCode = language === "es" ? "es-ES" : "en-US";
         speakWithRobotVoice(text, voice, volume, languageCode);
     };
-    
+
     // Handle requesting a hint
     const handleHintRequest = () => {
         if (requestHint) {
@@ -460,11 +471,12 @@ export const CommandPanel = ({
                     currSlotNumber: currSlotNumber,
                     // Pass mission-related props
                     isMissionMode: shouldApplyMissionConstraints,
-                    missionStep: missionStepData,
+                    missionStep: currentTask,
                     getPrefilledValue: getPrefilledValue,
-                    isValueLocked: isValueLocked
+                    isValueLocked: isValueLocked,
+                    // Pass event dispatcher for components to use
+                    dispatchTaskEvent: dispatchTaskEvent,
                 })}
-              
             </div>
         );
     };
@@ -473,28 +485,31 @@ export const CommandPanel = ({
         <div className={styles.hubTopBackground}>
             {/* Add TaskInstructionPanel at the top if in mission mode */}
             {showTaskPanel && (
-                <TaskInstructionPanel 
+                <TaskInstructionPanel
                     task={currentTask}
                     taskIndex={currentTaskIndex}
                     isCompleted={isCurrentTaskCompleted}
                     onRequestHint={handleHintRequest}
                 />
             )}
-            
+
             {/* Type Selector (ACTION/SENSE) or Stop indicator for stop step */}
             {!isStopStep ? (
                 <TypeSelector
                     selectedType={selectedType}
                     onTypeChange={handleTypeSelect}
-                    disabled={shouldApplyMissionConstraints && missionStepData?.uiRestrictions?.hideTypeSelection}
+                    disabled={
+                        shouldApplyMissionConstraints &&
+                        !isComponentVisible("type-selector")
+                    }
                 />
             ) : (
                 <div className={styles.stopStepIndicator}>
                     <TypeSelector
-                    selectedType={selectedType}
-                    onTypeChange={handleTypeSelect}
-                    disabled={true} // Always disabled for stop step
-                />
+                        selectedType={selectedType}
+                        onTypeChange={handleTypeSelect}
+                        disabled={true} // Always disabled for stop step
+                    />
                     <FilledOctagon
                         size={80}
                         className={styles.stopIcon}
@@ -514,7 +529,10 @@ export const CommandPanel = ({
                                 selectedType={selectedType}
                                 selectedSubtype={selectedSubtype}
                                 onSubtypeSelect={handleSubtypeSelect}
-                                disabled={shouldApplyMissionConstraints && missionStepData?.uiRestrictions?.hideSubtypeSelection}
+                                disabled={
+                                    shouldApplyMissionConstraints &&
+                                    !isComponentVisible("subtype-selector")
+                                }
                             />
                         ) : (
                             renderDashboard()
@@ -531,7 +549,10 @@ export const CommandPanel = ({
                                 selectedType={selectedType}
                                 selectedSubtype={selectedSubtype}
                                 onSubtypeSelect={handleSubtypeSelect}
-                                disabled={shouldApplyMissionConstraints && missionStepData?.uiRestrictions?.hideSubtypeSelection}
+                                disabled={
+                                    shouldApplyMissionConstraints &&
+                                    !isComponentVisible("subtype-selector")
+                                }
                             />
                         )}
                     </div>
@@ -544,7 +565,7 @@ export const CommandPanel = ({
                 onPlayAudio={handlePlayAudio}
                 slotNumber={currSlotNumber}
                 // Add mission-specific instructions if available
-                missionInstructions={shouldApplyMissionConstraints ? missionStepData?.instructions : null}
+                missionInstructions={currentTask?.instructions}
             />
         </div>
     );

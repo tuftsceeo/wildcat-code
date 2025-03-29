@@ -2,8 +2,7 @@
  * @file CodeTrack.jsx
  * @description Main component for displaying the coding track with instructions,
  * including navigation controls and instruction visualization.
- * Updated to handle mission validation and show test prompts.
- * @author Jennifer Cross with support from Claude
+ * Updated to dispatch events for Task Registry Mission System.
  */
 
 import React, { useEffect } from "react";
@@ -43,55 +42,27 @@ const CodeTrack = ({
     setCanRun,
 }) => {
     // Get mission context
-    const { 
-        isMissionMode, 
-        currentMission, 
-        currentStepIndex, 
-        markStepTested, 
-        completeStep, 
+    const {
+        isMissionMode,
+        currentMission,
+        dispatchTaskEvent,
         validateStepConfiguration,
         getCurrentTask,
-        completeTask,
-        currentTaskIndex
+        setShowTestPrompt,
     } = useMission();
 
-    // Track previous slot for navigation task completion
-    const [prevSlotNumber, setPrevSlotNumber] = React.useState(currSlotNumber);
+    // Get current task if we're in mission mode
+    const currentTask = getCurrentTask();
 
-    // Check for navigation task completion when slot changes
-    useEffect(() => {
-        // Only check if we're in mission mode and slot actually changed
-        if (isMissionMode && currSlotNumber !== prevSlotNumber) {
-            const currentTask = getCurrentTask();
-            
-            // Check if current task is a navigation task
-            if (currentTask?.taskType === 'navigation') {
-                // Complete the navigation task
-                completeTask(currentTaskIndex, {
-                    targetSlot: currSlotNumber
-                });
-            }
-            
-            // Update previous slot
-            setPrevSlotNumber(currSlotNumber);
-        }
-    }, [currSlotNumber, isMissionMode, getCurrentTask, completeTask, currentTaskIndex, prevSlotNumber]);
-
-    // Ensure current slot is valid based on missionSteps
-    useEffect(() => {
-        // If currSlotNumber is beyond the valid range, reset it to the max allowed
-        // IMPORTANT: missionSteps is the COUNT, so max index is missionSteps-1
-        if (currSlotNumber >= missionSteps) {
-            setCurrSlotNumber(missionSteps - 1);
-        }
-    }, [currSlotNumber, missionSteps, setCurrSlotNumber]);
+    const FilledOctagon = (props) => {
+        return React.cloneElement(<Octagon />, {
+            fill: "currentColor",
+            ...props,
+        });
+    };
 
     // Get the current instruction from slotData
     const currentInstruction = slotData?.[currSlotNumber];
-
-    const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
-    };
 
     // Check if current slot is the stop step
     const isStopStep = currentInstruction?.isStopInstruction === true;
@@ -102,7 +73,18 @@ const CodeTrack = ({
      * Handle navigation to previous slot
      */
     const handlePrevious = () => {
-        setCurrSlotNumber(Math.max(0, currSlotNumber - 1));
+        const prevSlot = Math.max(0, currSlotNumber - 1);
+        setCurrSlotNumber(prevSlot);
+
+        // Dispatch navigation event for mission tracking
+        if (isMissionMode) {
+            dispatchTaskEvent("NAVIGATION", {
+                fromSlot: currSlotNumber,
+                toSlot: prevSlot,
+                direction: "previous",
+                currentSlot: prevSlot,
+            });
+        }
     };
 
     /**
@@ -112,27 +94,43 @@ const CodeTrack = ({
         // missionSteps is the COUNT, so max index is missionSteps-1
         const nextSlot = Math.min(currSlotNumber + 1, missionSteps - 1);
         setCurrSlotNumber(nextSlot);
+
+        // Dispatch navigation event for mission tracking
+        if (isMissionMode) {
+            dispatchTaskEvent("NAVIGATION", {
+                fromSlot: currSlotNumber,
+                toSlot: nextSlot,
+                direction: "next",
+                currentSlot: nextSlot,
+            });
+        }
     };
 
     /**
      * Check if the current instruction matches mission requirements
-     * 
+     *
      * @returns {Object} Validation result
      */
     const validateCurrentInstruction = () => {
-        // Only validate in mission mode and when on the current mission step
-        if (!isMissionMode || !currentMission || currSlotNumber !== currentStepIndex) {
+        // Only validate in mission mode and for the current task's target slot
+        if (!isMissionMode || !currentMission || !currentTask) {
             return { isValid: true };
         }
-        
+
+        // If task is for a different slot, don't validate
+        if (currentTask.targetSlot !== currSlotNumber) {
+            return { isValid: true };
+        }
+
         // If no instruction, it's not valid
         if (!currentInstruction || !currentInstruction.type) {
-            return { 
-                isValid: false, 
-                message: "Please configure this step according to the mission instructions."
+            return {
+                isValid: false,
+                message:
+                    "Please configure this step according to the mission instructions.",
             };
         }
-        
+
         // Validate against mission requirements
         return validateStepConfiguration(currentInstruction);
     };
@@ -162,21 +160,25 @@ const CodeTrack = ({
             }
 
             // In mission mode, validate the instruction against mission requirements
-            if (isMissionMode && currSlotNumber === currentStepIndex) {
+            if (isMissionMode && currentTask?.targetSlot === currSlotNumber) {
                 const validation = validateCurrentInstruction();
                 if (!validation.isValid) {
-                    console.warn("Instruction doesn't meet mission requirements:", validation.message);
+                    console.warn(
+                        "Instruction doesn't meet mission requirements:",
+                        validation.message,
+                    );
                     return;
                 }
-                
-                // Mark the step as tested
-                markStepTested(currentStepIndex);
-                
-                // If the step has a success message, mark it as completed
-                const missionStep = currentMission.steps[currentStepIndex];
-                if (missionStep.instructions?.successMessage) {
-                    completeStep(currentStepIndex, currentInstruction.configuration);
-                }
+
+                // Hide the test prompt if it's showing
+                setShowTestPrompt(false);
+
+                // Dispatch test event for mission tracking
+                dispatchTaskEvent("TEST_EXECUTED", {
+                    slotIndex: currSlotNumber,
+                    instruction: currentInstruction,
+                    currentSlot: currSlotNumber,
+                });
             }
 
             // Generate code specifically for this single instruction
@@ -247,7 +249,7 @@ const CodeTrack = ({
                     </button>
                 )}
 
-                {/* Navigation controls - now passing currentInstruction */}
+                {/* Navigation controls */}
                 <NavigationControls
                     currSlotNumber={currSlotNumber}
                     missionSteps={missionSteps}
@@ -256,7 +258,10 @@ const CodeTrack = ({
                     currentInstruction={currentInstruction}
                     // Pass mission validation for button state
                     validInMission={validateCurrentInstruction().isValid}
-                    isMissionMode={isMissionMode && currSlotNumber === currentStepIndex}
+                    isMissionMode={
+                        isMissionMode &&
+                        currentTask?.targetSlot === currSlotNumber
+                    }
                 />
             </div>
         </div>
