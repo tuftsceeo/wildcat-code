@@ -2,6 +2,7 @@
  * @file ButtonDash.jsx
  * @description Dashboard interface for configuring button instructions (force sensors)
  * with separate visualizations for programmed condition and live sensor state.
+ * Updated to work with Task Registry Mission System.
  */
 
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
@@ -24,6 +25,10 @@ import styles from "../styles/ButtonDash.module.css";
  * @param {Object} props.configuration - Current configuration for this button
  * @param {boolean} props.isDisconnected - Whether the button is disconnected
  * @param {Function} props.onDismiss - Callback to dismiss a disconnected button
+ * @param {boolean} props.showLabels - Whether to show labels
+ * @param {boolean} props.isMissionMode - Whether running in mission mode
+ * @param {Function} props.dispatchTaskEvent - Function to dispatch task events
+ * @param {number} props.currSlotNumber - Current active slot number
  * @returns {JSX.Element} Single button dashboard
  */
 const SingleButtonDash = memo(
@@ -34,6 +39,9 @@ const SingleButtonDash = memo(
         isDisconnected,
         onDismiss,
         showLabels = true,
+        isMissionMode = false,
+        dispatchTaskEvent = null,
+        currSlotNumber,
     }) => {
         // Initialize state from props or defaults
         const [waitCondition, setWaitCondition] = useState(
@@ -42,35 +50,55 @@ const SingleButtonDash = memo(
 
         // Get BLE context to access live button state
         const { portStates, DEVICE_TYPES } = useBLE();
-        
+
         // Use a ref to track if initial update was sent
         const initialUpdateSent = useRef(false);
 
         // Only update when configuration changes externally
         useEffect(() => {
-            if (configuration?.waitCondition !== undefined && 
-                configuration.waitCondition !== waitCondition) {
+            if (
+                configuration?.waitCondition !== undefined &&
+                configuration.waitCondition !== waitCondition
+            ) {
                 setWaitCondition(configuration.waitCondition);
             }
-            
+
             // Send initial configuration if needed
-            if (!initialUpdateSent.current && onUpdate && port && 
-                !configuration?.waitCondition) {
-                onUpdate({ port, waitCondition });
+            if (
+                !initialUpdateSent.current &&
+                onUpdate &&
+                port &&
+                !configuration?.waitCondition
+            ) {
+                const initialConfig = { port, waitCondition };
+                onUpdate(initialConfig);
                 initialUpdateSent.current = true;
             }
-        }, [configuration, waitCondition, port]);
+        }, [configuration, waitCondition, port, onUpdate]);
 
         /**
          * Handle changing the wait condition
          * Now calls onUpdate directly to avoid effect-based update loops
          */
         const handleWaitConditionChange = () => {
-            const newWaitCondition = waitCondition === "pressed" ? "released" : "pressed";
+            const newWaitCondition =
+                waitCondition === "pressed" ? "released" : "pressed";
             setWaitCondition(newWaitCondition);
-            
+
             if (onUpdate && port) {
-                onUpdate({ port, waitCondition: newWaitCondition });
+                const newConfig = { port, waitCondition: newWaitCondition };
+                onUpdate(newConfig);
+
+                // Dispatch button state changed event for mission tracking
+                if (isMissionMode && dispatchTaskEvent) {
+                    dispatchTaskEvent("BUTTON_STATE_CHANGED", {
+                        port,
+                        waitCondition: newWaitCondition,
+                        slotIndex: currSlotNumber,
+                        configuration: newConfig,
+                        currentSlot: currSlotNumber,
+                    });
+                }
             }
         };
 
@@ -214,6 +242,9 @@ const SingleButtonDash = memo(
  * @param {Function} props.onUpdate - Callback when configuration changes
  * @param {Object|Array} props.configuration - Current button configuration(s)
  * @param {Array} props.slotData - All slot data for finding configured buttons
+ * @param {number} props.currSlotNumber - Current slot number
+ * @param {boolean} props.isMissionMode - Whether running in mission mode
+ * @param {Function} props.dispatchTaskEvent - Function to dispatch task events
  * @returns {JSX.Element} Button dashboard component
  */
 export const ButtonDash = ({
@@ -221,6 +252,8 @@ export const ButtonDash = ({
     configuration,
     slotData,
     currSlotNumber,
+    isMissionMode = false,
+    dispatchTaskEvent = null,
 }) => {
     const { portStates, isConnected, DEVICE_TYPES } = useBLE();
     const [dismissedPorts, setDismissedPorts] = useState(new Set());
@@ -339,6 +372,17 @@ export const ButtonDash = ({
                     JSON.stringify(config),
                 );
                 onUpdate(config);
+
+                // Dispatch button configured event for mission tracking
+                if (isMissionMode && dispatchTaskEvent) {
+                    dispatchTaskEvent("BUTTON_CONFIGURED", {
+                        port,
+                        waitCondition: config.waitCondition,
+                        slotIndex: currSlotNumber,
+                        configuration: config,
+                        currentSlot: currSlotNumber,
+                    });
+                }
             } else {
                 console.log(
                     "ButtonDash: Calling onUpdate with null (no config)",
@@ -346,7 +390,13 @@ export const ButtonDash = ({
                 onUpdate(null);
             }
         },
-        [onUpdate, configuration],
+        [
+            onUpdate,
+            configuration,
+            isMissionMode,
+            dispatchTaskEvent,
+            currSlotNumber,
+        ],
     );
 
     // Handle dismissing a disconnected button
@@ -417,6 +467,9 @@ export const ButtonDash = ({
                                     : null
                             }
                             isDisconnected={false}
+                            isMissionMode={isMissionMode}
+                            dispatchTaskEvent={dispatchTaskEvent}
+                            currSlotNumber={currSlotNumber}
                         />
                     ))}
 
@@ -435,6 +488,9 @@ export const ButtonDash = ({
                             }
                             isDisconnected={true}
                             onDismiss={handleDismiss}
+                            isMissionMode={isMissionMode}
+                            dispatchTaskEvent={dispatchTaskEvent}
+                            currSlotNumber={currSlotNumber}
                         />
                     ))}
                 </>
