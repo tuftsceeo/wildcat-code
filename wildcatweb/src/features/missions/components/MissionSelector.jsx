@@ -1,22 +1,13 @@
 /**
  * @file MissionSelector.jsx
- * @description Component for selecting missions or switching to sandbox mode.
- * Redesigned with side-by-side options and minimal text for users with reading challenges.
- * Includes reset functionality to clear saved progress and slot configurations.
+ * @description Component for selecting missions or switching to sandbox mode
+ * with error handling for empty mission lists
  */
 
 import React, { useState, useEffect } from "react";
 import { useMission } from "../../../context/MissionContext.js";
 import Portal from "../../../common/components/Portal.js";
-import { 
-  Rocket, 
-  Play, 
-  Gamepad2, 
-  ChevronLeft, 
-  ChevronRight, 
-  AlertTriangle,
-  RefreshCw 
-} from "lucide-react";
+import { Rocket, Play, Gamepad2, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
 import styles from "../styles/MissionSelector.module.css";
 
 /**
@@ -33,45 +24,35 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
   const { 
     availableMissions, 
     startMission, 
+    isMissionMode, 
     setIsMissionMode,
-    validateHardwareRequirements,
-    exitMission, // Added for reset functionality
-    clearAllProgress // Added for reset functionality 
+    validateHardwareRequirements 
   } = useMission();
   
   const [selectedMissionIndex, setSelectedMissionIndex] = useState(0);
   const [showHardwareWarning, setShowHardwareWarning] = useState(false);
   const [missingHardware, setMissingHardware] = useState([]);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [resetType, setResetType] = useState(null); // 'sandbox' or 'mission'
-  
-  // Check if there's saved data to clear
-  const [hasSandboxData, setHasSandboxData] = useState(false);
-  const [hasMissionData, setHasMissionData] = useState(false);
-  
-  // Check for saved data on component mount
-  useEffect(() => {
-    try {
-      // Check for slot configurations
-      const slotData = localStorage.getItem("slotData");
-      setHasSandboxData(!!slotData);
-      
-      // Check for mission progress
-      const missionProgress = localStorage.getItem("missionProgress");
-      setHasMissionData(!!missionProgress);
-    } catch (error) {
-      console.error("Error checking for saved data:", error);
-    }
-  }, []);
 
+  // Handle case where availableMissions is empty or undefined
+  const hasMissions = availableMissions && availableMissions.length > 0;
+  
   // Get the currently selected mission
-  const selectedMission = availableMissions[selectedMissionIndex];
+  const selectedMission = hasMissions ? availableMissions[selectedMissionIndex] : null;
+
+  // Reset selectedMissionIndex when availableMissions changes
+  useEffect(() => {
+    if (hasMissions && selectedMissionIndex >= availableMissions.length) {
+      setSelectedMissionIndex(0);
+    }
+  }, [availableMissions, selectedMissionIndex, hasMissions]);
 
   /**
    * Handle starting a mission
    * Validates hardware requirements before starting
    */
   const handleStartMission = () => {
+    if (!selectedMission) return;
+    
     // Validate hardware requirements
     const { isValid, missingHardware: missing } = validateHardwareRequirements();
     
@@ -98,6 +79,8 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
    * Navigate to the previous mission
    */
   const handlePrevMission = () => {
+    if (!hasMissions) return;
+    
     setSelectedMissionIndex(prev => 
       prev === 0 ? availableMissions.length - 1 : prev - 1
     );
@@ -107,6 +90,8 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
    * Navigate to the next mission
    */
   const handleNextMission = () => {
+    if (!hasMissions) return;
+    
     setSelectedMissionIndex(prev => 
       prev === availableMissions.length - 1 ? 0 : prev + 1
     );
@@ -116,72 +101,11 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
    * Dismiss hardware warning and continue with mission
    */
   const handleContinueAnyway = () => {
+    if (!selectedMission) return;
+    
     setShowHardwareWarning(false);
     startMission(selectedMission.missionId);
     onClose();
-  };
-  
-  /**
-   * Handle reset of mission progress or sandbox
-   * 
-   * @param {string} type - 'mission' or 'sandbox'
-   */
-  const handleResetProgress = (type) => {
-    setResetType(type);
-    setShowResetConfirm(true);
-  };
-  
-  /**
-   * Confirm reset and clear all progress
-   */
-  const confirmReset = () => {
-    if (resetType === 'mission') {
-      // Clear only mission progress
-      try {
-        localStorage.removeItem("missionMode");
-        localStorage.removeItem("missionProgress");
-        localStorage.removeItem("missionTaskProgress");
-        localStorage.removeItem("missionSlotConfigurations");
-        
-        // Update state
-        setHasMissionData(false);
-        
-        // Play feedback sound
-        const audio = new Audio('/assets/sounds/reset-sound.mp3');
-        audio.play().catch(error => {
-          console.error('Error playing reset sound:', error);
-        });
-      } catch (error) {
-        console.error("Error clearing mission progress:", error);
-      }
-    } else if (resetType === 'sandbox') {
-      // Clear only sandbox data
-      try {
-        localStorage.removeItem("slotData");
-        
-        // Update state
-        setHasSandboxData(false);
-        
-        // Play feedback sound
-        const audio = new Audio('/assets/sounds/reset-sound.mp3');
-        audio.play().catch(error => {
-          console.error('Error playing reset sound:', error);
-        });
-      } catch (error) {
-        console.error("Error clearing sandbox data:", error);
-      }
-    }
-    
-    // Close confirmation dialog
-    setShowResetConfirm(false);
-  };
-  
-  /**
-   * Cancel reset operation
-   */
-  const cancelReset = () => {
-    setShowResetConfirm(false);
-    setResetType(null);
   };
 
   // If the selector is not open, don't render anything
@@ -193,10 +117,10 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
     <Portal>
       <div className={styles.overlay}>
         <div className={styles.missionSelector}>
-          {/* Simple header with title */}
+          {/* Title and header */}
           <div className={styles.header}>
             <h2 className={styles.title}>
-              {initialSetup ? "CHOOSE YOUR MODE" : "SELECT MISSION"}
+              {initialSetup ? "Choose Your Mode" : "Select Mission"}
             </h2>
             {!initialSetup && (
               <button 
@@ -209,91 +133,44 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
             )}
           </div>
 
-          {/* Main content - options side by side */}
+          {/* Main content */}
           <div className={styles.content}>
+            {/* Sandbox mode option */}
             {initialSetup && (
-              <div className={styles.sideByOptions}>
-                {/* Sandbox option */}
-                <div className={styles.modeCard}>
-                  <div className={styles.modeIconLarge}>
-                    <Gamepad2 size={64} />
-                  </div>
-                  <h3 className={styles.modeTitle}>Sandbox Mode</h3>
+              <div className={styles.modeSelection}>
+                <div className={styles.modeOption}>
+                  <Gamepad2 size={48} className={styles.modeIcon} />
+                  <h3>Sandbox Mode</h3>
+                  <p>Create your own programs with full freedom.</p>
                   <button 
                     className={styles.modeButton} 
                     onClick={handleSandboxMode}
                   >
                     <Play size={20} />
-                    Start
+                    Start Sandbox
                   </button>
-                  
-                  {/* Show reset button only if there's sandbox data */}
-                  {hasSandboxData && (
-                    <button 
-                      className={styles.resetOptionButton} 
-                      onClick={() => handleResetProgress('sandbox')}
-                    >
-                      <RefreshCw size={16} className={styles.resetIcon} />
-                      <span>Reset Sandbox</span>
-                    </button>
-                  )}
                 </div>
 
-                {/* Mission option */}
-                <div className={styles.modeCard}>
-                  <div className={styles.modeIconLarge}>
-                    <Rocket size={64} />
-                  </div>
-                  <h3 className={styles.modeTitle}>Missions</h3>
-                  {/* Render mission with thumbnail */}
-                  <div className={styles.missionPreview}>
-                    {selectedMission.assets?.thumbnail ? (
-                      <img 
-                        src={selectedMission.assets.thumbnail} 
-                        alt="" 
-                        className={styles.missionImage}
-                      />
-                    ) : (
-                      <div className={styles.missionImage}>
-                        <Rocket size={32} />
-                      </div>
-                    )}
-                  </div>
-                  <button 
-                    className={styles.modeButton} 
-                    onClick={handleStartMission}
-                  >
-                    <Play size={20} />
-                    Start
-                  </button>
-                  
-                  {/* Show reset button only if there's mission data */}
-                  {hasMissionData && (
-                    <button 
-                      className={styles.resetOptionButton} 
-                      onClick={() => handleResetProgress('mission')}
-                    >
-                      <RefreshCw size={16} className={styles.resetIcon} />
-                      <span>Reset Progress</span>
-                    </button>
-                  )}
+                <div className={styles.separator}>
+                  <span>OR</span>
                 </div>
               </div>
             )}
 
-            {/* Mission selector for non-setup mode */}
-            {!initialSetup && (
-              <div className={styles.missionContainer}>
-                {/* Navigation buttons */}
-                <button 
-                  className={`${styles.navButton} ${styles.prevButton}`}
-                  onClick={handlePrevMission}
-                  aria-label="Previous mission"
-                >
-                  <ChevronLeft size={24} />
-                </button>
+            {/* Mission selection */}
+            <div className={styles.missionContainer}>
+              {/* Navigation buttons */}
+              <button 
+                className={`${styles.navButton} ${styles.prevButton}`}
+                onClick={handlePrevMission}
+                aria-label="Previous mission"
+                disabled={!hasMissions}
+              >
+                <ChevronLeft size={24} />
+              </button>
 
-                {/* Mission card with visual emphasis */}
+              {/* Mission card */}
+              {selectedMission ? (
                 <div className={styles.missionCard}>
                   <div className={styles.missionHeader}>
                     <Rocket size={24} className={styles.missionIcon} />
@@ -314,17 +191,19 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                   </div>
 
                   <div className={styles.missionInfo}>
-                    {/* Minimal text - just key information with visual indicators */}
-                    <div className={styles.missionMetadata}>
-                      <div className={styles.missionDifficulty}>
-                        <span className={styles.difficultyValue}>
-                          {selectedMission.difficultyLevel}
-                        </span>
+                    <p className={styles.missionDescription}>
+                      {selectedMission.description}
+                    </p>
+                    
+                    <div className={styles.missionDetails}>
+                      <div className={styles.missionDetail}>
+                        <span className={styles.detailLabel}>Difficulty:</span>
+                        <span className={styles.detailValue}>{selectedMission.difficultyLevel}</span>
                       </div>
-                      <div className={styles.missionSteps}>
-                        <span className={styles.stepsValue}>
-                          {selectedMission.totalMissionSteps} Steps
-                        </span>
+                      
+                      <div className={styles.missionDetail}>
+                        <span className={styles.detailLabel}>Steps:</span>
+                        <span className={styles.detailValue}>{selectedMission.totalSteps || 0}</span>
                       </div>
                     </div>
                   </div>
@@ -336,33 +215,33 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                     <Play size={20} />
                     Start Mission
                   </button>
-                  
-                  {/* Show reset button only if there's mission data */}
-                  {hasMissionData && (
-                    <button 
-                      className={styles.resetMissionButton} 
-                      onClick={() => handleResetProgress('mission')}
-                    >
-                      <RefreshCw size={16} className={styles.resetIcon} />
-                      Reset Progress
-                    </button>
-                  )}
                 </div>
+              ) : (
+                <div className={styles.noMissionsCard}>
+                  <div className={styles.noMissionsIcon}>
+                    <Rocket size={48} />
+                  </div>
+                  <h3 className={styles.noMissionsTitle}>No Missions Available</h3>
+                  <p className={styles.noMissionsText}>
+                    No missions are currently available. Try sandbox mode instead.
+                  </p>
+                </div>
+              )}
 
-                <button 
-                  className={`${styles.navButton} ${styles.nextButton}`}
-                  onClick={handleNextMission}
-                  aria-label="Next mission"
-                >
-                  <ChevronRight size={24} />
-                </button>
-              </div>
-            )}
+              <button 
+                className={`${styles.navButton} ${styles.nextButton}`}
+                onClick={handleNextMission}
+                aria-label="Next mission"
+                disabled={!hasMissions}
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
           </div>
 
           {/* Mission count indicator */}
-          <div className={styles.missionIndicator}>
-            <div className={styles.dotContainer}>
+          {hasMissions && (
+            <div className={styles.missionIndicator}>
               {availableMissions.map((_, index) => (
                 <div 
                   key={index} 
@@ -373,9 +252,9 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                 />
               ))}
             </div>
-          </div>
+          )}
 
-          {/* Sandbox option for non-setup mode */}
+          {/* Sandbox option when not in setup mode */}
           {!initialSetup && (
             <div className={styles.sandboxOption}>
               <button 
@@ -385,17 +264,6 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                 <Gamepad2 size={16} />
                 Switch to Sandbox Mode
               </button>
-              
-              {/* Show reset button only if there's sandbox data */}
-              {hasSandboxData && (
-                <button 
-                  className={styles.resetSandboxButton} 
-                  onClick={() => handleResetProgress('sandbox')}
-                >
-                  <RefreshCw size={16} className={styles.resetIcon} />
-                  Reset Sandbox
-                </button>
-              )}
             </div>
           )}
         </div>
@@ -408,11 +276,15 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
               
               <h3 className={styles.warningTitle}>Missing Hardware</h3>
               
+              <p className={styles.warningText}>
+                This mission requires the following hardware that isn't connected:
+              </p>
+              
               <ul className={styles.hardwareList}>
                 {missingHardware.map((item, index) => (
                   <li key={index} className={styles.hardwareItem}>
                     {item === "motor" ? "Motor" : ""}
-                    {item === "button" ? "Button" : ""}
+                    {item === "button" ? "Force Sensor/Button" : ""}
                   </li>
                 ))}
               </ul>
@@ -429,42 +301,7 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                   className={styles.continueButton} 
                   onClick={handleContinueAnyway}
                 >
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Reset confirmation modal */}
-        {showResetConfirm && (
-          <div className={styles.warningModal}>
-            <div className={styles.resetContent}>
-              <RefreshCw size={48} className={styles.resetDialogIcon} />
-              
-              <h3 className={styles.resetTitle}>
-                {resetType === 'mission' ? 'Reset Mission Progress?' : 'Reset Sandbox Data?'}
-              </h3>
-              
-              <p className={styles.resetMessage}>
-                {resetType === 'mission' 
-                  ? 'This will delete all saved mission progress.'
-                  : 'This will delete all saved sandbox code.'}
-              </p>
-              
-              <div className={styles.resetButtons}>
-                <button 
-                  className={styles.cancelButton} 
-                  onClick={cancelReset}
-                >
-                  Cancel
-                </button>
-                
-                <button 
-                  className={styles.resetConfirmButton} 
-                  onClick={confirmReset}
-                >
-                  Reset
+                  Continue Anyway
                 </button>
               </div>
             </div>

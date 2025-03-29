@@ -17,7 +17,7 @@ import {
     Volume,
     Timer,
     Clock9,
-    Octagon,
+    CircleStop,
     ArchiveRestore,
 } from "lucide-react";
 
@@ -33,8 +33,8 @@ import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 import { useMission } from "../../../context/MissionContext.js";
 
-const FilledOctagon = (props) => {
-    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+const FilledCircleStop = (props) => {
+    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
 };
 
 // Define the control types and their configurations
@@ -73,7 +73,7 @@ const CONTROL_TYPES = {
         stop: {
             name: "Stop",
             component: null,
-            icon: <FilledOctagon size={32} />,
+            icon: <CircleStop size={32} />,
         },
     },
 };
@@ -119,6 +119,7 @@ export const CommandPanel = ({
         getCurrentTask,
         isTaskCompleted,
         requestHint,
+        completeTask,
     } = useMission();
 
     // Get current task for the mission
@@ -264,6 +265,18 @@ export const CommandPanel = ({
                         );
                         // We could add UI feedback here about the invalid configuration
                         // For now, we'll still allow it but could restrict it if needed
+                    } else if (currentTask?.type === "MOTOR_CONFIGURATION") {
+                        // Complete the task if it's a motor configuration task and the configuration is valid
+                        console.log("CommandPanel: Motor configuration meets requirements, completing task");
+                        completeTask(currentTaskIndex, {
+                            configuration: instruction.configuration
+                        });
+                    } else if (currentTask?.type === "TIMER_SETTING") {
+                        // Complete the task if it's a timer setting task and the configuration is valid
+                        console.log("CommandPanel: Timer configuration meets requirements, completing task");
+                        completeTask(currentTaskIndex, {
+                            configuration: instruction.configuration
+                        });
                     }
                 }
 
@@ -313,6 +326,8 @@ export const CommandPanel = ({
         setShowTestPrompt,
         isMissionMode,
         dispatchTaskEvent,
+        completeTask,
+        currentTaskIndex,
     ]);
 
     // Handle updates from the dashboard components
@@ -368,6 +383,14 @@ export const CommandPanel = ({
                         currentSlot: currSlotNumber,
                     },
                 );
+
+                // Complete the SELECT_INPUT_TYPE task if the user clicked SENSE
+                if (currentTask?.type === "SELECT_INPUT_TYPE" && type === "input") {
+                    console.log("CommandPanel: Input type selected, completing task");
+                    completeTask(currentTaskIndex, {
+                        selectedType: type
+                    });
+                }
             }
         }
     };
@@ -511,7 +534,7 @@ export const CommandPanel = ({
                         onTypeChange={handleTypeSelect}
                         disabled={true} // Always disabled for stop step
                     />
-                    <FilledOctagon
+                    <CircleStop
                         size={80}
                         className={styles.stopIcon}
                     />

@@ -385,7 +385,7 @@ Each mission should clearly separate introduction phases from guided tasks:
       type: TASK_TYPES.MOTOR_CONFIGURATION,
       phase: MISSION_PHASES.GUIDED_TASKS,
       // Task data
-      targetElement: ".forwardBar", // Visual hint target
+      targetElement: ".clockwiseBar", // Visual hint target
       hintAnimation: "pulse" // Animation type
     },
     // More guided tasks...
@@ -422,7 +422,7 @@ const motorConfigurationHandler = {
   // Other methods...
   
   getHint: (task) => ({
-    selector: ".forwardBar", // CSS selector for target element
+    selector: ".clockwiseBar", // CSS selector for target element
     animation: "pulse", // Animation type
     effect: "highlight" // Visual effect
   })

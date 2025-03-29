@@ -19,8 +19,8 @@ import {
 } from "../../../features/bluetooth/ble_resources/messages";
 import {
     AlertTriangle,
-    AlertOctagon,
-    Octagon,
+    AlertCircleStop,
+    CircleStop,
     HelpCircle,
     RotateCw,
     Clock9,
@@ -29,8 +29,8 @@ import {
     Timer,
 } from "lucide-react";
 
-const FilledOctagon = (props) => {
-    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+const FilledCircleStop = (props) => {
+    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
 };
 
 /**
@@ -57,7 +57,7 @@ const INSTRUCTION_DISPLAY = {
     special: {
         stop: {
             name: "Stop",
-            icon: <FilledOctagon size={24} />,
+            icon: <CircleStop size={24} />,
         },
     },
 };
@@ -183,7 +183,7 @@ export const RunMenu = ({
             return {
                 name: "Stop",
                 icon: (
-                    <FilledOctagon
+                    <CircleStop
                         size={24}
                         className={styles.commandIcon}
                     />
@@ -452,7 +452,7 @@ export const RunMenu = ({
                 aria-current={currSlotNumber === stopStepIndex ? "step" : false}
             >
                 <span className={styles.stepName}>Stop</span>
-                <FilledOctagon
+                <CircleStop
                     size={24}
                     className={styles.stopIcon}
                 />

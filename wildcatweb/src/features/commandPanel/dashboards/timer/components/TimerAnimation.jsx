@@ -68,6 +68,8 @@ const TimerAnimation = ({ seconds = 3, active = true }) => {
     
     return (
         <div className={styles.timerVisualization}>
+
+        <div className={styles.timerTitle}>WAIT</div>
             {/* Time display */}
             <div className={styles.timerValue}>
                 <Timer className={styles.timerIcon} />

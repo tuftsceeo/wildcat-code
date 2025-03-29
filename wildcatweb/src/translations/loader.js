@@ -121,7 +121,7 @@ export function getTranslatedText(
     // Replace placeholders with values
     let result = template;
     Object.entries(replacements).forEach(([placeholder, value]) => {
-        // Handle translation of common values (like 'slow', 'forward', etc.)
+        // Handle translation of common values (like 'slow', 'clockwise', etc.)
         if (typeof value === "string" && translations.ui[value]) {
             result = result.replace(`{${placeholder}}`, translations.ui[value]);
         } else {

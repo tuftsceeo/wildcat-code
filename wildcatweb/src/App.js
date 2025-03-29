@@ -86,25 +86,11 @@ function AppContent() {
     
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
-    const [currSlotNumber, setCurrSlotNumber] = useState(0);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
-    // Log when missionSteps change for debugging
-    useEffect(() => {
-        console.log("App.js: missionSteps changed to", missionSteps);
-    }, [missionSteps]);
-
-    // Check if this is the first app launch
-    useEffect(() => {
-        // Check localStorage for a first launch flag
-        const hasLaunched = localStorage.getItem("hasLaunched");
-        if (!hasLaunched) {
-            setIsFirstLaunch(true);
-            // Set the flag for future launches
-            localStorage.setItem("hasLaunched", "true");
-        }
-    }, []);
+    // Get currSlotNumber from MissionContext
+    const { currSlotNumber, setCurrSlotNumber } = useMission();
 
     // Define interface for slot data
     const createEmptySlot = () => ({
@@ -124,82 +110,45 @@ function AppContent() {
         isStopInstruction: true, // Flag to identify this as a stop instruction
     });
 
-    // Initialize slot data array with empty slots
-    // Use a default of 3 if missionSteps is undefined
-    const [slotData, setSlotData] = useState(
-        Array(missionSteps || 3)
-            .fill(null)
-            .map((_, index) => {
-                // Make the last slot a stop instruction
-                if (index === (missionSteps || 3) - 1) {
-                    return createStopInstruction();
-                }
-                return createEmptySlot();
-            }),
-    );
-
-    // Update slotData when missionSteps changes
-    useEffect(() => {
-        // Guard against undefined missionSteps
-        if (!missionSteps) {
-            console.warn("App.js: missionSteps is undefined, using default value");
-            return;
+    // Initialize slot data with empty slots
+    const [slotData, setSlotData] = useState(() => {
+        const slots = [];
+        for (let i = 0; i < missionSteps; i++) {
+            slots.push(createEmptySlot());
         }
+        slots.push(createStopInstruction());
+        return slots;
+    });
 
-        console.log(
-            "App.js: Updating slotData based on missionSteps",
-            missionSteps
-        );
-        
-        setSlotData((prev) => {
-            // Only update if the length needs to change
-            if (prev.length !== missionSteps) {
-                console.log(
-                    "App.js: Adjusting slotData length from",
-                    prev.length,
-                    "to",
-                    missionSteps
-                );
-
-                // If expanding, add new empty slots
-                if (prev.length < missionSteps) {
-                    // Keep all existing slots except the last one (which may be the stop instruction)
-                    const regularSlots = prev.slice(0, prev.length - 1);
-
-                    // Calculate how many new empty slots to add
-                    const additionalSlotsCount = missionSteps - prev.length;
-
-                    // Create new empty slots
-                    const additionalSlots = Array(additionalSlotsCount)
-                        .fill(null)
-                        .map(() => createEmptySlot());
-
-                    // Add a stop instruction at the end
-                    return [
-                        ...regularSlots,
-                        ...additionalSlots,
-                        createStopInstruction(),
-                    ];
-                }
-
-                // If contracting, trim the array but preserve the stop instruction
-                // Get all slots up to the new length minus 1 (to leave room for stop)
-                const trimmedSlots = prev.slice(0, missionSteps - 1);
-
-                // Add the stop instruction at the end
-                return [...trimmedSlots, createStopInstruction()];
-            }
-
-            // Ensure the last slot is always the stop instruction
-            const result = [...prev];
-            if (!result[result.length - 1]?.isStopInstruction) {
-                result[result.length - 1] = createStopInstruction();
-            }
-
-            // Length is already correct
-            return result;
-        });
+    // Log when missionSteps change for debugging
+    useEffect(() => {
+        console.log("App.js: missionSteps changed to", missionSteps);
     }, [missionSteps]);
+
+    // Listen for slot data updates from mission context
+    useEffect(() => {
+        const handleSlotDataUpdate = (event) => {
+            const { slotData: newSlotData } = event.detail;
+            console.log("App.js: Received slot data update:", newSlotData);
+            setSlotData(newSlotData);
+        };
+
+        window.addEventListener('updateSlotData', handleSlotDataUpdate);
+        return () => {
+            window.removeEventListener('updateSlotData', handleSlotDataUpdate);
+        };
+    }, []);
+
+    // Check if this is the first app launch
+    useEffect(() => {
+        // Check localStorage for a first launch flag
+        const hasLaunched = localStorage.getItem("hasLaunched");
+        if (!hasLaunched) {
+            setIsFirstLaunch(true);
+            // Set the flag for future launches
+            localStorage.setItem("hasLaunched", "true");
+        }
+    }, []);
 
     // Update Python code whenever slot data changes
     useEffect(() => {

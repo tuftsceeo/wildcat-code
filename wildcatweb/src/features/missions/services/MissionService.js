@@ -57,10 +57,10 @@ const DEFAULT_MISSIONS = [
         type: "MOTOR_CONFIGURATION",
         targetSlot: 0,
         speedRange: [300, 1000],
-        direction: "forward",
-        instruction: "Make your motor spin forward",
+        direction: "clockwise",
+        instruction: "Make your motor spin clockwise",
         stepTitle: "Set Motor Speed",
-        targetElement: ".forwardBar",
+        targetElement: ".clockwiseBar",
         // Will check against the detected port from hardware setup
         validatePort: true
       },

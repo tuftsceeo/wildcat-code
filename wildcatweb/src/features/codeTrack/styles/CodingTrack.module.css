@@ -194,6 +194,15 @@
     color: var(--text-default);
 }
 
+
+.timerTitle {
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    text-transform: uppercase;
+    margin-bottom: 0;
+    font-family: var(--font-family-active);
+}
+
 .timerIcon {
     width: 36px;
     height: 36px;
@@ -619,22 +628,22 @@
 }
 
 .arrowUp {
-    border-bottom: 15px solid var(--color-motor-backward);
+    border-bottom: 15px solid var(--color-motor-countercw);
     border-top: 0;
 }
 
 .arrowDown {
-    border-top: 15px solid var(--color-motor-forward);
+    border-top: 15px solid var(--color-motor-clockwise);
     border-bottom: 0;
 }
 
 .arrowUpSmall {
-    border-bottom: 7px solid var(--color-motor-backward);
+    border-bottom: 7px solid var(--color-motor-countercw);
     border-top: 0;
 }
 
 .arrowDownSmall {
-    border-top: 7px solid var(--color-motor-forward);
+    border-top: 7px solid var(--color-motor-clockwise);
     border-bottom: 0;
 }
 

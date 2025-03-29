@@ -48,12 +48,12 @@
     transition: all 0.3s ease;
 }
 
-.backwardBar {
-    background-color: var(--color-warning-main); /* Yellow for backward */
+.countercwBar {
+    background-color: var(--color-warning-main); /* Yellow for countercw */
 }
 
-.forwardBar {
-    background-color: var(--color-motor-main); /* Green for forward */
+.clockwiseBar {
+    background-color: var(--color-motor-main); /* Green for clockwise */
 }
 
 .bar.active {

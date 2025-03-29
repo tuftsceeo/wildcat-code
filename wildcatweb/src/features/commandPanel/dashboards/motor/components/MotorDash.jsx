@@ -18,15 +18,15 @@ import {
     RefreshCwOff,
     Rabbit,
     Turtle,
-    Octagon,
+    CircleStop,
     MoveLeft,
     MoveRight,
 } from "lucide-react";
 import DashMotorAnimation from "./DashMotorAnimation";
 
 
-const FilledOctagon = (props) => {
-  return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+const FilledCircleStop = (props) => {
+  return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
 };
 
 /**
@@ -122,15 +122,15 @@ const SingleMotorDash = memo(
                     }
                 }
 
-                // Keep the visual appearance of forward/backward the same
-                const isForward = index > 3; // Right side is still visually forward
+                // Keep the visual appearance of clockwise/countercw the same
+                const isClockwise = index > 3; // Right side is still visually clockwise
                 const isVisible = index !== 3;
 
                 return {
                     index,
                     height: actualHeight,
                     isActive,
-                    isForward,
+                    isClockwise,
                     isVisible,
                 };
             });
@@ -190,9 +190,9 @@ const SingleMotorDash = memo(
                         size={20}
                     />
                 ),
-                label: "Fast Backward",
+                label: "Fast Counterclockwise",
             },
-            { icon: <MoveLeft size={20} />, label: "Medium Backward" },
+            { icon: <MoveLeft size={20} />, label: "Medium Counterclockwise" },
             {
                 icon: (
                     <Turtle
@@ -200,12 +200,12 @@ const SingleMotorDash = memo(
                         size={20}
                     />
                 ),
-                label: "Slow Backward",
+                label: "Slow Counterclockwise",
             },
-            { icon: <FilledOctagon size={16} />, label: "Stop" },
-            { icon: <Turtle size={20} />, label: "Slow Forward" },
-            { icon: <MoveRight size={20} />, label: "Medium Forward" },
-            { icon: <Rabbit size={20} />, label: "Fast Forward" },
+            { icon: <CircleStop size={16} />, label: "Stop" },
+            { icon: <Turtle size={20} />, label: "Slow Clockwise" },
+            { icon: <MoveRight size={20} />, label: "Medium Clockwise" },
+            { icon: <Rabbit size={20} />, label: "Fast Clockwise" },
         ];
 
         return (
@@ -253,9 +253,9 @@ const SingleMotorDash = memo(
                                 ${
                                     bar.isVisible
                                         ? `${
-                                              bar.isForward
-                                                  ? styles.forwardBar
-                                                  : styles.backwardBar
+                                              bar.isClockwise
+                                                  ? styles.clockwiseBar
+                                                  : styles.countercwBar
                                           }`
                                         : styles.stopBar
                                 } 
@@ -386,7 +386,7 @@ export const MotorDash = ({
 
             // Only update if we have at least one configuration
             if (currentConfigs.length > 0) {
-                // If there's only one config, don't wrap in array to maintain backward compatibility
+                // If there's only one config, don't wrap in array to maintain countercw compatibility
                 if (currentConfigs.length === 1) {
                     onUpdate(currentConfigs[0]);
                 } else {

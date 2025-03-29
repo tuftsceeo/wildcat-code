@@ -316,7 +316,7 @@ const motorConfigurationHandler = {
 
       // Check direction if specified
       if (direction) {
-        const currentDirection = speed >= 0 ? "forward" : "backward";
+        const currentDirection = speed >= 0 ? "clockwise" : "countercw";
         if (direction !== currentDirection) {
           return false;
         }
@@ -339,15 +339,15 @@ const motorConfigurationHandler = {
   getHint: (task) => {
     const { direction } = task;
 
-    if (direction === "forward") {
+    if (direction === "clockwise") {
       return {
-        selector: ".forwardBar",
+        selector: ".clockwiseBar",
         animation: "pulse",
         effect: "highlight"
       };
-    } else if (direction === "backward") {
+    } else if (direction === "countercw") {
       return {
-        selector: ".backwardBar",
+        selector: ".countercwBar",
         animation: "pulse",
         effect: "highlight"
       };

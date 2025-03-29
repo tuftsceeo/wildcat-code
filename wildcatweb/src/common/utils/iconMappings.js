@@ -6,12 +6,12 @@
 
 import React from 'react';
 import {
-  RefreshCw,         // For forward rotation
-  RefreshCcw,        // For backward rotation
+  RefreshCw,         // For clockwise rotation
+  RefreshCcw,        // For countercw rotation
   Rabbit,            // For fast speed
   Turtle,            // For slow speed
   ChevronRight,      // For medium speed
-  Octagon,           // For stop
+  CircleStop,           // For stop
   MousePointerClick, // For pressed
   Ban,               // For released
   Timer,        // For wait/timer operations
@@ -23,7 +23,7 @@ import {
 /**
  * Get the appropriate icon component for a concept
  * 
- * @param {string} concept - The concept to get an icon for (e.g., 'forward', 'slow')
+ * @param {string} concept - The concept to get an icon for (e.g., 'clockwise', 'slow')
  * @param {Object} props - Props to pass to the icon component
  * @returns {JSX.Element|null} - The icon component or null if no matching icon
  */
@@ -53,8 +53,8 @@ export function getIconForConcept(concept, props = {}) {
     );
   }
   
-  const FilledOctagon = (props) => {
-    return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+  const FilledCircleStop = (props) => {
+    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
   };
 
   const lowerConcept = concept.toLowerCase();
@@ -62,11 +62,11 @@ export function getIconForConcept(concept, props = {}) {
   // Map concepts to appropriate Lucide icons
   switch (lowerConcept) {
     // Direction icons
-    case 'forward':
+    case 'clockwise':
     case 'clockwise':
     case 'horario':
       return <RefreshCw {...props} />;
-    case 'backward':
+    case 'countercw':
     case 'counterclockwise':
     case 'antihorario':
       return <RefreshCcw {...props} />;
@@ -83,7 +83,7 @@ export function getIconForConcept(concept, props = {}) {
     case 'stopped':
     case 'parado':
     case 'para':
-      return <FilledOctagon color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
+      return <CircleStop color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
     
     // Button state icons
     case 'pressed':
@@ -165,8 +165,8 @@ export function segmentDescriptionText(text, includeBreaks = false) {
     let numberValue = null;
     
     // Direction words
-    if (lowerWord === 'forward' || lowerWord === 'clockwise' || lowerWord === 'horario') iconType = 'forward';
-    else if (lowerWord === 'backward' || lowerWord === 'counterclockwise' || lowerWord === 'antihorario') iconType = 'backward';
+    if (lowerWord === 'clockwise' || lowerWord === 'clockwise' || lowerWord === 'horario') iconType = 'clockwise';
+    else if (lowerWord === 'countercw' || lowerWord === 'counterclockwise' || lowerWord === 'antihorario') iconType = 'countercw';
     
     // Speed words
     else if (lowerWord === 'fast') iconType = 'fast';

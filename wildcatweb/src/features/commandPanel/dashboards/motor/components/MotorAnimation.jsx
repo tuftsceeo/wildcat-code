@@ -48,7 +48,7 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
 
     // Set direction and animation properties
     const animationDuration = getAnimationDuration();
-    const isClockwise = direction === "forward";
+    const isClockwise = direction === "clockwise";
 
     // Don't animate if speed is 0 or component is inactive
     const shouldAnimate = active && validatedSpeed !== 0;
@@ -87,7 +87,7 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
                     cy="50"
                     r="46"
                     fill="none"
-                    stroke="var(--color-motor-forward)"
+                    stroke="var(--color-motor-clockwise)"
                     strokeWidth="var(--border-width-thick)"
                 />
             </svg>
@@ -103,25 +103,25 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
                     cx="50"
                     cy="25"
                     r="8"
-                    fill="var(--color-motor-forward)"
+                    fill="var(--color-motor-clockwise)"
                 />
                 <circle
                     cx="75"
                     cy="50"
                     r="8"
-                    fill="var(--color-motor-forward)"
+                    fill="var(--color-motor-clockwise)"
                 />
                 <circle
                     cx="50"
                     cy="75"
                     r="8"
-                    fill="var(--color-motor-forward)"
+                    fill="var(--color-motor-clockwise)"
                 />
                 <circle
                     cx="25"
                     cy="50"
                     r="8"
-                    fill="var(--color-motor-forward)"
+                    fill="var(--color-motor-clockwise)"
                 />
 
                 {/* Center hub */}
@@ -129,7 +129,7 @@ const MotorAnimation = ({ speed = 0, active = true, port = "A" }) => {
                     cx="50"
                     cy="50"
                     r="10"
-                    fill="var(--color-motor-forward)"
+                    fill="var(--color-motor-clockwise)"
                 />
             </svg>
 

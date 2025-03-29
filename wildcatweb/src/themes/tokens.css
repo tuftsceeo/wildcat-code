@@ -248,8 +248,8 @@ body[data-theme="retro"] {
     --glow-white: 0 0 0.25rem rgba(var(--color-text-rgb-rgb), 0.7);
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-high);
-    --color-motor-backward: var(--color-info-main);
+    --color-motor-clockwise: var(--color-secondary-high);
+    --color-motor-countercw: var(--color-info-main);
     --color-motor-stopped: var(--color-gray-medium);
 
     --color-timer-main: var(--color-secondary-high);
@@ -399,8 +399,8 @@ body[data-theme="clean"] {
     --glow-white: none;
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-info-main);
+    --color-motor-clockwise: var(--color-secondary-main);
+    --color-motor-countercw: var(--color-info-main);
     --color-motor-stopped: var(--color-gray-medium);
 
     --color-timer-main: var(--color-secondary-main);
@@ -549,8 +549,8 @@ body[data-theme="pastel"] {
     --glow-white: none;
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-info-high);
+    --color-motor-clockwise: var(--color-secondary-main);
+    --color-motor-countercw: var(--color-info-high);
     --color-motor-stopped: var(--color-gray-medium);
 
     --color-timer-main: var(--color-secondary-main);

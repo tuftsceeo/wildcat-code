@@ -18,7 +18,7 @@ import {
 } from "../../bluetooth/ble_resources/messages";
 import { generateSlotCode } from "../../../code-generation/codeGenerator";
 import { Buffer } from "buffer";
-import { Octagon } from "lucide-react";
+import { CircleStop } from "lucide-react";
 
 /**
  * Main component for displaying the coding track with instructions
@@ -54,8 +54,8 @@ const CodeTrack = ({
     // Get current task if we're in mission mode
     const currentTask = getCurrentTask();
 
-    const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, {
+    const FilledCircleStop = (props) => {
+        return React.cloneElement(<CircleStop />, {
             fill: "currentColor",
             ...props,
         });
@@ -172,13 +172,6 @@ const CodeTrack = ({
 
                 // Hide the test prompt if it's showing
                 setShowTestPrompt(false);
-
-                // Dispatch test event for mission tracking
-                dispatchTaskEvent("TEST_EXECUTED", {
-                    slotIndex: currSlotNumber,
-                    instruction: currentInstruction,
-                    currentSlot: currSlotNumber,
-                });
             }
 
             // Generate code specifically for this single instruction
@@ -205,6 +198,16 @@ const CodeTrack = ({
 
             // Start the program on the robot
             await ble.startProgram(0);
+
+            // Only complete the test execution task after successful BLE communication
+            if (isMissionMode && currentTask?.type === "TEST_EXECUTION") {
+                console.log("CodeTrack: Test execution successful, completing task");
+                dispatchTaskEvent("TEST_EXECUTION", {
+                    slotIndex: currSlotNumber,
+                    instruction: currentInstruction,
+                    currentSlot: currSlotNumber,
+                });
+            }
         } catch (error) {
             console.error("Error running test program:", error);
         }
@@ -224,7 +227,7 @@ const CodeTrack = ({
                 >
                     {isStopStep ? (
                         <div className={styles.stopVisualization}>
-                            <FilledOctagon
+                            <CircleStop
                                 size={100}
                                 className={styles.stopIcon}
                             />

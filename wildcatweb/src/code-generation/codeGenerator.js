@@ -41,7 +41,7 @@ function isDeviceConnected(portStates, portLetter, deviceType) {
         return false;
     }
 
-    // Check both deviceType and type for backward compatibility
+    // Check both deviceType and type for countercw compatibility
     const state = portStates[portLetter];
     return state.deviceType === deviceType || state.type === deviceType;
 }
