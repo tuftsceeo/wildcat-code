@@ -57,7 +57,7 @@ function App() {
  */
 function AppWithCustomizationContext() {
     // Get customization settings
-    const { readingLevel, language } = useCustomization();
+    const { readingLevel, language, highContrast, customColors } = useCustomization();
     const { activeHint } = useMission();
   
     // Apply reading level to body data attribute
@@ -65,6 +65,183 @@ function AppWithCustomizationContext() {
         document.body.dataset.readingLevel = readingLevel;
         document.body.dataset.language = language;
     }, [readingLevel, language]);
+
+    // Effect to handle high contrast mode and custom colors at app level
+    useEffect(() => {
+        // Handle high contrast mode
+        if (highContrast) {
+            document.body.classList.add('high-contrast');
+        } else {
+            document.body.classList.remove('high-contrast');
+        }
+
+        // Handle custom colors
+        if (highContrast && Object.keys(customColors).length > 0) {
+            // Create or update style element for custom colors
+            let styleElement = document.getElementById('app-custom-theme-vars');
+            if (!styleElement) {
+                styleElement = document.createElement('style');
+                styleElement.id = 'app-custom-theme-vars';
+                document.head.appendChild(styleElement);
+            }
+
+            // Generate CSS rules for all custom colors
+            const cssRules = Object.entries(customColors).map(([colorType, value]) => {
+                // Convert hex to RGB for rgba support
+                const r = parseInt(value.slice(1, 3), 16);
+                const g = parseInt(value.slice(3, 5), 16);
+                const b = parseInt(value.slice(5, 7), 16);
+                
+                // Calculate relative luminance to determine contrast color
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                const contrastColor = luminance > 0.5 ? '#1E1E1E' : '#FFFFFF';
+
+                let rules = `
+                    :root {
+                        --color-${colorType}-main: ${value};
+                        --color-${colorType}-high: ${value};
+                        --color-${colorType}-low: ${value};
+                        --color-${colorType}-main-rgb: ${r}, ${g}, ${b};
+                        --color-${colorType}-contrast: ${contrastColor};
+                    }
+
+                    body.high-contrast {
+                        --color-${colorType}-main: ${value};
+                        --color-${colorType}-high: ${value};
+                        --color-${colorType}-low: ${value};
+                        --color-${colorType}-contrast: ${contrastColor};
+                    }
+                `;
+
+                // Add component-specific variables based on color type
+                if (colorType === 'primary') {
+                    rules += `
+                        body.high-contrast {
+                            /* Default button states (outlined) */
+                            --button-default-bg: transparent;
+                            --button-default-border: ${value};
+                            --button-default-text: ${value};
+                            
+                            /* Default contained button states */
+                            --button-contained-default-bg: ${value};
+                            --button-contained-default-border: ${value};
+                            --button-contained-default-text: ${contrastColor};
+                            
+                            /* Default input states */
+                            --input-default-border: ${value};
+                            --input-focus-border: ${value};
+                            
+                            /* Default panel states */
+                            --panel-border: ${value};
+                            
+                            /* Default focus states */
+                            --focus-ring-color: ${value};
+                            
+                            /* Default motor states */
+                            --color-motor-clockwise: ${value};
+                            --color-timer-main: ${value};
+                        }
+                    `;
+                } else if (colorType === 'secondary') {
+                    rules += `
+                        body.high-contrast {
+                            /* Selected/Active button states (outlined) */
+                            --button-selected-bg: transparent;
+                            --button-selected-border: ${value};
+                            --button-selected-text: ${value};
+                            
+                            /* Selected contained button states */
+                            --button-contained-selected-bg: ${value};
+                            --button-contained-selected-border: ${value};
+                            --button-contained-selected-text: ${contrastColor};
+                            
+                            /* Active state variables */
+                            --state-active-bg: ${value};
+                            --state-active-border: ${value};
+                            --state-active-text: ${contrastColor};
+                            
+                            /* Active panel states */
+                            --panel-active-border: ${value};
+                            
+                            /* Active motor states */
+                            --color-motor-countercw: ${value};
+                            --color-sensor-main: ${value};
+                        }
+                    `;
+                } else if (colorType === 'accent') {
+                    rules += `
+                        body.high-contrast {
+                            /* Warning states */
+                            --color-warning-main: ${value};
+                            --color-warning-high: ${value};
+                            --color-warning-low: ${value};
+                            --color-warning-contrast: ${contrastColor};
+                            
+                            /* Info states */
+                            --color-info-main: ${value};
+                            --color-info-high: ${value};
+                            --color-info-low: ${value};
+                            --color-info-contrast: ${contrastColor};
+                            
+                            /* Success states */
+                            --color-success-main: ${value};
+                            --color-success-high: ${value};
+                            --color-success-low: ${value};
+                            --color-success-contrast: ${contrastColor};
+                            
+                            /* Error states */
+                            --color-error-main: ${value};
+                            --color-error-high: ${value};
+                            --color-error-low: ${value};
+                            --color-error-contrast: ${contrastColor};
+                            
+                            /* Important UI states */
+                            --color-motor-stopped: ${value};
+                            --state-important-bg: ${value};
+                            --state-important-border: ${value};
+                            --state-important-text: ${contrastColor};
+                        }
+                    `;
+                }
+
+                // Add disabled states with a fixed color (white with opacity)
+                if (colorType === 'primary') {
+                    rules += `
+                        body.high-contrast {
+                            /* Disabled states */
+                            --button-disabled-bg: rgba(255, 255, 255, 0.3);
+                            --button-disabled-border: rgba(255, 255, 255, 0.3);
+                            --button-disabled-text: rgba(255, 255, 255, 0.5);
+                            --button-contained-disabled-bg: rgba(255, 255, 255, 0.3);
+                            --button-contained-disabled-border: rgba(255, 255, 255, 0.3);
+                            --button-contained-disabled-text: rgba(255, 255, 255, 0.5);
+                            --input-disabled-bg: rgba(255, 255, 255, 0.3);
+                            --input-disabled-border: rgba(255, 255, 255, 0.3);
+                            --input-disabled-text: rgba(255, 255, 255, 0.5);
+                        }
+                    `;
+                }
+
+                return rules;
+            }).join('\n');
+
+            styleElement.textContent = cssRules;
+        } else {
+            // Remove custom theme styles if high contrast is off or no custom colors
+            const styleElement = document.getElementById('app-custom-theme-vars');
+            if (styleElement) {
+                styleElement.remove();
+            }
+        }
+
+        // Cleanup function
+        return () => {
+            const styleElement = document.getElementById('app-custom-theme-vars');
+            if (styleElement) {
+                styleElement.remove();
+            }
+        };
+    }, [highContrast, customColors]);
   
     return (
         <>

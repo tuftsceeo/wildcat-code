@@ -51,10 +51,21 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
     // Accessibility
     const [highContrast, setHighContrast] = useState(false);
     const [largeText, setLargeText] = useState(false);
+    const [reduceMotion, setReduceMotion] = useState(false);
+    const [reduceSound, setReduceSound] = useState(false);
     
     // Navigation preferences - new settings
     const [requireSequentialCompletion, setRequireSequentialCompletion] = useState(true);
     const [useCommandLabels, setUseCommandLabels] = useState(true);
+
+    // Color scheme settings
+    const [colorScheme, setColorScheme] = useState("default");
+    const [borderThickness, setBorderThickness] = useState(4);
+    const [customColors, setCustomColors] = useState({
+        primary: "#00ff00",
+        secondary: "#00bfff",
+        accent: "#ff00ff"
+    });
 
     // Load settings from localStorage on mount
     useEffect(() => {
@@ -71,6 +82,11 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                 setVoice(parsed.voice || "robot1");
                 setVolume(parsed.volume || 80);
 
+                // Load custom colors if they exist
+                if (parsed.customColors) {
+                    setCustomColors(parsed.customColors);
+                }
+
                 // Ensure step count is within valid range
                 const parsedStepCount = parsed.stepCount || MIN_STEPS;
                 const validStepCount = Math.max(
@@ -80,6 +96,8 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                 setStepCount(validStepCount);
                 setHighContrast(parsed.highContrast || false);
                 setLargeText(parsed.largeText || false);
+                setReduceMotion(parsed.reduceMotion || false);
+                setReduceSound(parsed.reduceSound || false);
                 
                 // Load navigation preferences with default values if not found
                 setRequireSequentialCompletion(
@@ -92,6 +110,10 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                     ? parsed.useCommandLabels 
                     : true
                 );
+
+                // Load color scheme and border thickness
+                setColorScheme(parsed.colorScheme || "default");
+                setBorderThickness(parsed.borderThickness || 4);
             }
         } catch (error) {
             console.error("Error loading settings from localStorage:", error);
@@ -113,6 +135,11 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                 largeText,
                 requireSequentialCompletion,
                 useCommandLabels,
+                reduceMotion,
+                reduceSound,
+                colorScheme,
+                borderThickness,
+                customColors,
             };
             localStorage.setItem(
                 "customizationSettings",
@@ -133,6 +160,11 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         largeText,
         requireSequentialCompletion,
         useCommandLabels,
+        reduceMotion,
+        reduceSound,
+        colorScheme,
+        borderThickness,
+        customColors,
     ]);
 
     // Apply theme and accessibility settings to document
@@ -160,7 +192,24 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         } else {
             document.body.classList.remove("large-text");
         }
-    }, [theme, useDyslexiaFont, highContrast, largeText]);
+
+        // Apply color scheme and border thickness
+        document.body.dataset.colorScheme = colorScheme;
+        document.body.dataset.borderThickness = borderThickness;
+
+        // Apply accessibility classes
+        document.body.dataset.reduceMotion = reduceMotion;
+        document.body.dataset.reduceSound = reduceSound;
+    }, [
+        theme, 
+        useDyslexiaFont, 
+        highContrast, 
+        largeText, 
+        reduceMotion, 
+        reduceSound,
+        colorScheme,
+        borderThickness
+    ]);
 
     // Add effect to notify when step count changes
     useEffect(() => {
@@ -223,6 +272,15 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         setLargeText(false);
         setRequireSequentialCompletion(true);
         setUseCommandLabels(true);
+        setReduceMotion(false);
+        setReduceSound(false);
+        setColorScheme("default");
+        setBorderThickness(4);
+        setCustomColors({
+            primary: "#00ff00",
+            secondary: "#00bfff",
+            accent: "#ff00ff"
+        });
     };
 
     // Context value with all settings and setters
@@ -260,12 +318,26 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         setHighContrast,
         largeText,
         setLargeText,
+        useDyslexiaFont,
+        setUseDyslexiaFont,
+        reduceMotion,
+        setReduceMotion,
+        reduceSound,
+        setReduceSound,
         
         // Navigation preferences
         requireSequentialCompletion,
         setRequireSequentialCompletion,
         useCommandLabels,
         setUseCommandLabels,
+
+        // Color scheme
+        colorScheme,
+        setColorScheme,
+        borderThickness,
+        setBorderThickness,
+        customColors,
+        setCustomColors,
 
         // Utility functions
         resetSettings,

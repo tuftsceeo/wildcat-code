@@ -26,6 +26,7 @@ import LanguageSettings from "./LanguageSettings";
 import StepsSettings from "./StepsSettings";
 import PlaceholderSettings from "./PlaceholderSettings";
 import VoiceSettings from "./VoiceSettings";
+import AccessibilitySettings from "./AccessibilitySettings";
 import SettingsCarousel from "./SettingsCarousel";
 import styles from "../styles/CustomizationPage.module.css";
 
@@ -48,14 +49,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
 
     // Define all settings tabs with their properties
     const tabs = [
-        {
-            id: "reading",
-            icon: <Type size={32} />,
-            name: "Reading",
-            color: "#00ff00",
-            available: true,
-            priority: "high",
-        },
+
         {
             id: "themes",
             icon: <Palette size={32} />,
@@ -64,6 +58,15 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             available: true,
             priority: "high",
         },
+        {
+            id: "reading",
+            icon: <Type size={32} />,
+            name: "Reading",
+            color: "#00ff00",
+            available: true,
+            priority: "high",
+        },
+     
         {
             id: "voice",
             icon: <MessageCircleMore size={32} />,
@@ -85,6 +88,14 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             icon: <Globe size={32} />,
             name: "Language",
             color: "#0088ff",
+            available: true,
+            priority: "high",
+        },
+        {
+            id: "accessibility",
+            icon: <Accessibility size={32} />,
+            name: "Accessibility",
+            color: "#ff8800",
             available: true,
             priority: "high",
         },
@@ -154,6 +165,8 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
                 return <LanguageSettings />;
             case "voice":
                 return <VoiceSettings />;
+            case "accessibility":
+                return <AccessibilitySettings />;
             default:
                 return <PlaceholderSettings feature={currentTab} />;
         }
