@@ -12,12 +12,15 @@ import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
 import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
 import { KnobProvider } from "./context/KnobContext.js";
 import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
-import { MissionProvider } from "./context/MissionContext.js"; // Import MissionProvider
+import { MissionProvider, useMission } from "./context/MissionContext.js";
+import HintSystem from "./features/missions/components/HintSystem";
 import "./common/styles/App.css";
 import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";
 import CustomizationPage from "./features/settings/components/CustomizationPage.jsx";
 import MissionSelector from "./features/missions/components/MissionSelector.jsx"; // Import MissionSelector
 import MissionOverlay from "./features/missions/components/MissionOverlay.jsx"; // Import MissionOverlay
+
+
 
 import {
     CustomizationProvider,
@@ -28,7 +31,7 @@ import logo from "./assets/images/logo.svg";
 import "./common/styles/App.css";
 import reportWebVitals from "./common/utils/reportWebVitals";
 
-/**
+/*
  * The top-level App component with all providers
  * Manages the missionSteps state and handles changes from CustomizationContext
  *
@@ -37,30 +40,25 @@ import reportWebVitals from "./common/utils/reportWebVitals";
 function App() {
     // Move missionSteps state to the top level component
     const [missionSteps, setMissionSteps] = useState(3);
-
     return (
-        <CustomizationProvider
-            onStepCountChange={(newStepCount) => {
-                console.log("App: onStepCountChange called with", newStepCount);
-                // Directly update missionSteps state here so it propagates to all components
-                setMissionSteps(newStepCount);
-            }}
-        >
-            <BLEProvider>
-                <KnobProvider>
-                    <MissionProvider> {/* Add MissionProvider here */}
-                        <DndProvider backend={HTML5Backend}>
-                            {/* Pass missionSteps as a prop to the AppWithCustomizationContext */}
-                            <AppWithCustomizationContext
-                                missionSteps={missionSteps}
-                            />
-                        </DndProvider>
-                    </MissionProvider>
-                </KnobProvider>
-            </BLEProvider>
-        </CustomizationProvider>
-    );
+    <CustomizationProvider
+      onStepCountChange={(newStepCount) => {
+        setMissionSteps(newStepCount);
+      }}
+    >
+      <BLEProvider>
+        <KnobProvider>
+          <MissionProvider>
+            <DndProvider backend={HTML5Backend}>
+              <AppWithCustomizationContext />
+            </DndProvider>
+          </MissionProvider>
+        </KnobProvider>
+      </BLEProvider>
+    </CustomizationProvider>
+  );
 }
+
 
 /**
  * Main application wrapper that provides context providers and applies settings
@@ -69,19 +67,25 @@ function App() {
  * @param {number} props.missionSteps - Number of mission steps passed from parent
  * @returns {JSX.Element} Main application content component
  */
-function AppWithCustomizationContext({ missionSteps }) {
+function AppWithCustomizationContext() {
     // Get customization settings
     const { readingLevel, language } = useCustomization();
-
+    const { activeHint } = useMission();
+  
     // Apply reading level to body data attribute
     useEffect(() => {
-        document.body.dataset.readingLevel = readingLevel;
-        document.body.dataset.language = language;
+      document.body.dataset.readingLevel = readingLevel;
+      document.body.dataset.language = language;
     }, [readingLevel, language]);
-
-    return <AppContent missionSteps={missionSteps} />;
-}
-
+  
+    return (
+      <>
+        <AppContent />
+        {/* Add the HintSystem component to apply visual hints */}
+        <HintSystem activeHint={activeHint} />
+      </>
+    );
+  }
 /**
  * Main application content
  *

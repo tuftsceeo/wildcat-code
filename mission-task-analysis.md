@@ -293,3 +293,202 @@ The Missions feature provides a highly scaffolded, step-by-step learning experie
 - Progress tracking across multiple missions
 - Difficulty levels based on student needs
 - Teacher dashboard for monitoring progress
+
+# Corrected Implementation Guide for Task Registry Mission System
+
+## Overview
+
+This guide provides corrected instructions for implementing the Task Registry pattern in the WildCat application, with special attention to maintaining separation between introduction phases (intro, hardware setup, initial configuration) and guided task sequences.
+
+## 1. Mission Flow Structure
+
+The proper mission flow should maintain these distinct phases:
+
+```
+┌────────────────────────┐     ┌────────────────────────┐     ┌────────────────────────┐
+│                        │     │                        │     │                        │
+│  1. Mission Introduction ────►  2. Hardware Setup     ────►  3. Initial Configuration│
+│     (Overlay)          │     │     (Overlay)          │     │     (Automated)        │
+│                        │     │                        │     │                        │
+└────────────────────────┘     └────────────────────────┘     └────────────────────────┘
+                                                                         │
+                                                                         ▼
+┌────────────────────────┐     ┌────────────────────────┐     ┌────────────────────────┐
+│                        │     │                        │     │                        │
+│  6. Mission Completion ◄─────  5. Guided Task N       ◄─────  4. Guided Task 1...N   │
+│     (Overlay)          │     │     (Instruction UI)   │     │     (Instruction UI)   │
+│                        │     │                        │     │                        │
+└────────────────────────┘     └────────────────────────┘     └────────────────────────┘
+```
+
+## 2. Phase-based Task Types
+
+Define distinct task types for introduction phases and guided tasks:
+
+```javascript
+// Mission phases 
+export const MISSION_PHASES = {
+  INTRODUCTION: "introduction",
+  HARDWARE_SETUP: "hardware_setup", 
+  INITIAL_CONFIG: "initial_config",
+  GUIDED_TASKS: "guided_tasks",
+  COMPLETION: "completion"
+};
+
+// Task types
+export const TASK_TYPES = {
+  // Phase-specific task types
+  MISSION_INTRO: "mission_intro",
+  HARDWARE_CHECK: "hardware_check",
+  INITIAL_CONFIG: "initial_config",
+  
+  // Regular guided task types
+  // ... other task types
+};
+```
+
+## 3. Mission Data Structure
+
+Each mission should clearly separate introduction phases from guided tasks:
+
+```javascript
+{
+  missionId: "mission1",
+  title: "First Steps with Motors",
+  description: "Learn to control a motor and add a wait step",
+  introTaskCount: 3, // Count of intro phase tasks
+  tasks: [
+    // Introduction phases 
+    {
+      taskId: "mission_intro",
+      type: TASK_TYPES.MISSION_INTRO,
+      phase: MISSION_PHASES.INTRODUCTION,
+      instruction: "Welcome to your first mission!"
+      // No text hints - visual only
+    },
+    {
+      taskId: "hardware_setup",
+      type: TASK_TYPES.HARDWARE_CHECK,
+      phase: MISSION_PHASES.HARDWARE_SETUP,
+      // Hardware requirements
+    },
+    {
+      taskId: "initial_config",
+      type: TASK_TYPES.INITIAL_CONFIG,
+      phase: MISSION_PHASES.INITIAL_CONFIG,
+      // Initial configuration data
+    },
+    
+    // Guided tasks
+    {
+      taskId: "set_motor_speed",
+      type: TASK_TYPES.MOTOR_CONFIGURATION,
+      phase: MISSION_PHASES.GUIDED_TASKS,
+      // Task data
+      targetElement: ".forwardBar", // Visual hint target
+      hintAnimation: "pulse" // Animation type
+    },
+    // More guided tasks...
+  ]
+}
+```
+
+## 4. Mission Context Updates
+
+The MissionContext needs to explicitly track and process phases:
+
+```javascript
+// Add phase tracking
+const [currentPhase, setCurrentPhase] = useState(MISSION_PHASES.INTRODUCTION);
+const [isIntroSequenceComplete, setIsIntroSequenceComplete] = useState(false);
+
+// Process intro sequence
+const processIntroductionSequence = useCallback(() => {
+  // Logic to handle intro phases in sequence
+});
+
+// Check if intro sequence is complete
+const checkIntroSequenceCompletion = useCallback(() => {
+  // Logic to detect completion and move to guided tasks
+});
+```
+
+## 5. Task Handlers for Visual Hints
+
+Task handlers should provide visual-only hints:
+
+```javascript
+const motorConfigurationHandler = {
+  // Other methods...
+  
+  getHint: (task) => ({
+    selector: ".forwardBar", // CSS selector for target element
+    animation: "pulse", // Animation type
+    effect: "highlight" // Visual effect
+  })
+};
+```
+
+## 6. TaskInstructionPanel Updates
+
+Remove text hints from the TaskInstructionPanel:
+
+```jsx
+// Remove text hint content
+{/* NO HINT TEXT DISPLAY - visual hints only */}
+```
+
+## 7. MissionOverlay Updates
+
+MissionOverlay must handle different phases correctly:
+
+```jsx
+// Handle overlay dismiss based on phase
+const handleOverlayDismiss = useCallback(() => {
+  if (currentPhase === MISSION_PHASES.INTRODUCTION) {
+    // Introduction phase logic
+  } else if (currentPhase === MISSION_PHASES.HARDWARE_SETUP) {
+    // Hardware setup phase logic
+  }
+  // etc.
+});
+```
+
+## 8. Event Dispatching System
+
+The event dispatching system should only be active during guided tasks:
+
+```javascript
+const dispatchTaskEvent = useCallback((eventType, eventData) => {
+  // Skip event processing during intro sequence
+  if (!isIntroSequenceComplete) return;
+  
+  // Normal event processing...
+}, [/* dependencies */]);
+```
+
+## Implementation Order
+
+1. Define MISSION_PHASES and proper task types in TaskRegistry.js
+2. Update task handlers to provide visual-only hints
+3. Modify mission data to include distinct phases
+4. Update MissionContext with phase tracking and sequence processing
+5. Update MissionOverlay to handle phase-specific displays
+6. Remove text hints from TaskInstructionPanel
+7. Test the complete flow from intro → guided tasks
+
+## Common Pitfalls to Avoid
+
+1. **Task Flattening**: Don't flatten all tasks into a single list without phase distinction
+2. **Text Hints**: Never store or display text hints - use visual hints only
+3. **Missing Phase Transitions**: Ensure proper transitions between introduction phases
+4. **Event Handling During Intro**: Disable most event handling during introduction sequence
+5. **UI Element Visibility**: Control component visibility based on current phase
+
+## Testing Strategy
+
+1. Test each phase in isolation
+2. Verify proper phase transitions
+3. Validate visual hint system works without text
+4. Ensure introduction sequence precedes guided tasks
+5. Check persistence of phase state across app reloads

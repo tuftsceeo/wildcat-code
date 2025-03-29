@@ -1,16 +1,16 @@
 /**
  * @file MissionOverlay.jsx
- * @description Component for displaying mission instructions, transitions, 
- * success messages, and prompts with visual overlays. Supports different types 
- * of mission information with consistent styling.
+ * @description Component for displaying mission overlays based on different phases.
+ * Supports intro, hardware setup, success, and completion overlays.
  */
 
 import React, { useEffect } from "react";
 import Portal from "../../../common/components/Portal";
 import { useMission } from "../../../context/MissionContext.js";
 import { useCustomization } from "../../../context/CustomizationContext.js";
-import { Rocket, Award, Play, ArrowRight, CheckCircle2, X } from "lucide-react";
+import { Rocket, Award, Play, ArrowRight, CheckCircle2, X, Usb } from "lucide-react";
 import styles from "../styles/MissionOverlay.module.css";
+
 /**
  * Component that displays mission overlays with different content types
  * 
@@ -20,15 +20,14 @@ import styles from "../styles/MissionOverlay.module.css";
 const MissionOverlay = () => {
   const { 
     showMissionOverlay, 
-    setShowMissionOverlay,
+    handleOverlayDismiss,
     overlayContent,
     showTestPrompt,
     setShowTestPrompt,
     showRunPrompt,
     setShowRunPrompt,
     currentMission,
-    currentStepIndex,
-    exitMission,
+    currentPhase,
     validateHardwareRequirements
   } = useMission();
   
@@ -50,21 +49,6 @@ const MissionOverlay = () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [showTestPrompt, setShowTestPrompt]);
-
-  /**
-   * Close the overlay
-   */
-  const handleClose = () => {
-    setShowMissionOverlay(false);
-  };
-
-  /**
-   * Exit the mission
-   */
-  const handleExitMission = () => {
-    handleClose();
-    exitMission();
-  };
 
   /**
    * Verify hardware requirements for missing components
@@ -115,17 +99,71 @@ const MissionOverlay = () => {
             
             {renderHardwareWarning()}
             
-            <button className={styles.startButton} onClick={handleClose}>
+            <button className={styles.startButton} onClick={handleOverlayDismiss}>
               <Play size={20} />
               Start Mission
-            </button>
-            
-            <button className={styles.exitButton} onClick={handleExitMission}>
-              Return to Sandbox Mode
             </button>
           </div>
         );
         
+      case 'hardware':
+        // Hardware setup overlay (shown during hardware check phase)
+        return (
+          <div className={styles.hardwareContent}>
+            <div className={styles.hardwareIcon}>
+              <Usb size={80} />
+            </div>
+            
+            <h2 className={styles.hardwareTitle}>{overlayContent.title}</h2>
+            
+            <p className={styles.hardwareDescription}>{overlayContent.description}</p>
+            
+            <div className={styles.hardwareStatus}>
+              {(() => {
+                const { isValid, missingHardware } = validateHardwareRequirements();
+                
+                if (isValid) {
+                  return (
+                    <div className={styles.hardwareReady}>
+                      <CheckCircle2 size={40} className={styles.readyIcon} />
+                      <p>Hardware connected and ready!</p>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className={styles.hardwareMissing}>
+                      <ul className={styles.missingList}>
+                        {missingHardware.map((item, index) => (
+                          <li key={index} className={styles.missingItem}>
+                            {item === "motor" ? "Connect a motor" : ""}
+                            {item === "button" ? "Connect a button/force sensor" : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+            
+            <button 
+              className={styles.continueButton} 
+              onClick={handleOverlayDismiss}
+              disabled={!validateHardwareRequirements().isValid}
+            >
+              Continue
+              <ArrowRight size={20} />
+            </button>
+            
+            <button 
+              className={styles.skipButton} 
+              onClick={handleOverlayDismiss}
+            >
+              Skip Hardware Check
+            </button>
+          </div>
+        );
+      
       case 'step':
         // Step transition overlay (shown between steps)
         return (
@@ -146,7 +184,7 @@ const MissionOverlay = () => {
             
             {renderHardwareWarning()}
             
-            <button className={styles.continueButton} onClick={handleClose}>
+            <button className={styles.continueButton} onClick={handleOverlayDismiss}>
               Continue
               <ArrowRight size={20} />
             </button>
@@ -165,7 +203,7 @@ const MissionOverlay = () => {
             
             <p className={styles.successMessage}>{overlayContent.message}</p>
             
-            <button className={styles.continueButton} onClick={handleClose}>
+            <button className={styles.continueButton} onClick={handleOverlayDismiss}>
               Continue
               <ArrowRight size={20} />
             </button>
@@ -195,7 +233,7 @@ const MissionOverlay = () => {
             <div className={styles.completeButtons}>
               <button 
                 className={styles.exitButton} 
-                onClick={handleExitMission}
+                onClick={handleOverlayDismiss}
               >
                 Return to Sandbox Mode
               </button>
@@ -204,8 +242,7 @@ const MissionOverlay = () => {
                 <button 
                   className={styles.nextMissionButton} 
                   onClick={() => {
-                    handleClose();
-                    exitMission();
+                    handleOverlayDismiss();
                     // Logic to start next mission would go here
                   }}
                 >
@@ -230,14 +267,11 @@ const MissionOverlay = () => {
   const renderTestPrompt = () => {
     if (!showTestPrompt || !currentMission) return null;
     
-    const stepData = currentMission.steps[currentStepIndex];
-    if (!stepData?.testPrompt?.showPrompt) return null;
-    
     return (
       <Portal>
         <div className={styles.promptOverlay}>
           <div className={`${styles.prompt} ${styles.testPrompt}`}>
-            <p className={styles.promptText}>{stepData.testPrompt.message}</p>
+            <p className={styles.promptText}>Try testing your code!</p>
             
             <button 
               className={styles.closePromptButton} 
@@ -291,15 +325,13 @@ const MissionOverlay = () => {
         <Portal>
           <div className={styles.overlay}>
             <div className={`${styles.overlayContainer} ${styles[`complexity-${readingLevel}`]}`}>
-              {overlayContent && overlayContent.type !== 'intro' && (
-                <button 
-                  className={styles.closeButton} 
-                  onClick={handleClose}
-                  aria-label="Close overlay"
-                >
-                  ×
-                </button>
-              )}
+              <button 
+                className={styles.closeButton} 
+                onClick={handleOverlayDismiss}
+                aria-label="Close overlay"
+              >
+                ×
+              </button>
               
               {renderOverlayContent()}
             </div>

@@ -1,0 +1,193 @@
+/* HintSystem.css - Visual hint styles for mission guidance */
+
+/* Container for hint overlays */
+.visual-hint-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9000;
+  }
+  
+  /* Base styles for all visual hints */
+  .visual-hint {
+    position: absolute;
+    pointer-events: none;
+    z-index: 9001;
+  }
+  
+  /* Target element highlighting */
+  .hint-target {
+    z-index: 1000;
+    position: relative;
+  }
+  
+  /* Highlight effect - semi-transparent overlay */
+  .visual-hint.highlight {
+    border-radius: 4px;
+    background-color: rgba(var(--color-secondary-main-rgb), 0.25);
+    box-shadow: 0 0 0 2px var(--color-secondary-main);
+  }
+  
+  /* Outline effect - border around element */
+  .visual-hint.outline {
+    border: 3px solid var(--color-secondary-main);
+    border-radius: 4px;
+    box-shadow: 0 0 10px 2px var(--color-secondary-main);
+  }
+  
+  /* Arrow effect - pointing to element */
+  .visual-hint.arrow {
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-secondary-main);
+    clip-path: polygon(50% 100%, 0% 50%, 100% 50%);
+  }
+  
+  /* Pulse animation */
+  .visual-hint.pulse {
+    animation: hint-pulse 2s infinite;
+  }
+  
+  @keyframes hint-pulse {
+    0% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+  }
+  
+  /* Bounce animation */
+  .visual-hint.bounce {
+    animation: hint-bounce 1s infinite;
+  }
+  
+  @keyframes hint-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  /* Glow animation */
+  .visual-hint.glow {
+    animation: hint-glow 1.5s infinite alternate;
+  }
+  
+  @keyframes hint-glow {
+    from {
+      box-shadow: 0 0 5px 2px var(--color-secondary-main);
+    }
+    to {
+      box-shadow: 0 0 20px 5px var(--color-secondary-main);
+    }
+  }
+  
+  /* Blink animation */
+  .visual-hint.blink {
+    animation: hint-blink 1s infinite;
+  }
+  
+  @keyframes hint-blink {
+    0%, 49% {
+      opacity: 0.8;
+    }
+    50%, 100% {
+      opacity: 0.2;
+    }
+  }
+  
+  /* Specific hint styles for different UI elements */
+  
+  /* Button hints */
+  button.hint-target {
+    animation: button-hint 2s infinite;
+  }
+  
+  @keyframes button-hint {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* Form control hints */
+  input.hint-target, select.hint-target, .slider.hint-target {
+    animation: control-hint 2s infinite;
+  }
+  
+  @keyframes control-hint {
+    0%, 100% {
+      box-shadow: 0 0 0 0 var(--color-secondary-main);
+    }
+    50% {
+      box-shadow: 0 0 0 4px var(--color-secondary-main);
+    }
+  }
+  
+  /* Navigation button hints */
+  .nextButton.hint-target, .prevButton.hint-target {
+    animation: nav-hint 1.5s infinite;
+  }
+  
+  @keyframes nav-hint {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(5px);
+    }
+  }
+  
+  /* Icon button hints */
+  .iconButton.hint-target {
+    animation: icon-hint 1.5s infinite alternate;
+  }
+  
+  @keyframes icon-hint {
+    from {
+      color: var(--panel-text);
+    }
+    to {
+      color: var(--color-secondary-main);
+    }
+  }
+  
+  /* Accessibility considerations */
+  @media (prefers-reduced-motion: reduce) {
+    .visual-hint,
+    .hint-target,
+    button.hint-target,
+    input.hint-target, 
+    select.hint-target, 
+    .slider.hint-target,
+    .nextButton.hint-target, 
+    .prevButton.hint-target,
+    .iconButton.hint-target {
+      animation: none !important;
+      transition: none !important;
+    }
+    
+    .visual-hint.highlight,
+    .visual-hint.outline {
+      opacity: 0.8 !important;
+      border-width: 3px !important;
+      box-shadow: 0 0 0 3px var(--color-secondary-main) !important;
+    }
+  }
