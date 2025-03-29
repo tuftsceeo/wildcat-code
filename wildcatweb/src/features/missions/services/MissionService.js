@@ -1,14 +1,13 @@
 /**
  * @file MissionService.js
  * @description Service for loading, validating, and managing mission data.
- * Updated to support separate introduction phases and guided task sequences.
+ * Uses the corrected structure with introduction phases separate from tasks.
  */
 
-import { TASK_TYPES, MISSION_PHASES } from "./TaskRegistry";
+import { TASK_TYPES } from "./TaskRegistry";
 
 /**
  * Default missions that are included with the application
- * Updated to separate introduction phases from guided tasks
  */
 const DEFAULT_MISSIONS = [
   {
@@ -17,168 +16,129 @@ const DEFAULT_MISSIONS = [
     description: "Learn to control a motor and add a wait step",
     difficultyLevel: "beginner",
     totalSteps: 2, // Number of instruction steps (not including stop)
-    introTaskCount: 3, // Count of introduction tasks (intro, hardware, setup)
-    totalTasks: 11, // Total number of tasks in the mission
-
+    totalTasks: 8, // Total number of guided tasks
+    
+    // Introduction phase metadata (NOT tasks)
+    hardwareRequirements: [
+      { deviceType: 0x30, count: 1 } // One motor required
+    ],
+    
+    initialConfiguration: {
+      slots: [
+        {
+          slotIndex: 0,
+          type: "action",
+          subtype: "motor",
+          // Port will be dynamically determined during hardware detection
+          // Initial speed is set to 0
+          configuration: { speed: 0 }
+        },
+        {
+          slotIndex: 1,
+          type: "input",
+          subtype: "time",
+          // Initial wait time is set to 0
+          configuration: { seconds: 0 }
+        }
+      ]
+    },
+    
     // Assets for the mission
     assets: {
       introImage: "/assets/images/missions/motor-mission-intro.jpg",
       completeImage: "/assets/images/missions/motor-mission-complete.jpg",
     },
-
-    // Introduction phase tasks
+    
+    // Only actual guided tasks
     tasks: [
-      // 3.1 Mission Introduction
-      {
-        taskId: "mission_intro",
-        type: TASK_TYPES.MISSION_INTRO,
-        phase: MISSION_PHASES.INTRODUCTION,
-        instruction: "Welcome to your first mission!",
-        stepTitle: "Get Started",
-        targetSlot: 0, // Will start with first slot
-      },
-      
-      // 3.2 Hardware Setup
-      {
-        taskId: "hardware_setup",
-        type: TASK_TYPES.HARDWARE_CHECK,
-        phase: MISSION_PHASES.HARDWARE_SETUP,
-        requiredDevices: [
-          { deviceType: 0x30, count: 1 } // Requires one motor
-        ],
-        instruction: "Connect a motor to any port",
-        stepTitle: "Connect Motor",
-        targetSlot: 0,
-      },
-      
-      // 3.3 Initial Configuration
-      {
-        taskId: "initial_config",
-        type: TASK_TYPES.INITIAL_CONFIG,
-        phase: MISSION_PHASES.INITIAL_CONFIG,
-        presetSlots: [
-          {
-            slotIndex: 0,
-            type: "action",
-            subtype: "motor",
-            configuration: { port: "A", speed: 500 }
-          },
-          {
-            slotIndex: 1,
-            type: "input",
-            subtype: "time",
-            configuration: { seconds: 3 }
-          }
-        ],
-        instruction: "Setting up your mission...",
-        stepTitle: "Mission Setup",
-        targetSlot: 0,
-      },
-      
-      // 3.4 Guided Task Sequence - Actual implementation tasks
-      
       // Task 1: Set Motor Speed
       {
         taskId: "set_motor_speed",
-        type: TASK_TYPES.MOTOR_CONFIGURATION,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "MOTOR_CONFIGURATION",
         targetSlot: 0,
         speedRange: [300, 1000],
         direction: "forward",
         instruction: "Make your motor spin forward",
         stepTitle: "Set Motor Speed",
-        targetElement: ".forwardBar", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".forwardBar",
+        // Will check against the detected port from hardware setup
+        validatePort: true
       },
       
       // Task 2: Test Motor Command
       {
         taskId: "test_motor",
-        type: TASK_TYPES.TEST_EXECUTION,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "TEST_EXECUTION",
         targetSlot: 0,
         instruction: "Click TEST to see your motor spin",
         stepTitle: "Test Motor",
-        targetElement: ".testButton", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".testButton"
       },
       
       // Task 3: Navigate to Wait Step
       {
         taskId: "navigate_to_wait",
-        type: TASK_TYPES.NAVIGATION,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "NAVIGATION",
         targetSlot: 1,
         instruction: "Click the down arrow to move to the next step",
         stepTitle: "Go to Step 2",
-        targetElement: ".nextButton", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".nextButton"
       },
       
       // Task 4: Select SENSE
       {
         taskId: "select_input",
-        type: TASK_TYPES.SELECT_INPUT_TYPE,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "SELECT_INPUT_TYPE",
         targetSlot: 1,
         instruction: "Click on SENSE to access input options",
         stepTitle: "Select SENSE",
-        targetElement: ".senseButton button", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".senseButton button"
       },
       
       // Task 5: Select Wait
       {
         taskId: "select_timer",
-        type: TASK_TYPES.SELECT_SUBTYPE,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "SELECT_SUBTYPE",
+        targetSlot: 1,
         requiredType: "input",
         requiredSubtype: "time",
-        targetSlot: 1,
         instruction: "Click on Wait to set a timer",
         stepTitle: "Select Wait",
-        targetElement: '.subtypeButton[aria-label="Select Wait"]', // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: '.subtypeButton[aria-label="Select Wait"]'
       },
       
       // Task 6: Set Timer Duration
       {
         taskId: "set_timer",
-        type: TASK_TYPES.TIMER_SETTING,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "TIMER_SETTING",
         targetSlot: 1,
         timeRange: [2, 5],
         instruction: "Set the timer to 3 seconds",
         stepTitle: "Set Wait Time",
-        targetElement: ".timeButton", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".timeButton"
       },
       
       // Task 7: Test Timer
       {
         taskId: "test_timer",
-        type: TASK_TYPES.TEST_EXECUTION,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "TEST_EXECUTION",
         targetSlot: 1,
         instruction: "Click TEST to see your timer in action",
         stepTitle: "Test Timer",
-        targetElement: ".testButton", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".testButton"
       },
       
       // Task 8: Run Program
       {
         taskId: "run_program",
-        type: TASK_TYPES.RUN_PROGRAM,
-        phase: MISSION_PHASES.GUIDED_TASKS,
+        type: "RUN_PROGRAM",
         targetSlot: 0, // Start from the beginning
         instruction: "Click the PLAY button to run your complete program",
         stepTitle: "Run Program",
-        targetElement: ".playButton", // Target element for visual hint
-        hintAnimation: "pulse", // Animation effect for the hint
+        targetElement: ".playButton"
       }
     ],
-
+    
     // Optional prompts
     runPrompt: {
       showPrompt: true,
@@ -226,36 +186,6 @@ const MissionService = {
     return (
       allMissions.find((mission) => mission.missionId === missionId) ||
       null
-    );
-  },
-
-  /**
-   * Get introduction tasks for a mission
-   * 
-   * @param {Object} mission - Mission object
-   * @returns {Array} Array of introduction phase tasks
-   */
-  getIntroductionTasks: (mission) => {
-    if (!mission || !mission.tasks) return [];
-    
-    return mission.tasks.filter(task => 
-      task.phase === MISSION_PHASES.INTRODUCTION ||
-      task.phase === MISSION_PHASES.HARDWARE_SETUP ||
-      task.phase === MISSION_PHASES.INITIAL_CONFIG
-    );
-  },
-  
-  /**
-   * Get guided tutorial tasks for a mission
-   * 
-   * @param {Object} mission - Mission object
-   * @returns {Array} Array of guided tutorial tasks
-   */
-  getGuidedTasks: (mission) => {
-    if (!mission || !mission.tasks) return [];
-    
-    return mission.tasks.filter(task => 
-      task.phase === MISSION_PHASES.GUIDED_TASKS
     );
   },
 
@@ -360,13 +290,23 @@ const MissionService = {
     if (!mission.title) errors.push("Missing title");
     if (!mission.description) errors.push("Missing description");
     if (!mission.totalTasks) errors.push("Missing totalTasks");
+    if (!mission.totalSteps) errors.push("Missing totalSteps");
+
+    // Check introduction phase properties
+    if (!mission.hardwareRequirements || !Array.isArray(mission.hardwareRequirements)) {
+      errors.push("Missing or invalid hardwareRequirements");
+    }
+    
+    if (!mission.initialConfiguration || !mission.initialConfiguration.slots) {
+      errors.push("Missing or invalid initialConfiguration");
+    }
 
     // Check tasks
     if (!mission.tasks || !Array.isArray(mission.tasks)) {
       errors.push("Missing or invalid tasks array");
     } else if (mission.tasks.length !== mission.totalTasks) {
       errors.push(
-        `Mission has ${mission.tasks.length} tasks but totalTasks is ${mission.totalTasks}`,
+        `Mission has ${mission.tasks.length} tasks but totalTasks is ${mission.totalTasks}`
       );
     } else {
       // Check each task
@@ -376,18 +316,6 @@ const MissionService = {
         if (!task.type) errors.push(`Task ${index} is missing type`);
         if (!task.instruction)
           errors.push(`Task ${index} is missing instruction`);
-        
-        // Check phase is valid
-        if (!task.phase) {
-          errors.push(`Task ${index} is missing phase`);
-        } else if (!Object.values(MISSION_PHASES).includes(task.phase)) {
-          errors.push(`Task ${index} has unknown phase: ${task.phase}`);
-        }
-
-        // Validate task matches a known type
-        if (!Object.values(TASK_TYPES).includes(task.type)) {
-          errors.push(`Task ${index} has unknown type: ${task.type}`);
-        }
       });
     }
 

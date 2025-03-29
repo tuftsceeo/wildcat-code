@@ -1,127 +1,95 @@
 /**
  * @file TaskInstructionPanel.jsx
- * @description Component that displays mission task instructions with audio support.
- * Updated to provide visual hints without text for accessibility.
+ * @description Component to display task instructions during guided task sequences
+ * Only shown after the introduction phase is complete
  */
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Volume2, HelpCircle, CheckCircle, ArrowRight } from "lucide-react";
-import { useMission } from "../../../context/MissionContext";
-import { useCustomization } from "../../../context/CustomizationContext";
-import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
-import styles from "../styles/TaskInstructionPanel.module.css";
+import React, { useState, useCallback } from 'react';
+import { Volume2, HelpCircle, CheckCircle, ArrowRight } from 'lucide-react';
+import { useMission } from '../../../context/MissionContext';
+import { useCustomization } from '../../../context/CustomizationContext';
+import { speakWithRobotVoice } from '../../../common/utils/speechUtils';
+import styles from '../styles/TaskInstructionPanel.module.css';
 
 /**
- * Component that displays mission task instructions with audio support
- *
+ * Component to display task instructions with audio support
+ * 
  * @component
  * @param {Object} props - Component props
- * @param {Object} props.task - Task data object
- * @param {number} props.taskIndex - Current task index
- * @param {boolean} props.isCompleted - Whether the task is completed
- * @param {Function} props.onRequestHint - Callback function to request a hint
- * @returns {JSX.Element} Task instruction panel with audio support
+ * @returns {JSX.Element|null} Task instruction panel or null if no task
  */
-const TaskInstructionPanel = ({
-  task,
-  taskIndex,
-  isCompleted = false,
-  onRequestHint,
-}) => {
+const TaskInstructionPanel = () => {
+  const {
+    currentTaskIndex,
+    getCurrentTask,
+    isTaskCompleted,
+    completeTask,
+    introCompleted
+  } = useMission();
+  
   const { voice, volume, language } = useCustomization();
-  const { moveToNextTask, activeHint } = useMission();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-  const [inactivityTimer, setInactivityTimer] = useState(null);
-
+  
+  // Get current task data
+  const task = getCurrentTask();
+  
+  // Check if this task is completed
+  const isCompleted = task ? isTaskCompleted(currentTaskIndex) : false;
+  
   /**
-   * Reset the inactivity timer that triggers hints
+   * Handle playing audio instruction
    */
-  const resetInactivityTimer = useCallback(() => {
-    if (inactivityTimer) {
-      clearTimeout(inactivityTimer);
-    }
-
-    // Only set timer if task is not completed
-    if (!isCompleted && task && onRequestHint) {
-      const timer = setTimeout(() => {
-        if (onRequestHint) onRequestHint();
-      }, 30000); // Show hint after 30 seconds of inactivity
-
-      setInactivityTimer(timer);
-    }
-  }, [inactivityTimer, isCompleted, task, onRequestHint]);
-
-  /**
-   * Reset inactivity timer when task changes or is completed
-   */
-  useEffect(() => {
-    resetInactivityTimer();
-
-    return () => {
-      if (inactivityTimer) {
-        clearTimeout(inactivityTimer);
-      }
-    };
-  }, [task, isCompleted, taskIndex, resetInactivityTimer, inactivityTimer]);
-
-  /**
-   * Handle text-to-speech for task instruction
-   */
-  const handlePlayAudio = () => {
-    resetInactivityTimer();
-
-    // If already playing, don't start again
-    if (isAudioPlaying) return;
-
-    // Extract text to speak
-    const textToSpeak = task?.instruction || "";
-    if (!textToSpeak) return;
-
-    // Set playing flag
+  const handlePlayAudio = useCallback(() => {
+    if (isAudioPlaying || !task || !task.instruction) return;
+    
     setIsAudioPlaying(true);
-
+    
     // Use robot voice from speechUtils
-    const languageCode = language === "es" ? "es-ES" : "en-US";
-    speakWithRobotVoice(textToSpeak, voice, volume, languageCode);
-
+    const languageCode = language === 'es' ? 'es-ES' : 'en-US';
+    speakWithRobotVoice(task.instruction, voice, volume, languageCode);
+    
     // Reset flag after estimated speech duration
-    // Simple estimate: 100ms per character
-    const duration = Math.max(2000, textToSpeak.length * 100);
+    const duration = Math.max(2000, task.instruction.length * 100);
     setTimeout(() => {
       setIsAudioPlaying(false);
     }, duration);
-  };
+  }, [isAudioPlaying, task, language, voice, volume]);
 
   /**
-   * Handle Next button click to progress to next task
+   * Handle click on next button to advance to next task
    */
-  const handleNextTask = () => {
-    // Play a completion sound
-    const audio = new Audio("/assets/sounds/marimba-bloop.mp3");
-    audio.play().catch((error) => {
-      console.error("Error playing audio:", error);
-    });
-
+  const handleNextTask = useCallback(() => {
     // Move to next task
-    if (moveToNextTask) {
-      moveToNextTask();
-    }
-  };
+    completeTask(currentTaskIndex, { advancedManually: true });
+    
+    // Play completion sound
+    const audio = new Audio('/assets/sounds/marimba-bloop.mp3');
+    audio.play().catch(error => {
+      console.error('Error playing audio:', error);
+    });
+  }, [completeTask, currentTaskIndex]);
+  
+  /**
+   * Request visual hint for current task
+   */
+  const handleRequestHint = useCallback(() => {
+    if (!task) return;
+    // This would trigger visual hint display
+    console.log('Hint requested for task:', task.taskId);
+  }, [task]);
 
-  // If no task data is provided, don't render the panel
-  if (!task) return null;
+  // Show nothing if intro sequence is not completed or no task is available
+  if (!introCompleted || !task) return null;
 
   return (
     <div className={styles.taskInstructionContainer}>
       {/* Task header with number, title, and completion status */}
       <div className={styles.taskHeader}>
         <div className={styles.taskIdentifier}>
-          <span className={styles.taskNumber}>
-            {taskIndex !== undefined ? `Task ${taskIndex + 1}` : "Current Task"}
-          </span>
+          <span className={styles.taskNumber}>Task {currentTaskIndex + 1}</span>
           {task.stepTitle && <span className={styles.taskTitle}>{task.stepTitle}</span>}
         </div>
-
+        
         {/* Completion indicator */}
         {isCompleted && (
           <div className={styles.completionIndicator}>
@@ -130,15 +98,15 @@ const TaskInstructionPanel = ({
           </div>
         )}
       </div>
-
+      
       {/* Task instruction with support buttons */}
       <div className={styles.instructionContent}>
         <p className={styles.instruction}>{task.instruction}</p>
-
+        
         <div className={styles.supportButtons}>
           {/* Audio button */}
           <button
-            className={`${styles.supportButton} ${isAudioPlaying ? styles.active : ""}`}
+            className={`${styles.supportButton} ${isAudioPlaying ? styles.active : ''}`}
             onClick={handlePlayAudio}
             disabled={isAudioPlaying}
             aria-label="Play audio instruction"
@@ -146,26 +114,19 @@ const TaskInstructionPanel = ({
           >
             <Volume2 size={20} />
           </button>
-
-          {/* Hint button - only show if callback provided */}
-          {onRequestHint && (
-            <button
-              className={styles.supportButton}
-              onClick={() => {
-                if (onRequestHint) {
-                  onRequestHint();
-                  resetInactivityTimer();
-                }
-              }}
-              aria-label="Show hint"
-              title="Show hint"
-            >
-              <HelpCircle size={20} />
-            </button>
-          )}
+          
+          {/* Hint button */}
+          <button
+            className={styles.supportButton}
+            onClick={handleRequestHint}
+            aria-label="Show hint"
+            title="Show hint"
+          >
+            <HelpCircle size={20} />
+          </button>
         </div>
       </div>
-
+      
       {/* Next button - only shown when task is completed */}
       {isCompleted && (
         <div className={styles.nextButtonContainer}>
