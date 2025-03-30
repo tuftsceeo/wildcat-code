@@ -137,8 +137,7 @@ export const CommandPanel = ({
     const showTaskPanel = currentTask !== null;
 
     // Determine if the current slot is the special stop step
-    const isStopStep =
-        slotData && slotData[currSlotNumber]?.isStopInstruction === true;
+    const isStopStep = currSlotNumber === missionSteps - 1;
 
     // Determine if we should apply mission constraints to this slot
     const shouldApplyMissionConstraints =
@@ -533,11 +532,6 @@ export const CommandPanel = ({
                 />
             ) : (
                 <div className={styles.stopStepIndicator}>
-                    <TypeSelector
-                        selectedType={selectedType}
-                        onTypeChange={handleTypeSelect}
-                        disabled={true} // Always disabled for stop step
-                    />
                     <CircleStop
                         size={80}
                         className={styles.stopIcon}
@@ -589,7 +583,11 @@ export const CommandPanel = ({
 
             {/* Instruction Description Panel at bottom */}
             <InstructionDescriptionPanel
-                instruction={currentInstruction}
+                instruction={isStopStep ? {
+                    type: "special",
+                    subtype: "stop",
+                    description: "This step will stop all motors when the program ends."
+                } : currentInstruction}
                 onPlayAudio={handlePlayAudio}
                 slotNumber={currSlotNumber}
                 // Add mission-specific instructions if available

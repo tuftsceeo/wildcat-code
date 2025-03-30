@@ -290,10 +290,10 @@ function AppContent() {
     // Initialize slot data with empty slots
     const [slotData, setSlotData] = useState(() => {
         const slots = [];
-        for (let i = 0; i < missionSteps; i++) {
+        // Create N-1 slots for N steps (the last step is the stop step)
+        for (let i = 0; i < missionSteps - 1; i++) {
             slots.push(createEmptySlot());
         }
-        slots.push(createStopInstruction());
         return slots;
     });
 

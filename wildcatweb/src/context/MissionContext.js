@@ -233,14 +233,6 @@ export const MissionProvider = ({ children }) => {
       };
     }
     
-    // Add stop instruction at the end
-    slotData.push({
-      type: "special",
-      subtype: "stop",
-      configuration: { isEnd: true },
-      isStopInstruction: true
-    });
-    
     // Dispatch event to update app's slot data
     window.dispatchEvent(new CustomEvent('updateSlotData', { 
       detail: { slotData } 
@@ -470,6 +462,12 @@ export const MissionProvider = ({ children }) => {
     isMissionMode,
     availableMissions,
     currentMission,
+    setIsMissionMode: useCallback((value) => {
+      if (!value) {
+        // If setting to false, exit mission mode
+        exitMission();
+      }
+    }, [exitMission]),
     
     // Introduction phase
     showMissionOverlay,

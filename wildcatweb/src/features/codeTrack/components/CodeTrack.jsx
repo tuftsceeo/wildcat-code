@@ -64,7 +64,7 @@ const CodeTrack = ({
     const currentInstruction = slotData?.[currSlotNumber];
 
     // Check if current slot is the stop step
-    const isStopStep = currentInstruction?.isStopInstruction === true;
+    const isStopStep = currSlotNumber === missionSteps - 1;
 
     const { ble, isConnected, portStates } = useBLE();
 
