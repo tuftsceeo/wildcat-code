@@ -12,7 +12,7 @@ import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
 import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
 import { KnobProvider } from "./context/KnobContext.js";
 import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
-import { MissionProvider, useMission } from "./context/MissionContext.js";
+import { MissionProvider, useMission } from './context/MissionContext.js';
 import HintSystem from "./features/missions/components/HintSystem";
 import "./common/styles/App.css";
 import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";

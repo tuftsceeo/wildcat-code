@@ -1,193 +1,187 @@
-/* HintSystem.css - Visual hint styles for mission guidance */
+/**
+ * @file HintSystem.css
+ * @description Styles for the improved visual hint system with better animations
+ * and more reliable positioning
+ */
 
-/* Container for hint overlays */
+/* Hint container */
 .visual-hint-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Base hint style */
+.visual-hint {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* Highlight effect */
+.visual-hint.highlight {
+  background-color: rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.2);
+  border: 2px solid var(--color-primary-main, #0078d4);
+  border-radius: 6px;
+  box-shadow: 0 0 8px 2px rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.3);
+}
+
+/* Outline effect */
+.visual-hint.outline {
+  border: 3px solid var(--color-primary-main, #0078d4);
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.3);
+}
+
+/* Arrow effect */
+.visual-hint.arrow {
+  width: 30px;
+  height: 40px;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 40'%3E%3Cpath d='M15 0 L30 15 L22 15 L22 40 L8 40 L8 15 L0 15 Z' fill='%230078d4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Default effect */
+.visual-hint.default {
+  background-color: rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.2);
+  border: 2px dashed var(--color-primary-main, #0078d4);
+  border-radius: 6px;
+}
+
+/* Animation: pulse */
+@keyframes hint-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
   }
-  
-  /* Base styles for all visual hints */
-  .visual-hint {
-    position: absolute;
-    pointer-events: none;
-    z-index: 9001;
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
   }
-  
-  /* Target element highlighting */
-  .hint-target {
-    z-index: 1000;
-    position: relative;
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
   }
-  
-  /* Highlight effect - semi-transparent overlay */
-  .visual-hint.highlight {
-    border-radius: 4px;
-    background-color: rgba(var(--color-secondary-main-rgb), 0.25);
-    box-shadow: 0 0 0 2px var(--color-secondary-main);
+}
+
+.visual-hint.pulse {
+  animation: hint-pulse 1.5s ease-in-out infinite;
+}
+
+/* Animation: bounce */
+@keyframes hint-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
   }
-  
-  /* Outline effect - border around element */
-  .visual-hint.outline {
-    border: 3px solid var(--color-secondary-main);
-    border-radius: 4px;
-    box-shadow: 0 0 10px 2px var(--color-secondary-main);
+  40% {
+    transform: translateY(-10px);
   }
-  
-  /* Arrow effect - pointing to element */
-  .visual-hint.arrow {
-    width: 30px;
-    height: 30px;
-    background-color: var(--color-secondary-main);
-    clip-path: polygon(50% 100%, 0% 50%, 100% 50%);
+  60% {
+    transform: translateY(-5px);
   }
-  
-  /* Pulse animation */
-  .visual-hint.pulse {
-    animation: hint-pulse 2s infinite;
+}
+
+.visual-hint.bounce {
+  animation: hint-bounce 2s ease infinite;
+}
+
+/* Animation: glow */
+@keyframes hint-glow {
+  0% {
+    box-shadow: 0 0 5px 2px rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.3);
   }
-  
-  @keyframes hint-pulse {
-    0% {
-      opacity: 0.3;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.8;
-      transform: scale(1.05);
-    }
-    100% {
-      opacity: 0.3;
-      transform: scale(1);
-    }
+  50% {
+    box-shadow: 0 0 15px 5px rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.5);
   }
-  
-  /* Bounce animation */
-  .visual-hint.bounce {
-    animation: hint-bounce 1s infinite;
+  100% {
+    box-shadow: 0 0 5px 2px rgba(var(--color-primary-main-rgb, 0, 120, 212), 0.3);
   }
-  
-  @keyframes hint-bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+}
+
+.visual-hint.glow {
+  animation: hint-glow 1.5s ease-in-out infinite;
+}
+
+/* Animation: blink */
+@keyframes hint-blink {
+  0%, 100% {
+    opacity: 0.2;
   }
-  
-  /* Glow animation */
-  .visual-hint.glow {
-    animation: hint-glow 1.5s infinite alternate;
+  50% {
+    opacity: 1;
   }
-  
-  @keyframes hint-glow {
-    from {
-      box-shadow: 0 0 5px 2px var(--color-secondary-main);
-    }
-    to {
-      box-shadow: 0 0 20px 5px var(--color-secondary-main);
-    }
+}
+
+.visual-hint.blink {
+  animation: hint-blink 1s ease-in-out infinite;
+}
+
+/* Animation: wobble */
+@keyframes hint-wobble {
+  0%, 100% {
+    transform: translateX(0%);
   }
-  
-  /* Blink animation */
-  .visual-hint.blink {
-    animation: hint-blink 1s infinite;
+  15% {
+    transform: translateX(-5%) rotate(-2deg);
   }
-  
-  @keyframes hint-blink {
-    0%, 49% {
-      opacity: 0.8;
-    }
-    50%, 100% {
-      opacity: 0.2;
-    }
+  30% {
+    transform: translateX(4%) rotate(2deg);
   }
-  
-  /* Specific hint styles for different UI elements */
-  
-  /* Button hints */
-  button.hint-target {
-    animation: button-hint 2s infinite;
+  45% {
+    transform: translateX(-3%) rotate(-1deg);
   }
-  
-  @keyframes button-hint {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
-    }
-    100% {
-      transform: scale(1);
-    }
+  60% {
+    transform: translateX(2%) rotate(1deg);
   }
-  
-  /* Form control hints */
-  input.hint-target, select.hint-target, .slider.hint-target {
-    animation: control-hint 2s infinite;
+  75% {
+    transform: translateX(-1%) rotate(-0.5deg);
   }
-  
-  @keyframes control-hint {
-    0%, 100% {
-      box-shadow: 0 0 0 0 var(--color-secondary-main);
-    }
-    50% {
-      box-shadow: 0 0 0 4px var(--color-secondary-main);
-    }
-  }
-  
-  /* Navigation button hints */
-  .nextButton.hint-target, .prevButton.hint-target {
-    animation: nav-hint 1.5s infinite;
-  }
-  
-  @keyframes nav-hint {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    50% {
-      transform: translateX(5px);
-    }
-  }
-  
-  /* Icon button hints */
-  .iconButton.hint-target {
-    animation: icon-hint 1.5s infinite alternate;
-  }
-  
-  @keyframes icon-hint {
-    from {
-      color: var(--panel-text);
-    }
-    to {
-      color: var(--color-secondary-main);
-    }
-  }
-  
-  /* Accessibility considerations */
-  @media (prefers-reduced-motion: reduce) {
-    .visual-hint,
-    .hint-target,
-    button.hint-target,
-    input.hint-target, 
-    select.hint-target, 
-    .slider.hint-target,
-    .nextButton.hint-target, 
-    .prevButton.hint-target,
-    .iconButton.hint-target {
-      animation: none !important;
-      transition: none !important;
-    }
-    
-    .visual-hint.highlight,
-    .visual-hint.outline {
-      opacity: 0.8 !important;
-      border-width: 3px !important;
-      box-shadow: 0 0 0 3px var(--color-secondary-main) !important;
-    }
-  }
+}
+
+.visual-hint.wobble {
+  transform-origin: center;
+  animation: hint-wobble 2s ease-in-out infinite;
+}
+
+/* Target element styling */
+.hint-target {
+  position: relative;
+  z-index: 1001;
+}
+
+/* High contrast mode adjustments */
+body.high-contrast .visual-hint.highlight {
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 3px solid var(--color-primary-main, #0078d4);
+}
+
+body.high-contrast .visual-hint.outline {
+  border: 4px solid var(--color-primary-main, #0078d4);
+}
+
+/* Hint debugger styles */
+.hint-debug-info {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 5px;
+  font-size: 10px;
+  font-family: monospace;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Special styles for adjusting to different reading levels */
+[data-reading-level="basic"] .visual-hint {
+  border-width: 3px;
+}
+
+[data-reading-level="basic"] .visual-hint.pulse {
+  animation-duration: 2s;
+}

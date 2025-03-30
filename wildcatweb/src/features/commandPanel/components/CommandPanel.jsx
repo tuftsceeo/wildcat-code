@@ -31,11 +31,14 @@ import SubtypeSelector from "./SubtypeSelector";
 import TaskInstructionPanel from "../../missions/components/TaskInstructionPanel";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
-import { useMission } from "../../../context/MissionContext.js";
+import { useMission } from '../../../context/MissionContext.js';
+import { useBLE } from "../../bluetooth/context/BLEContext";
 
 const FilledCircleStop = (props) => {
     return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
 };
+
+
 
 // Define the control types and their configurations
 const CONTROL_TYPES = {
@@ -107,20 +110,21 @@ export const CommandPanel = ({
     const {
         isMissionMode,
         currentMission,
-        currentTaskIndex,
+        getCurrentTask,
+        isTaskCompleted,
+        completeTask,
+        dispatchTaskEvent,
+        validateStepConfiguration,
         isComponentVisible,
         isComponentEnabled,
         getPrefilledValue,
         isValueLocked,
-        validateStepConfiguration,
-        dispatchTaskEvent,
-        setShowTestPrompt,
-        // Task-level state and functions
-        getCurrentTask,
-        isTaskCompleted,
-        requestHint,
-        completeTask,
+        currentTaskIndex,
+        requestHint
     } = useMission();
+
+    // Add state for test prompt
+    const [showTestPrompt, setShowTestPrompt] = useState(false);
 
     // Get current task for the mission
     const currentTask = getCurrentTask();

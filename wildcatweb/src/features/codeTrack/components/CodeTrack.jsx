@@ -11,7 +11,7 @@ import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
 import { useBLE } from "../../bluetooth/context/BLEContext";
-import { useMission } from "../../../context/MissionContext"; // Import mission hook
+import { useMission } from '../../../context/MissionContext.js';
 import {
     ClearSlotRequest,
     ClearSlotResponse,
@@ -44,11 +44,10 @@ const CodeTrack = ({
     // Get mission context
     const {
         isMissionMode,
-        currentMission,
         dispatchTaskEvent,
         validateStepConfiguration,
         getCurrentTask,
-        setShowTestPrompt,
+        currentMission
     } = useMission();
 
     // Get current task if we're in mission mode
@@ -169,9 +168,6 @@ const CodeTrack = ({
                     );
                     return;
                 }
-
-                // Hide the test prompt if it's showing
-                setShowTestPrompt(false);
             }
 
             // Generate code specifically for this single instruction

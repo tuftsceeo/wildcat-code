@@ -10,7 +10,7 @@ import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
 import { useCustomization } from "../../../context/CustomizationContext";
-import { useMission } from "../../../context/MissionContext";
+import { useMission } from '../../../context/MissionContext.js';
 import { Buffer } from "buffer";
 import { ReactComponent as QuestionMarkIcon } from "../../../assets/images/question-mark.svg";
 import {
@@ -97,8 +97,8 @@ export const RunMenu = ({
         currentMission,
         dispatchTaskEvent,
         isTaskCompleted,
-        getCurrentTask,
-    } = useMission();
+        getCurrentTask
+      } = useMission();
 
     // Log any inconsistencies between missionSteps and slotData length
     useEffect(() => {
