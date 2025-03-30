@@ -53,7 +53,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
     const [largeText, setLargeText] = useState(false);
     const [reduceMotion, setReduceMotion] = useState(false);
     const [reduceSound, setReduceSound] = useState(false);
-    
+
     // Navigation preferences - new settings
     const [requireSequentialCompletion, setRequireSequentialCompletion] = useState(true);
     const [useCommandLabels, setUseCommandLabels] = useState(true);
@@ -62,9 +62,11 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
     const [colorScheme, setColorScheme] = useState("default");
     const [borderThickness, setBorderThickness] = useState(4);
     const [customColors, setCustomColors] = useState({
-        primary: "#00ff00",
-        secondary: "#00bfff",
-        accent: "#ff00ff"
+        primary: "#35b1ff",
+        secondary: "#33ff52",
+        info: "#ff00ff",
+        warning: "#ffa500",
+        error: "#ff0000",
     });
 
     // Load settings from localStorage on mount
@@ -89,27 +91,16 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
 
                 // Ensure step count is within valid range
                 const parsedStepCount = parsed.stepCount || MIN_STEPS;
-                const validStepCount = Math.max(
-                    MIN_STEPS,
-                    Math.min(MAX_STEPS, parsedStepCount),
-                );
+                const validStepCount = Math.max(MIN_STEPS, Math.min(MAX_STEPS, parsedStepCount));
                 setStepCount(validStepCount);
                 setHighContrast(parsed.highContrast || false);
                 setLargeText(parsed.largeText || false);
                 setReduceMotion(parsed.reduceMotion || false);
                 setReduceSound(parsed.reduceSound || false);
-                
+
                 // Load navigation preferences with default values if not found
-                setRequireSequentialCompletion(
-                    parsed.requireSequentialCompletion !== undefined 
-                    ? parsed.requireSequentialCompletion 
-                    : true
-                );
-                setUseCommandLabels(
-                    parsed.useCommandLabels !== undefined 
-                    ? parsed.useCommandLabels 
-                    : true
-                );
+                setRequireSequentialCompletion(parsed.requireSequentialCompletion !== undefined ? parsed.requireSequentialCompletion : true);
+                setUseCommandLabels(parsed.useCommandLabels !== undefined ? parsed.useCommandLabels : true);
 
                 // Load color scheme and border thickness
                 setColorScheme(parsed.colorScheme || "default");
@@ -141,10 +132,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
                 borderThickness,
                 customColors,
             };
-            localStorage.setItem(
-                "customizationSettings",
-                JSON.stringify(settings),
-            );
+            localStorage.setItem("customizationSettings", JSON.stringify(settings));
         } catch (error) {
             console.error("Error saving settings to localStorage:", error);
         }
@@ -200,16 +188,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         // Apply accessibility classes
         document.body.dataset.reduceMotion = reduceMotion;
         document.body.dataset.reduceSound = reduceSound;
-    }, [
-        theme, 
-        useDyslexiaFont, 
-        highContrast, 
-        largeText, 
-        reduceMotion, 
-        reduceSound,
-        colorScheme,
-        borderThickness
-    ]);
+    }, [theme, useDyslexiaFont, highContrast, largeText, reduceMotion, reduceSound, colorScheme, borderThickness]);
 
     // Add effect to notify when step count changes
     useEffect(() => {
@@ -240,9 +219,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         if (isLanguageSupported(newLanguage)) {
             setLanguage(newLanguage);
         } else {
-            console.warn(
-                `Language ${newLanguage} is not supported, using English instead`,
-            );
+            console.warn(`Language ${newLanguage} is not supported, using English instead`);
             setLanguage("en");
         }
     };
@@ -252,9 +229,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         if (isComplexityLevelSupported(newLevel)) {
             setReadingLevel(newLevel);
         } else {
-            console.warn(
-                `Complexity level ${newLevel} is not supported, using intermediate instead`,
-            );
+            console.warn(`Complexity level ${newLevel} is not supported, using intermediate instead`);
             setReadingLevel("intermediate");
         }
     };
@@ -279,7 +254,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         setCustomColors({
             primary: "#00ff00",
             secondary: "#00bfff",
-            accent: "#ff00ff"
+            accent: "#ff00ff",
         });
     };
 
@@ -324,7 +299,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         setReduceMotion,
         reduceSound,
         setReduceSound,
-        
+
         // Navigation preferences
         requireSequentialCompletion,
         setRequireSequentialCompletion,
@@ -343,11 +318,7 @@ export const CustomizationProvider = ({ children, onStepCountChange }) => {
         resetSettings,
     };
 
-    return (
-        <CustomizationContext.Provider value={contextValue}>
-            {children}
-        </CustomizationContext.Provider>
-    );
+    return <CustomizationContext.Provider value={contextValue}>{children}</CustomizationContext.Provider>;
 };
 
 export default CustomizationContext;
