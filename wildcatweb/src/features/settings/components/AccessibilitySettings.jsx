@@ -10,11 +10,11 @@ import { useCustomization } from "../../../context/CustomizationContext";
 import styles from "../styles/AccessibilitySettings.module.css";
 
 // Import sound effects
-import bubbleSound from "../../../assets/sounds/bubble-sound.mp3";
+import bubbleSound from "../../../assets/sounds/click.mp3";
 import dialSound from "../../../assets/sounds/dial.mp3";
-import popSound from "../../../assets/sounds/infographic-pop.mp3";
-import bloopSound from "../../../assets/sounds/marimba-bloop.mp3";
-import voopSound from "../../../assets/sounds/voop.mp3";
+import popSound from "../../../assets/sounds/close.mp3";
+import bloopSound from "../../../assets/sounds/success.mp3";
+import voopSound from "../../../assets/sounds/error.mp3";
 
 const AccessibilitySettings = () => {
     const {

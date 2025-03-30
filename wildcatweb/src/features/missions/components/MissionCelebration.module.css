@@ -1,0 +1,110 @@
+.celebrationOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.celebrationContent {
+  background-color: var(--panel-bg);
+  border: var(--border-width-standard) solid var(--color-secondary-main);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-8);
+  text-align: center;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: var(--glow-secondary);
+  animation: slideIn 0.5s ease;
+}
+
+.successIcon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-4);
+  animation: bounce 1s ease infinite;
+}
+
+.celebrationTitle {
+  font-size: var(--font-size-2xl);
+  color: var(--color-secondary-main);
+  margin-bottom: var(--spacing-4);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  font-family: var(--font-family-active);
+  animation: pulse 2s ease infinite;
+}
+
+.celebrationMessage {
+  font-size: var(--font-size-lg);
+  color: var(--panel-text);
+  margin-bottom: var(--spacing-6);
+  line-height: var(--line-height-relaxed);
+  font-family: var(--font-family-active);
+}
+
+.continueButton {
+  background-color: var(--color-secondary-main);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-active);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  transform: var(--button-scale-default);
+  box-shadow: var(--glow-secondary);
+}
+
+.continueButton:hover {
+  transform: var(--button-scale-hover);
+  background-color: var(--color-secondary-high);
+}
+
+.continueButton:active {
+  transform: var(--button-scale-active);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+} 

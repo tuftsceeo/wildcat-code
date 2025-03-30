@@ -28,7 +28,10 @@ export default class RunProgramTask extends Task {
     // Log the validation attempt
     logTaskEvent(`Validating run program task`, {
       taskId: this.taskId,
-      eventData
+      eventData,
+      taskType: this.type,
+      currentSlot: eventData.currentSlot,
+      targetSlot: this.targetSlot
     });
     
     // Check starting slot if specified
@@ -40,6 +43,14 @@ export default class RunProgramTask extends Task {
         actual: eventData.currentSlot
       });
       // This is a warning but not a blocker - user might want to run from any slot
+    }
+    
+    // Check if this is a run program event (handle both uppercase and lowercase)
+    if (eventData.type !== 'runProgram' && eventData.type !== 'RUN_PROGRAM') {
+      logTaskEvent('Run program: Not a run program event', {
+        eventType: eventData.type
+      });
+      return false;
     }
     
     // Basic check: the run program event happened

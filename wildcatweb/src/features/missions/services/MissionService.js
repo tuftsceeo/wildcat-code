@@ -16,7 +16,7 @@ const DEFAULT_MISSIONS = [
     description: "Learn to control a motor and add a wait step",
     difficultyLevel: "beginner",
     totalSteps: 2, // Number of instruction steps (not including stop)
-    totalTasks: 8, // Total number of guided tasks
+    totalTasks: 6, // Total number of guided tasks
     
     // Introduction phase metadata (NOT tasks)
     hardwareRequirements: [
@@ -98,32 +98,9 @@ const DEFAULT_MISSIONS = [
         targetElement: ".nextButton"
       },
       
-      // Task 4: Select SENSE
-      {
-        taskId: "select_input",
-        type: "SELECT_INPUT_TYPE",
-        targetSlot: 1,
-        instruction: "Click on SENSE to access input options",
-        stepTitle: "Select SENSE",
-        targetElement: ".senseButton button",
-        uiRestrictions: {
-          hideTypeSelection: false,
-          hideSubtypeSelection: true
-        }
-      },
+
       
-      // Task 5: Select Wait
-      {
-        taskId: "select_timer",
-        type: "SELECT_SUBTYPE",
-        targetSlot: 1,
-        requiredType: "input",
-        requiredSubtype: "time",
-        instruction: "Click on Wait to set a timer",
-        stepTitle: "Select Wait",
-        targetElement: '.subtypeButton[aria-label="Select Wait"]'
-      },
-      
+  
       // Task 6: Set Timer Duration
       {
         taskId: "set_timer",
@@ -156,13 +133,6 @@ const DEFAULT_MISSIONS = [
       }
     ],
     
-    // Optional prompts
-    runPrompt: {
-      showPrompt: true,
-      message: "Great job setting up your program! Now click PLAY to see what happens.",
-      showAfterTask: 7,
-      requiredForCompletion: true,
-    }
   }
 ];
 

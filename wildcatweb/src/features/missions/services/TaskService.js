@@ -317,6 +317,15 @@ class TaskService {
       percentage: total > 0 ? Math.round((completed / total) * 100) : 0
     };
   }
+  
+  /**
+   * Check if all tasks are completed
+   * @returns {boolean} Whether all tasks are completed
+   */
+  isAllTasksCompleted() {
+    return this.tasks.length > 0 && 
+           this.tasks.length === Object.keys(this.completedTasks).length;
+  }
 }
 
 // Create singleton instance

@@ -310,9 +310,17 @@ export const RunMenu = ({
 
             // Dispatch run program event for mission tracking
             if (isMissionMode) {
+                console.log("RunMenu: Dispatching RUN_PROGRAM event", {
+                    slots: slotData.length,
+                    currentSlot: currSlotNumber,
+                    isMissionMode,
+                    currentMission: currentMission
+                });
+                
                 dispatchTaskEvent("RUN_PROGRAM", {
                     slots: slotData.length,
                     currentSlot: currSlotNumber,
+                    type: "RUN_PROGRAM" // Explicitly set the event type
                 });
             }
         } catch (error) {

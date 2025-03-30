@@ -10,6 +10,7 @@ import { logTaskEvent } from '../features/missions/models/Task';
 import MissionService from '../features/missions/services/MissionService';
 import TaskService from '../features/missions/services/TaskService';
 import MissionUI from '../features/missions/services/MissionUI';
+import MissionCelebration from '../features/missions/components/MissionCelebration';
 import {
   missionReducer,
   createInitialMissionState,
@@ -20,7 +21,8 @@ import {
   applyConfigurations,
   setCurrentSlot,
   setShowTestPrompt,
-  setShowRunPrompt
+  setShowRunPrompt,
+  setShowCelebration
 } from '../features/missions/services/MissionState';
 
 // Create mission context
@@ -56,7 +58,8 @@ export const MissionProvider = ({ children }) => {
     slotConfigurations,
     showTestPrompt,
     showRunPrompt,
-    activeHint
+    activeHint,
+    showCelebration
   } = state;
   
   // Track available missions
@@ -280,6 +283,15 @@ export const MissionProvider = ({ children }) => {
       if (currentMission?.runPrompt?.showAfterTask === taskIndex) {
         dispatch(setShowRunPrompt(true));
       }
+
+      // Check if this was the last task
+      if (TaskService.isAllTasksCompleted()) {
+        dispatch(setShowCelebration(true));
+        logTaskEvent('Mission completed!', {
+          missionId: currentMission.missionId,
+          totalTasks: currentMission.tasks?.length || 0
+        });
+      }
     }
   }, [currentMission]);
   
@@ -322,6 +334,15 @@ export const MissionProvider = ({ children }) => {
       // Check if run prompt should be shown
       if (currentMission?.runPrompt?.showAfterTask === result.completedTaskIndex) {
         dispatch(setShowRunPrompt(true));
+      }
+
+      // Check if this was the last task
+      if (TaskService.isAllTasksCompleted()) {
+        dispatch(setShowCelebration(true));
+        logTaskEvent('Mission completed!', {
+          missionId: currentMission.missionId,
+          totalTasks: currentMission.tasks?.length || 0
+        });
       }
     }
   }, [
@@ -437,6 +458,12 @@ export const MissionProvider = ({ children }) => {
     });
   }, [isMissionMode, currentMission, introCompleted, getCurrentTask]);
   
+  // Handle celebration close
+  const handleCelebrationClose = useCallback(() => {
+    dispatch(setShowCelebration(false));
+    exitMission();
+  }, [exitMission]);
+  
   // Provide context values
   const contextValue = {
     // Mission state
@@ -496,11 +523,21 @@ export const MissionProvider = ({ children }) => {
     // Task event dispatching
     dispatchTaskEvent,
     syncSlotConfigurations,
+    
+    // Celebration
+    showCelebration,
+    handleCelebrationClose
   };
   
   return (
     <MissionContext.Provider value={contextValue}>
       {children}
+      {showCelebration && currentMission && (
+        <MissionCelebration
+          onClose={handleCelebrationClose}
+          missionTitle={currentMission.title}
+        />
+      )}
     </MissionContext.Provider>
   );
 };

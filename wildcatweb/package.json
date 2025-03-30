@@ -13,6 +13,7 @@
         "axios": "^1.7.7",
         "buffer": "^6.0.3",
         "buffer-layout": "^1.2.2",
+        "canvas-confetti": "^1.9.3",
         "crc-32": "^1.2.2",
         "lucide-react": "^0.469.0",
         "react": "^18.3.1",

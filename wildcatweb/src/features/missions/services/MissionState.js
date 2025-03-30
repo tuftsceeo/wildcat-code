@@ -14,7 +14,8 @@ export const MISSION_ACTIONS = {
   DISPATCH_TASK_EVENT: 'mission/dispatchTaskEvent',
   COMPLETE_TASK: 'mission/completeTask',
   SET_SHOW_TEST_PROMPT: 'mission/setShowTestPrompt',
-  SET_SHOW_RUN_PROMPT: 'mission/setShowRunPrompt'
+  SET_SHOW_RUN_PROMPT: 'mission/setShowRunPrompt',
+  SET_SHOW_CELEBRATION: 'mission/setShowCelebration'
 };
 
 /**
@@ -41,7 +42,8 @@ export function createInitialMissionState() {
     // UI state
     showTestPrompt: false,
     showRunPrompt: false,
-    activeHint: null
+    activeHint: null,
+    showCelebration: false
   };
 }
 
@@ -64,7 +66,9 @@ export function missionReducer(state, action) {
         slotConfigurations: {},
         currSlotNumber: 0,
         showTestPrompt: false,
-        showRunPrompt: false
+        showRunPrompt: false,
+        activeHint: null,
+        showCelebration: false
       };
       
     case MISSION_ACTIONS.EXIT_MISSION:
@@ -77,7 +81,9 @@ export function missionReducer(state, action) {
         detectedMotorPort: null,
         slotConfigurations: {},
         showTestPrompt: false,
-        showRunPrompt: false
+        showRunPrompt: false,
+        activeHint: null,
+        showCelebration: false
       };
       
     case MISSION_ACTIONS.COMPLETE_INTRO:
@@ -118,6 +124,12 @@ export function missionReducer(state, action) {
       return {
         ...state,
         showRunPrompt: action.payload.show
+      };
+      
+    case MISSION_ACTIONS.SET_SHOW_CELEBRATION:
+      return {
+        ...state,
+        showCelebration: action.payload.show
       };
       
     default:
@@ -213,6 +225,18 @@ export function setShowTestPrompt(show) {
 export function setShowRunPrompt(show) {
   return {
     type: MISSION_ACTIONS.SET_SHOW_RUN_PROMPT,
+    payload: { show }
+  };
+}
+
+/**
+ * Action creator to set the show celebration flag
+ * @param {boolean} show - Whether to show the celebration
+ * @returns {Object} Action object
+ */
+export function setShowCelebration(show) {
+  return {
+    type: MISSION_ACTIONS.SET_SHOW_CELEBRATION,
     payload: { show }
   };
 }
