@@ -291,7 +291,7 @@ const ThemeSettings = () => {
                             />
                         </div>
                         <div className={styles.colorControl}>
-                            <label className={styles.colorLabel}>Secondary Color</label>
+                            <label className={styles.colorLabel}>Secondary/Active Color</label>
                             <input
                                 type="color"
                                 value={customColors.secondary}
@@ -300,11 +300,29 @@ const ThemeSettings = () => {
                             />
                         </div>
                         <div className={styles.colorControl}>
-                            <label className={styles.colorLabel}>Accent Color</label>
+                            <label className={styles.colorLabel}>Info Color</label>
                             <input
                                 type="color"
-                                value={customColors.accent}
-                                onChange={(e) => handleColorChange('accent', e.target.value)}
+                                value={customColors.info}
+                                onChange={(e) => handleColorChange('info', e.target.value)}
+                                className={styles.colorInput}
+                            />
+                        </div>
+                        <div className={styles.colorControl}>
+                            <label className={styles.colorLabel}>Error/Stop Color</label>
+                            <input
+                                type="color"
+                                value={customColors.error}
+                                onChange={(e) => handleColorChange('error', e.target.value)}
+                                className={styles.colorInput}
+                            />
+                        </div>
+                        <div className={styles.colorControl}>
+                            <label className={styles.colorLabel}>Warning Color</label>
+                            <input
+                                type="color"
+                                value={customColors.warning}
+                                onChange={(e) => handleColorChange('warning', e.target.value)}
                                 className={styles.colorInput}
                             />
                         </div>
