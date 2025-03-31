@@ -114,9 +114,9 @@ const MissionCelebration = ({ onClose, missionTitle }) => {
           <button 
             className={styles.continueButton} 
             onClick={handleClose}
-            aria-label="Continue to next mission"
+            aria-label="Continue"
           >
-            Continue to Next Mission
+            Continue
           </button>
         </div>
       </div>

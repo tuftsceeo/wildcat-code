@@ -85,7 +85,11 @@ const DEFAULT_MISSIONS = [
         targetSlot: 0,
         instruction: "Click TEST to see your motor spin",
         stepTitle: "Test Motor",
-        targetElement: ".testButton"
+        targetElement: ".testButton",
+        uiRestrictions: {
+          hideTypeSelection: true,
+          hideSubtypeSelection: true
+        }
       },
       
       // Task 3: Navigate to Wait Step
@@ -95,7 +99,11 @@ const DEFAULT_MISSIONS = [
         targetSlot: 1,
         instruction: "Click the down arrow to move to the next step",
         stepTitle: "Go to Step 2",
-        targetElement: ".nextButton"
+        targetElement: ".nextButton",
+        uiRestrictions: {
+          hideTypeSelection: true,
+          hideSubtypeSelection: true
+        }
       },
       
 
@@ -109,7 +117,11 @@ const DEFAULT_MISSIONS = [
         timeRange: [3, 5],
         instruction: "Set the timer to 3 seconds",
         stepTitle: "Set Wait Time",
-        targetElement: ".timeButton"
+        targetElement: ".timeButton",
+        uiRestrictions: {
+          hideTypeSelection: true,
+          hideSubtypeSelection: true
+        }
       },
       
       // Task 7: Test Timer
@@ -119,7 +131,11 @@ const DEFAULT_MISSIONS = [
         targetSlot: 1,
         instruction: "Click TEST to see your timer in action",
         stepTitle: "Test Timer",
-        targetElement: ".testButton"
+        targetElement: ".testButton",
+        uiRestrictions: {
+          hideTypeSelection: true,
+          hideSubtypeSelection: true
+        }
       },
       
       // Task 8: Run Program
@@ -129,7 +145,11 @@ const DEFAULT_MISSIONS = [
         targetSlot: 0, // Start from the beginning
         instruction: "Click the PLAY button to run your complete program",
         stepTitle: "Run Program",
-        targetElement: ".playButton"
+        targetElement: ".playButton",
+        uiRestrictions: {
+          hideTypeSelection: true,
+          hideSubtypeSelection: true
+        }
       }
     ],
     

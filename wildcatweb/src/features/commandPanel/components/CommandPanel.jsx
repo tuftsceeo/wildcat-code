@@ -143,7 +143,7 @@ export const CommandPanel = ({
     const shouldApplyMissionConstraints =
         isMissionMode &&
         currentMission &&
-        currentTask?.targetSlot === currSlotNumber;
+        currentTask !== null;
 
     // Reset state when slot number changes
     useEffect(() => {
@@ -522,14 +522,16 @@ export const CommandPanel = ({
 
             {/* Type Selector (ACTION/SENSE) or Stop indicator for stop step */}
             {!isStopStep ? (
-                <TypeSelector
-                    selectedType={selectedType}
-                    onTypeChange={handleTypeSelect}
-                    disabled={
-                        shouldApplyMissionConstraints &&
-                        !isComponentVisible("type-selector")
-                    }
-                />
+                ((shouldApplyMissionConstraints && isComponentVisible("type-selector")) || !shouldApplyMissionConstraints) ? (
+                    <TypeSelector
+                        selectedType={selectedType}
+                        onTypeChange={handleTypeSelect}
+                        disabled={
+                            shouldApplyMissionConstraints &&
+                            !isComponentEnabled("type-selector")
+                        }
+                    />
+                ) : null
             ) : (
                 <div className={styles.stopStepIndicator}>
                     <CircleStop
@@ -546,16 +548,18 @@ export const CommandPanel = ({
                     {/* Left column - ACTION subtype or SENSE dashboard */}
                     <div className={styles.leftColumn}>
                         {selectedType === "action" ? (
-                            <SubtypeSelector
-                                controlTypes={CONTROL_TYPES}
-                                selectedType={selectedType}
-                                selectedSubtype={selectedSubtype}
-                                onSubtypeSelect={handleSubtypeSelect}
-                                disabled={
-                                    shouldApplyMissionConstraints &&
-                                    !isComponentVisible("subtype-selector")
-                                }
-                            />
+                            ((shouldApplyMissionConstraints && isComponentVisible("subtype-selector")) || !shouldApplyMissionConstraints) ? (
+                                <SubtypeSelector
+                                    controlTypes={CONTROL_TYPES}
+                                    selectedType={selectedType}
+                                    selectedSubtype={selectedSubtype}
+                                    onSubtypeSelect={handleSubtypeSelect}
+                                    disabled={
+                                        shouldApplyMissionConstraints &&
+                                        !isComponentEnabled("subtype-selector")
+                                    }
+                                />
+                            ) : null
                         ) : (
                             renderDashboard()
                         )}
@@ -566,16 +570,18 @@ export const CommandPanel = ({
                         {selectedType === "action" ? (
                             renderDashboard()
                         ) : (
-                            <SubtypeSelector
-                                controlTypes={CONTROL_TYPES}
-                                selectedType={selectedType}
-                                selectedSubtype={selectedSubtype}
-                                onSubtypeSelect={handleSubtypeSelect}
-                                disabled={
-                                    shouldApplyMissionConstraints &&
-                                    !isComponentVisible("subtype-selector")
-                                }
-                            />
+                            ((shouldApplyMissionConstraints && isComponentVisible("subtype-selector")) || !shouldApplyMissionConstraints) ? (
+                                <SubtypeSelector
+                                    controlTypes={CONTROL_TYPES}
+                                    selectedType={selectedType}
+                                    selectedSubtype={selectedSubtype}
+                                    onSubtypeSelect={handleSubtypeSelect}
+                                    disabled={
+                                        shouldApplyMissionConstraints &&
+                                        !isComponentEnabled("subtype-selector")
+                                    }
+                                />
+                            ) : null
                         )}
                     </div>
                 </div>
