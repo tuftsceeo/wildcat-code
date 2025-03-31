@@ -302,11 +302,10 @@ function AppContent() {
         console.log("App.js: missionSteps changed to", missionSteps);
     }, [missionSteps]);
 
-    // Listen for slot data updates from mission context
+    // Handle slot data updates from RunMenu
     useEffect(() => {
         const handleSlotDataUpdate = (event) => {
             const { slotData: newSlotData } = event.detail;
-            console.log("App.js: Received slot data update:", newSlotData);
             setSlotData(newSlotData);
         };
 
