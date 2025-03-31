@@ -17,6 +17,7 @@ import {
     UserRound,
     MessageCircleMore,
     Users,
+    ChevronDown,
 } from "lucide-react";
 import Portal from "../../../common/components/Portal";
 import { useCustomization } from "../../../context/CustomizationContext";
@@ -43,9 +44,52 @@ import styles from "../styles/CustomizationPage.module.css";
 const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
     // State for the active tab index
     const [activeTab, setActiveTab] = useState(0);
+    const [isScrollable, setIsScrollable] = useState(false);
+    const [isAtBottom, setIsAtBottom] = useState(false);
 
-    // Create a ref for the panel to detect outside clicks
+    // Create refs for the panel and content
     const panelRef = useRef(null);
+    const contentRef = useRef(null);
+
+    // Check if content is scrollable
+    useEffect(() => {
+        const checkScrollable = () => {
+            if (contentRef.current) {
+                const { scrollHeight, clientHeight } = contentRef.current;
+                setIsScrollable(scrollHeight > clientHeight);
+            }
+        };
+
+        // Check initially and after content changes
+        checkScrollable();
+        const observer = new ResizeObserver(checkScrollable);
+        if (contentRef.current) {
+            observer.observe(contentRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [activeTab]); // Recheck when tab changes
+
+    // Check if we're at the bottom of the content
+    useEffect(() => {
+        const handleScroll = () => {
+            const contentElement = contentRef.current?.querySelector(`.${styles.settingsContent}`);
+            if (contentElement) {
+                const { scrollTop, scrollHeight, clientHeight } = contentElement;
+                // More reliable bottom detection that works with zoom
+                const isBottom = scrollHeight - scrollTop <= clientHeight + 1;
+                setIsAtBottom(isBottom);
+            }
+        };
+
+        const contentElement = contentRef.current?.querySelector(`.${styles.settingsContent}`);
+        if (contentElement) {
+            contentElement.addEventListener('scroll', handleScroll);
+            // Check initial position
+            handleScroll();
+            return () => contentElement.removeEventListener('scroll', handleScroll);
+        }
+    }, []);
 
     // Define all settings tabs with their properties
     const tabs = [
@@ -99,7 +143,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             available: true,
             priority: "high",
         },
-        {
+        /* {
             id: "sound",
             icon: <Volume2 size={32} />,
             name: "Help",
@@ -122,7 +166,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             color: "#888888",
             available: false,
             priority: "low",
-        },
+        }, */
     ];
 
     // Handle clicks outside the panel to close it
@@ -199,8 +243,16 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
                     />
 
                     {/* Content area for the active tab */}
-                    <div className={styles.settingsContent}>
-                        {renderTabContent()}
+                    <div 
+                        ref={contentRef}
+                        className={`${styles.settingsContentWrapper} ${isScrollable ? styles.scrollable : ''} ${isAtBottom ? styles.atBottom : ''}`}
+                    >
+                        <div className={styles.settingsContent}>
+                            {renderTabContent()}
+                        </div>
+                        <div className={styles.gradientOverlay}>
+                            <ChevronDown size={24} color="var(--panel-text)" />
+                        </div>
                     </div>
                 </div>
             </div>

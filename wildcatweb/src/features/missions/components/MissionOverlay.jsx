@@ -8,7 +8,8 @@ import React, { useState, useEffect } from "react";
 import Portal from "../../../common/components/Portal";
 import { useMission } from "../../../context/MissionContext";
 import { useBLE } from "../../../features/bluetooth/context/BLEContext";
-import { Rocket, Play, CheckCircle, AlertTriangle, X, Disc } from "lucide-react";
+import { Rocket, Play, CheckCircle, AlertTriangle, X, Disc, BluetoothSearching, RefreshCwOff, ArrowLeft } from "lucide-react";
+import MissionSelector from "./MissionSelector";
 import styles from "../styles/MissionOverlay.module.css";
 
 /**
@@ -24,7 +25,8 @@ const MissionOverlay = () => {
     applyInitialConfiguration,
     beginGuidedTasks,
     validateHardwareRequirements,
-    setDetectedMotorPort
+    setDetectedMotorPort,
+    exitMission
   } = useMission();
   
   const { isConnected, portStates } = useBLE();
@@ -34,6 +36,9 @@ const MissionOverlay = () => {
   const [hardwareError, setHardwareError] = useState(null);
   const [configurationApplied, setConfigurationApplied] = useState(false);
   const [detectedPort, setDetectedPort] = useState(null);
+  
+  // State for mission selector
+  const [showMissionSelector, setShowMissionSelector] = useState(false);
   
   // Detect connected motor port and check hardware requirements
   useEffect(() => {
@@ -101,84 +106,78 @@ const MissionOverlay = () => {
       beginGuidedTasks();
     }
   };
+
+  /**
+   * Handle going back to mission selector
+   */
+  const handleBack = () => {
+    // exitMission();
+    setShowMissionSelector(true);
+  };
   
   if (!showMissionOverlay || !currentMission) {
     return null;
   }
   
   return (
-    <Portal>
-      <div className={styles.overlay}>
-        <div className={styles.missionContainer}>
-          {/* Mission intro content */}
-          <div className={styles.introContent}>
-            <div className={styles.missionIcon}>
-              <Rocket size={80} />
-            </div>
-            
-            <h2 className={styles.missionTitle}>{currentMission.title}</h2>
-            
-            <p className={styles.missionDescription}>{currentMission.description}</p>
-            
-            {currentMission.assets?.introImage && (
-              <div className={styles.missionImage}>
-                <img src={currentMission.assets.introImage} alt="Mission preview" />
+    <>
+      <Portal>
+        <div className={styles.overlay}>
+          <div className={styles.missionContainer}>
+            {/* Mission intro content */}
+            <div className={styles.introContent}>
+              <div className={styles.missionIcon}>
+                <Rocket size={48} />
               </div>
-            )}
-            
-            {/* Hardware requirements section */}
-            <div className={styles.hardwareSection}>
-              <h3 className={styles.sectionTitle}>Hardware Check</h3>
               
-              {!isConnected ? (
-                <div className={styles.connectionWarning}>
-                  <AlertTriangle size={24} />
-                  <p>Please connect your robot to continue</p>
-                </div>
-              ) : hardwareError ? (
-                <div className={styles.hardwareError}>
-                  <AlertTriangle size={24} />
-                  <p>{hardwareError.message}</p>
-                  <ul className={styles.missingHardwareList}>
-                    {hardwareError.details.map((item, index) => (
-                      <li key={index}>
-                        {item === "motor" ? "Motor" : ""}
-                        {item === "button" ? "Force Sensor/Button" : ""}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <div className={styles.hardwareSuccess}>
-                  <CheckCircle size={24} />
-                  <p>Motor connected to Port {detectedPort}!</p>
-                  <div className={styles.detectedDevice}>
-                    <Disc size={20} />
-                    <span>Motor detected on Port {detectedPort}</span>
+              <h2 className={styles.missionTitle}>{currentMission.title}</h2>
+              
+              {/* Hardware requirements section */}
+              <div className={styles.hardwareSection}>
+                {!isConnected ? (
+                  <div className={styles.noConnection}>
+                    <BluetoothSearching size={24} />
+                    <span>Connect robot</span>
                   </div>
-                </div>
-              )}
+                ) : hardwareError ? (
+                  <div className={styles.noMotors}>
+                    <RefreshCwOff size={24} />
+                    <span>Connect motor</span>
+                  </div>
+                ) : (
+                  <div className={styles.hardwareSuccess}>
+                    <CheckCircle size={24} />
+                    <span>Motor connected to Port {detectedPort}</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Action buttons */}
+              <div className={styles.buttonContainer}>
+                <button 
+                  className={styles.startButton} 
+                  onClick={handleStartMission}
+                  disabled={!hardwareReady}
+                >
+                  <Play size={20} />
+                  Start Mission
+                </button>
+
+                <button className={styles.backButton} onClick={handleBack}>
+                  <ArrowLeft size={20} />
+                  Back
+                </button>
+              </div>
             </div>
-            
-            {/* Start button - enabled only when hardware is ready */}
-            <button 
-              className={styles.startButton} 
-              onClick={handleStartMission}
-              disabled={!hardwareReady && !hardwareError?.allowSkip}
-            >
-              <Play size={20} />
-              Start Mission
-            </button>
-            
-            {hardwareError && (
-              <button className={styles.skipHardwareButton} onClick={handleStartMission}>
-                Continue Anyway
-              </button>
-            )}
           </div>
         </div>
-      </div>
-    </Portal>
+      </Portal>
+
+      <MissionSelector 
+        isOpen={showMissionSelector} 
+        onClose={() => setShowMissionSelector(false)} 
+      />
+    </>
   );
 };
 

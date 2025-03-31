@@ -12,7 +12,7 @@ import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
 import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
 import { KnobProvider } from "./context/KnobContext.js";
 import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
-import { MissionProvider, useMission } from "./context/MissionContext.js";
+import { MissionProvider, useMission } from './context/MissionContext.js';
 import HintSystem from "./features/missions/components/HintSystem";
 import "./common/styles/App.css";
 import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";
@@ -290,10 +290,10 @@ function AppContent() {
     // Initialize slot data with empty slots
     const [slotData, setSlotData] = useState(() => {
         const slots = [];
-        for (let i = 0; i < missionSteps; i++) {
+        // Create N-1 slots for N steps (the last step is the stop step)
+        for (let i = 0; i < missionSteps - 1; i++) {
             slots.push(createEmptySlot());
         }
-        slots.push(createStopInstruction());
         return slots;
     });
 

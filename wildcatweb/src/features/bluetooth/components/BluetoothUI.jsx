@@ -137,9 +137,11 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
                     className={styles.missionButton}
                     onClick={handleMissionClick}
                     aria-label="Open Mission Selector"
-                    title="Switch Mode"
+                    title="Missions"
                 >
-                    <Rocket size={24} className={styles.missionIcon} />
+                    <div className={styles.iconWrapper}>
+                        <Rocket className={styles.missionIcon} />
+                    </div>
                 </button>
                 
                 <button

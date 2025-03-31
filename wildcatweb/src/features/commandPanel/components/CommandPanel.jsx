@@ -31,11 +31,14 @@ import SubtypeSelector from "./SubtypeSelector";
 import TaskInstructionPanel from "../../missions/components/TaskInstructionPanel";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
-import { useMission } from "../../../context/MissionContext.js";
+import { useMission } from '../../../context/MissionContext.js';
+import { useBLE } from "../../bluetooth/context/BLEContext";
 
 const FilledCircleStop = (props) => {
     return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
 };
+
+
 
 // Define the control types and their configurations
 const CONTROL_TYPES = {
@@ -107,20 +110,21 @@ export const CommandPanel = ({
     const {
         isMissionMode,
         currentMission,
-        currentTaskIndex,
+        getCurrentTask,
+        isTaskCompleted,
+        completeTask,
+        dispatchTaskEvent,
+        validateStepConfiguration,
         isComponentVisible,
         isComponentEnabled,
         getPrefilledValue,
         isValueLocked,
-        validateStepConfiguration,
-        dispatchTaskEvent,
-        setShowTestPrompt,
-        // Task-level state and functions
-        getCurrentTask,
-        isTaskCompleted,
-        requestHint,
-        completeTask,
+        currentTaskIndex,
+        requestHint
     } = useMission();
+
+    // Add state for test prompt
+    const [showTestPrompt, setShowTestPrompt] = useState(false);
 
     // Get current task for the mission
     const currentTask = getCurrentTask();
@@ -133,8 +137,7 @@ export const CommandPanel = ({
     const showTaskPanel = currentTask !== null;
 
     // Determine if the current slot is the special stop step
-    const isStopStep =
-        slotData && slotData[currSlotNumber]?.isStopInstruction === true;
+    const isStopStep = currSlotNumber === missionSteps - 1;
 
     // Determine if we should apply mission constraints to this slot
     const shouldApplyMissionConstraints =
@@ -529,11 +532,6 @@ export const CommandPanel = ({
                 />
             ) : (
                 <div className={styles.stopStepIndicator}>
-                    <TypeSelector
-                        selectedType={selectedType}
-                        onTypeChange={handleTypeSelect}
-                        disabled={true} // Always disabled for stop step
-                    />
                     <CircleStop
                         size={80}
                         className={styles.stopIcon}
@@ -585,7 +583,11 @@ export const CommandPanel = ({
 
             {/* Instruction Description Panel at bottom */}
             <InstructionDescriptionPanel
-                instruction={currentInstruction}
+                instruction={isStopStep ? {
+                    type: "special",
+                    subtype: "stop",
+                    description: "This step will stop all motors when the program ends."
+                } : currentInstruction}
                 onPlayAudio={handlePlayAudio}
                 slotNumber={currSlotNumber}
                 // Add mission-specific instructions if available

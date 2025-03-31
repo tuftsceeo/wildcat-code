@@ -10,7 +10,7 @@ import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
 import { useCustomization } from "../../../context/CustomizationContext";
-import { useMission } from "../../../context/MissionContext";
+import { useMission } from '../../../context/MissionContext.js';
 import { Buffer } from "buffer";
 import { ReactComponent as QuestionMarkIcon } from "../../../assets/images/question-mark.svg";
 import {
@@ -97,8 +97,8 @@ export const RunMenu = ({
         currentMission,
         dispatchTaskEvent,
         isTaskCompleted,
-        getCurrentTask,
-    } = useMission();
+        getCurrentTask
+      } = useMission();
 
     // Log any inconsistencies between missionSteps and slotData length
     useEffect(() => {
@@ -160,6 +160,19 @@ export const RunMenu = ({
      * @returns {Object} Object with name and icon for the step
      */
     const getStepDisplayInfo = (index) => {
+        // If this is the stop step (last step)
+        if (index === missionSteps - 1) {
+            return {
+                name: "Stop",
+                icon: (
+                    <CircleStop
+                        size={24}
+                        className={styles.commandIcon}
+                    />
+                ),
+            };
+        }
+
         // If the step is not completed
         if (!isStepCompleted(index)) {
             return {
@@ -177,19 +190,6 @@ export const RunMenu = ({
 
         // Get the type and subtype from the slot data
         const { type, subtype } = slotData[index];
-
-        // The stop step is always labeled as "Stop" regardless of preference
-        if (type === "special" && subtype === "stop") {
-            return {
-                name: "Stop",
-                icon: (
-                    <CircleStop
-                        size={24}
-                        className={styles.commandIcon}
-                    />
-                ),
-            };
-        }
 
         // If command labels are disabled, use "Step X" format even for completed steps
         if (!useCommandLabels) {
@@ -222,27 +222,11 @@ export const RunMenu = ({
         }
 
         // Try to get the display info from our mapping
-        if (INSTRUCTION_DISPLAY[type]?.[subtype]) {
-            return {
-                name: INSTRUCTION_DISPLAY[type][subtype].name,
-                icon: React.cloneElement(
-                    INSTRUCTION_DISPLAY[type][subtype].icon,
-                    {
-                        className: styles.commandIcon,
-                    },
-                ),
-            };
-        }
-
-        // Fallback for unknown types
         return {
-            name: `${type} ${subtype}`,
-            icon: (
-                <HelpCircle
-                    size={16}
-                    className={styles.commandIcon}
-                />
-            ),
+            name: INSTRUCTION_DISPLAY[type][subtype].name,
+            icon: React.cloneElement(INSTRUCTION_DISPLAY[type][subtype].icon, {
+                className: styles.commandIcon,
+            }),
         };
     };
 
@@ -310,9 +294,17 @@ export const RunMenu = ({
 
             // Dispatch run program event for mission tracking
             if (isMissionMode) {
+                console.log("RunMenu: Dispatching RUN_PROGRAM event", {
+                    slots: slotData.length,
+                    currentSlot: currSlotNumber,
+                    isMissionMode,
+                    currentMission: currentMission
+                });
+                
                 dispatchTaskEvent("RUN_PROGRAM", {
                     slots: slotData.length,
                     currentSlot: currSlotNumber,
+                    type: "RUN_PROGRAM" // Explicitly set the event type
                 });
             }
         } catch (error) {
@@ -330,7 +322,7 @@ export const RunMenu = ({
         if (isStepAccessible(stepIndex)) {
             console.log(
                 "RunMenu: Clicked on step",
-                slotData[stepIndex]?.isStopInstruction ? "Stop" : stepIndex + 1,
+                stepIndex === missionSteps - 1 ? "Stop" : stepIndex + 1
             );
 
             // Dispatch navigation event for mission tracking

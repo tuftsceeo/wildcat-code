@@ -26,41 +26,27 @@
 /* Apply smooth transitions to the icon itself */
 .connectButton img,
 .settingsButton img,
-.helpButton img {
+.missionButton img,
+.helpButton img,
+.missionIcon {
     transition: transform var(--transition-normal),
         filter var(--transition-normal);
     transform: scale(1);
 }
 
-/* Mission icon styling */
-.missionIcon {
-    color: var(--panel-text);
-    transition: transform var(--transition-normal),
-        filter var(--transition-normal),
-        color var(--transition-normal);
-    transform: scale(1);
-}
-
 /* Hover state: slightly scale up and add a glow */
 .connectButton:hover img,
+.missionButton:hover .missionIcon,
 .settingsButton:hover img,
 .helpButton:hover img {
     transform: scale(1.2);
 }
 
-.missionButton:hover .missionIcon {
-    transform: scale(1.2);
-    color: var(--color-secondary-main);
-}
-
 /* Active (pressed) state: scale down a bit and reduce the glow */
 .connectButton:active img,
 .settingsButton:active img,
+.missionButton:active .missionIcon,
 .helpButton:active img {
-    transform: scale(0.95);
-}
-
-.missionButton:active .missionIcon {
     transform: scale(0.95);
 }
 
@@ -71,14 +57,19 @@
 
 /* Button icons - using theme colors */
 .iconWrapper {
-    width: var(--bluetooth-icon-size);
-    height: var(--bluetooth-icon-size);
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     color: var(--panel-text);
     transition: all var(--transition-normal);
+}
+
+.missionIcon {
+    width: 32px;
+    height: 32px;
 }
 
 .connected .iconWrapper {
@@ -88,7 +79,9 @@
 /* Ensure all button icons use theme colors */
 .connectButton img,
 .settingsButton img,
-.helpButton img {
+.helpButton img,
+.missionButton img,
+.missionIcon {
     filter: brightness(0) invert(1);
 }
 

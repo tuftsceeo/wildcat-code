@@ -83,7 +83,7 @@ export function getIconForConcept(concept, props = {}) {
     case 'stopped':
     case 'parado':
     case 'para':
-      return <CircleStop color="var(--color-error-main)" fill="var(--color-error-main)" {...props} />;
+      return <CircleStop color="var(--color-error-main)" {...props} />;
     
     // Button state icons
     case 'pressed':

@@ -5,16 +5,21 @@
  */
 
 import React, { useRef } from "react";
-import { Volume2, VolumeX, Zap, ZapOff, Play, StopCircle } from "lucide-react";
+import { 
+    MousePointerClick,
+    Sliders,
+    CheckCircle2,
+    AlertCircle
+} from "lucide-react";
 import { useCustomization } from "../../../context/CustomizationContext";
 import styles from "../styles/AccessibilitySettings.module.css";
 
 // Import sound effects
-import bubbleSound from "../../../assets/sounds/bubble-sound.mp3";
+import bubbleSound from "../../../assets/sounds/click.mp3";
 import dialSound from "../../../assets/sounds/dial.mp3";
-import popSound from "../../../assets/sounds/infographic-pop.mp3";
-import bloopSound from "../../../assets/sounds/marimba-bloop.mp3";
-import voopSound from "../../../assets/sounds/voop.mp3";
+import popSound from "../../../assets/sounds/close.mp3";
+import bloopSound from "../../../assets/sounds/success.mp3";
+import voopSound from "../../../assets/sounds/error.mp3";
 
 const AccessibilitySettings = () => {
     const {
@@ -64,15 +69,12 @@ const AccessibilitySettings = () => {
             console.warn("Error playing sound:", error);
         });
         
-        setPlayingSound(isLongSound ? soundRef : null);
-    };
-
-    // Function to stop long sounds
-    const stopSound = () => {
-        if (playingSound) {
-            playingSound.current.pause();
-            playingSound.current.currentTime = 0;
-            setPlayingSound(null);
+        // For longer sounds, automatically stop after 2 seconds
+        if (isLongSound) {
+            setTimeout(() => {
+                soundRef.current.pause();
+                soundRef.current.currentTime = 0;
+            }, 2000);
         }
     };
 
@@ -137,89 +139,51 @@ const AccessibilitySettings = () => {
                     </label>
                 </div>
 
-                {/* Sound Effect Preview */}
+                {/* Sound Preview */}
                 <div className={styles.soundPreview}>
                     <h4 className={styles.previewTitle}>Preview Sound Effects</h4>
                     
-                    {/* Interactive Elements */}
-                    <div className={styles.soundCategory}>
-                        <h5 className={styles.categoryTitle}>Interactive Elements</h5>
-                        <div className={styles.previewButtons}>
-                            <button
-                                className={styles.previewButton}
-                                onClick={() => playSound(bubbleAudio)}
-                                disabled={reduceSound}
-                            >
-                                <Play size={16} />
-                                Click (High)
-                            </button>
-                            <button
-                                className={styles.previewButton}
-                                onClick={() => playSound(popAudio)}
-                                disabled={reduceSound}
-                            >
-                                <Play size={16} />
-                                Click (Low)
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Adjustments */}
-                    <div className={styles.soundCategory}>
-                        <h5 className={styles.categoryTitle}>Adjustments</h5>
-                        <div className={styles.previewButtons}>
-                            <button
-                                className={styles.previewButton}
-                                onClick={() => playSound(dialAudio, true)}
-                                disabled={reduceSound}
-                            >
-                                <Play size={16} />
-                                Dial/Slider
-                            </button>
-                            {playingSound === dialAudio && (
-                                <button
-                                    className={`${styles.previewButton} ${styles.stopButton}`}
-                                    onClick={stopSound}
-                                    disabled={reduceSound}
-                                >
-                                    <StopCircle size={16} />
-                                    Stop
-                                </button>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Feedback */}
-                    <div className={styles.soundCategory}>
-                        <h5 className={styles.categoryTitle}>Feedback</h5>
-                        <div className={styles.previewButtons}>
-                            <button
-                                className={styles.previewButton}
-                                onClick={() => playSound(bloopAudio)}
-                                disabled={reduceSound}
-                            >
-                                <Play size={16} />
-                                Success
-                            </button>
-                            <button
-                                className={styles.previewButton}
-                                onClick={() => playSound(voopAudio, true)}
-                                disabled={reduceSound}
-                            >
-                                <Play size={16} />
-                                Error
-                            </button>
-                            {playingSound === voopAudio && (
-                                <button
-                                    className={`${styles.previewButton} ${styles.stopButton}`}
-                                    onClick={stopSound}
-                                    disabled={reduceSound}
-                                >
-                                    <StopCircle size={16} />
-                                    Stop
-                                </button>
-                            )}
-                        </div>
+                    <div className={styles.previewButtons}>
+                        <button
+                            className={styles.previewButton}
+                            onClick={() => playSound(bubbleAudio)}
+                            disabled={reduceSound}
+                            aria-label="Play high-pitched click sound"
+                        >
+                            <MousePointerClick size={20} />
+                        </button>
+                        <button
+                            className={styles.previewButton}
+                            onClick={() => playSound(popAudio)}
+                            disabled={reduceSound}
+                            aria-label="Play low-pitched click sound"
+                        >
+                            <MousePointerClick size={20} className={styles.lowPitch} />
+                        </button>
+                        <button
+                            className={styles.previewButton}
+                            onClick={() => playSound(dialAudio, true)}
+                            disabled={reduceSound}
+                            aria-label="Play dial/slider sound"
+                        >
+                            <Sliders size={20} />
+                        </button>
+                        <button
+                            className={styles.previewButton}
+                            onClick={() => playSound(bloopAudio)}
+                            disabled={reduceSound}
+                            aria-label="Play success sound"
+                        >
+                            <CheckCircle2 size={20} />
+                        </button>
+                        <button
+                            className={styles.previewButton}
+                            onClick={() => playSound(voopAudio, true)}
+                            disabled={reduceSound}
+                            aria-label="Play error sound"
+                        >
+                            <AlertCircle size={20} />
+                        </button>
                     </div>
                 </div>
             </section>

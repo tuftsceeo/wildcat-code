@@ -147,22 +147,24 @@
 }
 
 .previewButtons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     gap: var(--spacing-3);
+    margin-top: var(--spacing-2);
 }
 
 .previewButton {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-3);
+    width: 48px;
+    height: 48px;
+    padding: 0;
     background-color: var(--button-default-bg);
     border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
     color: var(--button-default-text);
-    font-size: var(--font-size-sm);
     cursor: pointer;
     transition: all var(--transition-fast);
     transform: var(--button-scale-default);
@@ -185,16 +187,8 @@
     transform: none;
 }
 
-.stopButton {
-    background-color: var(--color-error-low);
-    border-color: var(--color-error-main);
-    color: var(--color-error-contrast);
-}
-
-.stopButton:hover:not(:disabled) {
-    background-color: var(--color-error-main);
-    border-color: var(--color-error-high);
-    color: var(--color-error-contrast);
+.lowPitch {
+    transform: scale(0.8);
 }
 
 /* Game-like effects for preview buttons */

@@ -2,7 +2,7 @@
 
 .taskInstructionContainer {
     width: 100%;
-    padding: var(--spacing-4);
+    padding: var(--spacing-2);
     margin-bottom: var(--spacing-4);
     border-radius: var(--radius-md);
     background-color: var(--color-background);
@@ -12,7 +12,7 @@
     box-shadow: var(--glow-secondary);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3);
+    gap: var(--spacing-2);
 }
 
 /* Task header with title and completion status */
@@ -30,8 +30,8 @@
 }
 
 .taskNumber {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
     color: var(--color-secondary-main);
     font-family: var(--font-family-active);
 }
@@ -72,8 +72,8 @@
 
 .instruction {
     flex: 1;
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-relaxed);
+    font-size: var(--font-size-medium);
+    line-height: var(--line-height-tight);
     color: var(--panel-text);
     font-family: var(--font-family-active);
     margin: 0;
@@ -89,10 +89,9 @@
 
 /* Style for audio and hint buttons */
 .supportButton {
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    border: var(--border-width-thin) solid var(--button-default-border);
     background-color: var(--button-default-bg);
     color: var(--button-default-text);
     display: flex;

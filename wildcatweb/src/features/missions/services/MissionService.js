@@ -1,10 +1,10 @@
 /**
  * @file MissionService.js
- * @description Service for loading, validating, and managing mission data.
- * Uses the corrected structure with introduction phases separate from tasks.
+ * @description Improved service for loading, validating, and managing mission data.
  */
 
-import { TASK_TYPES } from "./TaskRegistry";
+import { logTaskEvent } from '../models/Task';
+import TaskFactory, { TASK_TYPES } from '../models/TaskFactory';
 
 /**
  * Default missions that are included with the application
@@ -16,7 +16,7 @@ const DEFAULT_MISSIONS = [
     description: "Learn to control a motor and add a wait step",
     difficultyLevel: "beginner",
     totalSteps: 2, // Number of instruction steps (not including stop)
-    totalTasks: 8, // Total number of guided tasks
+    totalTasks: 6, // Total number of guided tasks
     
     // Introduction phase metadata (NOT tasks)
     hardwareRequirements: [
@@ -49,7 +49,18 @@ const DEFAULT_MISSIONS = [
       completeImage: "/assets/images/missions/motor-mission-complete.jpg",
     },
     
-    // Only actual guided tasks
+    // UI restrictions for the mission
+    uiRestrictions: {
+      hideTypeSelection: false,
+      hideSubtypeSelection: false,
+      visibleComponents: [],
+      hiddenComponents: [],
+      disabledComponents: [],
+      prefilledValues: {},
+      lockedValues: {}
+    },
+    
+    // Tasks
     tasks: [
       // Task 1: Set Motor Speed
       {
@@ -61,8 +72,10 @@ const DEFAULT_MISSIONS = [
         instruction: "Make your motor spin clockwise",
         stepTitle: "Set Motor Speed",
         targetElement: ".clockwiseBar",
-        // Will check against the detected port from hardware setup
-        validatePort: true
+        uiRestrictions: {
+          hideTypeSelection: true,
+          hideSubtypeSelection: true
+        }
       },
       
       // Task 2: Test Motor Command
@@ -85,34 +98,15 @@ const DEFAULT_MISSIONS = [
         targetElement: ".nextButton"
       },
       
-      // Task 4: Select SENSE
-      {
-        taskId: "select_input",
-        type: "SELECT_INPUT_TYPE",
-        targetSlot: 1,
-        instruction: "Click on SENSE to access input options",
-        stepTitle: "Select SENSE",
-        targetElement: ".senseButton button"
-      },
+
       
-      // Task 5: Select Wait
-      {
-        taskId: "select_timer",
-        type: "SELECT_SUBTYPE",
-        targetSlot: 1,
-        requiredType: "input",
-        requiredSubtype: "time",
-        instruction: "Click on Wait to set a timer",
-        stepTitle: "Select Wait",
-        targetElement: '.subtypeButton[aria-label="Select Wait"]'
-      },
-      
+  
       // Task 6: Set Timer Duration
       {
         taskId: "set_timer",
         type: "TIMER_SETTING",
         targetSlot: 1,
-        timeRange: [2, 5],
+        timeRange: [3, 5],
         instruction: "Set the timer to 3 seconds",
         stepTitle: "Set Wait Time",
         targetElement: ".timeButton"
@@ -139,41 +133,41 @@ const DEFAULT_MISSIONS = [
       }
     ],
     
-    // Optional prompts
-    runPrompt: {
-      showPrompt: true,
-      message: "Great job setting up your program! Now click PLAY to see what happens.",
-      showAfterTask: 7, // Show after test_timer task
-      requiredForCompletion: true,
-    }
   }
 ];
 
 /**
- * Service for managing mission data
+ * Mission service for managing mission data
  */
-const MissionService = {
+class MissionService {
   /**
    * Get all available missions
    *
    * @returns {Promise<Array>} Array of mission objects
    */
-  getAllMissions: async () => {
+  async getAllMissions() {
+    logTaskEvent('Getting all available missions');
+    
     // First check if there are any saved missions in localStorage
     try {
       const savedMissions = localStorage.getItem("customMissions");
       if (savedMissions) {
         const parsed = JSON.parse(savedMissions);
+        
         // Combine default missions with custom ones
-        return [...DEFAULT_MISSIONS, ...parsed];
+        const allMissions = [...DEFAULT_MISSIONS, ...parsed];
+        logTaskEvent(`Found ${allMissions.length} missions (${DEFAULT_MISSIONS.length} default, ${parsed.length} custom)`);
+        
+        return allMissions;
       }
     } catch (error) {
       console.error("Error loading custom missions:", error);
     }
 
     // Return default missions if no custom ones found
+    logTaskEvent(`Returning ${DEFAULT_MISSIONS.length} default missions`);
     return DEFAULT_MISSIONS;
-  },
+  }
 
   /**
    * Get a specific mission by ID
@@ -181,13 +175,30 @@ const MissionService = {
    * @param {string} missionId - ID of the mission to retrieve
    * @returns {Promise<Object|null>} Mission object or null if not found
    */
-  getMissionById: async (missionId) => {
-    const allMissions = await MissionService.getAllMissions();
-    return (
-      allMissions.find((mission) => mission.missionId === missionId) ||
-      null
-    );
-  },
+  async getMissionById(missionId) {
+    logTaskEvent(`Getting mission by ID: ${missionId}`);
+    
+    const allMissions = await this.getAllMissions();
+    const mission = allMissions.find((mission) => mission.missionId === missionId);
+    
+    if (!mission) {
+      logTaskEvent(`Mission with ID ${missionId} not found`);
+      return null;
+    }
+    
+    // Pre-validate tasks using our task models
+    if (mission.tasks) {
+      try {
+        // Create task models to validate structure
+        const taskModels = TaskFactory.createTasks(mission.tasks);
+        logTaskEvent(`Successfully validated ${taskModels.length} tasks in mission ${missionId}`);
+      } catch (error) {
+        console.error(`Error validating tasks for mission ${missionId}:`, error);
+      }
+    }
+    
+    return mission;
+  }
 
   /**
    * Save a custom mission
@@ -195,9 +206,9 @@ const MissionService = {
    * @param {Object} mission - Mission object to save
    * @returns {Promise<boolean>} Success status
    */
-  saveCustomMission: async (mission) => {
+  async saveCustomMission(mission) {
     // Validate mission first
-    const validation = MissionService.validateMission(mission);
+    const validation = this.validateMission(mission);
     if (!validation.isValid) {
       console.error("Invalid mission format:", validation.errors);
       return false;
@@ -230,12 +241,18 @@ const MissionService = {
         "customMissions",
         JSON.stringify(customMissions),
       );
+      
+      logTaskEvent(`Saved custom mission: ${mission.title}`, {
+        missionId: mission.missionId,
+        taskCount: mission.tasks.length
+      });
+      
       return true;
     } catch (error) {
       console.error("Error saving custom mission:", error);
       return false;
     }
-  },
+  }
 
   /**
    * Delete a custom mission
@@ -243,7 +260,7 @@ const MissionService = {
    * @param {string} missionId - ID of the mission to delete
    * @returns {Promise<boolean>} Success status
    */
-  deleteCustomMission: async (missionId) => {
+  async deleteCustomMission(missionId) {
     try {
       // Can only delete custom missions, not default ones
       const defaultMission = DEFAULT_MISSIONS.find(
@@ -268,12 +285,14 @@ const MissionService = {
         "customMissions",
         JSON.stringify(updatedMissions),
       );
+      
+      logTaskEvent(`Deleted custom mission with ID: ${missionId}`);
       return true;
     } catch (error) {
       console.error("Error deleting custom mission:", error);
       return false;
     }
-  },
+  }
 
   /**
    * Validate mission data structure
@@ -282,7 +301,7 @@ const MissionService = {
    * @param {Object} mission - Mission object to validate
    * @returns {Object} Validation result with status and errors
    */
-  validateMission: (mission) => {
+  validateMission(mission) {
     const errors = [];
 
     // Check required top-level fields
@@ -316,6 +335,20 @@ const MissionService = {
         if (!task.type) errors.push(`Task ${index} is missing type`);
         if (!task.instruction)
           errors.push(`Task ${index} is missing instruction`);
+          
+        // Check if task type is valid
+        if (!Object.values(TASK_TYPES).includes(task.type)) {
+          errors.push(`Task ${index} has invalid type: ${task.type}`);
+        }
+      });
+    }
+    
+    if (errors.length > 0) {
+      logTaskEvent('Mission validation failed', { errors });
+    } else {
+      logTaskEvent('Mission validation succeeded', { 
+        missionId: mission.missionId, 
+        title: mission.title 
       });
     }
 
@@ -323,7 +356,7 @@ const MissionService = {
       isValid: errors.length === 0,
       errors,
     };
-  },
+  }
 
   /**
    * Import mission from JSON string
@@ -331,12 +364,12 @@ const MissionService = {
    * @param {string} jsonString - JSON string containing mission data
    * @returns {Object} Result with imported mission and status
    */
-  importMissionFromJson: (jsonString) => {
+  importMissionFromJson(jsonString) {
     try {
       const mission = JSON.parse(jsonString);
 
       // Validate mission structure
-      const validation = MissionService.validateMission(mission);
+      const validation = this.validateMission(mission);
 
       if (!validation.isValid) {
         return {
@@ -357,7 +390,7 @@ const MissionService = {
         mission: null,
       };
     }
-  },
+  }
 
   /**
    * Export mission to JSON string
@@ -365,9 +398,53 @@ const MissionService = {
    * @param {Object} mission - Mission object to export
    * @returns {string} JSON string representation of the mission
    */
-  exportMissionToJson: (mission) => {
+  exportMissionToJson(mission) {
     return JSON.stringify(mission, null, 2);
   }
-};
+  
+  /**
+   * Get mission progress for a mission
+   * 
+   * @param {string} missionId - Mission ID to check
+   * @returns {Object|null} Progress data or null if not found
+   */
+  getMissionProgress(missionId) {
+    try {
+      const progressData = localStorage.getItem(`mission_${missionId}_progress`);
+      
+      if (!progressData) {
+        return null;
+      }
+      
+      return JSON.parse(progressData);
+    } catch (error) {
+      console.error('Error retrieving mission progress:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Save mission progress
+   * 
+   * @param {string} missionId - Mission ID 
+   * @param {Object} progress - Progress data
+   * @returns {boolean} Success status
+   */
+  saveMissionProgress(missionId, progress) {
+    try {
+      localStorage.setItem(
+        `mission_${missionId}_progress`, 
+        JSON.stringify(progress)
+      );
+      return true;
+    } catch (error) {
+      console.error('Error saving mission progress:', error);
+      return false;
+    }
+  }
+}
 
-export default MissionService;
+// Create singleton instance
+const missionService = new MissionService();
+
+export default missionService;
