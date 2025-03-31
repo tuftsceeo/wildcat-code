@@ -7,8 +7,9 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Minus, Plus, AlertTriangle } from "lucide-react";
+import { Minus, Plus, AlertTriangle, Lock } from "lucide-react";
 import { useCustomization } from "../../../context/CustomizationContext";
+import { useMission } from "../../../context/MissionContext";
 
 import Portal from "../../../common/components/Portal";
 import styles from "../styles/StepsSettings.module.css";
@@ -69,6 +70,9 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
         setUseCommandLabels
     } = useCustomization();
 
+    // Get mission mode state
+    const { isMissionMode } = useMission();
+
     // Local state for step count (before applying)
     const [tempStepCount, setTempStepCount] = useState(stepCount);
 
@@ -85,6 +89,12 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
      * Increase step count (with upper limit)
      */
     const handleIncreaseSteps = () => {
+        if (isMissionMode) {
+            setConfirmationMessage("Cannot modify step count while a mission is in progress.");
+            setShowConfirmation(true);
+            return;
+        }
+
         if (tempStepCount < MAX_STEPS) {
             setTempStepCount((prev) => prev + 1);
         }
@@ -94,6 +104,12 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
      * Decrease step count (with lower limit)
      */
     const handleDecreaseSteps = () => {
+        if (isMissionMode) {
+            setConfirmationMessage("Cannot modify step count while a mission is in progress.");
+            setShowConfirmation(true);
+            return;
+        }
+
         if (tempStepCount > MIN_STEPS) {
             setTempStepCount((prev) => prev - 1);
         }
@@ -202,15 +218,23 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.title}>Number of Code Steps</div>
+            <div className={styles.title}>
+                Number of Code Steps
+            </div>
+            {isMissionMode && (
+                <div className={styles.missionModeWarning}>
+                    <Lock size={16} />
+                    <span>Mission in Progress</span>
+                </div>
+            )}
 
             <div className={styles.stepCountControl}>
                 <button
                     className={`${styles.stepButton} ${
-                        tempStepCount <= MIN_STEPS ? styles.disabled : ""
+                        tempStepCount <= MIN_STEPS || isMissionMode ? styles.disabled : ""
                     }`}
                     onClick={handleDecreaseSteps}
-                    disabled={tempStepCount <= MIN_STEPS}
+                    disabled={tempStepCount <= MIN_STEPS || isMissionMode}
                     aria-label="Decrease step count"
                 >
                     <Minus size={24} />
@@ -223,10 +247,10 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
 
                 <button
                     className={`${styles.stepButton} ${
-                        tempStepCount >= MAX_STEPS ? styles.disabled : ""
+                        tempStepCount >= MAX_STEPS || isMissionMode ? styles.disabled : ""
                     }`}
                     onClick={handleIncreaseSteps}
-                    disabled={tempStepCount >= MAX_STEPS}
+                    disabled={tempStepCount >= MAX_STEPS || isMissionMode}
                     aria-label="Increase step count"
                 >
                     <Plus size={24} />
@@ -235,9 +259,9 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
 
             <div className={styles.updateButtonContainer}>
                 <button
-                    className={styles.updateButton}
+                    className={`${styles.updateButton} ${isMissionMode ? styles.disabled : ""}`}
                     onClick={handleApplySteps}
-                    disabled={tempStepCount === stepCount}
+                    disabled={tempStepCount === stepCount || isMissionMode}
                 >
                     Apply Changes
                 </button>
@@ -275,7 +299,7 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
                     <div className={styles.confirmationDialog}>
                         <div className={styles.confirmationHeader}>
                             <AlertTriangle size={24} color="var(--color-warning-main)" />
-                            <h3>Warning: Code Will Be Deleted</h3>
+                            <h3>Warning: {isMissionMode ? "Mission in Progress" : "Code Will Be Deleted"}</h3>
                         </div>
 
                         <div className={styles.confirmationMessage}>
@@ -289,12 +313,14 @@ const StepsSettings = ({ slotData = [], onUpdateMissionSteps }) => {
                             >
                                 Cancel
                             </button>
-                            <button
-                                className={styles.confirmButton}
-                                onClick={applyStepCountChange}
-                            >
-                                Confirm
-                            </button>
+                            {!isMissionMode && (
+                                <button
+                                    className={styles.confirmButton}
+                                    onClick={applyStepCountChange}
+                                >
+                                    Confirm
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -10,15 +10,15 @@ import { validateSpeed, getSpeedDescription } from "./motorSpeedUtils";
 import {
     Rabbit,
     Turtle,
-    Octagon,
+    CircleStop,
     ArrowLeft,
     ArrowRight,
     MoveLeft,
     MoveRight,
 } from "lucide-react";
 
- const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
+ const FilledCircleStop = (props) => {
+        return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
       };
 
 /**
@@ -88,9 +88,9 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
 
         // We'll have 8 bars total (4 for each direction)
         for (let i = 0; i < 8; i++) {
-            // Bars 0-3 are backward (yellow), bars 4-7 are forward (green)
-            const isForward = i >= 4;
-            const intensityLevel = isForward ? i - 4 : 3 - i;
+            // Bars 0-3 are countercw (yellow), bars 4-7 are clockwise (green)
+            const isClockwise = i >= 4;
+            const intensityLevel = isClockwise ? i - 4 : 3 - i;
 
             // Determine if this bar should be active based on speed and direction
             let isActive = false;
@@ -98,15 +98,15 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
             if (speed === 0) {
                 // When stopped, only middle bars are slightly active
                 isActive = i === 3 || i === 4;
-            } else if (direction === "forward" && isForward) {
-                // Forward motion - light up appropriate green bars
+            } else if (direction === "clockwise" && isClockwise) {
+                // Clockwise motion - light up appropriate green bars
                 if (level === "slow" && intensityLevel <= 0) isActive = true;
                 else if (level === "medium" && intensityLevel <= 1)
                     isActive = true;
                 else if (level === "fast" && intensityLevel <= 2)
                     isActive = true;
-            } else if (direction === "backward" && !isForward) {
-                // Backward motion - light up appropriate yellow bars
+            } else if (direction === "countercw" && !isClockwise) {
+                // Counterclockwise motion - light up appropriate yellow bars
                 if (level === "slow" && intensityLevel <= 0) isActive = true;
                 else if (level === "medium" && intensityLevel <= 1)
                     isActive = true;
@@ -117,9 +117,9 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
             // Add this bar's status to our array
             barStatus.push({
                 isActive,
-                isForward,
+                isClockwise,
                 intensityLevel,
-                className: isForward ? styles.forwardBar : styles.backwardBar,
+                className: isClockwise ? styles.clockwiseBar : styles.countercwBar,
             });
         }
 
@@ -129,10 +129,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
     // Calculate slider position (0-100%)
     const getSliderPosition = () => {
         if (speed === 0) return 50; // Center
-        if (direction === "backward") {
-            return speed === -330 ? 30 : speed === -660 ? 20 : 10; // Slow, Medium, Fast backward
+        if (direction === "countercw") {
+            return speed === -330 ? 30 : speed === -660 ? 20 : 10; // Slow, Medium, Fast countercw
         } else {
-            return speed === 330 ? 70 : speed === 660 ? 80 : 90; // Slow, Medium, Fast forward
+            return speed === 330 ? 70 : speed === 660 ? 80 : 90; // Slow, Medium, Fast clockwise
         }
     };
 
@@ -179,10 +179,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
 
             {/* Animal icons for direction and speed */}
             <div className={styles.animalIcons}>
-                {/* Fast Backward (Rabbit) */}
+                {/* Fast Counterclockwise (Rabbit) */}
                 <div
                     className={`${styles.animalIcon} ${
-                        direction === "backward" && level === "fast"
+                        direction === "countercw" && level === "fast"
                             ? styles.active
                             : ""
                     }`}
@@ -193,10 +193,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                     />
                 </div>
 
-                {/* Medium Backward (Arrow) */}
+                {/* Medium Counterclockwise (Arrow) */}
                 <div
                     className={`${styles.animalIcon} ${
-                        direction === "backward" && level === "medium"
+                        direction === "countercw" && level === "medium"
                             ? styles.active
                             : ""
                     }`}
@@ -204,10 +204,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                     <MoveLeft size={24} />
                 </div>
 
-                {/* Slow Backward (Turtle) */}
+                {/* Slow Counterclockwise (Turtle) */}
                 <div
                     className={`${styles.animalIcon} ${
-                        direction === "backward" && level === "slow"
+                        direction === "countercw" && level === "slow"
                             ? styles.active
                             : ""
                     }`}
@@ -218,21 +218,21 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                     />
                 </div>
 
-                {/* Stop (Octagon) */}
+                {/* Stop (CircleStop) */}
                 <div
     className={`${styles.animalIcon} ${
         speed === 0 ? styles.active : ""
     }`}
 >
-    <FilledOctagon 
+    <CircleStop 
         size={20} 
         color="var(--color-error-main)" 
     />
 </div>
-                {/* Slow Forward (Turtle) */}
+                {/* Slow Clockwise (Turtle) */}
                 <div
                     className={`${styles.animalIcon} ${
-                        direction === "forward" && level === "slow"
+                        direction === "clockwise" && level === "slow"
                             ? styles.active
                             : ""
                     }`}
@@ -240,10 +240,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                     <Turtle size={24} />
                 </div>
 
-                {/* Medium Forward (Arrow) */}
+                {/* Medium Clockwise (Arrow) */}
                 <div
                     className={`${styles.animalIcon} ${
-                        direction === "forward" && level === "medium"
+                        direction === "clockwise" && level === "medium"
                             ? styles.active
                             : ""
                     }`}
@@ -251,10 +251,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                     <MoveRight size={24} />
                 </div>
 
-                {/* Fast Forward (Rabbit) */}
+                {/* Fast Clockwise (Rabbit) */}
                 <div
                     className={`${styles.animalIcon} ${
-                        direction === "forward" && level === "fast"
+                        direction === "clockwise" && level === "fast"
                             ? styles.active
                             : ""
                     }`}

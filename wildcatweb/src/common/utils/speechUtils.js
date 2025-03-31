@@ -15,7 +15,7 @@ export const VOICE_PRESETS = [
       rate: 0.8,
       pitch: 0.5,
       useWordPauses: true,
-      wordPauseChar: '.',
+      // wordPauseChar: '.',
     }
   },
   {

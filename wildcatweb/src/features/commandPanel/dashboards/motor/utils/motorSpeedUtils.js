@@ -40,7 +40,7 @@ export const getSpeedDescription = (speed) => {
 
     const absSpeed = Math.abs(clampedSpeed);
     const direction =
-        clampedSpeed < 0 ? "backward" : clampedSpeed > 0 ? "forward" : "stop";
+        clampedSpeed < 0 ? "countercw" : clampedSpeed > 0 ? "clockwise" : "stop";
 
     let level;
     if (clampedSpeed === 0) {
@@ -80,7 +80,7 @@ export const getMotorDescription = (config) => {
  * Maps a descriptive speed level and direction to a numeric value
  *
  * @param {string} level - Speed level ('slow', 'medium', 'fast', 'stop')
- * @param {string} direction - Direction ('forward', 'backward', 'stop')
+ * @param {string} direction - Direction ('clockwise', 'countercw', 'stop')
  * @returns {number} Numeric speed value
  */
 export const getSpeedValue = (level, direction) => {
@@ -88,7 +88,7 @@ export const getSpeedValue = (level, direction) => {
         return SPEED_PRESETS.STOP;
     }
 
-    const directionMultiplier = direction === "backward" ? -1 : 1;
+    const directionMultiplier = direction === "countercw" ? -1 : 1;
 
     switch (level) {
         case "slow":

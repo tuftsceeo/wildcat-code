@@ -15,53 +15,43 @@
    SHARED TOKENS (constant across all themes)
    ============================================ */
 :root {
-    /* Spacing Scale */
-    --spacing-1: 0.25rem; /* 4px */
-    --spacing-2: 0.5rem; /* 8px */
-    --spacing-3: 0.75rem; /* 12px */
-    --spacing-4: 1rem; /* 16px */
-    --spacing-5: 1.25rem; /* 20px */
-    --spacing-6: 1.5rem; /* 24px */
-    --spacing-8: 2rem; /* 32px */
-    --spacing-10: 2.5rem; /* 40px */
-    --spacing-12: 3rem; /* 48px */
-    --spacing-16: 4rem; /* 64px */
-    --spacing-20: 5rem; /* 80px */
+    /* Spacing Scale - Balanced for educational clarity */
+    --spacing-1: 0.25rem; /* 4px - For tight grouping */
+    --spacing-2: 0.5rem; /* 8px - For related elements */
+    --spacing-3: 0.75rem; /* 12px - For section separation */
+    --spacing-4: 1rem; /* 16px - Standard spacing */
+    --spacing-5: 1.25rem; /* 20px - For visual hierarchy */
+    --spacing-6: 1.5rem; /* 24px - For major sections */
+    --spacing-8: 2rem; /* 32px - For content blocks */
+    --spacing-10: 2.5rem; /* 40px - For page sections */
+    --spacing-12: 3rem; /* 48px - For major breaks */
+    --spacing-16: 4rem; /* 64px - For full sections */
+    --spacing-20: 5rem; /* 80px - For page breaks */
 
-    /* Border Radius */
+    /* Border Radius - Balanced for engagement */
     --radius-none: 0;
-    --radius-sm: 0.25rem; /* 4px */
-    --radius-md: 0.5rem; /* 8px */
-    --radius-lg: 0.75rem; /* 12px */
-    --radius-xl: 1rem; /* 16px */
+    --radius-sm: 0.25rem; /* 4px - Subtle rounding */
+    --radius-md: 0.5rem; /* 8px - Standard rounding */
+    --radius-lg: 0.75rem; /* 12px - Game-like elements */
+    --radius-xl: 1rem; /* 16px - Prominent elements */
     --radius-full: 9999px;
 
-    /* Border Width */
+    /* Border Width - Clear but not overwhelming */
     --border-width-none: 0;
-    --border-width-thin: 0.125rem;
-    --border-width-standard: 0.1875rem;
-    --border-width-thick: 0.25rem;
-    --border-width-extra: 0.3125rem;
+    --border-width-thin: 0.125rem; /* 2px - Subtle separation */
+    --border-width-standard: 0.25rem; /* 4px - Standard emphasis */
+    --border-width-thick: 0.375rem; /* 6px - Game-like elements */
+    --border-width-extra: 0.5rem; /* 8px - Prominent elements */
 
-    /* Z-Index Layers */
-    --z-index-below: -1;
-    --z-index-base: 0;
-    --z-index-above: 1;
-    --z-index-dropdown: 10;
-    --z-index-popover: 20;
-    --z-index-modal: 30;
-    --z-index-overlay: 40;
-    --z-index-toast: 50;
-
-    /* Font Sizes */
-    --font-size-xxs: 0.6rem; /* 12px */
-    --font-size-xs: 1.2rem; /* 12px */
-    --font-size-sm: 1.4rem; /* 14px */
-    --font-size-base: 1.6rem; /* 16px */
-    --font-size-lg: 2rem; /* 32 px*/
-    --font-size-xl: 2.5rem; /* 24px */
-    --font-size-2xl: 3.2rem; /* 32px */
-    --font-size-3xl: 4rem; /* 40px */
+    /* Font Sizes - Optimized for readability */
+    --font-size-xxs: 0.75rem; /* 12px - Small labels */
+    --font-size-xs: 0.875rem; /* 14px - Secondary text */
+    --font-size-sm: 1rem; /* 16px - Body text */
+    --font-size-base: 1.25rem; /* 20px - Primary text */
+    --font-size-lg: 1.5rem; /* 24px - Headers */
+    --font-size-xl: 2rem; /* 32px - Section headers */
+    --font-size-2xl: 2.5rem; /* 40px - Main headers */
+    --font-size-3xl: 3rem; /* 48px - Hero text */
 
     /* Font Weights */
     --font-weight-regular: 400;
@@ -81,40 +71,67 @@
     --letter-spacing-wider: 0.05em;
     --letter-spacing-widest: 0.1em;
 
-    /* Animation and Transition */
+    /* Animation and Transition - Enhanced for game-like feel */
     --transition-duration-fast: 150ms;
     --transition-duration-normal: 250ms;
     --transition-duration-slow: 350ms;
+    --transition-duration-game: 500ms; /* For more dramatic effects */
 
-    /* Easing Functions */
+    /* Easing Functions - Added game-like curves */
     --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
     --transition-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Playful bounce */
+    --transition-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Spring effect */
+    --transition-easing-pulse: cubic-bezier(0.4, 0, 0.6, 1); /* Pulsing effect */
 
-    /* Complete transitions */
-    --transition-standard: var(--transition-duration-normal)
-        var(--transition-easing-standard);
-    --transition-fast: var(--transition-duration-fast)
-        var(--transition-easing-standard);
-    --transition-slow: var(--transition-duration-slow)
-        var(--transition-easing-standard);
+    /* Complete transitions - Added game-like variants */
+    --transition-standard: var(--transition-duration-normal) var(--transition-easing-standard);
+    --transition-fast: var(--transition-duration-fast) var(--transition-easing-standard);
+    --transition-slow: var(--transition-duration-slow) var(--transition-easing-standard);
+    --transition-bounce: var(--transition-duration-game) var(--transition-easing-bounce);
+    --transition-spring: var(--transition-duration-game) var(--transition-easing-spring);
+    --transition-pulse: var(--transition-duration-game) var(--transition-easing-pulse);
 
-    /* Component dimensions - consistent across themes */
-    --panel-width-step: 325px;
-    --panel-width-code: 325px;
-    --panel-width-control: 620px;
-    --panel-width-settings: 350px;
+    /* Game-like Effects */
+    --glow-intensity-low: 0.3;
+    --glow-intensity-medium: 0.5;
+    --glow-intensity-high: 0.7;
+
+    /* Button Scale Transforms - Enhanced for game-like feel */
+    --button-scale-default: scale(1);
+    --button-scale-hover: scale(1.05);
+    --button-scale-active: scale(0.95);
+    --button-scale-success: scale(1.1); /* For successful actions */
+    --button-scale-error: scale(0.9); /* For errors */
+    --button-scale-pulse: scale(1.05); /* For attention-grabbing elements */
+
+    /* Animation Keyframes - Game-like effects */
+    --animation-duration-short: 0.3s;
+    --animation-duration-medium: 0.5s;
+    --animation-duration-long: 0.8s;
+
+    /* Sound Effect Tokens (for accessibility) */
+    --sound-effect-volume: 0.5; /* Default volume */
+    --sound-effect-duration: 0.3s; /* Default duration */
+    --sound-effect-pitch: 1; /* Default pitch */
+
+    /* Component dimensions - Balanced for engagement */
+    --panel-width-step: 300px; /* Slightly wider for clarity */
+    --panel-width-code: 300px; /* Room for code examples */
+    --panel-width-control: 540px; /* Comfortable control area */
+    --panel-width-settings: 320px; /* Clear settings layout */
     --panel-spacing: var(--spacing-4);
-    --header-height: 60px;
-    --bluetooth-button-size: 40px;
-    --bluetooth-icon-size: 24px;
-    --bluetooth-status-indicator-size: 10px;
+    --header-height: 56px; /* Prominent but not overwhelming */
+    --bluetooth-button-size: 40px; /* Easy to click */
+    --bluetooth-icon-size: 24px; /* Clear visibility */
+    --bluetooth-status-indicator-size: 10px; /* Noticeable status */
 
     /* Responsive adjustments */
-    /* Button Scale Transforms - consistent across themes */
+    /* Button Scale Transforms - More pronounced for engagement */
     --button-scale-default: scale(1);
-    --button-scale-hover: scale(1.01);
-    --button-scale-active: scale(0.99);
+    --button-scale-hover: scale(1.05); /* More noticeable feedback */
+    --button-scale-active: scale(0.95); /* Clear interaction */
 }
 
 @media (max-width: 1400px) {
@@ -248,8 +265,8 @@ body[data-theme="retro"] {
     --glow-white: 0 0 0.25rem rgba(var(--color-text-rgb-rgb), 0.7);
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-high);
-    --color-motor-backward: var(--color-info-main);
+    --color-motor-clockwise: var(--color-secondary-high);
+    --color-motor-countercw: var(--color-info-main);
     --color-motor-stopped: var(--color-gray-medium);
 
     --color-timer-main: var(--color-secondary-high);
@@ -298,8 +315,7 @@ body[data-theme="retro"] {
 
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
-    --input-focus-border: var(--color-secondary-main);
-    --input-focus-outline: var(--glow-secondary);
+    --input-focus-border: var(--glow-secondary);
 
     --input-disabled-bg: var(--color-background);
     --input-disabled-text: var(--color-gray-medium);
@@ -399,8 +415,8 @@ body[data-theme="clean"] {
     --glow-white: none;
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-info-main);
+    --color-motor-clockwise: var(--color-secondary-main);
+    --color-motor-countercw: var(--color-info-main);
     --color-motor-stopped: var(--color-gray-medium);
 
     --color-timer-main: var(--color-secondary-main);
@@ -448,8 +464,7 @@ body[data-theme="clean"] {
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
     --input-focus-border: var(--color-secondary-main);
-    --input-focus-outline: 0 0 0 2px
-        rgba(var(--color-secondary-main-rgb-rgb), 0.2);
+    --input-focus-outline: 0 0 0 2px rgba(var(--color-secondary-main-rgb-rgb), 0.2);
 
     --input-disabled-bg: var(--color-gray-faint);
     --input-disabled-text: var(--color-gray-medium);
@@ -549,8 +564,8 @@ body[data-theme="pastel"] {
     --glow-white: none;
 
     /* Component-specific colors */
-    --color-motor-forward: var(--color-secondary-main);
-    --color-motor-backward: var(--color-info-high);
+    --color-motor-clockwise: var(--color-secondary-main);
+    --color-motor-countercw: var(--color-info-high);
     --color-motor-stopped: var(--color-gray-medium);
 
     --color-timer-main: var(--color-secondary-main);
@@ -624,30 +639,245 @@ body.dyslexia-font {
 
 /* Apply high contrast when enabled */
 body.high-contrast {
-    --color-text-rgb: 255, 255, 255;
-    --color-text: rgb(var(--color-text-rgb));
-    --color-background-rgb: 0, 0, 0;
-    --color-background: rgb(var(--color-background-rgb));
-    --panel-bg: #000000;
-    --panel-border: #ffffff;
-    --button-default-border: #ffffff;
-    --button-default-text: #ffffff;
+    /* Base Colors - Respect theme's light/dark nature */
+    --color-text: var(--color-text);
+    --color-background: var(--color-background);
+
+    /* Strong Colors for High Contrast - Use custom colors if set */
+    --color-primary-main: var(--color-primary-main, #000000);
+    --color-primary-high: var(--color-primary-main, #000000);
+    --color-primary-low: var(--color-primary-main, #000000);
+    --color-primary-contrast: var(--color-primary-contrast, #ffffff);
+
+    --color-secondary-main: var(--color-secondary-main, #000000);
+    --color-secondary-high: var(--color-secondary-main, #000000);
+    --color-secondary-low: var(--color-secondary-main, #000000);
+    --color-secondary-contrast: var(--color-secondary-contrast, #ffffff);
+
+    /* Info Color - Use custom color if set */
+    --color-info-main: var(--color-info-main, #0000ff);
+    --color-info-high: var(--color-info-main, #0000ff);
+    --color-info-low: var(--color-info-main, #0000ff);
+    --color-info-contrast: var(--color-info-contrast, #ffffff);
+
+    /* Error/Stop Color - Use custom color if set */
+    --color-error-main: var(--color-error-main, #ff0000);
+    --color-error-high: var(--color-error-main, #ff0000);
+    --color-error-low: var(--color-error-main, #ff0000);
+    --color-error-contrast: var(--color-error-contrast, #ffffff);
+
+    /* Warning Color - Use custom color if set */
+    --color-warning-main: var(--color-warning-main, #ffa500);
+    --color-warning-high: var(--color-warning-main, #ffa500);
+    --color-warning-low: var(--color-warning-main, #ffa500);
+    --color-warning-contrast: var(--color-warning-contrast, #000000);
+
+    /* Success Color - Use secondary color for consistency */
+    --color-success-main: var(--color-secondary-main, #000000);
+    --color-success-high: var(--color-secondary-main, #000000);
+    --color-success-low: var(--color-secondary-main, #000000);
+    --color-success-contrast: var(--color-secondary-contrast, #ffffff);
+
+    /* Thicker Borders */
+    --border-width-standard: 0.375rem; /* 6px */
+    --border-width-thick: 0.5rem; /* 8px */
+    --border-width-extra: 0.75rem; /* 12px */
+
+    /* Heavier Font Weights */
+    --font-weight-regular: 600;
+    --font-weight-medium: 700;
+    --font-weight-semibold: 800;
+    --font-weight-bold: 900;
+
+    /* Component-specific colors - Use custom colors if set */
+    --panel-bg: var(--color-background);
+    --panel-border: var(--color-primary-main, #000000);
+    --panel-text: var(--color-text);
+
+    /* Button States - Outlined - Use custom colors if set */
+    --button-default-bg: var(--color-background);
+    --button-default-text: var(--color-text);
+    --button-default-border: var(--color-primary-main, #000000);
+
+    --button-selected-bg: var(--button-selected-bg, var(--color-secondary-main, #000000));
+    --button-selected-text: var(--button-selected-text, var(--color-secondary-contrast, #ffffff));
+    --button-selected-border: var(--button-selected-border, var(--color-secondary-main, #000000));
+
+    --button-disabled-bg: var(--color-background);
+    --button-disabled-text: var(--color-text);
+    --button-disabled-border: var(--color-text);
+    --button-disabled-opacity: 0.5;
+
+    /* Button States - Contained - Use custom colors if set */
+    --button-contained-default-bg: var(--button-contained-default-bg, var(--color-primary-main, #000000));
+    --button-contained-default-text: var(--button-contained-default-text, var(--color-primary-contrast, #ffffff));
+    --button-contained-default-border: var(--button-contained-default-border, var(--color-primary-main, #000000));
+
+    --button-contained-selected-bg: var(--button-contained-selected-bg, var(--color-secondary-main, #000000));
+    --button-contained-selected-text: var(--button-contained-selected-text, var(--color-secondary-contrast, #ffffff));
+    --button-contained-selected-border: var(--button-contained-selected-border, var(--color-secondary-main, #000000));
+
+    --button-contained-disabled-bg: var(--color-background);
+    --button-contained-disabled-text: var(--color-text);
+    --button-contained-disabled-border: var(--color-text);
+    --button-contained-disabled-opacity: 0.5;
+
+    /* Input States - Use custom colors if set */
+    --input-default-bg: var(--color-background);
+    --input-default-text: var(--color-text);
+    --input-default-border: var(--color-primary-main, #000000);
+
+    --input-focus-bg: var(--color-background);
+    --input-focus-text: var(--color-text);
+    --input-focus-border: var(--input-focus-border, var(--color-primary-main, #000000));
+    --input-focus-outline: 0 0 0 4px var(--color-primary-main, #000000);
+
+    --input-disabled-bg: var(--color-background);
+    --input-disabled-text: var(--color-text);
+    --input-disabled-border: var(--color-text);
+    --input-disabled-opacity: 0.5;
+
+    /* Replace subtle backgrounds with borders */
+    --color-gray-faint: var(--color-background);
+    --color-gray-subtle: var(--color-text);
+    --color-gray-medium: var(--color-text);
+    --color-gray-bold: var(--color-text);
+    --color-gray-extreme: var(--color-text);
+
+    /* Active/Inactive/Disabled States - Use custom colors if set */
+    --state-active-bg: var(--state-active-bg, var(--color-secondary-main, #000000));
+    --state-active-text: var(--state-active-text, var(--color-secondary-contrast, #ffffff));
+    --state-active-border: var(--state-active-border, var(--color-secondary-main, #000000));
+
+    --state-inactive-bg: var(--color-background);
+    --state-inactive-text: var(--color-text);
+    --state-inactive-border: var(--color-text);
+
+    --state-disabled-bg: var(--color-background);
+    --state-disabled-text: var(--color-text);
+    --state-disabled-border: var(--color-text);
+    --state-disabled-opacity: 0.5;
+
+    /* Focus States */
+    --focus-ring-color: var(--focus-ring-color, var(--color-primary-main, #000000));
+    --focus-ring-width: 4px;
+
+    /* Disable glow effects in high contrast mode */
+    --glow-primary: none;
+    --glow-secondary: none;
+    --glow-error: none;
+    --glow-warning: none;
+    --glow-info: none;
+    --glow-white: none;
+
+    /* Motor and Timer Colors */
+    --color-motor-clockwise: var(--color-secondary-main, #000000);
+    --color-motor-countercw: var(--color-info-main, #0000ff);
+    --color-motor-stopped: var(--color-error-main, #ff0000);
+    --color-timer-main: var(--color-warning-main, #ffa500);
+    --color-sensor-main: var(--color-info-main, #0000ff);
+
+    /* Force outlines on all buttons */
+    .wildcat-button {
+        border: var(--border-width-standard) solid var(--button-default-border);
+        background-color: var(--button-default-bg);
+        color: var(--button-default-text);
+    }
+
+    .wildcat-button.contained {
+        border: var(--border-width-standard) solid var(--button-contained-default-border);
+        background-color: var(--button-contained-default-bg);
+        color: var(--button-contained-default-text);
+    }
+
+    /* Force outlines on all interactive elements */
+    button,
+    input,
+    select,
+    textarea {
+        border: var(--border-width-standard) solid var(--color-primary-main);
+        background-color: var(--color-background);
+        color: var(--color-text);
+    }
+
+    /* Force outlines on all panels */
+    .wildcat-panel {
+        border: var(--border-width-standard) solid var(--panel-border);
+        background-color: var(--panel-bg);
+        color: var(--panel-text);
+    }
+
+    /* Settings specific overrides */
+    .settings-container,
+    .settings-panel,
+    .settings-section {
+        background-color: var(--color-background);
+        border: var(--border-width-standard) solid var(--color-primary-main);
+        color: var(--color-text);
+    }
+
+    /* Ensure all containers have background */
+    .container,
+    .section,
+    .panel,
+    .card {
+        background-color: var(--color-background);
+        border: var(--border-width-standard) solid var(--color-primary-main);
+        color: var(--color-text);
+    }
+
+    /* Portal specific overrides */
+    .portal-container,
+    .portal-background,
+    .portal-content {
+        background-color: var(--color-background);
+        border: var(--border-width-standard) solid var(--color-primary-main);
+        color: var(--color-text);
+    }
+
+    /* Theme-specific overrides */
+    &[data-theme="retro"] {
+        --color-background: rgb(30, 30, 30);
+        --color-text: rgb(255, 255, 255);
+    }
+
+    &[data-theme="clean"] {
+        --color-background: rgb(255, 255, 255);
+        --color-text: rgb(0, 0, 0);
+    }
+
+    &[data-theme="pastel"] {
+        --color-background: rgb(255, 250, 240);
+        --color-text: rgb(62, 69, 81);
+    }
 }
 
 /* Larger text when enabled */
 body.large-text {
-    --font-size-base: 1.25rem;
-    --font-size-lg: 1.5rem;
-    --font-size-xl: 1.75rem;
-    --font-size-2xl: 2.25rem;
-    --font-size-3xl: 2.75rem;
+    --font-size-base: 1.5rem;
+    --font-size-lg: 2rem;
+    --font-size-xl: 2.5rem;
+    --font-size-2xl: 3rem;
+    --font-size-3xl: 3.5rem;
+
+    /* Adjust spacing for larger text */
+    --spacing-1: 0.5rem;
+    --spacing-2: 1rem;
+    --spacing-3: 1.5rem;
+    --spacing-4: 2rem;
+    --spacing-5: 2.5rem;
+    --spacing-6: 3rem;
+    --spacing-8: 4rem;
+    --spacing-10: 5rem;
+    --spacing-12: 6rem;
+    --spacing-16: 8rem;
+    --spacing-20: 10rem;
 }
 
 /* Placeholder for OpenDyslexic font */
 @font-face {
     font-family: "OpenDyslexic";
-    src: local("OpenDyslexic"),
-        url(../assets/fonts/OpenDyslexic-Regular.woff) format("woff");
+    src: local("OpenDyslexic"), url(../assets/fonts/OpenDyslexic-Regular.woff) format("woff");
     font-weight: normal;
     font-style: normal;
 }
@@ -683,6 +913,117 @@ body.large-text {
     100% {
         opacity: 0.7;
     }
+}
+
+/* Game-like Animations */
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes pulse-glow {
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes success-pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes error-shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes level-up {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+    }
+    100% {
+        transform: scale(1) rotate(360deg);
+    }
+}
+
+/* Utility Classes for Game-like Effects */
+.wildcat-float {
+    animation: float 2s ease-in-out infinite;
+}
+
+.wildcat-pulse-glow {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.wildcat-success {
+    animation: success-pop 0.5s var(--transition-easing-bounce);
+}
+
+.wildcat-error {
+    animation: error-shake 0.5s var(--transition-easing-accelerate);
+}
+
+.wildcat-level-up {
+    animation: level-up 1s var(--transition-easing-spring);
+}
+
+/* Accessibility Overrides */
+body[data-reduce-motion="true"] {
+    --transition-duration-fast: 0ms;
+    --transition-duration-normal: 0ms;
+    --transition-duration-slow: 0ms;
+    --transition-duration-game: 0ms;
+    --animation-duration-short: 0ms;
+    --animation-duration-medium: 0ms;
+    --animation-duration-long: 0ms;
+}
+
+body[data-reduce-sound="true"] {
+    --sound-effect-volume: 0;
+}
+
+/* Sound Effect Classes */
+.wildcat-sound-success {
+    /* These would be implemented in JavaScript */
+    --sound-effect-pitch: 1.2;
+    --sound-effect-duration: 0.3s;
+}
+
+.wildcat-sound-error {
+    --sound-effect-pitch: 0.8;
+    --sound-effect-duration: 0.2s;
+}
+
+.wildcat-sound-level-up {
+    --sound-effect-pitch: 1.5;
+    --sound-effect-duration: 0.5s;
 }
 
 /* ============================================
@@ -750,4 +1091,29 @@ body.large-text {
     background-color: var(--button-contained-disabled-bg);
     color: var(--button-contained-disabled-text);
     border-color: var(--button-contained-disabled-border);
+}
+
+/* Apply Border Thickness */
+body[data-border-thickness="2"] {
+    --border-width-standard: 0.125rem; /* 2px */
+    --border-width-thick: 0.25rem; /* 4px */
+    --border-width-extra: 0.375rem; /* 6px */
+}
+
+body[data-border-thickness="4"] {
+    --border-width-standard: 0.25rem; /* 4px */
+    --border-width-thick: 0.375rem; /* 6px */
+    --border-width-extra: 0.5rem; /* 8px */
+}
+
+body[data-border-thickness="6"] {
+    --border-width-standard: 0.375rem; /* 6px */
+    --border-width-thick: 0.5rem; /* 8px */
+    --border-width-extra: 0.75rem; /* 12px */
+}
+
+body[data-border-thickness="8"] {
+    --border-width-standard: 0.5rem; /* 8px */
+    --border-width-thick: 0.75rem; /* 12px */
+    --border-width-extra: 1rem; /* 16px */
 }

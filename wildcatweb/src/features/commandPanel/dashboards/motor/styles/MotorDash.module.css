@@ -112,7 +112,7 @@
     flex: 1;
     margin: 0 2px;
     border-radius: 2px 2px 0 0;
-    background-color: var(--color-gray-subtle);
+    background-color: var(--color-gray-bold);
     cursor: pointer;
     border: none;
     transition: all var(--transition-normal);
@@ -143,17 +143,19 @@
     outline: var(--border-width-standard) solid var(--panel-border);
 }
 
-.forwardBar {
-    background-color: var(--color-gray-subtle);
+.clockwiseBar {
+    background-color: var(--color-gray-bold);
 }
 
+
+
 .stopBar {
-    background-color: var(--color-gray-subtle);
+    background-color: var(--color-gray-bold);
 }
 
 .stopBar svg{
     stroke: var(--color-error-main);
-    fill: var(--color-error-main);
+    /* fill: var(--color-error-main); */
 }
 
 .stopBar.active {
@@ -171,18 +173,34 @@
     fill: var(--color-error-main);
 }
 
-.forwardBar.active {
-    background-color: var(--color-motor-forward);
+.clockwiseBar.active {
+    background-color: var(--color-motor-clockwise);
     box-shadow: var(--glow-secondary);
 }
 
-.backwardBar {
-    background-color: var(--color-gray-subtle);
+.clockwiseBar.active  svg {
+    color: var(--color-background);
 }
 
-.backwardBar.active {
-    background-color: var(--color-motor-backward);
+.clockwiseBar  svg {
+    color: var(--color-background); 
+}
+
+.countercwBar {
+    background: var(--color-gray-bold);
+}
+
+.countercwBar.active {
+    background-color: var(--color-motor-countercw);
     box-shadow: var(--glow-warning);
+}
+
+.countercwBar.active  svg {
+    color: var(--color-background);
+}
+
+.countercwBar  svg {
+    color: var(--color-background); 
 }
 
 /* For icons that need to be flipped horizontally */

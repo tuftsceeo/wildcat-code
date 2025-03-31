@@ -1,7 +1,7 @@
 /**
  * @file MotorSlider.jsx
  * @description A custom slider component for controlling motor speed and direction
- * with 7 positions: fast/medium/slow backward, stop, slow/medium/fast forward.
+ * with 7 positions: fast/medium/slow countercw, stop, slow/medium/fast clockwise.
  */
 
 import React, { useState, useRef, useEffect } from "react";
@@ -13,12 +13,12 @@ import {
 } from "./motorSpeedUtils";
 import {
     SkipBack,
-    SkipForward,
+    SkipClockwise,
     ChevronsLeft,
     ChevronsRight,
     ChevronLeft,
     ChevronRight,
-    Square, Octagon,
+    Square, CircleStop,
 } from "lucide-react";
 import styles from "../styles/MotorSlider.module.css";
 
@@ -85,10 +85,10 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
         { icon: <SkipBack size={16} />, label: "Fast" },
         { icon: <ChevronsLeft size={16} />, label: "Medium" },
         { icon: <ChevronLeft size={16} />, label: "Slow" },
-        { icon: <Octagon color="var(--color-error-main)" fill="var(--color-error-main)" size={14} />, label: "Stop" },
+        { icon: <CircleStop color="var(--color-error-main)" fill="var(--color-error-main)" size={14} />, label: "Stop" },
         { icon: <ChevronRight size={16} />, label: "Slow" },
         { icon: <ChevronsRight size={16} />, label: "Medium" },
-        { icon: <SkipForward size={16} />, label: "Fast" },
+        { icon: <SkipClockwise size={16} />, label: "Fast" },
     ];
 
     // Calculate the current speed for ARIA attributes
@@ -104,8 +104,8 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
         >
             {/* Direction labels */}
             <div className={styles.directionLabels}>
-                <div className={styles.backwardLabel}>BACKWARD</div>
-                <div className={styles.forwardLabel}>FORWARD</div>
+                <div className={styles.countercwLabel}>BACKWARD</div>
+                <div className={styles.clockwiseLabel}>FORWARD</div>
             </div>
 
             {/* Slider track */}
@@ -127,16 +127,16 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
                                   ? "Medium"
                                   : "Fast"
                           } 
-          ${currentSpeed < 0 ? "Backward" : "Forward"}`
+          ${currentSpeed < 0 ? "Counterclockwise" : "Clockwise"}`
                 }`}
                 aria-disabled={disabled}
                 tabIndex={disabled ? -1 : 0}
             >
                 {/* Track background with gradient */}
                 <div className={styles.sliderBackground}>
-                    <div className={styles.backwardSection}></div>
+                    <div className={styles.countercwSection}></div>
                     <div className={styles.centerStop}></div>
-                    <div className={styles.forwardSection}></div>
+                    <div className={styles.clockwiseSection}></div>
                 </div>
 
                 {/* Position indicators */}
@@ -172,9 +172,9 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
                         disabled={disabled}
                         aria-label={`${pos.label} ${
                             index < 3
-                                ? "backward"
+                                ? "countercw"
                                 : index > 3
-                                ? "forward"
+                                ? "clockwise"
                                 : "stop"
                         }`}
                         aria-pressed={position === index}

@@ -164,23 +164,23 @@
 }
 
 .releasedLabel {
-    color: var(--color-motor-backward);
+    color: var(--color-motor-countercw);
 }
 
 .pressedLabel {
-    color: var(--color-motor-forward);
+    color: var(--color-motor-clockwise);
 }
 /* 
 .sliderWithLabels.active .releasedLabel {
-    color: var(--color-motor-backward);
+    color: var(--color-motor-countercw);
 }
 
 .sliderWithLabels.active .pressedLabel {
-    color: var(--color-motor-forward);
+    color: var(--color-motor-clockwise);
 }
 
 .sliderWithLabels:not(.active) .releasedLabel {
-    color: var(--color-motor-backward);
+    color: var(--color-motor-countercw);
 }
 
 .sliderWithLabels:not(.active) .pressedLabel {
@@ -209,7 +209,7 @@
     width: 44px;
     height: 22px;
     border-radius: 11px;
-    background-color: var(--color-motor-backward);
+    background-color: var(--color-motor-countercw);
     border: var(--border-width-standard) solid var(--color-text);
     /* transform: translateX(-50%); */
     box-shadow: var(--glow-white);
@@ -230,7 +230,7 @@
 
 .sliderTrack.active .sliderThumb {
     left: calc(100% - 40px);
-    background-color: var(--color-motor-forward);
+    background-color: var(--color-motor-clockwise);
 }
 
 /* TOGGLE SWITCH STYLING - IMPROVED CONTRAST */
@@ -474,22 +474,22 @@
 }
 
 .arrowUp {
-    border-bottom: 15px solid var(--color-motor-backward);
+    border-bottom: 15px solid var(--color-motor-countercw);
     border-top: 0;
 }
 
 .arrowDown {
-    border-top: 15px solid var(--color-motor-forward);
+    border-top: 15px solid var(--color-motor-clockwise);
     border-bottom: 0;
 }
 
 .arrowUpSmall {
-    border-bottom: 7px solid var(--color-motor-backward);
+    border-bottom: 7px solid var(--color-motor-countercw);
     border-top: 0;
 }
 
 .arrowDownSmall {
-    border-top: 7px solid var(--color-motor-forward);
+    border-top: 7px solid var(--color-motor-clockwise);
     border-bottom: 0;
 }
 

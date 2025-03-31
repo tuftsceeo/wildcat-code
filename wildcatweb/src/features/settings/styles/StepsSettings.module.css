@@ -11,11 +11,32 @@
     font-size: var(--font-size-xl);
     color: var(--color-text);
     text-align: center;
-    margin-bottom: var(--spacing-8);
+    margin-bottom: var(--spacing-2);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
     font-family: var(--font-family-active);
+}
+
+.missionModeWarning {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: rgba(var(--color-error-main-rgb), 0.1);
+    color: var(--color-error-main);
+    border: var(--border-width-standard) solid var(--color-error-main);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-4);
+    justify-content: center;
+}
+
+.missionModeWarning svg {
+    animation: pulse 2s infinite;
 }
 
 .stepCountControl {

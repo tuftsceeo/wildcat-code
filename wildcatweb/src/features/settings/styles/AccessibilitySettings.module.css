@@ -1,0 +1,239 @@
+.container {
+    padding: var(--spacing-4);
+    color: var(--panel-text);
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-6);
+    color: var(--color-primary-high);
+    text-align: center;
+}
+
+.section {
+    margin-bottom: var(--spacing-6);
+    padding: var(--spacing-4);
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    background-color: var(--panel-bg);
+}
+
+.sectionTitle {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-4);
+    color: var(--color-secondary-high);
+}
+
+.setting {
+    margin-bottom: var(--spacing-4);
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.description {
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+}
+
+.volumeControl {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+}
+
+.range {
+    flex: 1;
+    height: 8px;
+    -webkit-appearance: none;
+    background: var(--color-gray-subtle);
+    border-radius: var(--radius-full);
+    outline: none;
+}
+
+.range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--color-primary-high);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.range::-webkit-slider-thumb:hover {
+    transform: var(--button-scale-hover);
+}
+
+.range:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.volumeValue {
+    min-width: 48px;
+    text-align: right;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+}
+
+/* Game-like hover effects */
+.setting:hover .checkbox {
+    transform: var(--button-scale-hover);
+}
+
+.setting:hover .range::-webkit-slider-thumb {
+    transform: var(--button-scale-hover);
+}
+
+/* Accessibility focus states */
+.checkbox:focus-visible,
+.range:focus-visible {
+    outline: 2px solid var(--color-primary-high);
+    outline-offset: 2px;
+}
+
+/* High contrast mode adjustments */
+:global(body.high-contrast) .section {
+    border-color: var(--color-text);
+}
+
+:global(body.high-contrast) .range::-webkit-slider-thumb {
+    background: var(--color-text);
+}
+
+/* Reduced motion adjustments */
+:global(body[data-reduce-motion="true"]) .setting:hover .checkbox,
+:global(body[data-reduce-motion="true"]) .setting:hover .range::-webkit-slider-thumb {
+    transform: none;
+}
+
+/* Sound Preview Section */
+.soundPreview {
+    margin-top: var(--spacing-6);
+    padding-top: var(--spacing-4);
+    border-top: var(--border-width-thin) solid var(--panel-border);
+}
+
+.previewTitle {
+    font-size: var(--font-size-base);
+    color: var(--color-secondary-high);
+    margin-bottom: var(--spacing-3);
+}
+
+.soundCategory {
+    margin-bottom: var(--spacing-4);
+}
+
+.categoryTitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+    margin-bottom: var(--spacing-2);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.previewButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-2);
+}
+
+.previewButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background-color: var(--button-default-bg);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    color: var(--button-default-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    transform: var(--button-scale-default);
+}
+
+.previewButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--button-selected-bg);
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+}
+
+.previewButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.previewButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.lowPitch {
+    transform: scale(0.8);
+}
+
+/* Game-like effects for preview buttons */
+.previewButton:not(:disabled) {
+    position: relative;
+    overflow: hidden;
+}
+
+.previewButton:not(:disabled)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: translateX(-100%);
+    transition: transform var(--transition-fast);
+}
+
+.previewButton:not(:disabled):hover::after {
+    transform: translateX(100%);
+}
+
+/* High contrast mode adjustments */
+:global(body.high-contrast) .previewButton {
+    border-color: var(--color-text);
+}
+
+:global(body.high-contrast) .previewButton:hover:not(:disabled) {
+    background-color: var(--color-text);
+    color: var(--color-background);
+}
+
+/* Reduced motion adjustments */
+:global(body[data-reduce-motion="true"]) .previewButton::after {
+    display: none;
+}
+
+:global(body[data-reduce-motion="true"]) .previewButton:hover:not(:disabled),
+:global(body[data-reduce-motion="true"]) .previewButton:active:not(:disabled) {
+    transform: none;
+} 

@@ -15,7 +15,7 @@ import { getSpeedDescription } from "./motorSpeedUtils";
 import {
     Rabbit,
     Turtle,
-    Octagon,
+    CircleStop,
     ChevronLeft,
     ChevronRight,
     Clock,
@@ -23,8 +23,8 @@ import {
 import styles from "../styles/InstructionDisplay.module.css";
 
 
- const FilledOctagon = (props) => {
-        return React.cloneElement(<FilledOctagon />, { fill: "currentColor", ...props });
+ const FilledCircleStop = (props) => {
+        return React.cloneElement(<FilledCircleStop />, { fill: "currentColor", ...props });
       };
 
 
@@ -162,7 +162,7 @@ const SingleMotorDisplay = ({ config, complexity, language }) => {
                                 styles[getIconSizeClass(complexity)]
                             }`}
                         >
-                            <FilledOctagon size={24} color={'var(--color-error-main)'} />
+                            <CircleStop size={24} color={'var(--color-error-main)'} />
                         </div>
                     </div>
                 )}
@@ -266,16 +266,16 @@ const TimerInstructionDisplay = ({ configuration, complexity, language }) => {
 /**
  * Get the appropriate icon for the motor direction and speed
  *
- * @param {string} direction - Direction ('forward' or 'backward')
+ * @param {string} direction - Direction ('clockwise' or 'countercw')
  * @param {string} level - Speed level ('slow', 'medium', or 'fast')
  * @returns {JSX.Element} Icon component
  */
 function getDirectionIcon(direction, level) {
-    if (direction === "forward") {
+    if (direction === "clockwise") {
         if (level === "slow") return <Turtle size={24} />;
         if (level === "medium") return <ChevronRight size={24} />;
         return <Rabbit size={24} />;
-    } else if (direction === "backward") {
+    } else if (direction === "countercw") {
         if (level === "slow")
             return (
                 <Turtle
@@ -292,7 +292,7 @@ function getDirectionIcon(direction, level) {
         );
     } else {
         // This is for 'stop' case
-        return <FilledOctagon size={24} color="var(--color-error-main)" />;
+        return <CircleStop size={24} color="var(--color-error-main)" />;
     }
 }
 

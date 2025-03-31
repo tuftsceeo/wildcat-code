@@ -16,14 +16,14 @@
     margin-bottom: var(--spacing-2);
 }
 
-.backwardLabel {
+.countercwLabel {
     color: var(--color-error-main);
     font-size: var(--font-size-sm);
     text-transform: uppercase;
     font-family: var(--font-family-active);
 }
 
-.forwardLabel {
+.clockwiseLabel {
     color: var(--color-motor-main);
     font-size: var(--font-size-sm);
     text-transform: uppercase;
@@ -58,7 +58,7 @@
     overflow: hidden;
 }
 
-.backwardSection {
+.countercwSection {
     flex: 3;
     background: linear-gradient(
         to right,
@@ -72,7 +72,7 @@
     background-color: var(--color-gray-medium);
 }
 
-.forwardSection {
+.clockwiseSection {
     flex: 3;
     background: linear-gradient(
         to left,

@@ -22,8 +22,6 @@ const BaseInstructionBlock = ({ title, children }) => {
     return (
         <div className={styles.instructionBlock}>
             {children}
-
-            {title && <div className={styles.blockTitle}>{title}</div>}
         </div>
     );
 };

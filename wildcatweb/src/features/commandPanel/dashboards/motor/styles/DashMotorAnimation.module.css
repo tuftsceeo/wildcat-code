@@ -22,7 +22,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border: 3px solid var(--color-motor-forward);
+    border: 3px solid var(--color-motor-clockwise);
     border-radius: 50%;
     overflow: hidden;
     background-color: var(--color-panel-bg);
@@ -53,7 +53,7 @@
     position: absolute;
     width: 20%;
     height: 20%;
-    background-color: var(--color-motor-forward);
+    background-color: var(--color-motor-clockwise);
     border-radius: 50%;
 }
 

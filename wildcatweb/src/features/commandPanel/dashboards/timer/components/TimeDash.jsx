@@ -1,9 +1,8 @@
 /**
  * @file TimeDash.jsx
- * @description Dashboard interface for configuring time wait actions with block tower
- * visualization. Replaces the previous pie clock with a more intuitive block
+ * @description Dashboard interface for configuring time wait actions with base ten blocks
+ * visualization. Replaces the previous tower visualization with a base ten blocks
  * visualization for students with autism.
- * @author Jennifer Cross with support from Claude
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -16,31 +15,110 @@ import styles from "../styles/TimeDash.module.css";
  * @param {Object} props - Component props
  * @param {Function} props.onUpdate - Callback when time configuration changes
  * @param {Object} props.configuration - Current time configuration
+ * @param {boolean} props.isMissionMode - Whether running in mission mode
+ * @param {Function} props.dispatchTaskEvent - Function to dispatch task events
+ * @param {number} props.currSlotNumber - Current active slot number
  * @returns {JSX.Element} Time configuration dashboard with visual representation
  */
-export const TimeDash = ({ onUpdate, configuration }) => {
+export const TimeDash = ({
+    onUpdate,
+    configuration,
+    isMissionMode = false,
+    dispatchTaskEvent = null,
+    currSlotNumber,
+}) => {
     // Initialize seconds from configuration or default to 3
     const [seconds, setSeconds] = useState(configuration?.seconds || 3);
-    
+
     // Animation state
     const [progress, setProgress] = useState(0);
     const animationRef = useRef(null);
     const animationStart = useRef(null);
-    
+
     // Track if configuration is complete
     const [isConfigured, setIsConfigured] = useState(!!configuration?.seconds);
-    
+
     // Use a ref to track if we've sent the initial configuration
     const initialUpdateSent = useRef(false);
+
+    // Calculate the number of hundreds, tens and ones
+    const hundreds = Math.floor(seconds / 100);
+    const tens = Math.floor((seconds % 100) / 10);
+    const ones = seconds % 10;
+
+    // Determine how many units should be ghosted based on animation progress
+    const totalUnits = seconds;
+    const ghostedUnits = Math.floor(totalUnits * progress);
     
+    // Check if a specific unit should be ghosted
+    const isUnitGhosted = (position) => {
+        return position < ghostedUnits;
+    };
+    
+    // Calculate positions for proper visual LIFO ordering (last in, first out)
+    const getUnitPosition = (place, index, subIndex = 0) => {
+        // Places: 0 = ones, 1 = tens, 2 = hundreds
+        
+        if (place === 0) { // Ones position - index is from top (newest) to bottom
+            // Reverse the index so top block (index 0) is counted first
+            return (ones - 1 - index);
+        }
+        else if (place === 1) { // Tens position - rightmost rod first, top to bottom
+            // Ensure we've exhausted all ones blocks
+            const onesBasePosition = ones;
+            // Calculate tens position: starting from rightmost rod, top to bottom
+            return onesBasePosition + (tens - 1 - index) * 10 + (9 - subIndex);
+        }
+        else { // Hundreds position 
+            // Ensure we've exhausted all ones and tens blocks
+            const basePosition = ones + tens * 10;
+            // For hundreds, we need to count from right column to left, top to bottom
+            return basePosition + (hundreds - 1 - index) * 100 + subIndex;
+        }
+    };
+    
+    // Function to create cells for the hundred squares
+    const renderHundredCells = (hundredIdx) => {
+        const cells = [];
+        
+        // Iterate through columns from right to left
+        for (let colIdx = 9; colIdx >= 0; colIdx--) {
+            // Iterate through rows from top to bottom
+            for (let rowIdx = 0; rowIdx < 10; rowIdx++) {
+                // Calculate subIndex to maintain correct sequence
+                const subIndex = (9 - colIdx) * 10 + rowIdx;
+                
+                // Calculate position using unified position function
+                const position = getUnitPosition(2, hundredIdx, subIndex);
+                const ghosted = isUnitGhosted(position);
+                
+                cells.push(
+                    <div 
+                        key={`hundred-${hundredIdx}-cell-${colIdx}-${rowIdx}`}
+                        className={`${styles.baseTenCell} ${ghosted ? styles.ghosted : ''}`}
+                        style={{ 
+                            gridColumn: colIdx + 1,
+                            gridRow: rowIdx + 1,
+                        }}
+                    />
+                );
+            }
+        }
+        
+        return cells;
+    };
+
     // Only send an update when the component mounts or when configuration changes externally
     useEffect(() => {
         // If configuration exists but doesn't match our state, update our state
-        if (configuration?.seconds !== undefined && configuration.seconds !== seconds) {
+        if (
+            configuration?.seconds !== undefined &&
+            configuration.seconds !== seconds
+        ) {
             setSeconds(configuration.seconds);
             return; // Exit early to avoid sending an update for this change
         }
-        
+
         // Only send initial update if we haven't already and if needed
         if (!initialUpdateSent.current && onUpdate && !configuration?.seconds) {
             onUpdate({ seconds });
@@ -58,8 +136,19 @@ export const TimeDash = ({ onUpdate, configuration }) => {
             const newSeconds = seconds + 1;
             setSeconds(newSeconds);
             if (onUpdate) {
-                onUpdate({ seconds: newSeconds });
+                const newConfig = { seconds: newSeconds };
+                onUpdate(newConfig);
                 setIsConfigured(true);
+
+                // Dispatch timer value changed event for mission tracking
+                if (isMissionMode && dispatchTaskEvent) {
+                    dispatchTaskEvent("TIMER_VALUE_CHANGED", {
+                        seconds: newSeconds,
+                        slotIndex: currSlotNumber,
+                        configuration: newConfig,
+                        currentSlot: currSlotNumber,
+                    });
+                }
             }
         }
     };
@@ -73,45 +162,50 @@ export const TimeDash = ({ onUpdate, configuration }) => {
             const newSeconds = seconds - 1;
             setSeconds(newSeconds);
             if (onUpdate) {
-                onUpdate({ seconds: newSeconds });
+                const newConfig = { seconds: newSeconds };
+                onUpdate(newConfig);
                 setIsConfigured(true);
+
+                // Dispatch timer value changed event for mission tracking
+                if (isMissionMode && dispatchTaskEvent) {
+                    dispatchTaskEvent("TIMER_VALUE_CHANGED", {
+                        seconds: newSeconds,
+                        slotIndex: currSlotNumber,
+                        configuration: newConfig,
+                        currentSlot: currSlotNumber,
+                    });
+                }
             }
         }
     };
-    
-    // Get the stacking pattern based on seconds
-    const stackingPattern = getStackingPattern(seconds);
-    
-    // Scale block size based on seconds
-    const blockSize = getBlockSize(seconds);
-    
-    // Block color
-    const blockColor = 'var(--color-timer-main)';
-    
-    // Calculate how many blocks should be visible
-    const totalBlocks = stackingPattern.reduce((sum, rowWidth) => sum + rowWidth, 0);
-    const visibleBlocks = Math.ceil(totalBlocks * (1 - progress));
-    
+
     // Run continuous animation
     useEffect(() => {
-        // Animation duration matches the configured seconds
-        const ANIMATION_DURATION = seconds * 1000;
-        
+        // Animation duration matches the configured seconds plus one extra second
+        const ANIMATION_DURATION = (seconds + 1) * 1000;
+
         const animate = (timestamp) => {
             if (!animationStart.current) animationStart.current = timestamp;
             const elapsed = timestamp - animationStart.current;
-            
+
             // Loop the animation
             const normalizedTime = (elapsed % ANIMATION_DURATION) / ANIMATION_DURATION;
-            setProgress(normalizedTime);
             
+            // If we're in the final second (normalizedTime > seconds/(seconds+1)),
+            // show all blocks ghosted
+            const adjustedProgress = normalizedTime > seconds/(seconds + 1) 
+                ? 1  // All blocks ghosted
+                : normalizedTime * (seconds + 1)/seconds;  // Normal progress
+            
+            setProgress(adjustedProgress);
+
             animationRef.current = requestAnimationFrame(animate);
         };
-        
+
         // Reset animation start time when seconds change
         animationStart.current = null;
         animationRef.current = requestAnimationFrame(animate);
-        
+
         return () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
@@ -158,133 +252,71 @@ export const TimeDash = ({ onUpdate, configuration }) => {
                 <div className={styles.timeUnit}>seconds</div>
             </div>
 
-            {/* Block tower visualization */}
-            <div className={styles.blockTowerContainer}>
-                <div className={styles.blockTower}>
-                    {/* Render rows of blocks from top to bottom */}
-                    {stackingPattern.map((rowWidth, rowIndex) => (
-                        <div 
-                            key={`row-${rowIndex}`}
-                            className={styles.blockRow}
-                        >
-                            {Array.from({ length: rowWidth }).map((_, colIndex) => {
-                                // Calculate the position in the stacking order (top to bottom, left to right)
-                                // Sum of all previous rows' widths + current column
-                                let position = 0;
-                                for (let i = 0; i < rowIndex; i++) {
-                                    position += stackingPattern[i];
-                                }
-                                position += colIndex;
-                                
-                                // Check if this block should be visible based on remaining blocks
-                                // For top-down removal, blocks with lower positions are removed first
-                                const isVisible = position >= (totalBlocks - visibleBlocks);
-                                
-                                return (
-                                    <div 
-                                        key={`block-${rowIndex}-${colIndex}`}
-                                        className={styles.timeBlock}
-                                        style={{
-                                            width: `${blockSize.width}px`,
-                                            height: `${blockSize.height}px`, 
-                                            backgroundColor: blockColor,
-                                            opacity: isVisible ? 1 : 0.2,
-                                            transform: isVisible ? 'scale(1)' : 'scale(0.95)',
-                                            transition: 'opacity 0.2s, transform 0.2s'
-                                        }}
-                                    />
-                                );
-                            })}
+            {/* Base Ten Block Visualization */}
+            <div className={styles.baseTenContainer}>
+                <div className={styles.baseTenBlocks}>
+                    {/* Hundreds representation */}
+                    {hundreds > 0 && (
+                        <div className={styles.hundredsGroup}>
+                            {Array.from({ length: hundreds }).map((_, hundredIdx) => (
+                                <div 
+                                    key={`hundred-${hundredIdx}`} 
+                                    className={styles.hundredSquare}
+                                >
+                                    {renderHundredCells(hundredIdx)}
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
                     
-                    {/* Base platform */}
-                    <div 
-                        className={styles.blockBase}
-                        style={{ 
-                            width: `${Math.max(stackingPattern[stackingPattern.length-1] * (blockSize.width + 1) + 20, 80)}px`
-                        }}
-                    />
+                    {/* Tens representation */}
+                    {tens > 0 && (
+                        <div className={styles.tensGroup}>
+                            {Array.from({ length: tens }).map((_, tenIdx) => (
+                                <div 
+                                    key={`ten-${tenIdx}`} 
+                                    className={styles.tenRod}
+                                >
+                                    <div className={styles.tenSegments}>
+                                        {Array.from({ length: 10 }).map((_, segmentIdx) => {
+                                            const position = getUnitPosition(1, tenIdx, segmentIdx);
+                                            const ghosted = isUnitGhosted(position);
+                                            
+                                            return (
+                                                <div 
+                                                    key={`ten-${tenIdx}-segment-${segmentIdx}`}
+                                                    className={`${styles.tenSegment} ${ghosted ? styles.ghosted : ''}`}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    
+                    {/* Ones representation */}
+                    {ones > 0 && (
+                        <div className={styles.onesGroup}>
+                            <div className={styles.onesStack}>
+                                {Array.from({ length: ones }).map((_, oneIdx) => {
+                                    const position = getUnitPosition(0, oneIdx);
+                                    const ghosted = isUnitGhosted(position);
+                                    
+                                    return (
+                                        <div 
+                                            key={`one-${oneIdx}`} 
+                                            className={`${styles.oneBlock} ${ghosted ? styles.ghosted : ''}`}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
-
-/**
- * Get stacking pattern based on total blocks
- * Uses predefined patterns for 1-30 seconds
- * 
- * @param {number} totalBlocks - Total number of blocks (seconds)
- * @returns {Array} Array representing the width of each row from top to bottom
- */
-function getStackingPattern(totalBlocks) {
-    // Hard-coded patterns
-    const patterns = {
-        1: [1],
-        2: [2],
-        3: [1, 2],
-        4: [2, 2],
-        5: [2, 3],
-        6: [3, 3],
-        7: [1, 3, 3],
-        8: [2, 3, 3],
-        9: [2, 3, 4],
-        10: [1, 2, 3, 4],
-        11: [1, 3, 3, 4],
-        12: [2, 3, 3, 4],
-        13: [2, 3, 4, 4],
-        14: [2, 3, 4, 5],
-        15: [1, 2, 3, 4, 5],
-        16: [1, 2, 3, 5, 5],
-        17: [1, 2, 4, 5, 5],
-        18: [1, 2, 4, 5, 6],
-        19: [1, 3, 4, 5, 6],
-        20: [2, 3, 4, 5, 6],
-        21: [1, 2, 3, 4, 5, 6],
-        22: [1, 2, 3, 4, 6, 6],
-        23: [1, 2, 3, 5, 6, 6],
-        24: [1, 2, 4, 5, 6, 6],
-        25: [1, 2, 4, 5, 6, 7],
-        26: [1, 3, 4, 5, 6, 7],
-        27: [2, 3, 4, 5, 6, 7],
-        28: [1, 2, 3, 4, 5, 6, 7],
-        29: [1, 2, 3, 4, 6, 6, 7],
-        30: [1, 2, 3, 5, 6, 6, 7]
-    };
-    
-    // For larger values, use a simple pattern
-    if (totalBlocks > 30) {
-        return [2, 3, 5, 6, 7, 7];
-    }
-    
-    return patterns[totalBlocks] || [1]; // Default to [1] if not found
-}
-
-/**
- * Calculate the size of blocks based on total number
- * 
- * @param {number} totalBlocks - Total number of blocks
- * @returns {Object} Object with width and height properties
- */
-function getBlockSize(totalBlocks) {
-    let width, height;
-    
-    if (totalBlocks <= 5) {
-        width = 32;
-        height = 28;
-    } else if (totalBlocks <= 15) {
-        width = 28;
-        height = 24;  
-    } else if (totalBlocks <= 25) {
-        width = 24;
-        height = 20;
-    } else {
-        width = 20;
-        height = 16;
-    }
-    
-    return { width, height };
-}
 
 export default TimeDash;

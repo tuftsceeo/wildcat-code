@@ -279,7 +279,7 @@ function generateMultiMotorDescription(
     if (complexityLevel === "text_only") {
         // For text_only and advanced, use "while" to join - with first description maintaining case
         if (descriptions.length === 2) {
-            // For exactly two motors: "Motor A spins forward while Motor B spins backward."
+            // For exactly two motors: "Motor A spins clockwise while Motor B spins countercw."
             const firstDesc = descriptions[0];
 
             // Convert first letter of second description to lowercase
@@ -295,7 +295,7 @@ function generateMultiMotorDescription(
             return `${cleanFirstDesc} while ${secondDesc}`;
         } else {
             // For 3+ motors, use commas and "while" for the last one
-            // "Motor A spins forward, Motor B spins backward, while Motor C stops."
+            // "Motor A spins clockwise, Motor B spins countercw, while Motor C stops."
             const lastDesc =
                 descriptions[descriptions.length - 1].charAt(0).toLowerCase() +
                 descriptions[descriptions.length - 1].slice(1);

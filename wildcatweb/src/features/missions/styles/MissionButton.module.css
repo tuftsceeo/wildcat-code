@@ -1,0 +1,71 @@
+/* MissionButton.module.css - Styled with design token system */
+
+.missionButton {
+  width: var(--bluetooth-button-size);
+  height: var(--bluetooth-button-size);
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  color: var(--panel-text);
+  transition: transform var(--transition-normal),
+              filter var(--transition-normal);
+}
+
+/* Hover state: slightly scale up and add a glow */
+.missionButton:hover {
+  transform: scale(1.1);
+  color: var(--color-secondary-main);
+}
+
+/* Active (pressed) state: scale down a bit */
+.missionButton:active {
+  transform: scale(0.95);
+}
+
+/* Active mission mode indicator */
+.missionButton.active {
+  color: var(--color-secondary-main);
+}
+
+/* Small indicator dot for active mission */
+.activeDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-secondary-main);
+  border-radius: 50%;
+  box-shadow: var(--glow-secondary);
+  animation: pulse 2s infinite;
+}
+
+/* Theme-aware filter for clean theme (dark icons on light background) */
+body[data-theme="clean"] .missionButton {
+  color: var(--color-text);
+}
+
+body[data-theme="pastel"] .missionButton {
+  color: var(--color-text);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}

@@ -2,8 +2,7 @@
  * @file CodeTrack.jsx
  * @description Main component for displaying the coding track with instructions,
  * including navigation controls and instruction visualization.
- * Updated to handle special Stop step and pass currentInstruction to NavigationControls.
- * @author Jennifer Cross with support from Claude
+ * Updated to dispatch events for Task Registry Mission System.
  */
 
 import React, { useEffect } from "react";
@@ -12,13 +11,14 @@ import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
 import { useBLE } from "../../bluetooth/context/BLEContext";
+import { useMission } from '../../../context/MissionContext.js';
 import {
     ClearSlotRequest,
     ClearSlotResponse,
 } from "../../bluetooth/ble_resources/messages";
 import { generateSlotCode } from "../../../code-generation/codeGenerator";
 import { Buffer } from "buffer";
-import { Octagon } from "lucide-react";
+import { CircleStop } from "lucide-react";
 
 /**
  * Main component for displaying the coding track with instructions
@@ -41,24 +41,30 @@ const CodeTrack = ({
     setPyCode,
     setCanRun,
 }) => {
-    // Ensure current slot is valid based on missionSteps
-    useEffect(() => {
-        // If currSlotNumber is beyond the valid range, reset it to the max allowed
-        // IMPORTANT: missionSteps is the COUNT, so max index is missionSteps-1
-        if (currSlotNumber >= missionSteps) {
-            setCurrSlotNumber(missionSteps - 1);
-        }
-    }, [currSlotNumber, missionSteps, setCurrSlotNumber]);
+    // Get mission context
+    const {
+        isMissionMode,
+        dispatchTaskEvent,
+        validateStepConfiguration,
+        getCurrentTask,
+        currentMission
+    } = useMission();
+
+    // Get current task if we're in mission mode
+    const currentTask = getCurrentTask();
+
+    const FilledCircleStop = (props) => {
+        return React.cloneElement(<CircleStop />, {
+            fill: "currentColor",
+            ...props,
+        });
+    };
 
     // Get the current instruction from slotData
     const currentInstruction = slotData?.[currSlotNumber];
 
-    const FilledOctagon = (props) => {
-        return React.cloneElement(<Octagon />, { fill: "currentColor", ...props });
-    };
-
     // Check if current slot is the stop step
-    const isStopStep = currentInstruction?.isStopInstruction === true;
+    const isStopStep = currSlotNumber === missionSteps - 1;
 
     const { ble, isConnected, portStates } = useBLE();
 
@@ -66,7 +72,18 @@ const CodeTrack = ({
      * Handle navigation to previous slot
      */
     const handlePrevious = () => {
-        setCurrSlotNumber(Math.max(0, currSlotNumber - 1));
+        const prevSlot = Math.max(0, currSlotNumber - 1);
+        setCurrSlotNumber(prevSlot);
+
+        // Dispatch navigation event for mission tracking
+        if (isMissionMode) {
+            dispatchTaskEvent("NAVIGATION", {
+                fromSlot: currSlotNumber,
+                toSlot: prevSlot,
+                direction: "previous",
+                currentSlot: prevSlot,
+            });
+        }
     };
 
     /**
@@ -76,6 +93,45 @@ const CodeTrack = ({
         // missionSteps is the COUNT, so max index is missionSteps-1
         const nextSlot = Math.min(currSlotNumber + 1, missionSteps - 1);
         setCurrSlotNumber(nextSlot);
+
+        // Dispatch navigation event for mission tracking
+        if (isMissionMode) {
+            dispatchTaskEvent("NAVIGATION", {
+                fromSlot: currSlotNumber,
+                toSlot: nextSlot,
+                direction: "next",
+                currentSlot: nextSlot,
+            });
+        }
+    };
+
+    /**
+     * Check if the current instruction matches mission requirements
+     *
+     * @returns {Object} Validation result
+     */
+    const validateCurrentInstruction = () => {
+        // Only validate in mission mode and for the current task's target slot
+        if (!isMissionMode || !currentMission || !currentTask) {
+            return { isValid: true };
+        }
+
+        // If task is for a different slot, don't validate
+        if (currentTask.targetSlot !== currSlotNumber) {
+            return { isValid: true };
+        }
+
+        // If no instruction, it's not valid
+        if (!currentInstruction || !currentInstruction.type) {
+            return {
+                isValid: false,
+                message:
+                    "Please configure this step according to the mission instructions.",
+            };
+        }
+
+        // Validate against mission requirements
+        return validateStepConfiguration(currentInstruction);
     };
 
     /**
@@ -102,6 +158,18 @@ const CodeTrack = ({
                 return;
             }
 
+            // In mission mode, validate the instruction against mission requirements
+            if (isMissionMode && currentTask?.targetSlot === currSlotNumber) {
+                const validation = validateCurrentInstruction();
+                if (!validation.isValid) {
+                    console.warn(
+                        "Instruction doesn't meet mission requirements:",
+                        validation.message,
+                    );
+                    return;
+                }
+            }
+
             // Generate code specifically for this single instruction
             const code = generateSlotCode(currentInstruction, portStates);
             console.log("Generated Python Code for current slot:", code);
@@ -126,6 +194,16 @@ const CodeTrack = ({
 
             // Start the program on the robot
             await ble.startProgram(0);
+
+            // Only complete the test execution task after successful BLE communication
+            if (isMissionMode && currentTask?.type === "TEST_EXECUTION") {
+                console.log("CodeTrack: Test execution successful, completing task");
+                dispatchTaskEvent("TEST_EXECUTION", {
+                    slotIndex: currSlotNumber,
+                    instruction: currentInstruction,
+                    currentSlot: currSlotNumber,
+                });
+            }
         } catch (error) {
             console.error("Error running test program:", error);
         }
@@ -145,7 +223,7 @@ const CodeTrack = ({
                 >
                     {isStopStep ? (
                         <div className={styles.stopVisualization}>
-                            <FilledOctagon
+                            <CircleStop
                                 size={100}
                                 className={styles.stopIcon}
                             />
@@ -170,13 +248,19 @@ const CodeTrack = ({
                     </button>
                 )}
 
-                {/* Navigation controls - now passing currentInstruction */}
+                {/* Navigation controls */}
                 <NavigationControls
                     currSlotNumber={currSlotNumber}
                     missionSteps={missionSteps}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
                     currentInstruction={currentInstruction}
+                    // Pass mission validation for button state
+                    validInMission={validateCurrentInstruction().isValid}
+                    isMissionMode={
+                        isMissionMode &&
+                        currentTask?.targetSlot === currSlotNumber
+                    }
                 />
             </div>
         </div>

@@ -5,7 +5,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-4);
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
@@ -15,7 +14,7 @@
     font-size: var(--font-size-lg);
     text-transform: uppercase;
     color: var(--panel-text);
-    margin-bottom: var(--spacing-4);
+    margin-bottom: var(--spacing-2);
     letter-spacing: var(--letter-spacing-wide);
     font-family: var(--font-family-active);
 }
@@ -25,7 +24,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-3);
     width: 100%;
 }
 
@@ -34,7 +33,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-bottom: var(--spacing-2);
+    margin-bottom: 0;
 }
 
 .timeButton {
@@ -73,7 +72,7 @@
 /* Theme-adaptive number display */
 .timeInput {
     width: 80px;
-    height: 60px;
+    height: 50px;
     background-color: var(--button-selected-bg);
     margin: 0 var(--spacing-4);
     font-size: var(--font-size-2xl);
@@ -179,3 +178,123 @@
     margin-top: 1px;
 }
 
+/* Add these base ten block styles to TimeDash.module.css */
+
+/* Base Ten block visualization */
+.baseTenContainer {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 var(--spacing-4);
+    
+    overflow: hidden;
+    background-color: var(--color-gray-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2);
+
+    --block-size: 12px;
+
+    height: calc(calc(var(--block-size) * 10) + calc(var(--spacing-1) * 7));
+}
+
+.baseTenBlocks {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: var(--spacing-4);
+}
+
+/* Hundreds styles */
+.hundredsGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.hundredSquare {
+    background-color: var(--color-primary-main);
+    border: var(--border-width-thin) solid var(--color-primary-high);
+    border-radius: var(--radius-none);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: calc(var(--block-size) * 10);
+    height: calc(var(--block-size) * 10);
+}
+
+.baseTenCell {
+    background-color: var(--color-primary-high);
+    border-right: 1px solid var(--color-primary-main);
+    border-bottom: 1px solid var(--color-primary-main);
+}
+
+/* Tens styles */
+.tensGroup {
+    display: flex;
+    gap: var(--spacing-2);
+    height: calc(calc(var(--block-size) * 10) + calc(var(--spacing-1) * 5));
+    align-items: end;
+}
+
+.tenRod {
+    background-color: var(--color-warning-main);
+    border-radius: var(--radius-none);
+    overflow: hidden;
+    width: var(--block-size);
+    height: calc(calc(var(--block-size) * 10) + calc(var(--spacing-1) * 5));
+    display: flex;
+}
+
+.tenSegments {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 100%;
+    height: 100%;
+}
+
+.tenSegment {
+    height: calc(var(--block-size) + calc(var(--spacing-1) * .5));
+    width: 100%;
+    background-color: var(--color-warning-high);
+    border: calc(var(--border-width-thin)*.5) solid var(--color-warning-main);
+    border-bottom: calc(calc(var(--spacing-1) * .5) + calc(var(--border-width-thin)*.5)) solid var(--color-warning-main);
+}
+
+.tenSegment:first-child {
+    border-bottom-width: calc(var(--border-width-thin)*.5);
+    height: var(--block-size);
+}
+
+/* Ones styles */
+.onesGroup {
+    display: flex;
+    height: calc(calc(var(--block-size) * 10) + calc(var(--spacing-1) * 5));
+}
+
+.onesStack {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.oneBlock {
+    width: var(--block-size);
+    height: var(--block-size);
+    background-color: var(--color-secondary-high);
+    border: calc(var(--border-width-thin)*.5)  solid var(--color-secondary-main);
+    border-radius: var(--radius-none);
+    margin-bottom: calc(var(--spacing-1) * .5);
+}
+
+.oneBlock:first-child {
+    margin-bottom:  0;
+}
+
+/* Ghosted state for all blocks */
+.ghosted {
+    background-color: var(--color-gray-medium);
+    border-color: var(--color-gray-bold);
+}
+
+/* Note: Preserve existing TimeDash styles for time controls, etc. */

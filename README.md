@@ -1,139 +1,131 @@
-# wildcat-code
-The prototype coding tool for wildcats in the IEP-CT project
+# WildCatCode ---> WildCat Web
 
-## Update Jan 2025:
-Merged in the web BLE experiment into the React app / JS.
+## Educational Programming Environment with Executive Function Skill Scaffolding
 
-Contributors: jenncross
+WildCat Web is a specialized programming education application designed specifically for executing functioning skills practice. The application provides an accessible interface for controlling LEGO Spike Prime robots through a visually engaging, customizable user interface with multiple reading levels, and clear visual communication.
 
-`wildcatweb` is the primary prototype folder. 
-- Assistance from ChatGPT 4o and Claude 3.5 Sonnet
+## Key Features
 
-## Core Components
+-   **Visual Programming Interface**: visual programming tool with immediate feedback and sequential execution
+-   **Accessibility & UDL Considerations**:
+    -   Five reading levels from icon-only to complex text
+    -   Text-to-speech with customizable robot voices
+    -   High contrast mode and dyslexia-friendly fonts
+    -   Visual hint system requiring no reading ability
+-   **Robot Control**: Direct Bluetooth connectivity to LEGO Spike Prime robots
+-   **Mission System**: Guided learning experiences with structured tasks and progression
+-   **Multi-Sensory Learning**: Visual, auditory, and physical (robot) feedback paths
+-   **Extensive Customization**: Adjust language, reading level, theme, and accessibility settings
 
-### App Level
-- `App.js` - Main component structure and state management
-- `BLEContext.js` - Bluetooth connection management and device state tracking
-- `KnobContext.js` - Motor control knob state management
+## Getting Started
 
-### Main Interface Components
-- `FunctionDefault.jsx` - Main interaction dashboard for configuring steps
-- `CodingTrack.jsx` - Sequence visualization and step navigation
-- `RunMenu.jsx` - Code generation and program execution controls
-- `BluetoothUI.jsx` - Robot connection management interface
+### Prerequisites
 
-### Motor Control Components
-- `MotorDash.jsx` - Motor control interface and port status tracking
-- `SingleMotorDash.jsx` - Individual motor control dashboard
-- `Knob.js` - Motor speed control interface
+-   Node.js (v16+)
+-   Bluetooth-enabled computer with WebBLE support
+-   Chrome or Edge browser (for best WebBLE compatibility)
+-   LEGO Spike Prime robot (optional - the app has a simulation mode)
 
-### SPIKE Prime Communication
-- `spike_ble.js` - Bluetooth communication with SPIKE Prime
-- `messages.js` - Message protocol implementation
-- `codeGenerator.js` - Python code generation for SPIKE Prime
+### Installation
 
+```bash
+# Clone the repository
+git clone https://github.com/tuftsceeo/wildcat-code.git
+cd wildcatweb
 
+# Install dependencies
+npm install
 
-—----------------------
-—----------------------
+# Start the development server
+npm run start
+```
 
+> **Note on WebBLE**: This application requires Web Bluetooth API support, which is available in Chrome and Edge browsers.
 
+## Application Architecture
 
-## IEP-CT Prototype V1 August 2024
+The application consists of three main panels:
 
-Contributors: Ava Delaney & Douglas Lilly
+-   **Run Menu** (left): Navigation between program slots and execution
+-   **Code Track** (center): Visualization of the current instruction
+-   **Command Panel** (right): Interface for creating and configuring instructions
 
-8/7/24
+The architecture is built around React contexts for state management:
 
-—----------------------
+-   **CustomizationContext**: Manages user preferences (reading level, language, theme)
+-   **MissionContext**: Handles mission system and guided tasks
+-   **BLEContext**: Manages Bluetooth connectivity and device state
 
-How to setup/run:
+## Core Concepts
 
-Frontend: Make sure you have the following npm packages installed:
+### Program Structure
 
-├── @testing-library/jest-dom@5.17.0
-├── @testing-library/react@13.4.0
-├── @testing-library/user-event@13.5.0
-├── axios@1.7.3
-├── react-dnd-html5-backend@16.0.1
-├── react-dnd@16.0.1
-├── react-dom@18.3.1
-├── react-scripts@5.0.1
-├── react@18.3.1
-└── web-vitals@2.1.4
-Run npm start to launch the client-side server (localhost:3000).
+Programs in WildCat Web consist of **slots** (numbered positions) that contain **instructions**. Each instruction has:
 
-Backend: Make sure you have Python3 v11 or later. 
-Install pip
-Install bleak
-Install fastapi uvicorn
+-   **Type**: `action` or `input`
+-   **Subtype**: Specific control type (e.g., `motor`, `time`, `button`)
+-   **Configuration**: Parameters for the instruction (e.g., speed, port, seconds)
 
-Open a new terminal and run uvicorn main:app --reload to launch the backend server (localhost:8000).
+### Instruction Types
 
-—----------
+-   **Motor Instructions**: Control motor speed and direction
+-   **Timer Instructions**: Wait for specific durations
+-   **Button Instructions**: Wait for button/sensor input
+-   **Stop Instruction**: End program execution
 
-File descriptions:
+### Mission System
 
-Wildcat-code/Prototype-v1/src (this is where all the frontend code is):
+The mission system provides guided learning experiences:
 
-Assets folder: All the SVGs, PNGs, and audio files used in the project.
+-   **Mission**: Complete guided learning experience with defined objectives
+-   **Task**: Single objective within a mission
+-   **Sandbox Mode**: Free exploration without specific objectives
 
-App.js: The root component of the project that renders all of the necessary frontend providers and components for the project. This file also facilitates communication of user-inputted code and whether or not the user has completed enough steps to run code between components. Look here if you want to…
-Add or remove major components
-Change what data is shared between the coding track module and the run code module, or how this data is shared
+## Technologies Used
 
-BluetoothUI.jsx: The menu in the top right corner of the main screen. Contains buttons to navigate to the settings page, the help docs, and to connect to Bluetooth. 
-Look here if you want to…
-Implement a help button/docs
-Update the Bluetooth protocol on the client side (js)
+-   **Frontend**: React.js with hooks and context
+-   **Styling**: CSS modules with design token system
+-   **Bluetooth Communication**: Web Bluetooth API
+-   **Code Generation**: JavaScript-based Python code generator
+-   **Internationalization**: Custom translation system with reading levels
 
-CodingTrack.jsx: Contains the code sucker (box that initially is labeled “drag and drop code here”), and the code track (right below it). This component manages navigation between steps on the coding track, and converts what the user inputs onto the coding track into data that can be parsed by the backend, and executed as micropython code on the LEGO Spike hub (i.e., it creates the “code dictionary”). 
-Look here if you want to…
-Change how information/what information about user code is sent from the UI to the backend
-Change how code is dropped onto and appears in the code sucker and on the coding track
+## Development
 
-ColorSensorButtons.jsx: Reusable component that renders a button to change the color that the sensor is supposed to detect to trigger an action. Used by SensorDash.jsx, and appears in the “sensor” tab on the main page.
-Look here if you want to…
-Change the appearance of these buttons
+### Bluetooth Troubleshooting
 
-CustomizationPage.jsx: Renders the customization page (which pops up when you click the gear icon in the top-right corner of the main page). Currently not functional.
-Look here if you want to…
-Implement teacher customization functionality
+-   Ensure your browser supports Web Bluetooth API
+-   Check browser Bluetooth permissions
+-   Verify the robot is powered on and in range
+-   On Windows, ensure the browser has permission to use Bluetooth in system settings
 
-FunctionDefault.jsx: The component on the right side of the screen labeled “function hub.” Conditionally renders MotorDash and SensorDash components, which enables users to add motor and sensor code to the coding track.
-Look here if you want to…
-Implement additional modules from Spike (e.g., light matrix, distance sensor, etc.)
-Make the program display options for action/sense based on what is plugged into the LEGO hub.
+## Accessibility Focus
 
-Index.js: Renders the app component.
+WildCat Web was designed with specific accommodations for students with autism:
 
-Knob.js: The “speed dial” component of the MotorDash. Manages movement of the dial and tracking dial location.
-Look here if you want to…
-Modify the behavior of the speed dial (right now it snaps into place at 0, 45, 90, and 135, degrees and can’t move beyond 135 or 0 degrees).
-Change what information about motor “speed” is shared between components (currently the value of the knob’s “snapped angle” is passed to MotorDash.jsx and CodingTrack.jsx, this number should be converted into a motor speed that corresponds to the Spike Micropython API).
+-   **Multiple Reading Levels**: From icon-only to complex text for diverse reading abilities
+-   **Visual Communication**: Using consistent icons, colors, and animations
+-   **Predictable UI**: Consistent layout and interaction patterns
+-   **Sensory Considerations**: Options to reduce motion and sounds
+-   **Concrete Representations**: Base-ten blocks for time, animal icons for speed
 
-KnobContext.js: A react context for sharing motor speed/knob angle between different components. Currently not in use.
-Look here if you want to…
-Improve and scale how data is shared between components
+## Project Structure
 
-Main.py: Python file that facilitates communication between frontend js and backend python; calls modules to connect to Spike via bluetooth and run code on the Spike.
-
-MotorDash.jsx: Renders a dashboard within the FunctionDefault component that allows for users to change motor speed and have motors go/stop for motors plugged into different ports. This component gets dragged onto CodingTrack.jsx, which inherits information about motor speed, stop/go status, and motor port.
-Look here if you want to…
-Make the program display the correct motor port based on where it’s plugged in on the hub (not just ports A and B, which is currently hard-coded into FunctionDefault.jsx)
-
-Portal.js: A portal for the proper rendering of CustomizationPage.jsx (rendered when the .settingsButton in BluetoothUI.jsx is clicked).
-
-RunMenu.jsx: Contains the buttons to run user code.
-Look here if you want to:
-Implement running individual steps of user code
-Change what information is sent to the backend server
-
-SensorDash.jsx: Renders a dashboard within the FunctionDefault component that allows for users to change the color that the sensor is searching for. This component gets dragged onto CodingTrack.jsx, which inherits information about sensor color.
-Look here if you want to…
-Limit which colors users can choose to have the color sensor “see”
-
-[BluetoothUI/CodingTrack/CustomizationPage/FunctionDefault/MotorDash/RunMenu/SensorDash].module.css: CSS styling for components.
-
-[App/Index/Knob].css: CSS styling for components.
-
+```
+wildcatweb/
+├── src/
+│   ├── App.js                          # Main application component
+│   ├── assets/                         # Images, icons, and other static assets
+│   ├── code-generation/                # Python code generation utilities
+│   ├── common/                         # Shared utilities and components
+│   ├── context/                        # Application-wide context providers
+│   ├── features/                       # Feature-specific components and logic
+│   │   ├── bluetooth/                  # Bluetooth connectivity
+│   │   ├── commandPanel/               # Command configuration interface
+│   │   ├── codeTrack/                  # Code visualization and testing
+│   │   ├── missions/                   # Mission system and guided learning
+│   │   ├── runMenu/                    # Program navigation and execution
+│   │   └── settings/                   # User preferences and customization
+│   ├── themes/                         # Design tokens and theme definitions
+│   └── translations/                   # Internationalization and reading levels
+└── public/                             # Static assets and entry point
+```

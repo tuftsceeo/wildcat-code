@@ -43,7 +43,7 @@ const LanguageSettings = () => {
         subtype: "motor",
         configuration: {
             port: "A",
-            speed: 1000, // Fast forward
+            speed: 1000, // Fast clockwise
         },
     };
 

@@ -9,8 +9,8 @@
         "motorF": "Motor F",
 
         "direction": "Direction",
-        "forward": "clockwise",
-        "backward": "counterclockwise",
+        "clockwise": "clockwise",
+        "countercw": "counterclockwise",
         "stopped": "stopped",
 
         "speed": "speed",

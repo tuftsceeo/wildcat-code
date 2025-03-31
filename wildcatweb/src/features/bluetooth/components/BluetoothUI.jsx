@@ -1,6 +1,7 @@
 /**
  * @file BluetoothUI.jsx
  * @description Bluetooth connection interface with settings button and connection overlay
+ * Updated with a mission selector button for easy mode switching
  */
 
 import React, { useState, useEffect } from "react";
@@ -12,6 +13,8 @@ import questionMark from "../../../assets/images/question-mark.svg";
 import HelpDialog from "../../../common/components/HelpDialog";
 import { useBLE } from "../../bluetooth/context/BLEContext";
 import BluetoothConnectionOverlay from "./BluetoothConnectionOverlay";
+import MissionSelector from "../../missions/components/MissionSelector";
+import { Rocket } from "lucide-react";
 
 /**
  * Interface for Bluetooth connection and settings access
@@ -26,6 +29,8 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
     const [showHelpDialog, setShowHelpDialog] = useState(false);
     // State to control the visibility of the connection overlay
     const [showConnectionModal, setShowConnectionModal] = useState(false);
+    // State to control the visibility of the mission selector
+    const [showMissionSelector, setShowMissionSelector] = useState(false);
     const { ble, isConnected, setIsConnected } = useBLE();
 
     // Show connection overlay after a delay when disconnected
@@ -85,6 +90,13 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
     };
 
     /**
+     * Handle mission button click to show mission selector
+     */
+    const handleMissionClick = () => {
+        setShowMissionSelector(true);
+    };
+
+    /**
      * Handle closing the help dialog
      */
     const closeHelpDialog = () => {
@@ -120,6 +132,18 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
                     />
                 </button>
 
+                {/* Mission selector button */}
+                <button
+                    className={styles.missionButton}
+                    onClick={handleMissionClick}
+                    aria-label="Open Mission Selector"
+                    title="Missions"
+                >
+                    <div className={styles.iconWrapper}>
+                        <Rocket className={styles.missionIcon} />
+                    </div>
+                </button>
+                
                 <button
                     className={styles.settingsButton}
                     onClick={handleSettingsClick}
@@ -155,6 +179,14 @@ export const BluetoothUI = ({ currSlotNumber, openSettings }) => {
                 <BluetoothConnectionOverlay 
                     onConnect={handleBluetoothToggle}
                     onClose={devEscapeOverlay}
+                />
+            )}
+            
+            {/* Mission Selector */}
+            {showMissionSelector && (
+                <MissionSelector
+                    isOpen={true}
+                    onClose={() => setShowMissionSelector(false)}
                 />
             )}
         </>
