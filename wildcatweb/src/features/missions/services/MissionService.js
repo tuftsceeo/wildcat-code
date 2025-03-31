@@ -106,7 +106,7 @@ const DEFAULT_MISSIONS = [
         taskId: "set_timer",
         type: "TIMER_SETTING",
         targetSlot: 1,
-        timeRange: [2, 5],
+        timeRange: [3, 5],
         instruction: "Set the timer to 3 seconds",
         stepTitle: "Set Wait Time",
         targetElement: ".timeButton"

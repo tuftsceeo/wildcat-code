@@ -177,18 +177,7 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                     <h3 className={styles.missionTitle}>{selectedMission.title}</h3>
                   </div>
 
-                  <div className={styles.missionThumbnail}>
-                    {selectedMission.assets?.thumbnail ? (
-                      <img 
-                        src={selectedMission.assets.thumbnail} 
-                        alt={selectedMission.title}
-                      />
-                    ) : (
-                      <div className={styles.placeholderThumbnail}>
-                        <Rocket size={48} />
-                      </div>
-                    )}
-                  </div>
+                  
 
                   <div className={styles.missionInfo}>
                     <p className={styles.missionDescription}>
@@ -213,7 +202,7 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                     onClick={handleStartMission}
                   >
                     <Play size={20} />
-                    Start Mission
+                    Go!
                   </button>
                 </div>
               ) : (

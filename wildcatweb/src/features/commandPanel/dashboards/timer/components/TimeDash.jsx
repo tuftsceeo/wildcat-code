@@ -181,8 +181,8 @@ export const TimeDash = ({
 
     // Run continuous animation
     useEffect(() => {
-        // Animation duration matches the configured seconds
-        const ANIMATION_DURATION = seconds * 1000;
+        // Animation duration matches the configured seconds plus one extra second
+        const ANIMATION_DURATION = (seconds + 1) * 1000;
 
         const animate = (timestamp) => {
             if (!animationStart.current) animationStart.current = timestamp;
@@ -190,7 +190,14 @@ export const TimeDash = ({
 
             // Loop the animation
             const normalizedTime = (elapsed % ANIMATION_DURATION) / ANIMATION_DURATION;
-            setProgress(normalizedTime);
+            
+            // If we're in the final second (normalizedTime > seconds/(seconds+1)),
+            // show all blocks ghosted
+            const adjustedProgress = normalizedTime > seconds/(seconds + 1) 
+                ? 1  // All blocks ghosted
+                : normalizedTime * (seconds + 1)/seconds;  // Normal progress
+            
+            setProgress(adjustedProgress);
 
             animationRef.current = requestAnimationFrame(animate);
         };

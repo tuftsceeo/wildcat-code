@@ -86,8 +86,8 @@ const TaskInstructionPanel = () => {
       {/* Task header with number, title, and completion status */}
       <div className={styles.taskHeader}>
         <div className={styles.taskIdentifier}>
-          <span className={styles.taskNumber}>Task {currentTaskIndex + 1}</span>
-          {task.stepTitle && <span className={styles.taskTitle}>{task.stepTitle}</span>}
+          <span className={styles.taskNumber}>{task.stepTitle}</span>
+        
         </div>
         
         {/* Completion indicator */}
@@ -112,7 +112,7 @@ const TaskInstructionPanel = () => {
             aria-label="Play audio instruction"
             title="Play audio instruction"
           >
-            <Volume2 size={20} />
+            <Volume2 size={18} />
           </button>
           
           {/* Hint button */}
@@ -122,7 +122,7 @@ const TaskInstructionPanel = () => {
             aria-label="Show hint"
             title="Show hint"
           >
-            <HelpCircle size={20} />
+            <HelpCircle size={18} />
           </button>
         </div>
       </div>
