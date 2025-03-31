@@ -80,11 +80,68 @@
 }
 
 /* Content Area */
-.settingsContent {
+.settingsContentWrapper {
     flex: 1;
+    position: relative;
+    height: 450px;
+    overflow: hidden;
+}
+
+.settingsContent {
+    height: 100%;
     overflow-y: auto;
     padding: var(--spacing-6);
-    height: 450px;
+    /* Custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-high) var(--color-gray-subtle);
+}
+
+/* Webkit scrollbar styling */
+.settingsContent::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settingsContent::-webkit-scrollbar-track {
+    background: var(--color-gray-subtle);
+    border-radius: var(--radius-full);
+}
+
+.settingsContent::-webkit-scrollbar-thumb {
+    background: var(--color-primary-high);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-gray-subtle);
+}
+
+.settingsContent::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-main);
+}
+
+/* Gradient overlay */
+.gradientOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--panel-bg) 95%
+    );
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: var(--spacing-4);
+}
+
+.settingsContentWrapper.scrollable .gradientOverlay {
+    opacity: 1;
+}
+
+.settingsContentWrapper.atBottom .gradientOverlay {
+    opacity: 0;
 }
 
 /* Animations */
