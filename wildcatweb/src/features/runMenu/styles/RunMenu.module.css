@@ -10,56 +10,71 @@
     background-color: var(--panel-bg);
     color: var(--panel-text);
     font-family: var(--font-family-active);
-    padding: var(--spacing-4);
-}
-
-.menuContent {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    padding: 0;
     position: relative;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Content wrapper for scroll tracking */
-.menuContentWrapper {
-    flex: 1;
-    position: relative;
-    height: 450px;
-    overflow: hidden;
-}
-
-.menuContentWrapper.scrollable {
-    overflow-y: auto;
     /* Custom scrollbar styling */
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary-high) var(--color-gray-subtle);
 }
 
 /* Webkit scrollbar styling */
-.menuContentWrapper.scrollable::-webkit-scrollbar {
+.menuBackground::-webkit-scrollbar {
     width: 8px;
 }
 
-.menuContentWrapper.scrollable::-webkit-scrollbar-track {
+.menuBackground::-webkit-scrollbar-track {
     background: var(--color-gray-subtle);
     border-radius: var(--radius-full);
 }
 
-.menuContentWrapper.scrollable::-webkit-scrollbar-thumb {
+.menuBackground::-webkit-scrollbar-thumb {
     background: var(--color-primary-high);
     border-radius: var(--radius-full);
     border: 2px solid var(--color-gray-subtle);
 }
 
-.menuContentWrapper.scrollable::-webkit-scrollbar-thumb:hover {
+.menuBackground::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-main);
+}
+
+.menuContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: var(--spacing-4) 0;
+    /* Custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-high) var(--color-gray-subtle);
+}
+
+/* Webkit scrollbar styling */
+.menuContent::-webkit-scrollbar {
+    width: 8px;
+}
+
+.menuContent::-webkit-scrollbar-track {
+    background: var(--color-gray-subtle);
+    border-radius: var(--radius-full);
+}
+
+.menuContent::-webkit-scrollbar-thumb {
+    background: var(--color-primary-high);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-gray-subtle);
+}
+
+.menuContent::-webkit-scrollbar-thumb:hover {
     background: var(--color-primary-main);
 }
 
 /* Gradient overlay */
 .gradientOverlay {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
@@ -75,14 +90,28 @@
     align-items: flex-end;
     justify-content: center;
     padding-bottom: var(--spacing-4);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    width: inherit;
+    max-width: inherit;
 }
 
-.menuContentWrapper.scrollable .gradientOverlay {
+.menuContent.scrollable .gradientOverlay {
     opacity: 1;
 }
 
-.menuContentWrapper.atBottom .gradientOverlay {
+.menuContent.atBottom .gradientOverlay {
     opacity: 0;
+}
+
+/* Content wrapper */
+.menuContentWrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-4) 0;
 }
 
 /* Hide title as requested */
@@ -93,9 +122,11 @@
 .stepsContainer {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
+    gap: var(--spacing-1);
     width: 100%;
-    margin: auto 0;
+    max-width: 300px; /* Limit button width for better readability */
+    margin: 0 auto;
+    padding: 12px; /* Increased padding to prevent scaled borders from being cut off */
 }
 
 /* Step buttons styled with theme tokens */
@@ -111,6 +142,7 @@
     cursor: pointer;
     width: 100%;
     position: relative;
+    margin: 0 auto;
     
     /* Layout for content */
     display: flex;
@@ -122,6 +154,8 @@
 .stepButton:not(.dragging) {
     transition: transform var(--transition-normal);
     transform: var(--button-scale-default);
+    transform-origin: center;
+    margin: 8px 0; /* Add vertical margin to prevent overlap during scale */
 }
 
 .stepButton:not(.dragging):hover:not(:disabled) {
@@ -202,14 +236,25 @@
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     padding: var(--spacing-2) var(--spacing-4);
-    width: 100px;
+    width: 100%;
+    max-width: 300px; /* Match step button width */
     cursor: pointer;
-    margin-top: var(--spacing-3);
-    margin-bottom: var(--spacing-2);
+    margin: var(--spacing-4) auto; /* Match other button margins */
     text-transform: uppercase;
     align-self: center;
     transition: transform var(--transition-normal);
     transform: var(--button-scale-default);
+    transform-origin: center;
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+/* Add a container for the play button to match stepsContainer */
+.playButtonContainer {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 12px;
+    box-sizing: border-box;
 }
 
 .playButton:hover:not(:disabled) {
@@ -338,16 +383,17 @@
     color: var(--button-default-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
-    padding: var(--spacing-2);
+    padding: var(--spacing-1);
     text-align: center;
     cursor: pointer;
     width: 100%;
-    margin: var(--spacing-2) 0;
+    margin: var(--spacing-4) auto;
     transition: all var(--transition-normal);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-2);
+    transform-origin: center;
 }
 
 .addStepButton:hover:not(:disabled) {

@@ -129,8 +129,9 @@ export const RunMenu = ({
     // Check if content is scrollable
     useEffect(() => {
         const checkScrollable = () => {
-            if (contentRef.current) {
-                const { scrollHeight, clientHeight } = contentRef.current;
+            const menuElement = document.querySelector(`.${styles.menuContent}`);
+            if (menuElement) {
+                const { scrollHeight, clientHeight } = menuElement;
                 setIsScrollable(scrollHeight > clientHeight);
             }
         };
@@ -138,8 +139,9 @@ export const RunMenu = ({
         // Check initially and after content changes
         checkScrollable();
         const observer = new ResizeObserver(checkScrollable);
-        if (contentRef.current) {
-            observer.observe(contentRef.current);
+        const menuElement = document.querySelector(`.${styles.menuContent}`);
+        if (menuElement) {
+            observer.observe(menuElement);
         }
 
         return () => observer.disconnect();
@@ -148,19 +150,23 @@ export const RunMenu = ({
     // Check if we're at the bottom of the content
     useEffect(() => {
         const handleScroll = () => {
-            if (contentRef.current) {
-                const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
-                // More reliable bottom detection that works with zoom
-                const isBottom = scrollHeight - scrollTop <= clientHeight + 1;
+            const menuElement = document.querySelector(`.${styles.menuContent}`);
+            if (menuElement) {
+                const { scrollTop, scrollHeight, clientHeight } = menuElement;
+                // Add a small threshold to account for rounding errors
+                const threshold = 2;
+                const remainingScroll = scrollHeight - scrollTop - clientHeight;
+                const isBottom = remainingScroll <= threshold;
                 setIsAtBottom(isBottom);
             }
         };
 
-        if (contentRef.current) {
-            contentRef.current.addEventListener('scroll', handleScroll);
+        const menuElement = document.querySelector(`.${styles.menuContent}`);
+        if (menuElement) {
+            menuElement.addEventListener('scroll', handleScroll);
             // Check initial position
             handleScroll();
-            return () => contentRef.current.removeEventListener('scroll', handleScroll);
+            return () => menuElement.removeEventListener('scroll', handleScroll);
         }
     }, []);
 
@@ -587,15 +593,12 @@ export const RunMenu = ({
 
     return (
         <div className={styles.menuBackground}>
-            <div className={styles.menuContent}>
+            <div className={`${styles.menuContent} ${isScrollable ? styles.scrollable : ''} ${isAtBottom ? styles.atBottom : ''}`}>
                 {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>CODE STEPS</div>
 
-                {/* Content wrapper with scroll tracking */}
-                <div 
-                    ref={contentRef}
-                    className={`${styles.menuContentWrapper} ${isScrollable ? styles.scrollable : ''} ${isAtBottom ? styles.atBottom : ''}`}
-                >
+                {/* Content wrapper */}
+                <div className={styles.menuContentWrapper}>
                     {/* Step buttons */}
                     <div className={styles.stepsContainer}>
                         {renderStepButtons()}
@@ -603,24 +606,28 @@ export const RunMenu = ({
 
                     {/* Add Step button - only show in sandbox mode */}
                     {!isMissionMode && (
-                        <button
-                            className={styles.addStepButton}
-                            onClick={handleAddStep}
-                            disabled={stepCount >= MAX_STEPS}
-                            aria-label="Add new step"
-                        >
-                            <Plus size={20} />
-                            Add Step
-                        </button>
+                        <div className={styles.stepsContainer}>
+                            <button
+                                className={styles.addStepButton}
+                                onClick={handleAddStep}
+                                disabled={stepCount >= MAX_STEPS}
+                                aria-label="Add new step"
+                            >
+                                <Plus size={20} />
+                                Add Step
+                            </button>
+                        </div>
                     )}
                 </div>
+            </div>
 
-                {/* Gradient overlay */}
-                <div className={styles.gradientOverlay}>
-                    <ChevronDown size={24} color="var(--panel-text)" />
-                </div>
+            {/* Gradient overlay */}
+            <div className={styles.gradientOverlay}>
+                <ChevronDown size={24} color="var(--panel-text)" />
+            </div>
 
-                {/* Play button */}
+            {/* Play button */}
+            <div className={styles.playButtonContainer}>
                 <button
                     className={styles.playButton}
                     onClick={handleRunAllSlots}
