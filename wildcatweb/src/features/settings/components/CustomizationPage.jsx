@@ -76,25 +76,18 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             const contentElement = contentRef.current?.querySelector(`.${styles.settingsContent}`);
             if (contentElement) {
                 const { scrollTop, scrollHeight, clientHeight } = contentElement;
-                const isBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 10;
+                // More reliable bottom detection that works with zoom
+                const isBottom = scrollHeight - scrollTop <= clientHeight + 1;
                 setIsAtBottom(isBottom);
             }
-        };
-
-        const handleResize = () => {
-            handleScroll();
         };
 
         const contentElement = contentRef.current?.querySelector(`.${styles.settingsContent}`);
         if (contentElement) {
             contentElement.addEventListener('scroll', handleScroll);
-            window.addEventListener('resize', handleResize);
             // Check initial position
             handleScroll();
-            return () => {
-                contentElement.removeEventListener('scroll', handleScroll);
-                window.removeEventListener('resize', handleResize);
-            };
+            return () => contentElement.removeEventListener('scroll', handleScroll);
         }
     }, []);
 
