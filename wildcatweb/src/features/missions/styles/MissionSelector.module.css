@@ -83,22 +83,23 @@
 .sideByOptions {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: var(--spacing-8);
   width: 100%;
+  padding: var(--spacing-4);
 }
 
 .modeCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 250px;
+  width: 300px;
   background-color: var(--panel-bg);
   border: var(--border-width-standard) solid var(--panel-border);
   border-radius: var(--radius-md);
-  padding: var(--spacing-6);
+  padding: var(--spacing-4);
   text-align: center;
   transition: all var(--transition-normal);
-  cursor: pointer;
 }
 
 .modeCard:hover {
@@ -109,23 +110,28 @@
 
 .modeIconLarge {
   color: var(--panel-text);
-  margin-bottom: var(--spacing-4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
+  margin-bottom: var(--spacing-3);
 }
 
 .modeTitle {
-  font-size: var(--font-size-lg);
-  margin: var(--spacing-2) 0 var(--spacing-4);
+  font-size: var(--font-size-base);
+  margin: var(--spacing-2) 0 var(--spacing-2);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
+  font-weight: var(--font-weight-bold);
+}
+
+.modeDescription {
+  font-size: var(--font-size-sm);
+  color: var(--panel-text);
+  margin-bottom: var(--spacing-4);
+  line-height: 1.4;
+  opacity: 0.8;
 }
 
 .missionPreview {
   width: 100%;
-  height: 100px;
+  height: 120px;
   margin-bottom: var(--spacing-4);
   overflow: hidden;
   border-radius: var(--radius-md);
@@ -139,10 +145,17 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.placeholderThumbnail {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-gray-subtle);
+  width: 100%;
+  height: 100%;
+  color: var(--panel-text);
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
 }
 
 .modeButton {
@@ -158,7 +171,7 @@
   font-family: var(--font-family-active);
   transition: all var(--transition-normal);
   transform: var(--button-scale-default);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   width: 100%;
   justify-content: center;
 }
@@ -169,6 +182,26 @@
 
 .modeButton:active {
   transform: var(--button-scale-active);
+}
+
+.modeButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-gray-faint);
+  border-radius: 50%;
+  color: var(--panel-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  opacity: 0.8;
 }
 
 /* Mission display */
@@ -246,16 +279,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.placeholderThumbnail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--color-gray-subtle);
-  background-color: var(--color-gray-faint);
 }
 
 .missionInfo {
@@ -719,6 +742,10 @@
   .modeCard {
     width: 100%;
     max-width: 300px;
+  }
+  
+  .separator {
+    transform: rotate(90deg);
   }
   
   .missionContainer {

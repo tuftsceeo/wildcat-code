@@ -221,9 +221,9 @@ const ThemeSettings = () => {
 
     // Define border thickness options
     const borderThicknesses = [
-        { id: "thin", name: "Thin", value: 2 },
-        { id: "medium", name: "Medium", value: 4 },
-        { id: "thick", name: "Thick", value: 6 },
+        { id: "thin", name: "Thin", value: 1 },
+        { id: "medium", name: "Medium", value: 2 },
+        { id: "thick", name: "Thick", value: 4 },
         { id: "extra", name: "Extra Thick", value: 8 }
     ];
 

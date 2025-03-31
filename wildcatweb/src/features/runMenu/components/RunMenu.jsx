@@ -5,7 +5,7 @@
  * names and icons for completed steps. Updated for flat task structure.
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
@@ -27,7 +27,11 @@ import {
     Disc,
     ArchiveRestore,
     Timer,
+    Plus,
+    Lock,
+    ChevronDown,
 } from "lucide-react";
+import DraggableStepButton from "./DraggableStepButton";
 
 const FilledCircleStop = (props) => {
     return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
@@ -88,8 +92,13 @@ export const RunMenu = ({
     const { ble, isConnected, portStates } = useBLE();
 
     // Get user preferences from CustomizationContext
-    const { requireSequentialCompletion, useCommandLabels } =
-        useCustomization();
+    const { 
+        requireSequentialCompletion, 
+        useCommandLabels,
+        stepCount,
+        setStepCount,
+        MAX_STEPS
+    } = useCustomization();
 
     // Get mission context
     const {
@@ -98,7 +107,13 @@ export const RunMenu = ({
         dispatchTaskEvent,
         isTaskCompleted,
         getCurrentTask
-      } = useMission();
+    } = useMission();
+
+    // Add state to track when reordering is in progress
+    const [isReordering, setIsReordering] = useState(false);
+    const [isScrollable, setIsScrollable] = useState(false);
+    const [isAtBottom, setIsAtBottom] = useState(false);
+    const contentRef = useRef(null);
 
     // Log any inconsistencies between missionSteps and slotData length
     useEffect(() => {
@@ -110,6 +125,50 @@ export const RunMenu = ({
             );
         }
     }, [missionSteps, slotData]);
+
+    // Check if content is scrollable
+    useEffect(() => {
+        const checkScrollable = () => {
+            const menuElement = document.querySelector(`.${styles.menuContent}`);
+            if (menuElement) {
+                const { scrollHeight, clientHeight } = menuElement;
+                setIsScrollable(scrollHeight > clientHeight);
+            }
+        };
+
+        // Check initially and after content changes
+        checkScrollable();
+        const observer = new ResizeObserver(checkScrollable);
+        const menuElement = document.querySelector(`.${styles.menuContent}`);
+        if (menuElement) {
+            observer.observe(menuElement);
+        }
+
+        return () => observer.disconnect();
+    }, [missionSteps, slotData]); // Recheck when steps or data changes
+
+    // Check if we're at the bottom of the content
+    useEffect(() => {
+        const handleScroll = () => {
+            const menuElement = document.querySelector(`.${styles.menuContent}`);
+            if (menuElement) {
+                const { scrollTop, scrollHeight, clientHeight } = menuElement;
+                // Add a small threshold to account for rounding errors
+                const threshold = 2;
+                const remainingScroll = scrollHeight - scrollTop - clientHeight;
+                const isBottom = remainingScroll <= threshold;
+                setIsAtBottom(isBottom);
+            }
+        };
+
+        const menuElement = document.querySelector(`.${styles.menuContent}`);
+        if (menuElement) {
+            menuElement.addEventListener('scroll', handleScroll);
+            // Check initial position
+            handleScroll();
+            return () => menuElement.removeEventListener('scroll', handleScroll);
+        }
+    }, []);
 
     /**
      * Check if a step is completed (has instructions assigned)
@@ -132,8 +191,8 @@ export const RunMenu = ({
      * @returns {boolean} Whether the step is accessible
      */
     const isStepAccessible = (index) => {
-        // If sequential completion is disabled, all steps are accessible
-        if (!requireSequentialCompletion) {
+        // If sequential completion is disabled or we're reordering, all steps are accessible
+        if (!requireSequentialCompletion || isReordering) {
             return true;
         }
 
@@ -383,6 +442,72 @@ export const RunMenu = ({
     };
 
     /**
+     * Move a step to a new position
+     * 
+     * @param {number} fromIndex - Source index
+     * @param {number} toIndex - Destination index
+     */
+    const moveStep = (fromIndex, toIndex) => {
+        if (isMissionMode) return;
+
+        // Set reordering state to true
+        setIsReordering(true);
+
+        // Create a new array with the moved step
+        const newSlotData = [...slotData];
+        const [movedStep] = newSlotData.splice(fromIndex, 1);
+        newSlotData.splice(toIndex, 0, movedStep);
+
+        // Update current slot number to follow the moved step
+        if (currSlotNumber === fromIndex) {
+            setCurrSlotNumber(toIndex);
+        } else if (currSlotNumber > fromIndex && currSlotNumber <= toIndex) {
+            // If current slot is between the old and new position, shift it back
+            setCurrSlotNumber(currSlotNumber - 1);
+        } else if (currSlotNumber < fromIndex && currSlotNumber >= toIndex) {
+            // If current slot is between the new and old position, shift it forward
+            setCurrSlotNumber(currSlotNumber + 1);
+        }
+
+        // Dispatch event to update slot data
+        window.dispatchEvent(new CustomEvent('updateSlotData', { 
+            detail: { slotData: newSlotData } 
+        }));
+    };
+
+    /**
+     * Add a new step before the stop step
+     */
+    const handleAddStep = () => {
+        if (isMissionMode) return;
+
+        // Check if we can add more steps
+        if (stepCount >= MAX_STEPS) {
+            console.warn("Cannot add more steps - maximum reached");
+            return;
+        }
+
+        // Create new empty slot
+        const newSlot = {
+            type: null,
+            subtype: null,
+            configuration: {},
+        };
+
+        // Insert new slot before the stop step
+        const newSlotData = [...slotData];
+        newSlotData.splice(missionSteps - 1, 0, newSlot);
+
+        // Update step count
+        setStepCount(stepCount + 1);
+
+        // Dispatch event to update slot data
+        window.dispatchEvent(new CustomEvent('updateSlotData', { 
+            detail: { slotData: newSlotData } 
+        }));
+    };
+
+    /**
      * Generate buttons for each mission step
      *
      * @returns {Array} Array of step button elements
@@ -399,7 +524,7 @@ export const RunMenu = ({
             const accessible = isStepAccessible(i);
             const { name, icon } = getStepDisplayInfo(i);
 
-            buttons.push(
+            const stepButton = (
                 <button
                     key={i}
                     className={`${styles.stepButton} 
@@ -424,7 +549,19 @@ export const RunMenu = ({
                     {icon && (
                         <span className={styles.iconContainer}>{icon}</span>
                     )}
-                </button>,
+                </button>
+            );
+
+            // Wrap the button in DraggableStepButton if not in mission mode
+            buttons.push(
+                <DraggableStepButton
+                    key={i}
+                    index={i}
+                    moveStep={moveStep}
+                    isMissionMode={isMissionMode}
+                >
+                    {stepButton}
+                </DraggableStepButton>
             );
         }
 
@@ -448,7 +585,7 @@ export const RunMenu = ({
                     size={24}
                     className={styles.stopIcon}
                 />
-            </button>,
+            </button>
         );
 
         return buttons;
@@ -456,16 +593,41 @@ export const RunMenu = ({
 
     return (
         <div className={styles.menuBackground}>
-            <div className={styles.menuContent}>
+            <div className={`${styles.menuContent} ${isScrollable ? styles.scrollable : ''} ${isAtBottom ? styles.atBottom : ''}`}>
                 {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>CODE STEPS</div>
 
-                {/* Step buttons */}
-                <div className={styles.stepsContainer}>
-                    {renderStepButtons()}
-                </div>
+                {/* Content wrapper */}
+                <div className={styles.menuContentWrapper}>
+                    {/* Step buttons */}
+                    <div className={styles.stepsContainer}>
+                        {renderStepButtons()}
+                    </div>
 
-                {/* Play button */}
+                    {/* Add Step button - only show in sandbox mode */}
+                    {!isMissionMode && (
+                        <div className={styles.stepsContainer}>
+                            <button
+                                className={styles.addStepButton}
+                                onClick={handleAddStep}
+                                disabled={stepCount >= MAX_STEPS}
+                                aria-label="Add new step"
+                            >
+                                <Plus size={20} />
+                                Add Step
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Gradient overlay */}
+            <div className={styles.gradientOverlay}>
+                <ChevronDown size={24} color="var(--panel-text)" />
+            </div>
+
+            {/* Play button */}
+            <div className={styles.playButtonContainer}>
                 <button
                     className={styles.playButton}
                     onClick={handleRunAllSlots}

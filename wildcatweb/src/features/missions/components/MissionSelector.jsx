@@ -135,13 +135,14 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
 
           {/* Main content */}
           <div className={styles.content}>
-            {/* Sandbox mode option */}
-            {initialSetup && (
-              <div className={styles.modeSelection}>
-                <div className={styles.modeOption}>
-                  <Gamepad2 size={48} className={styles.modeIcon} />
-                  <h3>Sandbox Mode</h3>
-                  <p>Create your own programs with full freedom.</p>
+            {/* Initial setup mode selection */}
+            {initialSetup ? (
+              <div className={styles.sideByOptions}>
+                {/* Sandbox mode option */}
+                <div className={styles.modeCard}>
+                  <Gamepad2 size={48} className={styles.modeIconLarge} />
+                  <h3 className={styles.modeTitle}>Sandbox Mode</h3>
+                  <p className={styles.modeDescription}>Create your own programs with full freedom.</p>
                   <button 
                     className={styles.modeButton} 
                     onClick={handleSandboxMode}
@@ -154,78 +155,81 @@ const MissionSelector = ({ isOpen, onClose, initialSetup = false }) => {
                 <div className={styles.separator}>
                   <span>OR</span>
                 </div>
-              </div>
-            )}
 
-            {/* Mission selection */}
-            <div className={styles.missionContainer}>
-              {/* Navigation buttons */}
-              <button 
-                className={`${styles.navButton} ${styles.prevButton}`}
-                onClick={handlePrevMission}
-                aria-label="Previous mission"
-                disabled={!hasMissions}
-              >
-                <ChevronLeft size={24} />
-              </button>
-
-              {/* Mission card */}
-              {selectedMission ? (
-                <div className={styles.missionCard}>
-                  <div className={styles.missionHeader}>
-                    <Rocket size={24} className={styles.missionIcon} />
-                    <h3 className={styles.missionTitle}>{selectedMission.title}</h3>
-                  </div>
-
-                  
-
-                  <div className={styles.missionInfo}>
-                    <p className={styles.missionDescription}>
-                      {selectedMission.description}
-                    </p>
-                    
-                    <div className={styles.missionDetails}>
-                      <div className={styles.missionDetail}>
-                        <span className={styles.detailLabel}>Difficulty:</span>
-                        <span className={styles.detailValue}>{selectedMission.difficultyLevel}</span>
-                      </div>
-                      
-                      <div className={styles.missionDetail}>
-                        <span className={styles.detailLabel}>Steps:</span>
-                        <span className={styles.detailValue}>{selectedMission.totalSteps || 0}</span>
-                      </div>
-                    </div>
-                  </div>
-
+                {/* Mission selection */}
+                <div className={styles.modeCard}>
+                  <Rocket size={48} className={styles.modeIconLarge} />
+                  <h3 className={styles.modeTitle}>Mission Mode</h3>
+                  <p className={styles.modeDescription}>Complete guided missions to learn programming.</p>
+                 
                   <button 
-                    className={styles.startButton} 
+                    className={styles.modeButton} 
                     onClick={handleStartMission}
+                    disabled={!selectedMission}
                   >
                     <Play size={20} />
-                    Go!
+                    Start Mission
                   </button>
                 </div>
-              ) : (
-                <div className={styles.noMissionsCard}>
-                  <div className={styles.noMissionsIcon}>
-                    <Rocket size={48} />
-                  </div>
-                  <h3 className={styles.noMissionsTitle}>No Missions Available</h3>
-                  <p className={styles.noMissionsText}>
-                    No missions are currently available. Try sandbox mode instead.
-                  </p>
-                </div>
-              )}
+              </div>
+            ) : (
+              <div className={styles.missionContainer}>
+                {/* Navigation buttons */}
+                <button 
+                  className={`${styles.navButton} ${styles.prevButton}`}
+                  onClick={handlePrevMission}
+                  aria-label="Previous mission"
+                  disabled={!hasMissions}
+                >
+                  <ChevronLeft size={24} />
+                </button>
 
-              <button 
-                className={`${styles.navButton} ${styles.nextButton}`}
-                onClick={handleNextMission}
-                aria-label="Next mission"
-                disabled={!hasMissions}
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
+                {/* Mission card */}
+                {selectedMission ? (
+                  <div className={styles.missionCard}>
+                    <div className={styles.missionHeader}>
+                      <Rocket size={24} className={styles.missionIcon} />
+                      <h3 className={styles.missionTitle}>{selectedMission.title}</h3>
+                    </div>
+
+                    <div className={styles.missionInfo}>
+                      <p className={styles.missionDescription}>
+                        {selectedMission.description}
+                      </p>
+                      
+                  
+                    </div>
+
+                    <button 
+                      className={styles.startButton} 
+                      onClick={handleStartMission}
+                    >
+                      <Play size={20} />
+                      Go!
+                    </button>
+                  </div>
+                ) : (
+                  <div className={styles.noMissionsCard}>
+                    <div className={styles.noMissionsIcon}>
+                      <Rocket size={48} />
+                    </div>
+                    <h3 className={styles.noMissionsTitle}>No Missions Available</h3>
+                    <p className={styles.noMissionsText}>
+                      No missions are currently available. Try sandbox mode instead.
+                    </p>
+                  </div>
+                )}
+
+                <button 
+                  className={`${styles.navButton} ${styles.nextButton}`}
+                  onClick={handleNextMission}
+                  aria-label="Next mission"
+                  disabled={!hasMissions}
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mission count indicator */}

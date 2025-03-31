@@ -43,16 +43,18 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-4);
-    margin-bottom: var(--spacing-4);
+    margin-bottom: 0; /* Remove margin from group */
     position: relative;
     z-index: 1;
-    width:100%;
+    width: 100%;
+    padding: 8px;
 }
 
 .actionButton,
 .senseButton {
     flex: 1;
     position: relative;
+    padding: 0; /* Remove padding from button containers */
 }
 
 /* Base button style */
@@ -69,6 +71,7 @@
     text-transform: uppercase;
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
+    transform-origin: center;
 }
 
 /* Active state for buttons */
@@ -127,16 +130,19 @@
     gap: var(--spacing-2);
     width: 100%;
     flex: 0 0 auto;
+    padding: 0;
 }
 
 /* Action subtype buttons are left-aligned */
 .leftColumn .subtypeSelection {
     align-items: flex-start;
+    padding-left: 8px; /* Match parent padding */
 }
 
 /* Sense subtype buttons are right-aligned */
 .rightColumn .subtypeSelection {
     align-items: flex-end;
+    padding-right: 8px; /* Match parent padding */
 }
 
 /* Subtype button styling */
@@ -154,8 +160,10 @@
     cursor: pointer;
     transition: all var(--transition-normal);
     text-transform: uppercase;
-    width: 90%;
+    width: calc(100% - 16px);
     transform: var(--button-scale-default);
+    transform-origin: center;
+    margin: 0; /* Remove margin from buttons */
 }
 
 /* Icon within subtype buttons */
@@ -199,7 +207,7 @@
     border-radius: var(--radius-md);
     border: none;
     background-color: var(--color-background);
-    margin-top: var(--spacing-2);
+    margin-top: var(--spacing-1);
     display: flex;
     flex-direction: column;
     width: 100%;

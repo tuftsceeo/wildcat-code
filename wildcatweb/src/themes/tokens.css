@@ -38,10 +38,10 @@
 
     /* Border Width - Clear but not overwhelming */
     --border-width-none: 0;
-    --border-width-thin: 0.125rem; /* 2px - Subtle separation */
-    --border-width-standard: 0.25rem; /* 4px - Standard emphasis */
-    --border-width-thick: 0.375rem; /* 6px - Game-like elements */
-    --border-width-extra: 0.5rem; /* 8px - Prominent elements */
+    --border-width-thin: 0.06rem; /* 2px - Subtle separation */
+    --border-width-standard: 0.125rem; /* 4px - Standard emphasis */
+    --border-width-thick: 0.25rem; /* 6px - Game-like elements */
+    --border-width-extra: 0.375rem; /* 8px - Prominent elements */
 
     /* Font Sizes - Optimized for readability */
     --font-size-xxs: 0.75rem; /* 12px - Small labels */
