@@ -13,6 +13,7 @@ import MissionUI from '../features/missions/services/MissionUI';
 import MissionCelebration from '../features/missions/components/MissionCelebration';
 import { getDeviceByCode } from '../features/missions/utils/DeviceTypes';
 import { processInstructions } from '../features/missions/utils/InstructionTemplating';
+import motorIdentityManager from '../features/missions/utils/MotorIdentity';
 import {
   missionReducer,
   createInitialMissionState,
@@ -25,7 +26,9 @@ import {
   setShowTestPrompt,
   setShowRunPrompt,
   setShowCelebration,
-  setDetectedDevices
+  setDetectedDevices,
+  setMotorIdentities,
+  setMotorAssignments
 } from '../features/missions/services/MissionState';
 
 // Create mission context
@@ -106,12 +109,19 @@ export const MissionProvider = ({ children }) => {
       // Update step count
       setStepCount(mission.totalSteps + 1); // +1 for stop step
       
+      // Initialize motor identity system if mission uses it
+      if (mission.motorIdentities) {
+        motorIdentityManager.setIdentityDefinitions(mission.motorIdentities);
+        dispatch(setMotorIdentities(mission.motorIdentities));
+      }
+      
       // Dispatch mission start action
       dispatch(startMissionAction(mission));
       
       logTaskEvent(`Started mission: ${mission.title}`, {
         missionId: mission.missionId,
-        taskCount: mission.tasks?.length || 0
+        taskCount: mission.tasks?.length || 0,
+        hasMotorIdentities: !!mission.motorIdentities
       });
     } catch (error) {
       console.error('Error starting mission:', error);
@@ -124,6 +134,9 @@ export const MissionProvider = ({ children }) => {
   const exitMission = useCallback(() => {
     // Reset task service
     TaskService.resetTasks();
+    
+    // Clear motor identity mappings
+    motorIdentityManager.clear();
     
     // Dispatch exit mission action
     dispatch(exitMissionAction());
@@ -172,11 +185,19 @@ export const MissionProvider = ({ children }) => {
       }
     });
     
+    // If we have motor identities defined, assign ports to them
+    if (currentMission?.motorIdentities && devices.motor) {
+      const assignments = motorIdentityManager.assignPorts(devices.motor);
+      dispatch(setMotorAssignments(assignments));
+      
+      logTaskEvent('Assigned motor identities to ports', assignments);
+    }
+    
     // Update state with detected devices
     dispatch(setDetectedDevices(devices));
     
     return devices;
-  }, [portStates]);
+  }, [portStates, currentMission]);
   
   /**
    * Begin guided tasks after intro phase is complete
@@ -221,19 +242,40 @@ export const MissionProvider = ({ children }) => {
     const newConfigs = {};
     
     config.slots.forEach(slot => {
-      // For motor configurations, use detected ports
+      // For motor configurations, handle both legacy and identity-based configs
       if (slot.type === "action" && slot.subtype === "motor") {
-        const motorPorts = devices.motor || [];
-        if (motorPorts.length > 0) {
-          // Use first detected motor port for single motor configs
-          newConfigs[slot.slotIndex] = {
-            type: slot.type,
-            subtype: slot.subtype,
-            configuration: { 
-              ...slot.configuration,
-              port: motorPorts[0]
+        if (currentMission?.motorIdentities) {
+          // For identity-based configs, use the motor identity manager
+          const motorPorts = devices.motor || [];
+          if (motorPorts.length > 0) {
+            // Get the first motor's identity and port
+            const firstIdentity = Object.keys(currentMission.motorIdentities)[0];
+            const firstPort = motorIdentityManager.getPort(firstIdentity);
+            
+            if (firstPort) {
+              newConfigs[slot.slotIndex] = {
+                type: slot.type,
+                subtype: slot.subtype,
+                configuration: { 
+                  ...slot.configuration,
+                  port: firstPort
+                }
+              };
             }
-          };
+          }
+        } else {
+          // Legacy behavior for non-identity missions
+          const motorPorts = devices.motor || [];
+          if (motorPorts.length > 0) {
+            newConfigs[slot.slotIndex] = {
+              type: slot.type,
+              subtype: slot.subtype,
+              configuration: { 
+                ...slot.configuration,
+                port: motorPorts[0]
+              }
+            };
+          }
         }
       } else {
         // For other configurations, use as-is
@@ -248,14 +290,11 @@ export const MissionProvider = ({ children }) => {
     // Update slot configurations
     dispatch(applyConfigurations(newConfigs));
     
-    // Sync with app's slot data
-    syncSlotConfigurations(newConfigs);
-    
     logTaskEvent('Applied initial configuration', {
-      detectedDevices: devices,
-      configurations: newConfigs
+      slotConfigs: newConfigs,
+      hasMotorIdentities: !!currentMission?.motorIdentities
     });
-  }, [detectConnectedDevices]);
+  }, [currentMission, detectConnectedDevices]);
   
   /**
    * Sync slot configurations with the app's slot data

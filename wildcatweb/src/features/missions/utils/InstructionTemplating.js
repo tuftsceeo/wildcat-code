@@ -4,6 +4,7 @@
  */
 
 import { getDeviceByName } from './DeviceTypes';
+import motorIdentityManager from './MotorIdentity';
 
 /**
  * Process an instruction template, replacing placeholders with device ports
@@ -15,13 +16,38 @@ export function processInstructionTemplate(instruction, devices) {
   if (!instruction) return '';
   
   return instruction.replace(/{(\w+)}/g, (match, placeholder) => {
-    // Check if this is a port placeholder
+    // Match patterns like {leftMotorPort}, {rightMotorPort}, etc.
+    const motorPortMatch = placeholder.match(/^(\w+)MotorPort$/);
+    if (motorPortMatch) {
+      const identity = motorPortMatch[1]; // e.g., "left"
+      
+      // Get port for this specific motor identity
+      const port = motorIdentityManager.getPort(identity);
+      if (port) {
+        return port; // Return just the port letter (e.g., "A")
+      }
+    }
+    
+    // Match patterns like {leftMotor}, {rightMotor}, etc.
+    const motorNameMatch = placeholder.match(/^(\w+)Motor$/);
+    if (motorNameMatch) {
+      const identity = motorNameMatch[1]; // e.g., "left"
+      
+      // Get port for this identity
+      const port = motorIdentityManager.getPort(identity);
+      if (port) {
+        return `Motor ${port}`; // Return "Motor A" instead of "left motor"
+      }
+    }
+    
+    // Standard device type placeholder (e.g., motorPort)
     if (placeholder.endsWith('Port')) {
       const deviceName = placeholder.replace('Port', '');
       if (devices[deviceName] && devices[deviceName].length > 0) {
         return devices[deviceName].join(', ');
       }
     }
+    
     return match; // Keep original if no replacement found
   });
 }

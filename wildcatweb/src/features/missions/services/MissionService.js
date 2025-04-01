@@ -154,6 +154,150 @@ const DEFAULT_MISSIONS = [
         }
       }
     ],
+  },
+  {
+    missionId: "two_motor_mission",
+    title: "Two Motor Challenge",
+    description: "Control two motors with different directions and speeds",
+    difficultyLevel: "intermediate",
+    totalSteps: 3,
+    totalTasks: 5,
+    
+    hardwareRequirements: [
+      { deviceName: "motor", count: 2 }
+    ],
+    
+    // Define semantic identities for motors - no port references
+    motorIdentities: {
+      "left": {
+        role: "drive wheel",
+        position: "left side" 
+      },
+      "right": {
+        role: "drive wheel",
+        position: "right side"
+      }
+    },
+    
+    initialConfiguration: {
+      slots: [
+        {
+          slotIndex: 0,
+          type: "action",
+          subtype: "motor",
+          // No port references - ports will be assigned at runtime
+          configuration: []
+        },
+        {
+          slotIndex: 1,
+          type: "input",
+          subtype: "time",
+          configuration: { seconds: 0 }
+        },
+        {
+          slotIndex: 2,
+          type: "action",
+          subtype: "motor",
+          // No port references - ports will be assigned at runtime
+          configuration: []
+        }
+      ]
+    },
+    
+    // Assets for the mission
+    assets: {
+      introImage: "/assets/images/missions/two-motor-intro.jpg",
+      completeImage: "/assets/images/missions/two-motor-complete.jpg",
+    },
+    
+    // UI restrictions for the mission
+    uiRestrictions: {
+      hideTypeSelection: false,
+      hideSubtypeSelection: false,
+      visibleComponents: [],
+      hiddenComponents: [],
+      disabledComponents: [],
+      prefilledValues: {},
+      lockedValues: {}
+    },
+    
+    tasks: [
+      // Task 1: Configure left motor
+      {
+        taskId: "configure_left_motor",
+        type: "MOTOR_CONFIGURATION",
+        targetSlot: 0,
+        targetMotorIdentity: "left", // Identify motor by semantic identity
+        motorRequirements: [
+          {
+            speedRange: [300, 1000],
+            direction: "clockwise"
+            // No port references
+          }
+        ],
+        // User will see "Make Motor A spin clockwise"
+        instruction: "Make Motor {leftMotorPort} spin clockwise",
+        stepTitle: "Set First Motor Speed",
+        targetElement: ".clockwiseBar"
+      },
+      
+      // Task 2: Configure right motor
+      {
+        taskId: "configure_right_motor",
+        type: "MOTOR_CONFIGURATION",
+        targetSlot: 0,
+        targetMotorIdentity: "right", // Identify motor by semantic identity
+        motorRequirements: [
+          {
+            speedRange: [300, 1000],
+            direction: "countercw"
+            // No port references
+          }
+        ],
+        // User will see "Make Motor B spin counter-clockwise"
+        instruction: "Make Motor {rightMotorPort} spin counter-clockwise",
+        stepTitle: "Set Second Motor Speed",
+        targetElement: ".countercwBar"
+      },
+      
+      // Task 3: Set wait time
+      {
+        taskId: "set_timer",
+        type: "TIMER_SETTING",
+        targetSlot: 1,
+        timeRange: [2, 4],
+        instruction: "Set a timer for 3 seconds",
+        stepTitle: "Set Wait Time",
+        targetElement: ".timeButton"
+      },
+      
+      // Task 4: Stop left motor - same motor from Task 1
+      {
+        taskId: "stop_left_motor",
+        type: "MOTOR_CONFIGURATION",
+        targetSlot: 2,
+        targetMotorIdentity: "left", // Reference the same motor by identity
+        motorRequirements: [
+          {
+            speedRange: [0, 0], // Speed of 0 = stopped
+            direction: "clockwise"
+          }
+        ],
+        // User will see "Stop Motor A"
+        instruction: "Stop Motor {leftMotorPort}",
+        stepTitle: "Stop First Motor",
+        targetElement: ".motorDashContainer"
+      },
+      
+      // Task 5: Run program
+      {
+        taskId: "run_program",
+        type: "RUN_PROGRAM",
+        instruction: "Click the PLAY button to run your complete program",
+        stepTitle: "Run Program",
+        targetElement: ".playButton"
+      }
+    ]
   }
 ];
 

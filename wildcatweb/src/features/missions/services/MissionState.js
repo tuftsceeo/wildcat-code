@@ -16,7 +16,9 @@ export const MISSION_ACTIONS = {
   SET_SHOW_TEST_PROMPT: 'mission/setShowTestPrompt',
   SET_SHOW_RUN_PROMPT: 'mission/setShowRunPrompt',
   SET_SHOW_CELEBRATION: 'mission/setShowCelebration',
-  SET_DETECTED_DEVICES: 'mission/setDetectedDevices'
+  SET_DETECTED_DEVICES: 'mission/setDetectedDevices',
+  SET_MOTOR_IDENTITIES: 'mission/setMotorIdentities',
+  SET_MOTOR_ASSIGNMENTS: 'mission/setMotorAssignments'
 };
 
 /**
@@ -45,7 +47,11 @@ export function createInitialMissionState() {
     showTestPrompt: false,
     showRunPrompt: false,
     activeHint: null,
-    showCelebration: false
+    showCelebration: false,
+    
+    // Motor identity state
+    motorIdentities: {},
+    motorAssignments: {}
   };
 }
 
@@ -140,6 +146,18 @@ export function missionReducer(state, action) {
       return {
         ...state,
         detectedDevicesByType: action.payload.devices
+      };
+      
+    case MISSION_ACTIONS.SET_MOTOR_IDENTITIES:
+      return {
+        ...state,
+        motorIdentities: action.payload.motorIdentities
+      };
+      
+    case MISSION_ACTIONS.SET_MOTOR_ASSIGNMENTS:
+      return {
+        ...state,
+        motorAssignments: action.payload.assignments
       };
       
     default:
@@ -260,5 +278,29 @@ export function setDetectedDevices(devices) {
   return {
     type: MISSION_ACTIONS.SET_DETECTED_DEVICES,
     payload: { devices }
+  };
+}
+
+/**
+ * Action creator to set motor identity definitions
+ * @param {Object} motorIdentities - Map of motor identity definitions
+ * @returns {Object} Action object
+ */
+export function setMotorIdentities(motorIdentities) {
+  return {
+    type: MISSION_ACTIONS.SET_MOTOR_IDENTITIES,
+    payload: { motorIdentities }
+  };
+}
+
+/**
+ * Action creator to set motor port assignments
+ * @param {Object} assignments - Map of motor identity to port assignments
+ * @returns {Object} Action object
+ */
+export function setMotorAssignments(assignments) {
+  return {
+    type: MISSION_ACTIONS.SET_MOTOR_ASSIGNMENTS,
+    payload: { assignments }
   };
 }

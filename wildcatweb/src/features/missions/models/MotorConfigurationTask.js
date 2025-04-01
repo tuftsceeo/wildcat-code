@@ -4,6 +4,7 @@
  */
 
 import Task, { logTaskEvent } from './Task';
+import motorIdentityManager from '../utils/MotorIdentity';
 
 /**
  * Task model for motor configuration tasks
@@ -30,6 +31,9 @@ export default class MotorConfigurationTask extends Task {
         requiredPort: taskData.port
       }];
     }
+    
+    // Store target motor identity if specified
+    this.targetMotorIdentity = taskData.targetMotorIdentity;
   }
   
   /**
@@ -44,7 +48,8 @@ export default class MotorConfigurationTask extends Task {
       taskId: this.taskId,
       eventData,
       requirements: this.motorRequirements,
-      targetSlot: this.targetSlot
+      targetSlot: this.targetSlot,
+      targetMotorIdentity: this.targetMotorIdentity
     });
     
     // Check if we're in the right slot
@@ -77,7 +82,39 @@ export default class MotorConfigurationTask extends Task {
     // Handle both single and multiple motor configs
     const motorConfigs = Array.isArray(config) ? config : [config];
     
-    // For each requirement, check if any motor config satisfies it
+    // If we have a target motor identity, we need to find a configuration for that specific motor
+    if (this.targetMotorIdentity) {
+      // Find configuration for the target motor by looking up its current port assignment
+      const targetPort = motorIdentityManager.getPort(this.targetMotorIdentity);
+      
+      if (!targetPort) {
+        logTaskEvent('Motor configuration: Target motor identity not assigned to any port', {
+          identity: this.targetMotorIdentity
+        });
+        return false;
+      }
+      
+      // Find the motor config matching this port
+      const targetConfig = motorConfigs.find(cfg => cfg.port === targetPort);
+      
+      if (!targetConfig) {
+        logTaskEvent('Motor configuration: No configuration for target motor', {
+          identity: this.targetMotorIdentity,
+          port: targetPort
+        });
+        return false;
+      }
+      
+      // Validate this specific motor configuration
+      const isValid = this.motorRequirements.some(requirement => {
+        return this.motorConfigMeetsRequirement(targetConfig, requirement, appState);
+      });
+      
+      logTaskEvent(`Motor configuration for ${this.targetMotorIdentity} validation ${isValid ? 'succeeded' : 'failed'}`);
+      return isValid;
+    }
+    
+    // If no specific target identity, use the original validation logic
     const allRequirementsMet = this.motorRequirements.every(requirement => {
       return motorConfigs.some(motorConfig => {
         return this.motorConfigMeetsRequirement(motorConfig, requirement, appState);
@@ -153,29 +190,47 @@ export default class MotorConfigurationTask extends Task {
    * @returns {Object} Hint configuration
    */
   getHint(appState) {
-    // If a specific target element is provided, use it
+    // If a specific motor identity is targeted, get its port
+    if (this.targetMotorIdentity) {
+      const motorPort = motorIdentityManager.getPort(this.targetMotorIdentity);
+      if (motorPort) {
+        // Use the existing port-based selector
+        if (this.motorRequirements[0]?.direction === 'clockwise') {
+          return {
+            selector: `.singleMotorDash[data-port="${motorPort}"] .clockwiseBar`,
+            animation: 'pulse',
+            effect: 'highlight'
+          };
+        } else if (this.motorRequirements[0]?.direction === 'countercw') {
+          return {
+            selector: `.singleMotorDash[data-port="${motorPort}"] .countercwBar`,
+            animation: 'pulse',
+            effect: 'highlight'
+          };
+        } else {
+          return {
+            selector: `.singleMotorDash[data-port="${motorPort}"]`,
+            animation: 'pulse',
+            effect: 'highlight'
+          };
+        }
+      }
+    }
+    
+    // Fall back to default behavior
     if (this.targetElement) {
       return super.getHint(appState);
     }
     
-    // If we have multiple requirements, default to the motor dashboard
-    if (this.motorRequirements.length > 1) {
-      return {
-        selector: '.motorDashContainer',
-        animation: 'pulse',
-        effect: 'highlight'
-      };
-    }
-    
-    // Otherwise, choose hint based on direction
+    // Default behaviors for direction hints
     const requirement = this.motorRequirements[0];
-    if (requirement.direction === 'clockwise') {
+    if (requirement?.direction === 'clockwise') {
       return {
         selector: '.clockwiseBar',
         animation: 'pulse',
         effect: 'highlight'
       };
-    } else if (requirement.direction === 'countercw') {
+    } else if (requirement?.direction === 'countercw') {
       return {
         selector: '.countercwBar',
         animation: 'pulse',
@@ -183,7 +238,7 @@ export default class MotorConfigurationTask extends Task {
       };
     }
     
-    // Default to the motor dashboard
+    // Default
     return {
       selector: '.motorDashContainer',
       animation: 'pulse',
