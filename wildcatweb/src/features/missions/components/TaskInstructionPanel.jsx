@@ -24,7 +24,8 @@ const TaskInstructionPanel = () => {
     getCurrentTask,
     isTaskCompleted,
     completeTask,
-    introCompleted
+    introCompleted,
+    detectedDevices
   } = useMission();
   
   const { voice, volume, language } = useCustomization();
@@ -40,16 +41,16 @@ const TaskInstructionPanel = () => {
    * Handle playing audio instruction
    */
   const handlePlayAudio = useCallback(() => {
-    if (isAudioPlaying || !task || !task.instruction) return;
+    if (isAudioPlaying || !task || !task.processedInstruction) return;
     
     setIsAudioPlaying(true);
     
     // Use robot voice from speechUtils
     const languageCode = language === 'es' ? 'es-ES' : 'en-US';
-    speakWithRobotVoice(task.instruction, voice, volume, languageCode);
+    speakWithRobotVoice(task.processedInstruction, voice, volume, languageCode);
     
     // Reset flag after estimated speech duration
-    const duration = Math.max(2000, task.instruction.length * 100);
+    const duration = Math.max(2000, task.processedInstruction.length * 100);
     setTimeout(() => {
       setIsAudioPlaying(false);
     }, duration);
@@ -87,7 +88,6 @@ const TaskInstructionPanel = () => {
       <div className={styles.taskHeader}>
         <div className={styles.taskIdentifier}>
           <span className={styles.taskNumber}>{task.stepTitle}</span>
-        
         </div>
         
         {/* Completion indicator */}
@@ -101,7 +101,7 @@ const TaskInstructionPanel = () => {
       
       {/* Task instruction with support buttons */}
       <div className={styles.instructionContent}>
-        <p className={styles.instruction}>{task.instruction}</p>
+        <p className={styles.instruction}>{task.processedInstruction || task.instruction}</p>
         
         <div className={styles.supportButtons}>
           {/* Audio button */}

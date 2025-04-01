@@ -9,7 +9,8 @@ import {
   RefreshCw,         // For clockwise rotation
   RefreshCcw,        // For countercw rotation
   Rabbit,            // For fast speed
-  Turtle,            // For slow speed
+  Turtle, 
+  Snail,        // For slow speed
   ChevronRight,      // For medium speed
   CircleStop,           // For stop
   MousePointerClick, // For pressed
@@ -75,9 +76,9 @@ export function getIconForConcept(concept, props = {}) {
     case 'fast':
       return <Rabbit {...props} />;
     case 'medium':
-      return <ChevronRight {...props} />;
-    case 'slow':
       return <Turtle {...props} />;
+    case 'slow':
+      return <Snail {...props} />;
     case 'stop':
     case 'stops':
     case 'stopped':

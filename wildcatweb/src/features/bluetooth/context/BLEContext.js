@@ -40,7 +40,7 @@ export const BLEProvider = ({ children }) => {
     // Handle device disconnections
     useEffect(() => {
         const handleDisconnect = () => {
-            console.log("BLEContext: Handling unexpected disconnection");
+            //console.log("BLEContext: Handling unexpected disconnection");
             setIsConnected(false);
         };
 
@@ -55,7 +55,7 @@ export const BLEProvider = ({ children }) => {
     useEffect(() => {
         const handleDeviceNotification = (event) => {
             const message = event.detail;
-            console.log("Processing device notification:", message);
+            //console.log("Processing device notification:", message);
 
             // Reset port states for new notification
             const newPortStates = {
@@ -80,10 +80,10 @@ export const BLEProvider = ({ children }) => {
                         connected: true,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Motor on port ${portLetter}`,
-                        msg.values,
-                    );
+                    //console.log(
+                    //    `BLEContext: Detected Motor on port ${portLetter}`,
+                    //    msg.values,
+                    //);
                 } else if (msg.name === "Force") {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
@@ -96,10 +96,10 @@ export const BLEProvider = ({ children }) => {
                         measuredValue: msg.values.measuredValue,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Force Sensor on port ${portLetter}`,
-                        msg.values,
-                    );
+                    //console.log(
+                    //    `BLEContext: Detected Force Sensor on port ${portLetter}`,
+                    //    msg.values,
+                    //);
                 }
                 // Handle other device types as needed...
             });

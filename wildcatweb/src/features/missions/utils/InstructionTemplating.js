@@ -17,9 +17,9 @@ export function processInstructionTemplate(instruction, devices) {
   
   return instruction.replace(/{(\w+)}/g, (match, placeholder) => {
     // Match patterns like {leftMotorPort}, {rightMotorPort}, etc.
-    const motorPortMatch = placeholder.match(/^(\w+)MotorPort$/);
+    const motorPortMatch = placeholder.match(/^(\w+)MotorPort$/i);
     if (motorPortMatch) {
-      const identity = motorPortMatch[1]; // e.g., "left"
+      const identity = motorPortMatch[1].toLowerCase(); // e.g., "left"
       
       // Get port for this specific motor identity
       const port = motorIdentityManager.getPort(identity);
@@ -29,14 +29,22 @@ export function processInstructionTemplate(instruction, devices) {
     }
     
     // Match patterns like {leftMotor}, {rightMotor}, etc.
-    const motorNameMatch = placeholder.match(/^(\w+)Motor$/);
+    const motorNameMatch = placeholder.match(/^(\w+)Motor$/i);
     if (motorNameMatch) {
-      const identity = motorNameMatch[1]; // e.g., "left"
+      const identity = motorNameMatch[1].toLowerCase(); // e.g., "left"
       
       // Get port for this identity
       const port = motorIdentityManager.getPort(identity);
       if (port) {
         return `Motor ${port}`; // Return "Motor A" instead of "left motor"
+      }
+    }
+    
+    // Match legacy motor port placeholder
+    if (placeholder.toLowerCase() === 'motorport') {
+      const motorPorts = devices.motor || [];
+      if (motorPorts.length > 0) {
+        return motorPorts[0]; // Return first motor port for legacy support
       }
     }
     
@@ -47,6 +55,9 @@ export function processInstructionTemplate(instruction, devices) {
         return devices[deviceName].join(', ');
       }
     }
+    
+    // Log unmatched placeholder for debugging
+    console.warn(`Unmatched placeholder in instruction: ${match}`);
     
     return match; // Keep original if no replacement found
   });

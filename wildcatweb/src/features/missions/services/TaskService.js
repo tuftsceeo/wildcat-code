@@ -5,6 +5,7 @@
 
 import { logTaskEvent } from '../models/Task';
 import TaskFactory, { TASK_TYPES } from '../models/TaskFactory';
+import { processInstructions } from '../utils/InstructionTemplating';
 
 /**
  * Task management service
@@ -35,6 +36,25 @@ class TaskService {
     logTaskEvent('Initialized tasks', {
       missionId: mission.missionId,
       taskCount: this.tasks.length
+    });
+  }
+  
+  /**
+   * Update task instructions with processed versions
+   * @param {Object} devices - Map of device types to port arrays
+   */
+  updateTaskInstructions(devices) {
+    if (!this.tasks || !Array.isArray(this.tasks)) {
+      console.error('No tasks to update');
+      return;
+    }
+    
+    // Process instructions for all tasks
+    processInstructions(this.tasks, devices);
+    
+    logTaskEvent('Updated task instructions', {
+      taskCount: this.tasks.length,
+      devices
     });
   }
   

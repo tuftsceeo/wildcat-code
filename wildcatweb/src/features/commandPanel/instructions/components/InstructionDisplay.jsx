@@ -15,10 +15,12 @@ import { getSpeedDescription } from "./motorSpeedUtils";
 import {
     Rabbit,
     Turtle,
+    Snail,
     CircleStop,
     ChevronLeft,
     ChevronRight,
     Clock,
+    SnailIcon,
 } from "lucide-react";
 import styles from "../styles/InstructionDisplay.module.css";
 
@@ -272,18 +274,23 @@ const TimerInstructionDisplay = ({ configuration, complexity, language }) => {
  */
 function getDirectionIcon(direction, level) {
     if (direction === "clockwise") {
-        if (level === "slow") return <Turtle size={24} />;
-        if (level === "medium") return <ChevronRight size={24} />;
+        if (level === "slow") return <Snail size={24} />;
+        if (level === "medium") return <Turtle size={24} />;
         return <Rabbit size={24} />;
     } else if (direction === "countercw") {
         if (level === "slow")
             return (
-                <Turtle
+                <Snail 
                     size={24}
                     style={{ transform: "scaleX(-1)" }}
                 />
             );
-        if (level === "medium") return <ChevronLeft size={24} />;
+        if (level === "medium") return (
+            <Turtle
+                size={24}
+                style={{ transform: "scaleX(-1)" }}
+            />
+        );
         return (
             <Rabbit
                 size={24}

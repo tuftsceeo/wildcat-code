@@ -206,10 +206,8 @@ export const MissionProvider = ({ children }) => {
     // Detect connected devices
     const devices = detectConnectedDevices();
     
-    // Process instructions with detected devices
-    if (currentMission && currentMission.tasks) {
-      processInstructions(currentMission.tasks, devices);
-    }
+    // Update task instructions with processed versions
+    TaskService.updateTaskInstructions(devices);
     
     dispatch(completeIntro());
     

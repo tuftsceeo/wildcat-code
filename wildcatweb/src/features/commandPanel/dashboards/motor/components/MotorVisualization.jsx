@@ -10,6 +10,7 @@ import { validateSpeed, getSpeedDescription } from "./motorSpeedUtils";
 import {
     Rabbit,
     Turtle,
+    Snail,
     CircleStop,
     ArrowLeft,
     ArrowRight,
@@ -193,7 +194,7 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                     />
                 </div>
 
-                {/* Medium Counterclockwise (Arrow) */}
+                {/* Medium Counterclockwise (Turtle) */}
                 <div
                     className={`${styles.animalIcon} ${
                         direction === "countercw" && level === "medium"
@@ -201,10 +202,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                             : ""
                     }`}
                 >
-                    <MoveLeft size={24} />
+                    <Turtle size={24} />
                 </div>
 
-                {/* Slow Counterclockwise (Turtle) */}
+                {/* Slow Counterclockwise (Snail) */}
                 <div
                     className={`${styles.animalIcon} ${
                         direction === "countercw" && level === "slow"
@@ -212,7 +213,7 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                             : ""
                     }`}
                 >
-                    <Turtle
+                    <Snail
                         className={styles.flippedHorizontally}
                         size={24}
                     />
@@ -229,7 +230,7 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
         color="var(--color-error-main)" 
     />
 </div>
-                {/* Slow Clockwise (Turtle) */}
+                {/* Slow Clockwise (Snail) */}
                 <div
                     className={`${styles.animalIcon} ${
                         direction === "clockwise" && level === "slow"
@@ -237,10 +238,10 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                             : ""
                     }`}
                 >
-                    <Turtle size={24} />
+                    <Snail size={24} />
                 </div>
 
-                {/* Medium Clockwise (Arrow) */}
+                {/* Medium Clockwise (Turtle) */}
                 <div
                     className={`${styles.animalIcon} ${
                         direction === "clockwise" && level === "medium"
@@ -248,7 +249,7 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                             : ""
                     }`}
                 >
-                    <MoveRight size={24} />
+                    <Turtle size={24} />
                 </div>
 
                 {/* Fast Clockwise (Rabbit) */}

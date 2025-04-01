@@ -18,6 +18,7 @@ import {
     RefreshCwOff,
     Rabbit,
     Turtle,
+    Snail,
     CircleStop,
     MoveLeft,
     MoveRight,
@@ -192,10 +193,13 @@ const SingleMotorDash = memo(
                 ),
                 label: "Fast Counterclockwise",
             },
-            { icon: <MoveLeft size={20} />, label: "Medium Counterclockwise" },
+            { icon: <Turtle
+                className={styles.flippedHorizontally}
+                size={20}
+            />, label: "Medium Counterclockwise" },
             {
                 icon: (
-                    <Turtle
+                    <Snail
                         className={styles.flippedHorizontally}
                         size={20}
                     />
@@ -203,8 +207,8 @@ const SingleMotorDash = memo(
                 label: "Slow Counterclockwise",
             },
             { icon: <CircleStop size={16} />, label: "Stop" },
-            { icon: <Turtle size={20} />, label: "Slow Clockwise" },
-            { icon: <MoveRight size={20} />, label: "Medium Clockwise" },
+            { icon: <Snail size={20} />, label: "Slow Clockwise" },
+            { icon: <Turtle size={20} />, label: "Medium Clockwise" },
             { icon: <Rabbit size={20} />, label: "Fast Clockwise" },
         ];
 
