@@ -11,6 +11,8 @@ import MissionService from '../features/missions/services/MissionService';
 import TaskService from '../features/missions/services/TaskService';
 import MissionUI from '../features/missions/services/MissionUI';
 import MissionCelebration from '../features/missions/components/MissionCelebration';
+import { getDeviceByCode } from '../features/missions/utils/DeviceTypes';
+import { processInstructions } from '../features/missions/utils/InstructionTemplating';
 import {
   missionReducer,
   createInitialMissionState,
@@ -22,7 +24,8 @@ import {
   setCurrentSlot,
   setShowTestPrompt,
   setShowRunPrompt,
-  setShowCelebration
+  setShowCelebration,
+  setDetectedDevices
 } from '../features/missions/services/MissionState';
 
 // Create mission context
@@ -59,7 +62,8 @@ export const MissionProvider = ({ children }) => {
     showTestPrompt,
     showRunPrompt,
     activeHint,
-    showCelebration
+    showCelebration,
+    detectedDevicesByType
   } = state;
   
   // Track available missions
@@ -149,15 +153,49 @@ export const MissionProvider = ({ children }) => {
   }, [isMissionMode, currentMission, introCompleted]);
   
   /**
+   * Detect connected devices and map them by type
+   * @returns {Object} Map of device types to port arrays
+   */
+  const detectConnectedDevices = useCallback(() => {
+    const devices = {};
+    
+    // Check all ports for connected devices
+    Object.entries(portStates).forEach(([port, state]) => {
+      if (state && state.deviceType) {
+        const device = getDeviceByCode(state.deviceType);
+        if (device) {
+          if (!devices[device.name]) {
+            devices[device.name] = [];
+          }
+          devices[device.name].push(port);
+        }
+      }
+    });
+    
+    // Update state with detected devices
+    dispatch(setDetectedDevices(devices));
+    
+    return devices;
+  }, [portStates]);
+  
+  /**
    * Begin guided tasks after intro phase is complete
    */
   const beginGuidedTasks = useCallback(() => {
+    // Detect connected devices
+    const devices = detectConnectedDevices();
+    
+    // Process instructions with detected devices
+    if (currentMission && currentMission.tasks) {
+      processInstructions(currentMission.tasks, devices);
+    }
+    
     dispatch(completeIntro());
     
     logTaskEvent('Beginning guided tasks', {
-      detectedMotorPort
+      detectedDevices: devices
     });
-  }, [detectedMotorPort]);
+  }, [currentMission, detectConnectedDevices]);
   
   /**
    * Set the detected motor port
@@ -170,27 +208,33 @@ export const MissionProvider = ({ children }) => {
   }, []);
   
   /**
-   * Apply initial configuration from mission data, using detected port
-   * 
-   * @param {Object} config - Configuration data with detected port
+   * Apply initial configuration from mission data
+   * @param {Object} config - Configuration data
    */
   const applyInitialConfiguration = useCallback((config) => {
     if (!config || !config.slots) return;
+    
+    // Detect connected devices
+    const devices = detectConnectedDevices();
     
     // Create new slot configurations
     const newConfigs = {};
     
     config.slots.forEach(slot => {
-      // For motor configurations, use the detected port
-      if (slot.type === "action" && slot.subtype === "motor" && config.detectedPort) {
-        newConfigs[slot.slotIndex] = {
-          type: slot.type,
-          subtype: slot.subtype,
-          configuration: { 
-            ...slot.configuration,
-            port: config.detectedPort
-          }
-        };
+      // For motor configurations, use detected ports
+      if (slot.type === "action" && slot.subtype === "motor") {
+        const motorPorts = devices.motor || [];
+        if (motorPorts.length > 0) {
+          // Use first detected motor port for single motor configs
+          newConfigs[slot.slotIndex] = {
+            type: slot.type,
+            subtype: slot.subtype,
+            configuration: { 
+              ...slot.configuration,
+              port: motorPorts[0]
+            }
+          };
+        }
       } else {
         // For other configurations, use as-is
         newConfigs[slot.slotIndex] = {
@@ -208,10 +252,10 @@ export const MissionProvider = ({ children }) => {
     syncSlotConfigurations(newConfigs);
     
     logTaskEvent('Applied initial configuration', {
-      detectedPort: config.detectedPort,
+      detectedDevices: devices,
       configurations: newConfigs
     });
-  }, []);
+  }, [detectConnectedDevices]);
   
   /**
    * Sync slot configurations with the app's slot data
@@ -524,7 +568,10 @@ export const MissionProvider = ({ children }) => {
     
     // Celebration
     showCelebration,
-    handleCelebrationClose
+    handleCelebrationClose,
+    
+    // Device detection
+    detectedDevicesByType
   };
   
   return (

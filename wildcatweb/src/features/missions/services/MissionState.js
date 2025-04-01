@@ -15,7 +15,8 @@ export const MISSION_ACTIONS = {
   COMPLETE_TASK: 'mission/completeTask',
   SET_SHOW_TEST_PROMPT: 'mission/setShowTestPrompt',
   SET_SHOW_RUN_PROMPT: 'mission/setShowRunPrompt',
-  SET_SHOW_CELEBRATION: 'mission/setShowCelebration'
+  SET_SHOW_CELEBRATION: 'mission/setShowCelebration',
+  SET_DETECTED_DEVICES: 'mission/setDetectedDevices'
 };
 
 /**
@@ -34,6 +35,7 @@ export function createInitialMissionState() {
     
     // Hardware detection
     detectedMotorPort: null,
+    detectedDevicesByType: {},
     
     // Slot state
     currSlotNumber: 0,
@@ -63,6 +65,7 @@ export function missionReducer(state, action) {
         showMissionOverlay: true,
         introCompleted: false,
         detectedMotorPort: null,
+        detectedDevicesByType: {},
         slotConfigurations: {},
         currSlotNumber: 0,
         showTestPrompt: false,
@@ -79,6 +82,7 @@ export function missionReducer(state, action) {
         showMissionOverlay: false,
         introCompleted: false,
         detectedMotorPort: null,
+        detectedDevicesByType: {},
         slotConfigurations: {},
         showTestPrompt: false,
         showRunPrompt: false,
@@ -130,6 +134,12 @@ export function missionReducer(state, action) {
       return {
         ...state,
         showCelebration: action.payload.show
+      };
+      
+    case MISSION_ACTIONS.SET_DETECTED_DEVICES:
+      return {
+        ...state,
+        detectedDevicesByType: action.payload.devices
       };
       
     default:
@@ -238,5 +248,17 @@ export function setShowCelebration(show) {
   return {
     type: MISSION_ACTIONS.SET_SHOW_CELEBRATION,
     payload: { show }
+  };
+}
+
+/**
+ * Action creator to set detected devices by type
+ * @param {Object} devices - Map of device types to port arrays
+ * @returns {Object} Action object
+ */
+export function setDetectedDevices(devices) {
+  return {
+    type: MISSION_ACTIONS.SET_DETECTED_DEVICES,
+    payload: { devices }
   };
 }

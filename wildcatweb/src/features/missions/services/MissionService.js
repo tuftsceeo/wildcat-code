@@ -5,6 +5,7 @@
 
 import { logTaskEvent } from '../models/Task';
 import TaskFactory, { TASK_TYPES } from '../models/TaskFactory';
+import { getDeviceByName } from '../utils/DeviceTypes';
 
 /**
  * Default missions that are included with the application
@@ -20,7 +21,7 @@ const DEFAULT_MISSIONS = [
     
     // Introduction phase metadata (NOT tasks)
     hardwareRequirements: [
-      { deviceType: 0x30, count: 1 } // One motor required
+      { deviceName: "motor", count: 1 } // One motor required
     ],
     
     initialConfiguration: {
@@ -67,9 +68,13 @@ const DEFAULT_MISSIONS = [
         taskId: "set_motor_speed",
         type: "MOTOR_CONFIGURATION",
         targetSlot: 0,
-        speedRange: [300, 1000],
-        direction: "clockwise",
-        instruction: "Make your motor spin clockwise",
+        motorRequirements: [
+          {
+            speedRange: [300, 1000],
+            direction: "clockwise"
+          }
+        ],
+        instruction: "Make your motor on port {motorPort} spin clockwise",
         stepTitle: "Set Motor Speed",
         targetElement: ".clockwiseBar",
         uiRestrictions: {
@@ -83,7 +88,7 @@ const DEFAULT_MISSIONS = [
         taskId: "test_motor",
         type: "TEST_EXECUTION",
         targetSlot: 0,
-        instruction: "Click TEST to see your motor spin",
+        instruction: "Click TEST to see your motor on port {motorPort} spin",
         stepTitle: "Test Motor",
         targetElement: ".testButton",
         uiRestrictions: {
@@ -106,9 +111,6 @@ const DEFAULT_MISSIONS = [
         }
       },
       
-
-      
-  
       // Task 6: Set Timer Duration
       {
         taskId: "set_timer",
@@ -152,7 +154,6 @@ const DEFAULT_MISSIONS = [
         }
       }
     ],
-    
   }
 ];
 
@@ -315,66 +316,78 @@ class MissionService {
   }
 
   /**
-   * Validate mission data structure
-   * Checks if a mission object has all required fields and valid structure
-   *
+   * Validate a mission's format and requirements
    * @param {Object} mission - Mission object to validate
-   * @returns {Object} Validation result with status and errors
+   * @returns {Object} Validation result with isValid flag and errors array
    */
   validateMission(mission) {
     const errors = [];
-
-    // Check required top-level fields
+    
+    // Check required fields
     if (!mission.missionId) errors.push("Missing missionId");
     if (!mission.title) errors.push("Missing title");
     if (!mission.description) errors.push("Missing description");
-    if (!mission.totalTasks) errors.push("Missing totalTasks");
+    if (!mission.difficultyLevel) errors.push("Missing difficultyLevel");
     if (!mission.totalSteps) errors.push("Missing totalSteps");
-
-    // Check introduction phase properties
-    if (!mission.hardwareRequirements || !Array.isArray(mission.hardwareRequirements)) {
-      errors.push("Missing or invalid hardwareRequirements");
-    }
+    if (!mission.totalTasks) errors.push("Missing totalTasks");
     
-    if (!mission.initialConfiguration || !mission.initialConfiguration.slots) {
-      errors.push("Missing or invalid initialConfiguration");
-    }
-
-    // Check tasks
-    if (!mission.tasks || !Array.isArray(mission.tasks)) {
-      errors.push("Missing or invalid tasks array");
-    } else if (mission.tasks.length !== mission.totalTasks) {
-      errors.push(
-        `Mission has ${mission.tasks.length} tasks but totalTasks is ${mission.totalTasks}`
-      );
-    } else {
-      // Check each task
-      mission.tasks.forEach((task, index) => {
-        if (!task.taskId)
-          errors.push(`Task ${index} is missing taskId`);
-        if (!task.type) errors.push(`Task ${index} is missing type`);
-        if (!task.instruction)
-          errors.push(`Task ${index} is missing instruction`);
-          
-        // Check if task type is valid
-        if (!Object.values(TASK_TYPES).includes(task.type)) {
-          errors.push(`Task ${index} has invalid type: ${task.type}`);
+    // Validate hardware requirements
+    if (mission.hardwareRequirements) {
+      mission.hardwareRequirements.forEach((req, index) => {
+        if (!req.deviceName) {
+          errors.push(`Hardware requirement ${index} missing deviceName`);
+        } else {
+          // Check if device name is valid
+          const device = getDeviceByName(req.deviceName);
+          if (!device) {
+            errors.push(`Invalid device name in hardware requirement ${index}: ${req.deviceName}`);
+          }
+        }
+        if (req.count === undefined || req.count < 1) {
+          errors.push(`Invalid count in hardware requirement ${index}`);
         }
       });
     }
     
-    if (errors.length > 0) {
-      logTaskEvent('Mission validation failed', { errors });
-    } else {
-      logTaskEvent('Mission validation succeeded', { 
-        missionId: mission.missionId, 
-        title: mission.title 
+    // Validate tasks
+    if (mission.tasks) {
+      mission.tasks.forEach((task, index) => {
+        if (!task.taskId) errors.push(`Task ${index} missing taskId`);
+        if (!task.type) errors.push(`Task ${index} missing type`);
+        if (!task.instruction) errors.push(`Task ${index} missing instruction`);
+        
+        // Validate motor configuration tasks
+        if (task.type === "MOTOR_CONFIGURATION") {
+          if (!task.motorRequirements || !Array.isArray(task.motorRequirements)) {
+            errors.push(`Task ${index} missing or invalid motorRequirements`);
+          } else {
+            task.motorRequirements.forEach((req, reqIndex) => {
+              if (req.speedRange && (!Array.isArray(req.speedRange) || req.speedRange.length !== 2)) {
+                errors.push(`Task ${index} motor requirement ${reqIndex} has invalid speedRange`);
+              }
+              if (req.direction && !["clockwise", "countercw"].includes(req.direction)) {
+                errors.push(`Task ${index} motor requirement ${reqIndex} has invalid direction`);
+              }
+            });
+          }
+        }
+        
+        // Validate port placeholders in instructions
+        if (task.instruction) {
+          const placeholders = task.instruction.match(/{(\w+)}/g) || [];
+          placeholders.forEach(placeholder => {
+            const deviceName = placeholder.slice(1, -1).replace('Port', '');
+            if (!getDeviceByName(deviceName)) {
+              errors.push(`Task ${index} instruction contains invalid device placeholder: ${placeholder}`);
+            }
+          });
+        }
       });
     }
-
+    
     return {
       isValid: errors.length === 0,
-      errors,
+      errors
     };
   }
 

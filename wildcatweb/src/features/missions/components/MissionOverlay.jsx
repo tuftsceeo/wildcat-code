@@ -11,6 +11,7 @@ import { useBLE } from "../../../features/bluetooth/context/BLEContext";
 import { Rocket, Play, CheckCircle, AlertTriangle, X, Disc, BluetoothSearching, RefreshCwOff, ArrowLeft } from "lucide-react";
 import MissionSelector from "./MissionSelector";
 import styles from "../styles/MissionOverlay.module.css";
+import { deviceMatchesRequirement } from "../utils/DeviceTypes";
 
 /**
  * Mission overlay component with proper initialization flow
@@ -76,9 +77,9 @@ const MissionOverlay = () => {
    * @returns {string|null} Port letter or null if no motor found
    */
   const findConnectedMotorPort = () => {
-    // Check all ports for a motor (device type 0x30)
+    // Check all ports for a motor
     for (const [port, state] of Object.entries(portStates)) {
-      if (state && state.deviceType === 0x30) {
+      if (state && deviceMatchesRequirement(state.deviceType, "motor")) {
         return port; // Return port letter (A, B, C, etc.)
       }
     }

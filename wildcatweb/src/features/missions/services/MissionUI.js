@@ -5,6 +5,7 @@
  */
 
 import { logTaskEvent } from '../models/Task';
+import { getDeviceByName, deviceMatchesRequirement } from '../utils/DeviceTypes';
 
 /**
  * Class for handling UI visibility and state in mission mode
@@ -319,24 +320,16 @@ export default class MissionUI {
     // Check hardware requirements from mission data
     if (currentMission.hardwareRequirements) {
       currentMission.hardwareRequirements.forEach(requirement => {
-        const { deviceType, count = 1 } = requirement;
+        const { deviceName, count = 1 } = requirement;
         
         // Count connected devices of this type
         const connectedCount = Object.values(portStates)
-          .filter(port => port && port.deviceType === deviceType)
+          .filter(port => port && deviceMatchesRequirement(port.deviceType, deviceName))
           .length;
         
         // Add to missing hardware if not enough connected
         if (connectedCount < count) {
-          if (deviceType === 0x30) {
-            // Motor
-            missingHardware.push("motor");
-          } else if (deviceType === 0x3c) {
-            // Button/Force sensor
-            missingHardware.push("button");
-          } else {
-            missingHardware.push(`unknown-${deviceType}`);
-          }
+          missingHardware.push(deviceName);
         }
       });
     }
