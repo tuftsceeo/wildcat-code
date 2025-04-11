@@ -1,9 +1,10 @@
 /* tokens.css - Comprehensive design token system for WildCat app
  * This file provides a complete set of design tokens for all themes
  * using contrast-based naming conventions instead of light/dark.
- * Preference for rem scaling.
+ * Updated with improved responsive scaling for Chromebooks and other devices.
  * 
  * UPDATED: Added RGB values for all colors to support rgba() usage
+ *          Implemented proportional scaling for different viewport sizes
  */
 
 /* Import necessary fonts */
@@ -15,43 +16,58 @@
    SHARED TOKENS (constant across all themes)
    ============================================ */
 :root {
+    /* Base scaling factors for different viewport sizes */
+    /* Scales down for smaller screens, scales up for larger screens */
+    --scale-factor: clamp(0.7, 0.7 + 0.3 * (100vw - 768px) / 1152, 1) * clamp(1, 1 + 0.1 * (100vw - 1680px) / 1152, 1.3);
+    --font-scale-factor: clamp(0.75, 0.75 + 0.25 * (100vw - 768px) / 1152, 1) * clamp(1, 1 + 0.1 * (100vw - 1680px) / 1152, 1.2);
+    --spacing-scale-factor: clamp(0.65, 0.65 + 0.35 * (100vw - 768px) / 1152, 1) * clamp(1, 1 + 0.15 * (100vw - 1680px) / 1152, 1.3);
+    
+    /* Panel width scaling - more aggressive than general scaling */
+    --panel-scale-factor: clamp(0.6, 0.6 + 0.4 * (100vw - 768px) / 1152, 1) * clamp(1, 1 + 0.2 * (100vw - 1680px) / 1152, 1.4);
+    
+    /* Z-index scale */
+    --z-index-base: 0;
+    --z-index-raised: 10;
+    --z-index-dropdown: 100;
+    --z-index-modal: 1000;
+    
     /* Spacing Scale - Balanced for educational clarity */
-    --spacing-1: 0.25rem; /* 4px - For tight grouping */
-    --spacing-2: 0.5rem; /* 8px - For related elements */
-    --spacing-3: 0.75rem; /* 12px - For section separation */
-    --spacing-4: 1rem; /* 16px - Standard spacing */
-    --spacing-5: 1.25rem; /* 20px - For visual hierarchy */
-    --spacing-6: 1.5rem; /* 24px - For major sections */
-    --spacing-8: 2rem; /* 32px - For content blocks */
-    --spacing-10: 2.5rem; /* 40px - For page sections */
-    --spacing-12: 3rem; /* 48px - For major breaks */
-    --spacing-16: 4rem; /* 64px - For full sections */
-    --spacing-20: 5rem; /* 80px - For page breaks */
+    --spacing-1: calc(0.25rem * var(--spacing-scale-factor)); /* 4px - For tight grouping */
+    --spacing-2: calc(0.5rem * var(--spacing-scale-factor)); /* 8px - For related elements */
+    --spacing-3: calc(0.75rem * var(--spacing-scale-factor)); /* 12px - For section separation */
+    --spacing-4: calc(1rem * var(--spacing-scale-factor)); /* 16px - Standard spacing */
+    --spacing-5: calc(1.25rem * var(--spacing-scale-factor)); /* 20px - For visual hierarchy */
+    --spacing-6: calc(1.5rem * var(--spacing-scale-factor)); /* 24px - For major sections */
+    --spacing-8: calc(2rem * var(--spacing-scale-factor)); /* 32px - For content blocks */
+    --spacing-10: calc(2.5rem * var(--spacing-scale-factor)); /* 40px - For page sections */
+    --spacing-12: calc(3rem * var(--spacing-scale-factor)); /* 48px - For major breaks */
+    --spacing-16: calc(4rem * var(--spacing-scale-factor)); /* 64px - For full sections */
+    --spacing-20: calc(5rem * var(--spacing-scale-factor)); /* 80px - For page breaks */
 
     /* Border Radius - Balanced for engagement */
     --radius-none: 0;
-    --radius-sm: 0.25rem; /* 4px - Subtle rounding */
-    --radius-md: 0.5rem; /* 8px - Standard rounding */
-    --radius-lg: 0.75rem; /* 12px - Game-like elements */
-    --radius-xl: 1rem; /* 16px - Prominent elements */
+    --radius-sm: calc(0.25rem * var(--scale-factor)); /* 4px - Subtle rounding */
+    --radius-md: calc(0.5rem * var(--scale-factor)); /* 8px - Standard rounding */
+    --radius-lg: calc(0.75rem * var(--scale-factor)); /* 12px - Game-like elements */
+    --radius-xl: calc(1rem * var(--scale-factor)); /* 16px - Prominent elements */
     --radius-full: 9999px;
 
     /* Border Width - Clear but not overwhelming */
     --border-width-none: 0;
-    --border-width-thin: 0.06rem; /* 2px - Subtle separation */
-    --border-width-standard: 0.125rem; /* 4px - Standard emphasis */
-    --border-width-thick: 0.25rem; /* 6px - Game-like elements */
-    --border-width-extra: 0.375rem; /* 8px - Prominent elements */
+    --border-width-thin: calc(0.06rem * var(--scale-factor)); /* 2px - Subtle separation */
+    --border-width-standard: calc(0.125rem * var(--scale-factor)); /* 4px - Standard emphasis */
+    --border-width-thick: calc(0.25rem * var(--scale-factor)); /* 6px - Game-like elements */
+    --border-width-extra: calc(0.375rem * var(--scale-factor)); /* 8px - Prominent elements */
 
-    /* Font Sizes - Optimized for readability */
-    --font-size-xxs: 0.75rem; /* 12px - Small labels */
-    --font-size-xs: 0.875rem; /* 14px - Secondary text */
-    --font-size-sm: 1rem; /* 16px - Body text */
-    --font-size-base: 1.25rem; /* 20px - Primary text */
-    --font-size-lg: 1.5rem; /* 24px - Headers */
-    --font-size-xl: 2rem; /* 32px - Section headers */
-    --font-size-2xl: 2.5rem; /* 40px - Main headers */
-    --font-size-3xl: 3rem; /* 48px - Hero text */
+    /* Font Sizes - Optimized for readability, scales with viewport */
+    --font-size-xxs: calc(0.75rem * var(--font-scale-factor)); /* 12px - Small labels */
+    --font-size-xs: calc(0.875rem * var(--font-scale-factor)); /* 14px - Secondary text */
+    --font-size-sm: calc(1rem * var(--font-scale-factor)); /* 16px - Body text */
+    --font-size-base: calc(1.25rem * var(--font-scale-factor)); /* 20px - Primary text */
+    --font-size-lg: calc(1.5rem * var(--font-scale-factor)); /* 24px - Headers */
+    --font-size-xl: calc(2rem * var(--font-scale-factor)); /* 32px - Section headers */
+    --font-size-2xl: calc(2.5rem * var(--font-scale-factor)); /* 40px - Main headers */
+    --font-size-3xl: calc(3rem * var(--font-scale-factor)); /* 48px - Hero text */
 
     /* Font Weights */
     --font-weight-regular: 400;
@@ -116,59 +132,142 @@
     --sound-effect-duration: 0.3s; /* Default duration */
     --sound-effect-pitch: 1; /* Default pitch */
 
-    /* Component dimensions - Balanced for engagement */
-    --panel-width-step: 300px; /* Slightly wider for clarity */
-    --panel-width-code: 300px; /* Room for code examples */
-    --panel-width-control: 540px; /* Comfortable control area */
-    --panel-width-settings: 320px; /* Clear settings layout */
+    /* Component dimensions - Scaled with viewport width */
+    --panel-width-step: calc(300px * var(--panel-scale-factor)); /* Run menu width */
+    --panel-width-code: calc(300px * var(--panel-scale-factor)); /* Code track width */
+    --panel-width-control: calc(540px * var(--panel-scale-factor)); /* Command panel width */
     --panel-spacing: var(--spacing-4);
-    --header-height: 56px; /* Prominent but not overwhelming */
-    --bluetooth-button-size: 40px; /* Easy to click */
-    --bluetooth-icon-size: 24px; /* Clear visibility */
-    --bluetooth-status-indicator-size: 10px; /* Noticeable status */
-
-    /* Responsive adjustments */
-    /* Button Scale Transforms - More pronounced for engagement */
-    --button-scale-default: scale(1);
-    --button-scale-hover: scale(1.05); /* More noticeable feedback */
-    --button-scale-active: scale(0.95); /* Clear interaction */
+    --header-height: calc(56px * var(--scale-factor)); /* Prominent but not overwhelming */
+    --bluetooth-button-size: calc(40px * var(--scale-factor)); /* Easy to click */
+    --bluetooth-icon-size: calc(24px * var(--scale-factor)); /* Clear visibility */
+    --bluetooth-status-indicator-size: calc(10px * var(--scale-factor)); /* Noticeable status */
 }
 
-@media (max-width: 1400px) {
-    /*Small Screens*/
-    :root {
-        /* Font Sizes */
-        --font-size-xxs: 0.5rem; /* 12px */
-        --font-size-xs: 0.9rem; /* 12px */
-        --font-size-sm: 1.05rem; /* 14px */
-        --font-size-base: 1.2rem; /* 16px */
-        --font-size-lg: 1.5rem; /* 32 px*/
-        --font-size-xl: 1.875rem; /* 24px */
-        --font-size-2xl: 2.4rem; /* 32px */
-        --font-size-3xl: 3rem; /* 40px */
+/* ============================================
+   TARGETED DEVICE BREAKPOINTS
+   ============================================ */
 
-        /* Component dimensions - consistent across themes */
-        --panel-width-step: 235px;
-        --panel-width-code: 235px;
-        --panel-width-control: 482px;
+/* School Chromebooks & Medium Displays (1281px - 1366px) */
+@media (min-width: 1281px) and (max-width: 1366px) {
+    :root {
+        /* Slightly more aggressive scaling for this problematic range */
+        --scale-factor: 0.85;
+        --font-scale-factor: 0.85;
+        --spacing-scale-factor: 0.8;
+        --panel-scale-factor: 0.8;
+        
+        /* Fixed dimensions to ensure fit */
+        --panel-width-step: 250px;
+        --panel-width-code: 250px;  
+        --panel-width-control: 450px;
     }
 }
 
-@media (max-width: 1000px) {
-    /*Portrait/Phone*/
+/* Smaller Desktops & Laptops (1025px - 1280px) */
+@media (min-width: 1025px) and (max-width: 1280px) {
     :root {
-        /* Font Sizes */
-        --font-size-xxs: 0.4rem; /* 12px */
-        --font-size-xs: 0.6rem; /* 12px */
-        --font-size-sm: 0.7rem; /* 14px */
-        --font-size-base: 0.8rem; /* 16px */
-        --font-size-lg: 1rem; /* 32 px*/
-        --font-size-xl: 1.25rem; /* 24px */
-        --font-size-2xl: 1.6rem; /* 32px */
-        --font-size-3xl: 2rem; /* 40px */
+        --scale-factor: 0.8;
+        --font-scale-factor: 0.8;
+        --spacing-scale-factor: 0.75;
+        --panel-scale-factor: 0.75;
+        
+        /* Fixed dimensions to ensure fit */
+        --panel-width-step: 230px;
+        --panel-width-code: 230px;
+        --panel-width-control: 400px;
     }
 }
 
+/* Tablets & Small Laptops - Landscape (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    :root {
+        --scale-factor: 0.75;
+        --font-scale-factor: 0.7;
+        --spacing-scale-factor: 0.6;
+        --panel-scale-factor: 0.65;
+        
+        /* Fixed dimensions to ensure fit */
+        --panel-width-step: 200px;
+        --panel-width-code: 180px;
+        --panel-width-control: 350px;
+        
+        /* Reduced values for key spacing to save space */
+        --spacing-8: 1.25rem;
+        --spacing-6: 1rem;
+    }
+}
+
+/* Interactive Whiteboards (typically 1280x800 or similar) */
+@media (min-width: 1280px) and (max-height: 800px) {
+    :root {
+        /* Optimize for wider but shorter screens */
+        --scale-factor: 0.9;
+        --font-scale-factor: 0.85;
+        --spacing-scale-factor: 0.8;
+        --panel-scale-factor: 0.9; /* Can afford width but need to save height */
+    }
+}
+
+/* iPad classroom settings in landscape */
+@media (min-width: 1024px) and (max-width: 1024px) and (orientation: landscape) {
+    :root {
+        --scale-factor: 0.75;
+        --font-scale-factor: 0.7;
+        --spacing-scale-factor: 0.6;
+        --panel-scale-factor: 0.65;
+        
+        --panel-width-step: 200px;
+        --panel-width-code: 180px;
+        --panel-width-control: 350px;
+    }
+}
+
+/* Large Displays (1367px - 1680px) */
+@media (min-width: 1367px) and (max-width: 1680px) {
+    :root {
+        --scale-factor: 1.05;
+        --font-scale-factor: 1.05;
+        --spacing-scale-factor: 1.1;
+        --panel-scale-factor: 1.1;
+        
+        /* Increase panel sizes proportionally */
+        --panel-width-step: 330px;
+        --panel-width-code: 330px;
+        --panel-width-control: 600px;
+    }
+}
+
+/* Extra Large Displays (1681px - 1920px) */
+@media (min-width: 1681px) and (max-width: 1920px) {
+    :root {
+        --scale-factor: 1.15;
+        --font-scale-factor: 1.1;
+        --spacing-scale-factor: 1.2;
+        --panel-scale-factor: 1.2;
+        
+        /* Increase panel sizes proportionally */
+        --panel-width-step: 360px;
+        --panel-width-code: 360px;
+        --panel-width-control: 650px;
+    }
+}
+
+/* 4K & Ultra-Wide Displays (1921px and above) */
+@media (min-width: 1921px) {
+    :root {
+        --scale-factor: 1.3;
+        --font-scale-factor: 1.2;
+        --spacing-scale-factor: 1.3;
+        --panel-scale-factor: 1.3;
+        
+        /* Increase panel sizes proportionally */
+        --panel-width-step: 390px;
+        --panel-width-code: 390px;
+        --panel-width-control: 700px;
+    }
+}
+
+/* The rest of the original tokens.css remains unchanged */
 /* ============================================
    RETRO THEME (Dark Mode with Neon Elements)
    ============================================ */
@@ -257,12 +356,12 @@ body[data-theme="retro"] {
     --color-gray-extreme: rgb(var(--color-gray-extreme-rgb));
 
     /* Glow Effects - Only in Retro theme */
-    --glow-primary: 0 0 0.25rem rgba(var(--color-primary-main-rgb-rgb), 0.7);
-    --glow-secondary: 0 0 0.25rem rgba(var(--color-secondary-main-rgb-rgb), 0.7);
-    --glow-error: 0 0 0.25rem rgba(var(--color-error-main-rgb-rgb), 0.7);
-    --glow-warning: 0 0 0.25rem rgba(var(--color-warning-main-rgb-rgb), 0.7);
-    --glow-info: 0 0 0.25rem rgba(var(--color-info-main-rgb-rgb), 0.7);
-    --glow-white: 0 0 0.25rem rgba(var(--color-text-rgb-rgb), 0.7);
+    --glow-primary: 0 0 0.25rem rgba(var(--color-primary-main-rgb), 0.7);
+    --glow-secondary: 0 0 0.25rem rgba(var(--color-secondary-main-rgb), 0.7);
+    --glow-error: 0 0 0.25rem rgba(var(--color-error-main-rgb), 0.7);
+    --glow-warning: 0 0 0.25rem rgba(var(--color-warning-main-rgb), 0.7);
+    --glow-info: 0 0 0.25rem rgba(var(--color-info-main-rgb), 0.7);
+    --glow-white: 0 0 0.25rem rgba(var(--color-text-rgb), 0.7);
 
     /* Component-specific colors */
     --color-motor-clockwise: var(--color-secondary-high);
@@ -429,7 +528,7 @@ body[data-theme="clean"] {
     --button-default-text: var(--color-text);
     --button-default-border: var(--color-primary-main);
 
-    --button-selected-bg: rgba(var(--color-secondary-main-rgb-rgb), 0.1);
+    --button-selected-bg: rgba(var(--color-secondary-main-rgb), 0.1);
     --button-selected-text: var(--color-secondary-main);
     --button-selected-border: var(--color-secondary-main);
 
@@ -464,7 +563,7 @@ body[data-theme="clean"] {
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
     --input-focus-border: var(--color-secondary-main);
-    --input-focus-outline: 0 0 0 2px rgba(var(--color-secondary-main-rgb-rgb), 0.2);
+    --input-focus-outline: 0 0 0 2px rgba(var(--color-secondary-main-rgb), 0.2);
 
     --input-disabled-bg: var(--color-gray-faint);
     --input-disabled-text: var(--color-gray-medium);
@@ -627,14 +726,14 @@ body[data-theme="pastel"] {
 /* Apply dyslexia font when enabled */
 body.dyslexia-font {
     --font-family-active: var(--font-family-dyslexic);
-    --font-size-xxs: 0.5rem; /* 12px */
-    --font-size-xs: 0.9rem; /* 12px */
-    --font-size-sm: 1.05rem; /* 14px */
-    --font-size-base: 1.2rem; /* 16px */
-    --font-size-lg: 1.5rem; /* 32 px*/
-    --font-size-xl: 1.875rem; /* 24px */
-    --font-size-2xl: 2.4rem; /* 32px */
-    --font-size-3xl: 3rem; /* 40px */
+    --font-size-xxs: calc(0.5rem * var(--font-scale-factor));
+    --font-size-xs: calc(0.9rem * var(--font-scale-factor));
+    --font-size-sm: calc(1.05rem * var(--font-scale-factor));
+    --font-size-base: calc(1.2rem * var(--font-scale-factor));
+    --font-size-lg: calc(1.5rem * var(--font-scale-factor));
+    --font-size-xl: calc(1.875rem * var(--font-scale-factor));
+    --font-size-2xl: calc(2.4rem * var(--font-scale-factor));
+    --font-size-3xl: calc(3rem * var(--font-scale-factor));
 }
 
 /* Apply high contrast when enabled */
@@ -679,9 +778,9 @@ body.high-contrast {
     --color-success-contrast: var(--color-secondary-contrast, #ffffff);
 
     /* Thicker Borders */
-    --border-width-standard: 0.375rem; /* 6px */
-    --border-width-thick: 0.5rem; /* 8px */
-    --border-width-extra: 0.75rem; /* 12px */
+    --border-width-standard: calc(0.375rem * var(--scale-factor));
+    --border-width-thick: calc(0.5rem * var(--scale-factor));
+    --border-width-extra: calc(0.75rem * var(--scale-factor));
 
     /* Heavier Font Weights */
     --font-weight-regular: 600;
@@ -854,24 +953,24 @@ body.high-contrast {
 
 /* Larger text when enabled */
 body.large-text {
-    --font-size-base: 1.5rem;
-    --font-size-lg: 2rem;
-    --font-size-xl: 2.5rem;
-    --font-size-2xl: 3rem;
-    --font-size-3xl: 3.5rem;
+    --font-size-base: calc(1.5rem * var(--font-scale-factor));
+    --font-size-lg: calc(2rem * var(--font-scale-factor));
+    --font-size-xl: calc(2.5rem * var(--font-scale-factor));
+    --font-size-2xl: calc(3rem * var(--font-scale-factor));
+    --font-size-3xl: calc(3.5rem * var(--font-scale-factor));
 
     /* Adjust spacing for larger text */
-    --spacing-1: 0.5rem;
-    --spacing-2: 1rem;
-    --spacing-3: 1.5rem;
-    --spacing-4: 2rem;
-    --spacing-5: 2.5rem;
-    --spacing-6: 3rem;
-    --spacing-8: 4rem;
-    --spacing-10: 5rem;
-    --spacing-12: 6rem;
-    --spacing-16: 8rem;
-    --spacing-20: 10rem;
+    --spacing-1: calc(0.5rem * var(--spacing-scale-factor));
+    --spacing-2: calc(1rem * var(--spacing-scale-factor));
+    --spacing-3: calc(1.5rem * var(--spacing-scale-factor));
+    --spacing-4: calc(2rem * var(--spacing-scale-factor));
+    --spacing-5: calc(2.5rem * var(--spacing-scale-factor));
+    --spacing-6: calc(3rem * var(--spacing-scale-factor));
+    --spacing-8: calc(4rem * var(--spacing-scale-factor));
+    --spacing-10: calc(5rem * var(--spacing-scale-factor));
+    --spacing-12: calc(6rem * var(--spacing-scale-factor));
+    --spacing-16: calc(8rem * var(--spacing-scale-factor));
+    --spacing-20: calc(10rem * var(--spacing-scale-factor));
 }
 
 /* Placeholder for OpenDyslexic font */
@@ -885,6 +984,7 @@ body.large-text {
 /* ============================================
        ANIMATIONS & KEYFRAMES
        ============================================ */
+/* [Animation keyframes remain unchanged - the rest of the file continues as in the original] */
 @keyframes clockwise {
     from {
         transform: rotate(0deg);
@@ -1095,25 +1195,25 @@ body[data-reduce-sound="true"] {
 
 /* Apply Border Thickness */
 body[data-border-thickness="2"] {
-    --border-width-standard: 0.125rem; /* 2px */
-    --border-width-thick: 0.25rem; /* 4px */
-    --border-width-extra: 0.375rem; /* 6px */
+    --border-width-standard: calc(0.125rem * var(--scale-factor));
+    --border-width-thick: calc(0.25rem * var(--scale-factor));
+    --border-width-extra: calc(0.375rem * var(--scale-factor));
 }
 
 body[data-border-thickness="4"] {
-    --border-width-standard: 0.25rem; /* 4px */
-    --border-width-thick: 0.375rem; /* 6px */
-    --border-width-extra: 0.5rem; /* 8px */
+    --border-width-standard: calc(0.25rem * var(--scale-factor));
+    --border-width-thick: calc(0.375rem * var(--scale-factor));
+    --border-width-extra: calc(0.5rem * var(--scale-factor));
 }
 
 body[data-border-thickness="6"] {
-    --border-width-standard: 0.375rem; /* 6px */
-    --border-width-thick: 0.5rem; /* 8px */
-    --border-width-extra: 0.75rem; /* 12px */
+    --border-width-standard: calc(0.375rem * var(--scale-factor));
+    --border-width-thick: calc(0.5rem * var(--scale-factor));
+    --border-width-extra: calc(0.75rem * var(--scale-factor));
 }
 
 body[data-border-thickness="8"] {
-    --border-width-standard: 0.5rem; /* 8px */
-    --border-width-thick: 0.75rem; /* 12px */
-    --border-width-extra: 1rem; /* 16px */
+    --border-width-standard: calc(0.5rem * var(--scale-factor));
+    --border-width-thick: calc(0.75rem * var(--scale-factor));
+    --border-width-extra: calc(1rem * var(--scale-factor));
 }
