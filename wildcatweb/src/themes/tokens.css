@@ -1,9 +1,7 @@
-/* tokens.css - Comprehensive design token system for WildCat app
-
-This file provides a complete set of design tokens for all themes
-using contrast-based naming conventions instead of light/dark.
-Fixed version with guaranteed border visibility and simplified scaling.
-*/
+/* tokens.css - Comprehensive design token system for WildCat app with responsive scaling
+ * This design system prioritizes consistent proportions across different screen sizes
+ * to support users with autism who need predictable interfaces.
+ */
 
 /* Import necessary fonts */
 @import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;500;600;700&display=swap");
@@ -11,333 +9,741 @@ Fixed version with guaranteed border visibility and simplified scaling.
 @import url("https://fonts.googleapis.com/css2?family=Arial&display=swap");
 
 /* ============================================
-SHARED TOKENS (constant across all themes)
-============================================ */
-:root   {
-/* Base scaling for different screen sizes - simpler calculations */
---scale-factor: 1; /* Default scaling at 1366px width */
-/* Always visible border widths - fixed pixel values as fallbacks */
---border-width-none: 0;
---border-width-thin: 2px;
---border-width-standard: 4px;
---border-width-thick: 6px;
---border-width-extra: 8px;
-
-/* Fixed base sizes for different display element types */
---panel-width-step: 300px; /* Run menu width */
---panel-width-code: 300px; /* Code track width */
---panel-width-control: 540px; /* Command panel width */
-
-/* Z-index scale */
---z-index-base: 0;
---z-index-raised: 10;
---z-index-dropdown: 100;
---z-index-modal: 1000;
-
-/* Spacing Scale - With fixed pixel fallbacks */
---spacing-1: 4px; /* For tight grouping */
---spacing-2: 8px; /* For related elements */
---spacing-3: 12px; /* For section separation */
---spacing-4: 16px; /* Standard spacing */
---spacing-5: 20px; /* For visual hierarchy */
---spacing-6: 24px; /* For major sections */
---spacing-8: 32px; /* For content blocks */
---spacing-10: 40px; /* For page sections */
---spacing-12: 48px; /* For major breaks */
---spacing-16: 64px; /* For full sections */
---spacing-20: 80px; /* For page breaks */
-
-/* Border Radius - With fixed pixel fallbacks */
---radius-none: 0;
---radius-sm: 4px; /* Subtle rounding */
---radius-md: 8px; /* Standard rounding */
---radius-lg: 12px; /* Game-like elements */
---radius-xl: 16px; /* Prominent elements */
---radius-full: 9999px;
-
-/* Font Sizes - With fixed pixel fallbacks */
---font-size-xxs: 12px; /* Small labels */
---font-size-xs: 14px; /* Secondary text */
---font-size-sm: 16px; /* Body text */
---font-size-base: 20px; /* Primary text */
---font-size-lg: 24px; /* Headers */
---font-size-xl: 32px; /* Section headers */
---font-size-2xl: 40px; /* Main headers */
---font-size-3xl: 48px; /* Hero text */
-
-/* Font Weights */
---font-weight-regular: 400;
---font-weight-medium: 500;
---font-weight-semibold: 600;
---font-weight-bold: 700;
-
-/* Line Heights */
---line-height-tight: 1.2;
---line-height-normal: 1.5;
---line-height-relaxed: 1.75;
-
-/* Letter Spacing */
---letter-spacing-tight: -0.025em;
---letter-spacing-normal: 0;
---letter-spacing-wide: 0.025em;
---letter-spacing-wider: 0.05em;
---letter-spacing-widest: 0.1em;
-
-/* Animation and Transition - Enhanced for game-like feel */
---transition-duration-fast: 150ms;
---transition-duration-normal: 250ms;
---transition-duration-slow: 350ms;
---transition-duration-game: 500ms; /* For more dramatic effects */
-
-/* Easing Functions - Added game-like curves */
---transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
---transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
---transition-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
---transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Playful bounce */
---transition-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Spring effect */
---transition-easing-pulse: cubic-bezier(0.4, 0, 0.6, 1); /* Pulsing effect */
-
-/* Complete transitions - Added game-like variants */
---transition-standard: var(--transition-duration-normal) var(--transition-easing-standard);
---transition-fast: var(--transition-duration-fast) var(--transition-easing-standard);
---transition-slow: var(--transition-duration-slow) var(--transition-easing-standard);
---transition-bounce: var(--transition-duration-game) var(--transition-easing-bounce);
---transition-spring: var(--transition-duration-game) var(--transition-easing-spring);
---transition-pulse: var(--transition-duration-game) var(--transition-easing-pulse);
-
-/* Game-like Effects */
---glow-intensity-low: 0.3;
---glow-intensity-medium: 0.5;
---glow-intensity-high: 0.7;
-
-/* Button Scale Transforms - Enhanced for game-like feel */
---button-scale-default: scale(1);
---button-scale-hover: scale(1.05);
---button-scale-active: scale(0.95);
---button-scale-success: scale(1.1); /* For successful actions */
---button-scale-error: scale(0.9); /* For errors */
---button-scale-pulse: scale(1.05); /* For attention-grabbing elements */
-
-/* Animation Keyframes - Game-like effects */
---animation-duration-short: 0.3s;
---animation-duration-medium: 0.5s;
---animation-duration-long: 0.8s;
-
-/* Sound Effect Tokens (for accessibility) */
---sound-effect-volume: 0.5; /* Default volume */
---sound-effect-duration: 0.3s; /* Default duration */
---sound-effect-pitch: 1; /* Default pitch */
-
-/* Component dimensions - With fixed pixel fallbacks */
---header-height: 56px; /* Prominent but not overwhelming */
---bluetooth-button-size: 40px; /* Easy to click */
---bluetooth-icon-size: 24px; /* Clear visibility */
---bluetooth-status-indicator-size: 10px; /* Noticeable status */
---panel-spacing: var(--spacing-4);
-}
-
-
-/* ============================================
-TARGETED DEVICE BREAKPOINTS
-============================================ */
-/* 4K & Ultra-Wide Displays (1921px and above) */
-@media (min-width: 1921px) {
-:root   {
-/* Scale up elements for very large screens */
---scale-factor: 1.2;
-    --font-size-xxs: 14px;
-    --font-size-xs: 16px;
-    --font-size-sm: 18px;
-    --font-size-base: 24px;
-    --font-size-lg: 28px;
-    --font-size-xl: 36px;
-    --font-size-2xl: 48px;
-    --font-size-3xl: 60px;
+   SHARED TOKENS (constant across all themes)
+   ============================================ */
+:root {
+    /* Scale factor reference (1.0 is base) */
+    --scale-factor: 1.0;
     
-    --panel-width-step: 360px;
-    --panel-width-code: 360px;
-    --panel-width-control: 650px;
+    /* Panel dimensions - core layout components */
+    --panel-width-step: 300px;
+    --panel-width-code: 300px;
+    --panel-width-control: 616px;
+    --panel-spacing: 16px;
     
-    --spacing-1: 5px;
-    --spacing-2: 10px;
-    --spacing-3: 15px;
-    --spacing-4: 20px;
-    --spacing-5: 25px;
-    --spacing-6: 30px;
-    --spacing-8: 40px;
-    --spacing-10: 50px;
-    --spacing-12: 60px;
-    --spacing-16: 80px;
-    --spacing-20: 100px;
-    
-    /* Borders scale up but not too much */
+    /* Border Widths - always visible with minimum values */
+    --border-width-none: 0;
     --border-width-thin: 2px;
     --border-width-standard: 4px;
-    --border-width-thick: 8px;
-    --border-width-extra: 12px;
-}
-}
-
-/* Extra Large Displays (1681px - 1920px) */
-@media (min-width: 1681px) and (max-width: 1920px) {
-:root   {
-/* Moderate scaling for larger screens */
---scale-factor: 1.1;
-    --font-size-xxs: 13px;
-    --font-size-xs: 15px;
-    --font-size-sm: 17px;
-    --font-size-base: 22px;
-    --font-size-lg: 26px;
-    --font-size-xl: 34px;
-    --font-size-2xl: 44px;
-    --font-size-3xl: 54px;
+    --border-width-thick: 6px;
+    --border-width-extra: 8px;
     
-    --panel-width-step: 330px;
-    --panel-width-code: 330px;
-    --panel-width-control: 600px;
+    /* Spacing Scale */
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
     
-    --spacing-1: 5px;
-    --spacing-2: 9px;
-    --spacing-3: 14px;
-    --spacing-4: 18px;
-    --spacing-5: 23px;
-    --spacing-6: 28px;
-    --spacing-8: 36px;
-    --spacing-10: 45px;
-    --spacing-12: 55px;
-    --spacing-16: 72px;
-    --spacing-20: 90px;
-}
-}
-/* Large Displays (1367px - 1680px) */
-@media (min-width: 1367px) and (max-width: 1680px) {
-:root   {
-/* Slight scaling for standard modern displays */
---scale-factor: 1.05;
+    /* Border Radius */
+    --radius-none: 0;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    
+    /* Font Sizes */
     --font-size-xxs: 12px;
     --font-size-xs: 14px;
     --font-size-sm: 16px;
-    --font-size-base: 21px;
-    --font-size-lg: 25px;
-    --font-size-xl: 33px;
-    --font-size-2xl: 42px;
-    --font-size-3xl: 50px;
+    --font-size-base: 20px;
+    --font-size-lg: 24px;
+    --font-size-xl: 32px;
+    --font-size-2xl: 40px;
+    --font-size-3xl: 48px;
     
-    --panel-width-step: 315px;
-    --panel-width-code: 315px;
-    --panel-width-control: 570px;
-}
-}
-/* School Chromebooks & Medium Displays (1281px - 1366px) */
-@media (min-width: 1281px) and (max-width: 1366px) {
-:root   {
-/* Our baseline - default values */
-}
-}
-/* Smaller Desktops & Laptops (1025px - 1280px) */
-@media (min-width: 1025px) and (max-width: 1280px) {
-:root    {
---scale-factor: 0.9;
-    --font-size-xxs: 11px;
-    --font-size-xs: 13px;
-    --font-size-sm: 15px;
-    --font-size-base: 18px;
-    --font-size-lg: 22px;
-    --font-size-xl: 29px;
-    --font-size-2xl: 36px;
-    --font-size-3xl: 43px;
+    /* Component dimensions */
+    --header-height: 56px;
+    --bluetooth-button-size: 40px;
+    --bluetooth-icon-size: 24px;
+    --bluetooth-status-indicator-size: 10px;
     
-    --panel-width-step: 270px;
-    --panel-width-code: 270px;
-    --panel-width-control: 480px;
+    /* Z-index scale */
+    --z-index-base: 0;
+    --z-index-raised: 10;
+    --z-index-dropdown: 100;
+    --z-index-modal: 1000;
     
-    --spacing-1: 3px;
-    --spacing-2: 7px;
-    --spacing-3: 11px;
-    --spacing-4: 14px;
-    --spacing-5: 18px;
-    --spacing-6: 22px;
-    --spacing-8: 29px;
-    --spacing-10: 36px;
-    --spacing-12: 43px;
-    --spacing-16: 57px;
-    --spacing-20: 72px;
-}
+    /* Dialog dimensions */
+    --dialog-width: 400px;
+    --dialog-height: 250px;
+    --dialog-icon-size: 30px;
+    
+    /* Overlay dimensions */
+    --overlay-max-width: 500px;
+    
+    /* Motor visualization dimensions */
+    --motor-bar-base-width: 10px;
+    --motor-bar-width-increment: 2px;
+    
+    /* Font Weights */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Line Heights */
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    
+    /* Letter Spacing */
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    --letter-spacing-widest: 0.1em;
+    
+    /* Animation and Transition - Enhanced for game-like feel */
+    --transition-duration-fast: 150ms;
+    --transition-duration-normal: 250ms;
+    --transition-duration-slow: 350ms;
+    --transition-duration-game: 500ms;
+    
+    /* Easing Functions */
+    --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+    --transition-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-easing-pulse: cubic-bezier(0.4, 0, 0.6, 1);
+    
+    /* Complete transitions */
+    --transition-standard: var(--transition-duration-normal) var(--transition-easing-standard);
+    --transition-fast: var(--transition-duration-fast) var(--transition-easing-standard);
+    --transition-slow: var(--transition-duration-slow) var(--transition-easing-standard);
+    --transition-bounce: var(--transition-duration-game) var(--transition-easing-bounce);
+    --transition-spring: var(--transition-duration-game) var(--transition-easing-spring);
+    --transition-pulse: var(--transition-duration-game) var(--transition-easing-pulse);
+    
+    /* Game-like Effects */
+    --glow-intensity-low: 0.3;
+    --glow-intensity-medium: 0.5;
+    --glow-intensity-high: 0.7;
+    
+    /* Button Scale Transforms */
+    --button-scale-default: scale(1);
+    --button-scale-hover: scale(1.05);
+    --button-scale-active: scale(0.95);
+    --button-scale-success: scale(1.1);
+    --button-scale-error: scale(0.9);
+    --button-scale-pulse: scale(1.05);
+    
+    /* Animation Keyframes durations */
+    --animation-duration-short: 0.3s;
+    --animation-duration-medium: 0.5s;
+    --animation-duration-long: 0.8s;
+    
+    /* Sound Effect Tokens (for accessibility) */
+    --sound-effect-volume: 0.5;
+    --sound-effect-duration: 0.3s;
+    --sound-effect-pitch: 1;
 }
 
-/* Tablets & Small Laptops - Landscape (768px - 1024px) */
+/* ============================================
+   TARGETED DEVICE BREAKPOINTS
+   ============================================ */
+
+/* 4K & Ultra-Wide Displays (1921px and above) - Scale factor 1.5 */
+@media (min-width: 1921px) {
+    :root {
+        --scale-factor: 1.5;
+        
+        /* Panel dimensions */
+        --panel-width-step: 450px;
+        --panel-width-code: 450px;
+        --panel-width-control: 924px;
+        --panel-spacing: 24px;
+        
+        /* Border Widths - maintain minimum visibility */
+        --border-width-thin: 3px;
+        --border-width-standard: 6px;
+        --border-width-thick: 9px;
+        --border-width-extra: 12px;
+        
+        /* Spacing Scale */
+        --spacing-1: 6px;
+        --spacing-2: 12px;
+        --spacing-3: 18px;
+        --spacing-4: 24px;
+        --spacing-5: 30px;
+        --spacing-6: 36px;
+        --spacing-8: 48px;
+        --spacing-10: 60px;
+        --spacing-12: 72px;
+        --spacing-16: 96px;
+        --spacing-20: 120px;
+        
+        /* Border Radius */
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 18px;
+        --radius-xl: 24px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 18px;
+        --font-size-xs: 21px;
+        --font-size-sm: 24px;
+        --font-size-base: 30px;
+        --font-size-lg: 36px;
+        --font-size-xl: 48px;
+        --font-size-2xl: 60px;
+        --font-size-3xl: 72px;
+        
+        /* Component dimensions */
+        --header-height: 84px;
+        --bluetooth-button-size: 60px;
+        --bluetooth-icon-size: 36px;
+        --bluetooth-status-indicator-size: 15px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 600px;
+        --dialog-height: 375px;
+        --dialog-icon-size: 45px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 750px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 15px;
+        --motor-bar-width-increment: 3px;
+    }
+}
+
+/* Extra Large Displays (1681px - 1920px) - Scale factor 1.25 */
+@media (min-width: 1681px) and (max-width: 1920px) {
+    :root {
+        --scale-factor: 1.25;
+        
+        /* Panel dimensions */
+        --panel-width-step: 375px;
+        --panel-width-code: 375px;
+        --panel-width-control: 770px;
+        --panel-spacing: 20px;
+        
+        /* Border Widths */
+        --border-width-thin: 2.5px;
+        --border-width-standard: 5px;
+        --border-width-thick: 7.5px;
+        --border-width-extra: 10px;
+        
+        /* Spacing Scale */
+        --spacing-1: 5px;
+        --spacing-2: 10px;
+        --spacing-3: 15px;
+        --spacing-4: 20px;
+        --spacing-5: 25px;
+        --spacing-6: 30px;
+        --spacing-8: 40px;
+        --spacing-10: 50px;
+        --spacing-12: 60px;
+        --spacing-16: 80px;
+        --spacing-20: 100px;
+        
+        /* Border Radius */
+        --radius-sm: 5px;
+        --radius-md: 10px;
+        --radius-lg: 15px;
+        --radius-xl: 20px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 15px;
+        --font-size-xs: 17.5px;
+        --font-size-sm: 20px;
+        --font-size-base: 25px;
+        --font-size-lg: 30px;
+        --font-size-xl: 40px;
+        --font-size-2xl: 50px;
+        --font-size-3xl: 60px;
+        
+        /* Component dimensions */
+        --header-height: 70px;
+        --bluetooth-button-size: 50px;
+        --bluetooth-icon-size: 30px;
+        --bluetooth-status-indicator-size: 12.5px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 500px;
+        --dialog-height: 312.5px;
+        --dialog-icon-size: 37.5px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 625px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 12.5px;
+        --motor-bar-width-increment: 2.5px;
+    }
+}
+
+/* Large Displays (1367px - 1680px) - Scale factor 1.1 */
+@media (min-width: 1367px) and (max-width: 1680px) {
+    :root {
+        --scale-factor: 1.1;
+        
+        /* Panel dimensions */
+        --panel-width-step: 330px;
+        --panel-width-code: 330px;
+        --panel-width-control: 678px;
+        --panel-spacing: 17.6px;
+        
+        /* Border Widths */
+        --border-width-thin: 2.2px;
+        --border-width-standard: 4.4px;
+        --border-width-thick: 6.6px;
+        --border-width-extra: 8.8px;
+        
+        /* Spacing Scale */
+        --spacing-1: 4.4px;
+        --spacing-2: 8.8px;
+        --spacing-3: 13.2px;
+        --spacing-4: 17.6px;
+        --spacing-5: 22px;
+        --spacing-6: 26.4px;
+        --spacing-8: 35.2px;
+        --spacing-10: 44px;
+        --spacing-12: 52.8px;
+        --spacing-16: 70.4px;
+        --spacing-20: 88px;
+        
+        /* Border Radius */
+        --radius-sm: 4.4px;
+        --radius-md: 8.8px;
+        --radius-lg: 13.2px;
+        --radius-xl: 17.6px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 13.2px;
+        --font-size-xs: 15.4px;
+        --font-size-sm: 17.6px;
+        --font-size-base: 22px;
+        --font-size-lg: 26.4px;
+        --font-size-xl: 35.2px;
+        --font-size-2xl: 44px;
+        --font-size-3xl: 52.8px;
+        
+        /* Component dimensions */
+        --header-height: 61.6px;
+        --bluetooth-button-size: 44px;
+        --bluetooth-icon-size: 26.4px;
+        --bluetooth-status-indicator-size: 11px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 440px;
+        --dialog-height: 275px;
+        --dialog-icon-size: 33px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 550px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 11px;
+        --motor-bar-width-increment: 2.2px;
+    }
+}
+
+/* School Chromebooks & Medium Displays (1281px - 1366px) - Base scale 1.0 */
+@media (min-width: 1281px) and (max-width: 1366px) {
+    /* This is our baseline, so we use the root values */
+}
+
+/* Smaller Desktops & Laptops (1025px - 1280px) - Scale factor 0.85 */
+@media (min-width: 1025px) and (max-width: 1280px) {
+    :root {
+        --scale-factor: 0.85;
+        
+        /* Panel dimensions */
+        --panel-width-step: 255px;
+        --panel-width-code: 255px;
+        --panel-width-control: 524px;
+        --panel-spacing: 13.6px;
+        
+        /* Border Widths - maintain minimum visibility */
+        --border-width-thin: 2px; /* minimum for visibility */
+        --border-width-standard: 3.4px;
+        --border-width-thick: 5.1px;
+        --border-width-extra: 6.8px;
+        
+        /* Spacing Scale */
+        --spacing-1: 3.4px;
+        --spacing-2: 6.8px;
+        --spacing-3: 10.2px;
+        --spacing-4: 13.6px;
+        --spacing-5: 17px;
+        --spacing-6: 20.4px;
+        --spacing-8: 27.2px;
+        --spacing-10: 34px;
+        --spacing-12: 40.8px;
+        --spacing-16: 54.4px;
+        --spacing-20: 68px;
+        
+        /* Border Radius */
+        --radius-sm: 3.4px;
+        --radius-md: 6.8px;
+        --radius-lg: 10.2px;
+        --radius-xl: 13.6px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 10.2px;
+        --font-size-xs: 11.9px;
+        --font-size-sm: 13.6px;
+        --font-size-base: 17px;
+        --font-size-lg: 20.4px;
+        --font-size-xl: 27.2px;
+        --font-size-2xl: 34px;
+        --font-size-3xl: 40.8px;
+        
+        /* Component dimensions */
+        --header-height: 47.6px;
+        --bluetooth-button-size: 34px;
+        --bluetooth-icon-size: 20.4px;
+        --bluetooth-status-indicator-size: 8.5px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 340px;
+        --dialog-height: 212.5px;
+        --dialog-icon-size: 25.5px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 425px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 8.5px;
+        --motor-bar-width-increment: 1.7px;
+    }
+}
+
+/* Tablets & Small Laptops - Landscape (768px - 1024px) - Scale factor 0.7 */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-:root   {
---scale-factor: 0.8;
-    --font-size-xxs: 9px;
-    --font-size-xs: 11px;
-    --font-size-sm: 13px;
-    --font-size-base: 16px;
-    --font-size-lg: 19px;
-    --font-size-xl: 26px;
-    --font-size-2xl: 32px;
-    --font-size-3xl: 38px;
-    
-    --panel-width-step: 240px;
-    --panel-width-code: 240px;
-    --panel-width-control: 430px;
-    
-    --spacing-1: 3px;
-    --spacing-2: 6px;
-    --spacing-3: 9px;
-    --spacing-4: 12px;
-    --spacing-5: 16px;
-    --spacing-6: 19px;
-    --spacing-8: 26px;
-    --spacing-10: 32px;
-    --spacing-12: 38px;
-    --spacing-16: 51px;
-    --spacing-20: 64px;
+    :root {
+        --scale-factor: 0.7;
+        
+        /* Panel dimensions */
+        --panel-width-step: 210px;
+        --panel-width-code: 210px;
+        --panel-width-control: 431px;
+        --panel-spacing: 11.2px;
+        
+        /* Border Widths - maintain minimum visibility */
+        --border-width-thin: 2px; /* minimum for visibility */
+        --border-width-standard: 3px;
+        --border-width-thick: 4.2px;
+        --border-width-extra: 5.6px;
+        
+        /* Spacing Scale */
+        --spacing-1: 2.8px;
+        --spacing-2: 5.6px;
+        --spacing-3: 8.4px;
+        --spacing-4: 11.2px;
+        --spacing-5: 14px;
+        --spacing-6: 16.8px;
+        --spacing-8: 22.4px;
+        --spacing-10: 28px;
+        --spacing-12: 33.6px;
+        --spacing-16: 44.8px;
+        --spacing-20: 56px;
+        
+        /* Border Radius */
+        --radius-sm: 2.8px;
+        --radius-md: 5.6px;
+        --radius-lg: 8.4px;
+        --radius-xl: 11.2px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 8.4px;
+        --font-size-xs: 9.8px;
+        --font-size-sm: 11.2px;
+        --font-size-base: 14px;
+        --font-size-lg: 16.8px;
+        --font-size-xl: 22.4px;
+        --font-size-2xl: 28px;
+        --font-size-3xl: 33.6px;
+        
+        /* Component dimensions */
+        --header-height: 39.2px;
+        --bluetooth-button-size: 28px;
+        --bluetooth-icon-size: 16.8px;
+        --bluetooth-status-indicator-size: 7px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 280px;
+        --dialog-height: 175px;
+        --dialog-icon-size: 21px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 350px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 7px;
+        --motor-bar-width-increment: 1.4px;
+    }
 }
-}
-/* Special case for very small screens (like 1366x768 Chromebooks) */
+
+/* Special case for very small screens (like 1366x768 Chromebooks) - Scale factor 0.8 */
 @media (max-width: 1366px) and (max-height: 768px) {
-:root       {
---scale-factor: 0.85;
-    /* Make sure these critical dimensions fit */
-    --panel-width-step: 250px;
-    --panel-width-code: 250px;
-    --panel-width-control: 450px;
-    
-    /* Reduced spacing to save space */
-    --spacing-8: 24px;
-    --spacing-10: 30px;
-    --spacing-12: 36px;
-    --spacing-16: 48px;
-    --spacing-20: 60px;
+    :root {
+        --scale-factor: 0.8;
+        
+        /* Panel dimensions */
+        --panel-width-step: 240px;
+        --panel-width-code: 240px;
+        --panel-width-control: 493px;
+        --panel-spacing: 12.8px;
+        
+        /* Border Widths - maintain minimum visibility */
+        --border-width-thin: 2px; /* minimum for visibility */
+        --border-width-standard: 3.2px;
+        --border-width-thick: 4.8px;
+        --border-width-extra: 6.4px;
+        
+        /* Spacing Scale */
+        --spacing-1: 3.2px;
+        --spacing-2: 6.4px;
+        --spacing-3: 9.6px;
+        --spacing-4: 12.8px;
+        --spacing-5: 16px;
+        --spacing-6: 19.2px;
+        --spacing-8: 25.6px;
+        --spacing-10: 32px;
+        --spacing-12: 38.4px;
+        --spacing-16: 51.2px;
+        --spacing-20: 64px;
+        
+        /* Border Radius */
+        --radius-sm: 3.2px;
+        --radius-md: 6.4px;
+        --radius-lg: 9.6px;
+        --radius-xl: 12.8px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 9.6px;
+        --font-size-xs: 11.2px;
+        --font-size-sm: 12.8px;
+        --font-size-base: 16px;
+        --font-size-lg: 19.2px;
+        --font-size-xl: 25.6px;
+        --font-size-2xl: 32px;
+        --font-size-3xl: 38.4px;
+        
+        /* Component dimensions */
+        --header-height: 44.8px;
+        --bluetooth-button-size: 32px;
+        --bluetooth-icon-size: 19.2px;
+        --bluetooth-status-indicator-size: 8px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 320px;
+        --dialog-height: 200px;
+        --dialog-icon-size: 24px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 400px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 8px;
+        --motor-bar-width-increment: 1.6px;
+    }
 }
-}
+
 /* Portrait orientation handling */
 @media (orientation: portrait) {
-:root   {
-/* In portrait, optimize for stacked components */
---panel-width-step: min(90vw, 300px);
---panel-width-code: min(90vw, 300px);
---panel-width-control: min(90vw, 540px);
-}
-}
-/* Interactive Whiteboards (typically 1280x800 or similar) */
-@media (min-width: 1280px) and (max-height: 800px) {
-:root   {
-/* Optimize for wider but shorter screens */
---scale-factor: 0.9;
-}
-}
-/* iPad classroom settings in landscape */
-@media (width: 1024px) and (orientation: landscape) {
-:root   {
-/* iPad-specific optimizations */
---panel-width-step: 220px;
---panel-width-code: 220px;
---panel-width-control: 400px;
-}
+    :root {
+        /* In portrait, optimize for stacked components */
+        --panel-width-step: min(90vw, 300px);
+        --panel-width-code: min(90vw, 300px);
+        --panel-width-control: min(90vw, 616px);
+        
+        /* Font Sizes - slightly smaller for portrait */
+        --font-size-xxs: 10px;
+        --font-size-xs: 12px;
+        --font-size-sm: 14px;
+        --font-size-base: 18px;
+        --font-size-lg: 22px;
+        --font-size-xl: 28px;
+        --font-size-2xl: 34px;
+        --font-size-3xl: 40px;
+        
+        /* Spacing - adjusted for portrait */
+        --spacing-1: 3px;
+        --spacing-2: 6px;
+        --spacing-3: 9px;
+        --spacing-4: 12px;
+        --spacing-5: 15px;
+        --spacing-6: 18px;
+        --spacing-8: 24px;
+        --spacing-10: 30px;
+        --spacing-12: 36px;
+        --spacing-16: 48px;
+        --spacing-20: 60px;
+        
+        /* Border Widths - maintain visibility */
+        --border-width-thin: 2px;
+        --border-width-standard: 3px;
+        --border-width-thick: 4px;
+        --border-width-extra: 6px;
+        
+        /* Border Radius */
+        --radius-sm: 3px;
+        --radius-md: 6px;
+        --radius-lg: 9px;
+        --radius-xl: 12px;
+        
+        /* Component dimensions */
+        --header-height: 48px;
+        --bluetooth-button-size: 36px;
+        --bluetooth-icon-size: 20px;
+        --bluetooth-status-indicator-size: 8px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 85vw;
+        --dialog-height: 250px;
+        --dialog-icon-size: 28px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 90vw;
+    }
 }
 
+/* Interactive Whiteboards (typically 1280x800 or similar) - Scale factor 0.9 */
+@media (min-width: 1280px) and (max-height: 800px) {
+    :root {
+        --scale-factor: 0.9;
+        
+        /* Panel dimensions */
+        --panel-width-step: 270px;
+        --panel-width-code: 270px;
+        --panel-width-control: 554px;
+        --panel-spacing: 14.4px;
+        
+        /* Border Widths - maintain minimum visibility */
+        --border-width-thin: 2px; /* minimum for visibility */
+        --border-width-standard: 3.6px;
+        --border-width-thick: 5.4px;
+        --border-width-extra: 7.2px;
+        
+        /* Spacing Scale */
+        --spacing-1: 3.6px;
+        --spacing-2: 7.2px;
+        --spacing-3: 10.8px;
+        --spacing-4: 14.4px;
+        --spacing-5: 18px;
+        --spacing-6: 21.6px;
+        --spacing-8: 28.8px;
+        --spacing-10: 36px;
+        --spacing-12: 43.2px;
+        --spacing-16: 57.6px;
+        --spacing-20: 72px;
+        
+        /* Border Radius */
+        --radius-sm: 3.6px;
+        --radius-md: 7.2px;
+        --radius-lg: 10.8px;
+        --radius-xl: 14.4px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 10.8px;
+        --font-size-xs: 12.6px;
+        --font-size-sm: 14.4px;
+        --font-size-base: 18px;
+        --font-size-lg: 21.6px;
+        --font-size-xl: 28.8px;
+        --font-size-2xl: 36px;
+        --font-size-3xl: 43.2px;
+        
+        /* Component dimensions */
+        --header-height: 50.4px;
+        --bluetooth-button-size: 36px;
+        --bluetooth-icon-size: 21.6px;
+        --bluetooth-status-indicator-size: 9px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 360px;
+        --dialog-height: 225px;
+        --dialog-icon-size: 27px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 450px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 9px;
+        --motor-bar-width-increment: 1.8px;
+    }
+}
+
+/* iPad classroom settings in landscape - Scale factor 0.65 */
+@media (width: 1024px) and (orientation: landscape) {
+    :root {
+        --scale-factor: 0.65;
+        
+        /* Panel dimensions */
+        --panel-width-step: 195px;
+        --panel-width-code: 195px;
+        --panel-width-control: 400px;
+        --panel-spacing: 10.4px;
+        
+        /* Border Widths - maintain minimum visibility */
+        --border-width-thin: 2px; /* minimum for visibility */
+        --border-width-standard: 3px;
+        --border-width-thick: 4px;
+        --border-width-extra: 5.2px;
+        
+        /* Spacing Scale */
+        --spacing-1: 2.6px;
+        --spacing-2: 5.2px;
+        --spacing-3: 7.8px;
+        --spacing-4: 10.4px;
+        --spacing-5: 13px;
+        --spacing-6: 15.6px;
+        --spacing-8: 20.8px;
+        --spacing-10: 26px;
+        --spacing-12: 31.2px;
+        --spacing-16: 41.6px;
+        --spacing-20: 52px;
+        
+        /* Border Radius */
+        --radius-sm: 2.6px;
+        --radius-md: 5.2px;
+        --radius-lg: 7.8px;
+        --radius-xl: 10.4px;
+        
+        /* Font Sizes */
+        --font-size-xxs: 7.8px;
+        --font-size-xs: 9.1px;
+        --font-size-sm: 10.4px;
+        --font-size-base: 13px;
+        --font-size-lg: 15.6px;
+        --font-size-xl: 20.8px;
+        --font-size-2xl: 26px;
+        --font-size-3xl: 31.2px;
+        
+        /* Component dimensions */
+        --header-height: 36.4px;
+        --bluetooth-button-size: 26px;
+        --bluetooth-icon-size: 15.6px;
+        --bluetooth-status-indicator-size: 6.5px;
+        
+        /* Dialog dimensions */
+        --dialog-width: 260px;
+        --dialog-height: 162.5px;
+        --dialog-icon-size: 19.5px;
+        
+        /* Overlay dimensions */
+        --overlay-max-width: 325px;
+        
+        /* Motor visualization dimensions */
+        --motor-bar-base-width: 6.5px;
+        --motor-bar-width-increment: 1.3px;
+    }
+}
+
+/* The rest of the original tokens.css remains unchanged */
 /* The rest of the original tokens.css remains unchanged */
 /* ============================================
    RETRO THEME (Dark Mode with Neon Elements)

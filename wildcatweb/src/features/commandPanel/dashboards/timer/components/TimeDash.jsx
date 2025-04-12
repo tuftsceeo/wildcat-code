@@ -213,6 +213,73 @@ export const TimeDash = ({
         };
     }, [seconds]); // Add seconds to dependency array
 
+
+// {/* Base Ten Block Visualization */}
+// <div className={styles.baseTenContainer}>
+// <div className={styles.baseTenBlocks}>
+//     {/* Hundreds representation */}
+//     {hundreds > 0 && (
+//         <div className={styles.hundredsGroup}>
+//             {Array.from({ length: hundreds }).map((_, hundredIdx) => (
+//                 <div 
+//                     key={`hundred-${hundredIdx}`} 
+//                     className={styles.hundredSquare}
+//                 >
+//                     {renderHundredCells(hundredIdx)}
+//                 </div>
+//             ))}
+//         </div>
+//     )}
+    
+//     {/* Tens representation */}
+//     {tens > 0 && (
+//         <div className={styles.tensGroup}>
+//             {Array.from({ length: tens }).map((_, tenIdx) => (
+//                 <div 
+//                     key={`ten-${tenIdx}`} 
+//                     className={styles.tenRod}
+//                 >
+//                     <div className={styles.tenSegments}>
+//                         {Array.from({ length: 10 }).map((_, segmentIdx) => {
+//                             const position = getUnitPosition(1, tenIdx, segmentIdx);
+//                             const ghosted = isUnitGhosted(position);
+                            
+//                             return (
+//                                 <div 
+//                                     key={`ten-${tenIdx}-segment-${segmentIdx}`}
+//                                     className={`${styles.tenSegment} ${ghosted ? styles.ghosted : ''}`}
+//                                 />
+//                             );
+//                         })}
+//                     </div>
+//                 </div>
+//             ))}
+//         </div>
+//     )}
+    
+//     {/* Ones representation */}
+//     {ones > 0 && (
+//         <div className={styles.onesGroup}>
+//             <div className={styles.onesStack}>
+//                 {Array.from({ length: ones }).map((_, oneIdx) => {
+//                     const position = getUnitPosition(0, oneIdx);
+//                     const ghosted = isUnitGhosted(position);
+                    
+//                     return (
+//                         <div 
+//                             key={`one-${oneIdx}`} 
+//                             className={`${styles.oneBlock} ${ghosted ? styles.ghosted : ''}`}
+//                         />
+//                     );
+//                 })}
+//             </div>
+//         </div>
+//     )}
+// </div>
+// </div>
+
+
+
     return (
         <div className={styles.timeGroup}>
             <div className={styles.timeName}>WAIT FOR</div>
@@ -253,68 +320,6 @@ export const TimeDash = ({
             </div>
 
             {/* Base Ten Block Visualization */}
-            <div className={styles.baseTenContainer}>
-                <div className={styles.baseTenBlocks}>
-                    {/* Hundreds representation */}
-                    {hundreds > 0 && (
-                        <div className={styles.hundredsGroup}>
-                            {Array.from({ length: hundreds }).map((_, hundredIdx) => (
-                                <div 
-                                    key={`hundred-${hundredIdx}`} 
-                                    className={styles.hundredSquare}
-                                >
-                                    {renderHundredCells(hundredIdx)}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    
-                    {/* Tens representation */}
-                    {tens > 0 && (
-                        <div className={styles.tensGroup}>
-                            {Array.from({ length: tens }).map((_, tenIdx) => (
-                                <div 
-                                    key={`ten-${tenIdx}`} 
-                                    className={styles.tenRod}
-                                >
-                                    <div className={styles.tenSegments}>
-                                        {Array.from({ length: 10 }).map((_, segmentIdx) => {
-                                            const position = getUnitPosition(1, tenIdx, segmentIdx);
-                                            const ghosted = isUnitGhosted(position);
-                                            
-                                            return (
-                                                <div 
-                                                    key={`ten-${tenIdx}-segment-${segmentIdx}`}
-                                                    className={`${styles.tenSegment} ${ghosted ? styles.ghosted : ''}`}
-                                                />
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    
-                    {/* Ones representation */}
-                    {ones > 0 && (
-                        <div className={styles.onesGroup}>
-                            <div className={styles.onesStack}>
-                                {Array.from({ length: ones }).map((_, oneIdx) => {
-                                    const position = getUnitPosition(0, oneIdx);
-                                    const ghosted = isUnitGhosted(position);
-                                    
-                                    return (
-                                        <div 
-                                            key={`one-${oneIdx}`} 
-                                            className={`${styles.oneBlock} ${ghosted ? styles.ghosted : ''}`}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
         </div>
     );
 };
