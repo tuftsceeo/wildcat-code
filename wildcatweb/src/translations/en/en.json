@@ -40,7 +40,24 @@
         "released": "released",
         "waitUntil": "Wait until",
         "port": "Port",
-        "waitFor": "Wait for"
+        "waitFor": "Wait for",
+
+        "color": "Color Sensor",
+        "colorA": "Color Sensor A",
+        "colorB": "Color Sensor B",
+        "colorC": "Color Sensor C",
+        "colorD": "Color Sensor D",
+        "colorE": "Color Sensor E",
+        "colorF": "Color Sensor F",
+        "red": "red",
+        "green": "green",
+        "blue": "blue",
+        "yellow": "yellow",
+        "white": "white",
+        "black": "black",
+        "magenta": "magenta",
+        "orange": "orange",
+        "azure": "azure"
     },
 
     "complexity": {
@@ -50,6 +67,7 @@
                 "motor_stop": "{port} stops",
                 "wait_action": "Wait {seconds}",
                 "button_action": "{port} {condition}",
+                "color_action": "{port} {color}",
                 "default_message": "Select action or sensor",
                 "stop_message": "Stop program"
             }
@@ -61,6 +79,7 @@
                 "motor_stop": "{port} stops",
                 "wait_action": "Wait {seconds} seconds",
                 "button_action": "{port} wait {condition}",
+                "color_action": "{port} wait for {color}",
                 "default_message": "Select action or sensor",
                 "stop_message": "Program stopped"
             }
@@ -72,6 +91,7 @@
                 "motor_stop": "{port} stops turning.",
                 "wait_action": "Robot waits {seconds} seconds.",
                 "button_action": "Wait until {port} is {condition}.",
+                "color_action": "Wait until {port} detects {color}.",
                 "default_message": "Select an action or sensor",
                 "stop_message": "The program has stopped."
             }
@@ -83,6 +103,7 @@
                 "motor_stop": "{port} stops rotating.",
                 "wait_action": "The robot waits for {seconds} seconds.",
                 "button_action": "The robot waits until {port} is {condition}.",
+                "color_action": "The robot waits until {port} detects {color}.",
                 "default_message": "Select an action or sensor",
                 "stop_message": "The program has stopped."
             }
@@ -94,6 +115,7 @@
                 "motor_stop": "{port} stops rotating.",
                 "wait_action": "The robot waits for {seconds} seconds.",
                 "button_action": "The robot pauses execution until the button on {port} is {condition}.",
+                "color_action": "The robot pauses execution until the color sensor on {port} detects {color}.",
                 "default_message": "Select an action or sensor",
                 "stop_message": "The program has stopped."
             }

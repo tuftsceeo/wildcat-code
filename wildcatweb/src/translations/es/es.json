@@ -9,25 +9,25 @@
         "motorF": "Motor F",
 
         "direction": "Dirección",
-        "clockwise": "horario",
-        "countercw": "antihorario",
-        "stopped": "parado",
+        "clockwise": "en sentido horario",
+        "countercw": "en sentido antihorario",
+        "stopped": "detenido",
 
         "speed": "velocidad",
-        "slow": "lento",
-        "medium": "medio",
-        "fast": "rápido",
+        "slow": "lenta",
+        "medium": "media",
+        "fast": "rápida",
 
         "wait": "Esperar",
         "seconds": "segundos",
 
         "turns": "gira",
-        "stops": "para",
+        "stops": "se detiene",
 
         "apply": "Aplicar",
         "cancel": "Cancelar",
         "next": "Siguiente",
-        "play": "Ejecutar",
+        "play": "Jugar",
 
         "button": "Botón",
         "buttonA": "Botón A",
@@ -38,64 +38,86 @@
         "buttonF": "Botón F",
         "pressed": "presionado",
         "released": "liberado",
-        "waitUntil": "Esperar hasta",
+        "waitUntil": "Esperar hasta que",
         "port": "Puerto",
-        "waitFor": "Esperar a"
+        "waitFor": "Esperar por",
+
+        "color": "Sensor de Color",
+        "colorA": "Sensor de Color A",
+        "colorB": "Sensor de Color B",
+        "colorC": "Sensor de Color C",
+        "colorD": "Sensor de Color D",
+        "colorE": "Sensor de Color E",
+        "colorF": "Sensor de Color F",
+        "red": "rojo",
+        "green": "verde",
+        "blue": "azul",
+        "yellow": "amarillo",
+        "white": "blanco",
+        "black": "negro",
+        "magenta": "magenta",
+        "orange": "naranja",
+        "azure": "azur"
     },
 
     "complexity": {
         "icon_only": {
             "templates": {
                 "motor_action": "{port} {direction} {speed}",
-                "motor_stop": "{port} para",
+                "motor_stop": "{port} se detiene",
                 "wait_action": "Esperar {seconds}",
                 "button_action": "{port} {condition}",
+                "color_action": "{port} {color}",
                 "default_message": "Seleccionar acción o sensor",
-                "stop_message": "Parar programa"
+                "stop_message": "Detener programa"
             }
         },
 
         "beginner": {
             "templates": {
                 "motor_action": "{port} gira {direction} {speed}",
-                "motor_stop": "{port} para",
+                "motor_stop": "{port} se detiene",
                 "wait_action": "Esperar {seconds} segundos",
-                "button_action": "{port} espera {condition}",
-                "default_message": "Seleccionar una acción o sensor",
-                "stop_message": "Programa parado"
+                "button_action": "{port} esperar {condition}",
+                "color_action": "{port} esperar por {color}",
+                "default_message": "Seleccionar acción o sensor",
+                "stop_message": "Programa detenido"
             }
         },
 
         "intermediate": {
             "templates": {
-                "motor_action": "{port} gira hacia {direction} {speed}.",
-                "motor_stop": "{port} deja de girar.",
-                "wait_action": "Robot espera {seconds} segundos.",
+                "motor_action": "{port} gira {direction} a velocidad {speed}.",
+                "motor_stop": "{port} se detiene.",
+                "wait_action": "El robot espera {seconds} segundos.",
                 "button_action": "Esperar hasta que {port} esté {condition}.",
+                "color_action": "Esperar hasta que {port} detecte {color}.",
                 "default_message": "Seleccionar una acción o sensor",
-                "stop_message": "El programa ha terminado."
+                "stop_message": "El programa se ha detenido."
             }
         },
 
         "advanced": {
             "templates": {
-                "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
-                "motor_stop": "{port} para de girar.",
+                "motor_action": "{port} rota {direction} a velocidad {speed}.",
+                "motor_stop": "{port} se detiene.",
                 "wait_action": "El robot espera {seconds} segundos.",
                 "button_action": "El robot espera hasta que {port} esté {condition}.",
+                "color_action": "El robot espera hasta que {port} detecte {color}.",
                 "default_message": "Seleccionar una acción o sensor",
-                "stop_message": "El programa ha terminado."
+                "stop_message": "El programa se ha detenido."
             }
         },
 
         "text_only": {
             "templates": {
-                "motor_action": "{port} gira hacia {direction} a {speed} velocidad.",
-                "motor_stop": "{port} para de girar.",
+                "motor_action": "{port} rota {direction} a velocidad {speed}.",
+                "motor_stop": "{port} se detiene.",
                 "wait_action": "El robot espera {seconds} segundos.",
                 "button_action": "El robot pausa la ejecución hasta que el botón en {port} esté {condition}.",
+                "color_action": "El robot pausa la ejecución hasta que el sensor de color en {port} detecte {color}.",
                 "default_message": "Seleccionar una acción o sensor",
-                "stop_message": "El programa ha terminado."
+                "stop_message": "El programa se ha detenido."
             }
         }
     }
