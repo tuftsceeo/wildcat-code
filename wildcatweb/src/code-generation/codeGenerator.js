@@ -75,6 +75,7 @@ const generatePythonCode = (slots, portStates = {}) => {
     }
     if (needsColorSensorImport) {
         code.push("import color_sensor");
+        code.push("import color");
         console.log("generatePythonCode: Added color_sensor import");
     }
 

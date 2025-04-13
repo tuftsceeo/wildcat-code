@@ -104,11 +104,32 @@ export const BLEProvider = ({ children }) => {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
                     );
+                    
+                    // Map color value to a readable name based on LEGO SPIKE Prime color constants
+                    let colorName = "Unknown";
+                    switch (msg.values.color) {
+                        case 0: colorName = "Black"; break;
+                        case 1: colorName = "Magenta"; break;
+                        case 2: colorName = "Purple"; break;
+                        case 3: colorName = "Blue"; break;
+                        case 4: colorName = "Azure"; break;
+                        case 5: colorName = "Turquoise"; break;
+                        case 6: colorName = "Green"; break;
+                        case 7: colorName = "Yellow"; break;
+                        case 8: colorName = "Orange"; break;
+                        case 9: colorName = "Red"; break;
+                        case 10: colorName = "White"; break;
+                        case -1: colorName = "Unknown"; break;
+                        default: colorName = "Unknown"; break;
+                    }
+                    
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.COLOR_SENSOR,
                         type: DEVICE_TYPES.COLOR_SENSOR, // Keep both for compatibility
                         connected: true,
                         color: msg.values.color,
+                        colorName: colorName,
+                        displayValue: colorName, // Add this for UI display
                         rawRed: msg.values.rawRed,
                         rawGreen: msg.values.rawGreen,
                         rawBlue: msg.values.rawBlue,

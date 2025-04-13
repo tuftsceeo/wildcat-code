@@ -51,6 +51,22 @@
     color: var(--color-text-secondary);
 }
 
+.liveReading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-2);
+    background-color: var(--color-background);
+    border-radius: var(--radius-sm);
+    border: var(--border-width-thin) solid var(--panel-border);
+    font-size: var(--font-size-sm);
+}
+
+.colorValue {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary-main);
+}
+
 .colorSelect {
     padding: var(--spacing-2);
     border-radius: var(--radius-sm);

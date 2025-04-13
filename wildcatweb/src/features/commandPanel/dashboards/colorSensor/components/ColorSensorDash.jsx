@@ -10,15 +10,17 @@ import styles from "../styles/ColorSensorDash.module.css";
 
 // Color options with their display names and values
 const COLOR_OPTIONS = [
-    { value: "red", label: "Red" },
-    { value: "green", label: "Green" },
-    { value: "blue", label: "Blue" },
-    { value: "yellow", label: "Yellow" },
-    { value: "white", label: "White" },
     { value: "black", label: "Black" },
     { value: "magenta", label: "Magenta" },
-    { value: "orange", label: "Orange" },
+    { value: "purple", label: "Purple" },
+    { value: "blue", label: "Blue" },
     { value: "azure", label: "Azure" },
+    { value: "turquoise", label: "Turquoise" },
+    { value: "green", label: "Green" },
+    { value: "yellow", label: "Yellow" },
+    { value: "orange", label: "Orange" },
+    { value: "red", label: "Red" },
+    { value: "white", label: "White" },
 ];
 
 /**
@@ -33,7 +35,7 @@ const COLOR_OPTIONS = [
  */
 const ColorSensorControl = ({ port, onUpdate, configuration }) => {
     const { portStates, DEVICE_TYPES } = useBLE();
-    const [selectedColor, setSelectedColor] = useState(configuration?.color || "red");
+    const [selectedColor, setSelectedColor] = useState(configuration?.color || "black");
     const [isConnected, setIsConnected] = useState(false);
 
     // Update connection state when port state changes
@@ -42,12 +44,16 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
         setIsConnected(portState?.deviceType === DEVICE_TYPES.COLOR_SENSOR || portState?.type === DEVICE_TYPES.COLOR_SENSOR);
     }, [portStates, port, DEVICE_TYPES.COLOR_SENSOR]);
 
+    // Get the current color reading from the port state
+    const currentColorReading = portStates?.[port]?.displayValue || "No reading";
+
     // Handle color selection
     const handleColorChange = (event) => {
         const newColor = event.target.value;
         setSelectedColor(newColor);
         if (onUpdate) {
-            onUpdate({ port, color: newColor });
+            console.log("ColorSensorControl: Color changed to", newColor);
+            onUpdate(port, { color: newColor });
         }
     };
 
@@ -55,6 +61,12 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
         <div className={styles.colorSensorControl}>
             <div className={styles.portLabel}>Port {port}</div>
             <div className={styles.connectionStatus}>{isConnected ? "Connected" : "Not Connected"}</div>
+            {isConnected && (
+                <div className={styles.liveReading}>
+                    <span>Current Color: </span>
+                    <span className={styles.colorValue}>{currentColorReading}</span>
+                </div>
+            )}
             <select
                 value={selectedColor}
                 onChange={handleColorChange}
@@ -106,7 +118,14 @@ export const ColorSensorDash = ({ onUpdate, configuration, slotData, currSlotNum
     // Handle configuration updates
     const handleConfigUpdate = (port, newConfig) => {
         if (onUpdate) {
-            onUpdate({ ...newConfig, port });
+            // Ensure we're passing both port and color in the configuration
+            const config = {
+                port: port,
+                color: newConfig.color || "black", // Default to black if not specified
+                ...newConfig
+            };
+            console.log("ColorSensorDash: Updating configuration", config);
+            onUpdate(config);
         }
     };
 
