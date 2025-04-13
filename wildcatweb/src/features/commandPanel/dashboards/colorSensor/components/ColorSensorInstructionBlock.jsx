@@ -5,7 +5,7 @@
 
 import React from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
-import BaseInstructionBlock from "../../../instructions/components/BaseInstructionBlock";
+import BaseInstructionBlock from "../../../../codeTrack/components/BaseInstructionBlock";
 import styles from "../styles/ColorSensorInstructionBlock.module.css";
 
 // Color mapping for visualization

@@ -30,6 +30,7 @@ import {
     Plus,
     Lock,
     ChevronDown,
+    Droplet,
 } from "lucide-react";
 import DraggableStepButton from "./DraggableStepButton";
 
@@ -56,6 +57,10 @@ const INSTRUCTION_DISPLAY = {
         button: {
             name: "Button",
             icon: <ArchiveRestore size={24} />,
+        },
+        color: {
+            name: "Color",
+            icon: <Droplet size={24} />,
         },
     },
     special: {

@@ -100,6 +100,24 @@ export const BLEProvider = ({ children }) => {
                         `BLEContext: Detected Force Sensor on port ${portLetter}`,
                         msg.values,
                     );
+                } else if (msg.name === "Color") {
+                    const portLetter = String.fromCharCode(
+                        65 + msg.values.port,
+                    );
+                    newPortStates[portLetter] = {
+                        deviceType: DEVICE_TYPES.COLOR_SENSOR,
+                        type: DEVICE_TYPES.COLOR_SENSOR, // Keep both for compatibility
+                        connected: true,
+                        color: msg.values.color,
+                        rawRed: msg.values.rawRed,
+                        rawGreen: msg.values.rawGreen,
+                        rawBlue: msg.values.rawBlue,
+                        ...msg.values,
+                    };
+                    console.log(
+                        `BLEContext: Detected Color Sensor on port ${portLetter}`,
+                        msg.values,
+                    );
                 }
                 // Handle other device types as needed...
             });
