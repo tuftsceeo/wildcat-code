@@ -1,7 +1,7 @@
 /**
  * @file ColorSensorDash.jsx
  * @description Dashboard component for configuring color sensor instructions.
- * Allows selecting a port and color to wait for.
+ * Enhanced with realistic sensor visualization.
  */
 
 import React, { useState, useEffect, useRef } from "react";
@@ -25,8 +25,9 @@ const COLOR_OPTIONS = [
     { value: "unknown", label: "Unknown", hex: "#FFFFFF", isUnknown: true }
 ];
 
+// Unknown icon component
 const UnknownIcon = () => (
-  <svg width="var(--font-size-2xl)" height="var(--font-size-2xl)" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="var(--font-size-xl)" height="var(--font-size-xl)" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="3" fill="none"/>
     <line x1="10" y1="10" x2="30" y2="30" stroke="#FF0000" strokeWidth="3"/>
   </svg>
@@ -78,7 +79,6 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
     const handleColorSelect = (colorValue) => {
         setSelectedColor(colorValue);
         if (onUpdate) {
-            console.log("ColorSensorControl: Color changed to", colorValue);
             onUpdate(port, { color: colorValue });
         }
     };
@@ -92,17 +92,22 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
             {isConnected && (
                 <div className={styles.liveReading}>
                     <div className={styles.sensorVisual}>
+                        {/* Realistic sensor visualization with nested structure */}
                         <div className={styles.sensorBody}>
-                            {isCurrentReadingUnknown() ? (
-                                <div className={styles.unknownIndicator}>
-                                    <UnknownIcon />
+                            <div className={styles.sensorFrame}>
+                                <div className={styles.sensorLens}>
+                                    {isCurrentReadingUnknown() ? (
+                                        <div className={styles.unknownIndicator}>
+                                            <UnknownIcon />
+                                        </div>
+                                    ) : (
+                                        <div 
+                                            className={styles.sensorColor} 
+                                            style={{ backgroundColor: getCurrentColorHex() }}
+                                        ></div>
+                                    )}
                                 </div>
-                            ) : (
-                                <div 
-                                    className={styles.sensorColor} 
-                                    style={{ backgroundColor: getCurrentColorHex() }}
-                                ></div>
-                            )}
+                            </div>
                         </div>
                     </div>
                     <div className={styles.readingLabel}>
@@ -175,7 +180,6 @@ export const ColorSensorDash = ({ onUpdate, configuration, slotData, currSlotNum
                 color: newConfig.color || "black", // Default to black if not specified
                 ...newConfig
             };
-            console.log("ColorSensorDash: Updating configuration", config);
             onUpdate(config);
         }
     };

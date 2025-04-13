@@ -106,7 +106,13 @@
     --transition-duration-normal: 250ms;
     --transition-duration-slow: 350ms;
     --transition-duration-game: 500ms;
-    
+
+
+    /* Transition presets for consistent motion */
+    --transition-selection: var(--transition-duration-fast)  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-color: var(--transition-duration-slow)  ease;
+    --transition-position: var(--transition-duration-normal)  cubic-bezier(0.4, 0, 0.2, 1);
+
     /* Easing Functions */
     --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --transition-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
@@ -127,6 +133,10 @@
     --glow-intensity-low: 0.3;
     --glow-intensity-medium: 0.5;
     --glow-intensity-high: 0.7;
+        /* Selection and feedback effects */
+    --selection-glow: 0 var(--radius-sm) var(--radius-md) rgba(var(--color-text-rgb), 0.2);
+    --selection-glow-secondary: 0 var(--radius-sm) var(--radius-md) rgba(var(--color-secondary-main-rgb-rgb), 0.2);
+    --selection-scale: scale(1.05);
     
     /* Button Scale Transforms */
     --button-scale-default: scale(1);
