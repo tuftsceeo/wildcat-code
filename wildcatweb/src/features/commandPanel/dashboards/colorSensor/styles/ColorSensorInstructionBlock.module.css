@@ -16,8 +16,8 @@
 }
 
 .sensorBody {
-    width: 60px;
-    height: 60px;
+    width: var(--font-size-2xl);
+    height: var(--font-size-2xl);
     background-color: var(--color-background-alt);
     border-radius: 50%;
     border: var(--border-width-thin) solid var(--panel-border);
@@ -29,11 +29,22 @@
 }
 
 .colorIndicator {
-    width: 40px;
-    height: 40px;
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
     border-radius: 50%;
     border: var(--border-width-thin) solid var(--panel-border);
     transition: all var(--transition-normal);
+}
+
+.unknownIndicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
 .sensorLabel {

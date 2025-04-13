@@ -6,22 +6,31 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
+import { XCircle } from "lucide-react";
 import styles from "../styles/ColorSensorDash.module.css";
 
-// Color options with their display names and values
+// Color options with their display names, values, and hex colors
 const COLOR_OPTIONS = [
-    { value: "black", label: "Black" },
-    { value: "magenta", label: "Magenta" },
-    { value: "purple", label: "Purple" },
-    { value: "blue", label: "Blue" },
-    { value: "azure", label: "Azure" },
-    { value: "turquoise", label: "Turquoise" },
-    { value: "green", label: "Green" },
-    { value: "yellow", label: "Yellow" },
-    { value: "orange", label: "Orange" },
-    { value: "red", label: "Red" },
-    { value: "white", label: "White" },
+    { value: "black", label: "Black", hex: "#000000" },
+    { value: "magenta", label: "Magenta", hex: "#D432A3" },
+    { value: "purple", label: "Purple", hex: "#8A2BE2" },
+    { value: "blue", label: "Blue", hex: "#3C90EE" },
+    { value: "azure", label: "Azure", hex: "#93E6FC" },
+    { value: "turquoise", label: "Turquoise", hex: "#40E0D0" },
+    { value: "green", label: "Green", hex: "#4BA551" },
+    { value: "yellow", label: "Yellow", hex: "#FBE376" },
+    { value: "orange", label: "Orange", hex: "#FFA500" },
+    { value: "red", label: "Red", hex: "#EB3327" },
+    { value: "white", label: "White", hex: "#FFFFFF" },
+    { value: "unknown", label: "Unknown", hex: "#FFFFFF", isUnknown: true }
 ];
+
+const UnknownIcon = () => (
+  <svg width="var(--font-size-2xl)" height="var(--font-size-2xl)" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="3" fill="none"/>
+    <line x1="10" y1="10" x2="30" y2="30" stroke="#FF0000" strokeWidth="3"/>
+  </svg>
+);
 
 /**
  * Individual color sensor control component
@@ -46,14 +55,31 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
 
     // Get the current color reading from the port state
     const currentColorReading = portStates?.[port]?.displayValue || "No reading";
+    
+    // Get the hex color for the current reading
+    const getCurrentColorHex = () => {
+        if (currentColorReading === "Unknown" || currentColorReading === "No reading") {
+            return "#FFFFFF"; // White background for unknown
+        }
+        
+        const colorOption = COLOR_OPTIONS.find(
+            option => option.label.toLowerCase() === currentColorReading.toLowerCase()
+        );
+        
+        return colorOption ? colorOption.hex : "#FFFFFF";
+    };
+
+    // Check if the current reading is unknown
+    const isCurrentReadingUnknown = () => {
+        return currentColorReading === "Unknown" || currentColorReading === "No reading";
+    };
 
     // Handle color selection
-    const handleColorChange = (event) => {
-        const newColor = event.target.value;
-        setSelectedColor(newColor);
+    const handleColorSelect = (colorValue) => {
+        setSelectedColor(colorValue);
         if (onUpdate) {
-            console.log("ColorSensorControl: Color changed to", newColor);
-            onUpdate(port, { color: newColor });
+            console.log("ColorSensorControl: Color changed to", colorValue);
+            onUpdate(port, { color: colorValue });
         }
     };
 
@@ -61,27 +87,52 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
         <div className={styles.colorSensorControl}>
             <div className={styles.portLabel}>Port {port}</div>
             <div className={styles.connectionStatus}>{isConnected ? "Connected" : "Not Connected"}</div>
+            
+            {/* Live sensor reading */}
             {isConnected && (
                 <div className={styles.liveReading}>
-                    <span>Current Color: </span>
-                    <span className={styles.colorValue}>{currentColorReading}</span>
+                    <div className={styles.sensorVisual}>
+                        <div className={styles.sensorBody}>
+                            {isCurrentReadingUnknown() ? (
+                                <div className={styles.unknownIndicator}>
+                                    <UnknownIcon />
+                                </div>
+                            ) : (
+                                <div 
+                                    className={styles.sensorColor} 
+                                    style={{ backgroundColor: getCurrentColorHex() }}
+                                ></div>
+                            )}
+                        </div>
+                    </div>
+                    <div className={styles.readingLabel}>
+                        <span>Current Color: </span>
+                        <span className={styles.colorValue}>{currentColorReading}</span>
+                    </div>
                 </div>
             )}
-            <select
-                value={selectedColor}
-                onChange={handleColorChange}
-                className={styles.colorSelect}
-                disabled={!isConnected}
-            >
-                {COLOR_OPTIONS.map((option) => (
-                    <option
-                        key={option.value}
-                        value={option.value}
-                    >
-                        {option.label}
-                    </option>
-                ))}
-            </select>
+            
+            {/* Color palette */}
+            <div className={styles.colorPalette}>
+                <div className={styles.paletteLabel}>Select a color to wait for:</div>
+                <div className={styles.colorCircles}>
+                    {COLOR_OPTIONS.map((option) => (
+                        <button
+                            key={option.value}
+                            className={`${styles.colorCircle} ${selectedColor === option.value ? styles.selected : ''}`}
+                            style={{ backgroundColor: option.hex }}
+                            onClick={() => handleColorSelect(option.value)}
+                            disabled={!isConnected}
+                            aria-label={`Select ${option.label} color`}
+                        >
+                            {option.isUnknown && <UnknownIcon />}
+                            {selectedColor === option.value && (
+                                <div className={styles.selectedIndicator}></div>
+                            )}
+                        </button>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };

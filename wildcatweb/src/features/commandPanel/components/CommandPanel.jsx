@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Check, RefreshCcwDot, Plus, Zap, Disc, Lightbulb, RotateCw, Volume, Timer, Clock9, CircleStop, ArchiveRestore } from "lucide-react";
+import { Check, RefreshCcwDot, Plus, Zap, Disc, Lightbulb, RotateCw, Volume, Timer, Clock9, CircleStop, ArchiveRestore, Droplet } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
 import { MotorDash } from "../dashboards/motor/components/MotorDash.jsx";
@@ -60,7 +60,7 @@ const CONTROL_TYPES = {
         color: {
             name: "Color",
             component: ColorSensorDash,
-            icon: <Lightbulb size={32} />,
+            icon: <Droplet size={32} />,
         },
     },
     special: {
