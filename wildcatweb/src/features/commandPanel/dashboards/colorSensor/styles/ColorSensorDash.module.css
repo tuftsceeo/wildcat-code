@@ -126,9 +126,11 @@
 }
 
 .paletteLabel {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
     text-align: center;
+    margin-bottom: var(--spacing-2);
 }
 
 .colorCircles {
@@ -144,23 +146,28 @@
     border-radius: 50%;
     border: var(--border-width-thin) solid var(--panel-border);
     cursor: pointer;
+    transition: all 0.2s ease;
     position: relative;
-    transition: all var(--transition-normal);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.colorCircle:hover:not(:disabled) {
+.colorCircle:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .colorCircle:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
-.selected {
-    border: var(--border-width-standard) solid var(--color-primary-main);
-    box-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
+.colorCircle.selected {
+    border: 3px solid var(--color-primary-main);
+    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-primary-main);
 }
 
 .selectedIndicator {
@@ -172,7 +179,7 @@
     height: calc(var(--font-size-sm) * 1.5);
     background-color: white;
     border-radius: 50%;
-    border: var(--border-width-thin) solid var(--panel-border);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
 .noSensors {
