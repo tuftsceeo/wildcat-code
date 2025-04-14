@@ -1,6 +1,7 @@
 /**
  * @file ColorSensorInstructionBlock.jsx
  * @description Component that visualizes a color sensor instruction in the coding track.
+ * Updated with a realistic sensor appearance.
  */
 
 import React from "react";
@@ -26,10 +27,30 @@ const COLOR_MAP = {
 
 // Unknown icon component
 const UnknownIcon = () => (
-  <svg width="var(--font-size-xl)" height="var(--font-size-xl)" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="3" fill="none"/>
-    <line x1="10" y1="10" x2="30" y2="30" stroke="#FF0000" strokeWidth="3"/>
-  </svg>
+    <svg
+        width="var(--font-size-lg)"
+        height="var(--font-size-lg)"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle
+            cx="20"
+            cy="20"
+            r="18"
+            stroke="#FF0000"
+            strokeWidth="3"
+            fill="none"
+        />
+        <line
+            x1="10"
+            y1="10"
+            x2="30"
+            y2="30"
+            stroke="#FF0000"
+            strokeWidth="3"
+        />
+    </svg>
 );
 
 /**
@@ -46,7 +67,7 @@ const ColorSensorInstructionBlock = ({ configuration }) => {
 
     // Check if sensor is connected
     const isConnected = port && portStates?.[port]?.deviceType === DEVICE_TYPES.COLOR_SENSOR;
-    
+
     // Check if the color is "unknown"
     const isUnknown = color === "unknown";
 
@@ -54,20 +75,22 @@ const ColorSensorInstructionBlock = ({ configuration }) => {
         <BaseInstructionBlock>
             <div className={styles.colorSensorVisualization}>
                 <div className={styles.sensorContainer}>
+                    {/* Realistic sensor visualization with nested structure */}
                     <div className={styles.sensorBody}>
-                        {isUnknown ? (
-                            <div className={styles.unknownIndicator}>
-                                <UnknownIcon />
+                        <div className={styles.sensorFrame}>
+                            <div className={styles.sensorLens}>
+                                {isUnknown ? (
+                                    <div className={styles.unknownIndicator}>
+                                        <UnknownIcon />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className={styles.sensorColor}
+                                        style={{ backgroundColor: COLOR_MAP[color] || "#CCCCCC" }}
+                                    ></div>
+                                )}
                             </div>
-                        ) : (
-                            <div
-                                className={styles.colorIndicator}
-                                style={{
-                                    backgroundColor: COLOR_MAP[color] || "#CCCCCC",
-                                    opacity: isConnected ? 1 : 0.5,
-                                }}
-                            />
-                        )}
+                        </div>
                     </div>
                     <div className={styles.sensorLabel}>{`COLOR SENSOR ${port}`}</div>
                 </div>

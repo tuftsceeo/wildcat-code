@@ -66,8 +66,8 @@
                 "motor_action": "{port} {direction} {speed}",
                 "motor_stop": "{port} stops",
                 "wait_action": "Wait {seconds}",
-                "button_action": "{port} {condition}",
-                "color_action": "{port} {color}",
+                "button_action": "Wait {port} {condition}",
+                "color_action": "Wait {port} {color}",
                 "default_message": "Select action or sensor",
                 "stop_message": "Stop program"
             }

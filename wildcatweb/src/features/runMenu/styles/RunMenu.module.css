@@ -79,11 +79,7 @@
     left: 0;
     right: 0;
     height: 120px;
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        var(--panel-bg) 95%
-    );
+    background: linear-gradient(to bottom, transparent, var(--panel-bg) 95%);
     pointer-events: none;
     z-index: 1;
     display: flex;
@@ -143,7 +139,7 @@
     width: 100%;
     position: relative;
     margin: 0 auto;
-    
+
     /* Layout for content */
     display: flex;
     align-items: center;
@@ -419,4 +415,9 @@
     padding: var(--spacing-2);
     background-color: var(--color-warning-bg);
     border-radius: var(--radius-sm);
+}
+
+/* For icons that need to be flipped horizontally */
+.flippedHorizontally {
+    transform: scaleX(-1);
 }

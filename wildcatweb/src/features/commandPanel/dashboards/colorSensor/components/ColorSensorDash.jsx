@@ -22,15 +22,35 @@ const COLOR_OPTIONS = [
     { value: "orange", label: "Orange", hex: "#FFA500" },
     { value: "red", label: "Red", hex: "#EB3327" },
     { value: "white", label: "White", hex: "#FFFFFF" },
-    { value: "unknown", label: "Unknown", hex: "#FFFFFF", isUnknown: true }
+    { value: "unknown", label: "Unknown", hex: "#FFFFFF", isUnknown: true },
 ];
 
 // Unknown icon component
 const UnknownIcon = () => (
-  <svg width="var(--font-size-xl)" height="var(--font-size-xl)" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="3" fill="none"/>
-    <line x1="10" y1="10" x2="30" y2="30" stroke="#FF0000" strokeWidth="3"/>
-  </svg>
+    <svg
+        width="var(--font-size-xl)"
+        height="var(--font-size-xl)"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle
+            cx="20"
+            cy="20"
+            r="18"
+            stroke="#FF0000"
+            strokeWidth="3"
+            fill="none"
+        />
+        <line
+            x1="10"
+            y1="10"
+            x2="30"
+            y2="30"
+            stroke="#FF0000"
+            strokeWidth="3"
+        />
+    </svg>
 );
 
 /**
@@ -56,17 +76,15 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
 
     // Get the current color reading from the port state
     const currentColorReading = portStates?.[port]?.displayValue || "No reading";
-    
+
     // Get the hex color for the current reading
     const getCurrentColorHex = () => {
         if (currentColorReading === "Unknown" || currentColorReading === "No reading") {
             return "#FFFFFF"; // White background for unknown
         }
-        
-        const colorOption = COLOR_OPTIONS.find(
-            option => option.label.toLowerCase() === currentColorReading.toLowerCase()
-        );
-        
+
+        const colorOption = COLOR_OPTIONS.find((option) => option.label.toLowerCase() === currentColorReading.toLowerCase());
+
         return colorOption ? colorOption.hex : "#FFFFFF";
     };
 
@@ -87,7 +105,7 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
         <div className={styles.colorSensorControl}>
             <div className={styles.portLabel}>Port {port}</div>
             <div className={styles.connectionStatus}>{isConnected ? "Connected" : "Not Connected"}</div>
-            
+
             {/* Live sensor reading */}
             {isConnected && (
                 <div className={styles.liveReading}>
@@ -101,8 +119,8 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
                                             <UnknownIcon />
                                         </div>
                                     ) : (
-                                        <div 
-                                            className={styles.sensorColor} 
+                                        <div
+                                            className={styles.sensorColor}
                                             style={{ backgroundColor: getCurrentColorHex() }}
                                         ></div>
                                     )}
@@ -116,7 +134,7 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
                     </div>
                 </div>
             )}
-            
+
             {/* Color palette */}
             <div className={styles.colorPalette}>
                 <div className={styles.paletteLabel}>Select a color to wait for:</div>
@@ -124,16 +142,14 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
                     {COLOR_OPTIONS.map((option) => (
                         <button
                             key={option.value}
-                            className={`${styles.colorCircle} ${selectedColor === option.value ? styles.selected : ''}`}
+                            className={`${styles.colorCircle} ${selectedColor === option.value ? styles.selected : ""}`}
                             style={{ backgroundColor: option.hex }}
                             onClick={() => handleColorSelect(option.value)}
                             disabled={!isConnected}
                             aria-label={`Select ${option.label} color`}
                         >
                             {option.isUnknown && <UnknownIcon />}
-                            {selectedColor === option.value && (
-                                <div className={styles.selectedIndicator}></div>
-                            )}
+                            {selectedColor === option.value && <div className={styles.selectedIndicator}></div>}
                         </button>
                     ))}
                 </div>
@@ -178,7 +194,7 @@ export const ColorSensorDash = ({ onUpdate, configuration, slotData, currSlotNum
             const config = {
                 port: port,
                 color: newConfig.color || "black", // Default to black if not specified
-                ...newConfig
+                ...newConfig,
             };
             onUpdate(config);
         }
@@ -202,11 +218,6 @@ export const ColorSensorDash = ({ onUpdate, configuration, slotData, currSlotNum
 
     return (
         <div className={styles.colorSensorDash}>
-            <div className={styles.header}>
-                <h3>Color Sensor</h3>
-                <p>Select a color to wait for</p>
-            </div>
-
             <div className={styles.sensorsContainer}>
                 {availablePorts.map((port) => (
                     <ColorSensorControl

@@ -104,8 +104,6 @@
     gap: var(--spacing-3);
 }
 
-
-
 /* Live reading styles - more compact */
 .liveReading {
     display: flex;
@@ -115,7 +113,6 @@
     background-color: var(--color-gray-faint);
     border-radius: var(--radius-md);
 }
-
 
 /* Main sensor container */
 .sensorVisual {

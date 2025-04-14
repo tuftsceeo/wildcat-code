@@ -1,4 +1,4 @@
-/* ColorSensorInstructionBlock.module.css - Styling for color sensor instruction block */
+/* ColorSensorInstructionBlock.module.css - Updated with realistic sensor styling */
 
 .colorSensorVisualization {
     display: flex;
@@ -15,36 +15,59 @@
     gap: var(--spacing-1);
 }
 
+/* Outermost layer - white square with text color outline */
 .sensorBody {
-    width: var(--font-size-2xl);
-    height: var(--font-size-2xl);
-    background-color: var(--color-background-alt);
-    border-radius: 50%;
-    border: var(--border-width-thin) solid var(--panel-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
-    overflow: hidden;
+    width: calc(var(--font-size-3xl) * 2);
+    height: calc(var(--font-size-3xl) * 2);
+    background-color: white;
+    border: var(--border-width-thin) solid var(--color-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.colorIndicator {
-    width: var(--font-size-xl);
-    height: var(--font-size-xl);
+/* Second layer - black rounded corner square */
+.sensorFrame {
+    width: 75%;
+    height: 75%;
+    background-color: #111111;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Third layer - white circle */
+.sensorLens {
+    width: 75%; /* 50% of the original sensor body */
+    height: 75%;
+    background-color: white;
     border-radius: 50%;
-    border: var(--border-width-thin) solid var(--panel-border);
-    transition: all var(--transition-normal);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Fourth layer (innermost) - color indicating circle */
+.sensorColor {
+    width: 90%; /* 37.4% of the original sensor body */
+    height: 90%;
+    border-radius: 50%;
+    transition: all var(--transition-color);
+    border: var(--border-width-thin) solid black;
 }
 
 .unknownIndicator {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: var(--font-size-xl);
-    height: var(--font-size-xl);
+    width: calc(var(--font-size-2xl) * 0.75);
+    height: calc(var(--font-size-2xl) * 0.75);
     border-radius: 50%;
     background-color: white;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
 }
 
 .sensorLabel {

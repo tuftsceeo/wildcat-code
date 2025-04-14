@@ -9,7 +9,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useCustomization } from "../../../context/CustomizationContext";
 import styles from "../styles/ThemeSettings.module.css";
 
-const STORAGE_KEY = 'wildcat-custom-colors';
+const STORAGE_KEY = "wildcat-custom-colors";
 
 /**
  * Theme settings component with proper theme variable usage
@@ -19,17 +19,17 @@ const STORAGE_KEY = 'wildcat-custom-colors';
  */
 const ThemeSettings = () => {
     // Get theme settings from context
-    const { 
-        theme, 
-        setTheme, 
-        useDyslexiaFont, 
+    const {
+        theme,
+        setTheme,
+        useDyslexiaFont,
         setUseDyslexiaFont,
         highContrast,
         setHighContrast,
         borderThickness,
         setBorderThickness,
         customColors,
-        setCustomColors
+        setCustomColors,
     } = useCustomization();
 
     // State for color customization
@@ -46,7 +46,7 @@ const ThemeSettings = () => {
                 const parsedColors = JSON.parse(savedColors);
                 setCustomColors(parsedColors);
             } catch (error) {
-                console.error('Error loading saved colors:', error);
+                console.error("Error loading saved colors:", error);
             }
         }
     }, []); // Empty dependency array means this runs once on mount
@@ -63,9 +63,9 @@ const ThemeSettings = () => {
     // Effect to handle high contrast mode changes
     useEffect(() => {
         if (highContrast) {
-            document.body.classList.add('high-contrast');
+            document.body.classList.add("high-contrast");
         } else {
-            document.body.classList.remove('high-contrast');
+            document.body.classList.remove("high-contrast");
         }
     }, [highContrast]);
 
@@ -74,21 +74,22 @@ const ThemeSettings = () => {
         if (!highContrast) return;
 
         // Create a style element for custom colors
-        const styleElement = document.createElement('style');
-        styleElement.id = 'custom-theme-vars';
-        
-        // Generate CSS rules for all custom colors
-        const cssRules = Object.entries(customColors).map(([colorType, value]) => {
-            // Convert hex to RGB for rgba support
-            const r = parseInt(value.slice(1, 3), 16);
-            const g = parseInt(value.slice(3, 5), 16);
-            const b = parseInt(value.slice(5, 7), 16);
-            
-            // Calculate relative luminance to determine contrast color
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            const contrastColor = luminance > 0.5 ? '#1E1E1E' : '#FFFFFF';
+        const styleElement = document.createElement("style");
+        styleElement.id = "custom-theme-vars";
 
-            let rules = `
+        // Generate CSS rules for all custom colors
+        const cssRules = Object.entries(customColors)
+            .map(([colorType, value]) => {
+                // Convert hex to RGB for rgba support
+                const r = parseInt(value.slice(1, 3), 16);
+                const g = parseInt(value.slice(3, 5), 16);
+                const b = parseInt(value.slice(5, 7), 16);
+
+                // Calculate relative luminance to determine contrast color
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                const contrastColor = luminance > 0.5 ? "#1E1E1E" : "#FFFFFF";
+
+                let rules = `
                 :root {
                     --color-${colorType}-main: ${value};
                     --color-${colorType}-high: ${value};
@@ -105,9 +106,9 @@ const ThemeSettings = () => {
                 }
             `;
 
-            // Add component-specific variables based on color type
-            if (colorType === 'primary') {
-                rules += `
+                // Add component-specific variables based on color type
+                if (colorType === "primary") {
+                    rules += `
                     body.high-contrast {
                         --button-selected-bg: ${value};
                         --button-selected-border: ${value};
@@ -125,8 +126,8 @@ const ThemeSettings = () => {
                         --color-timer-main: ${value};
                     }
                 `;
-            } else if (colorType === 'secondary') {
-                rules += `
+                } else if (colorType === "secondary") {
+                    rules += `
                     body.high-contrast {
                         --button-contained-selected-bg: ${value};
                         --button-contained-selected-border: ${value};
@@ -136,21 +137,22 @@ const ThemeSettings = () => {
                         --color-sensor-main: ${value};
                     }
                 `;
-            } else if (colorType === 'accent') {
-                rules += `
+                } else if (colorType === "accent") {
+                    rules += `
                     body.high-contrast {
                         --color-motor-stopped: ${value};
                     }
                 `;
-            }
+                }
 
-            return rules;
-        }).join('\n');
+                return rules;
+            })
+            .join("\n");
 
         styleElement.textContent = cssRules;
 
         // Remove any existing style element
-        const existingStyle = document.getElementById('custom-theme-vars');
+        const existingStyle = document.getElementById("custom-theme-vars");
         if (existingStyle) {
             existingStyle.remove();
         }
@@ -169,13 +171,13 @@ const ThemeSettings = () => {
     // Handle color changes
     const handleColorChange = (colorType, value) => {
         if (!highContrast) {
-            console.warn('High contrast mode is not enabled. Colors will not be applied.');
+            console.warn("High contrast mode is not enabled. Colors will not be applied.");
             return;
         }
 
-        setCustomColors(prev => ({
+        setCustomColors((prev) => ({
             ...prev,
-            [colorType]: value
+            [colorType]: value,
         }));
     };
 
@@ -224,7 +226,7 @@ const ThemeSettings = () => {
         { id: "thin", name: "Thin", value: 1 },
         { id: "medium", name: "Medium", value: 2 },
         { id: "thick", name: "Thick", value: 4 },
-        { id: "extra", name: "Extra Thick", value: 8 }
+        { id: "extra", name: "Extra Thick", value: 8 },
     ];
 
     return (
@@ -235,9 +237,7 @@ const ThemeSettings = () => {
                 {themes.map((themeOption) => (
                     <button
                         key={themeOption.id}
-                        className={`${styles.themeButton} ${
-                            theme === themeOption.id ? styles.activeTheme : ""
-                        }`}
+                        className={`${styles.themeButton} ${theme === themeOption.id ? styles.activeTheme : ""}`}
                         onClick={() => setTheme(themeOption.id)}
                         aria-pressed={theme === themeOption.id}
                     >
@@ -250,9 +250,7 @@ const ThemeSettings = () => {
                                 />
                             ))}
                         </div>
-                        <span className={styles.themeName}>
-                            {themeOption.name}
-                        </span>
+                        <span className={styles.themeName}>{themeOption.name}</span>
                     </button>
                 ))}
             </div>
@@ -270,9 +268,7 @@ const ThemeSettings = () => {
                         />
                         High Contrast Mode
                     </label>
-                    <p className={styles.description}>
-                        Increases contrast and uses thicker borders for better visibility
-                    </p>
+                    <p className={styles.description}>Increases contrast and uses thicker borders for better visibility</p>
                 </div>
             </div>
 
@@ -286,7 +282,7 @@ const ThemeSettings = () => {
                             <input
                                 type="color"
                                 value={customColors.primary}
-                                onChange={(e) => handleColorChange('primary', e.target.value)}
+                                onChange={(e) => handleColorChange("primary", e.target.value)}
                                 className={styles.colorInput}
                             />
                         </div>
@@ -295,7 +291,7 @@ const ThemeSettings = () => {
                             <input
                                 type="color"
                                 value={customColors.secondary}
-                                onChange={(e) => handleColorChange('secondary', e.target.value)}
+                                onChange={(e) => handleColorChange("secondary", e.target.value)}
                                 className={styles.colorInput}
                             />
                         </div>
@@ -304,7 +300,7 @@ const ThemeSettings = () => {
                             <input
                                 type="color"
                                 value={customColors.info}
-                                onChange={(e) => handleColorChange('info', e.target.value)}
+                                onChange={(e) => handleColorChange("info", e.target.value)}
                                 className={styles.colorInput}
                             />
                         </div>
@@ -313,7 +309,7 @@ const ThemeSettings = () => {
                             <input
                                 type="color"
                                 value={customColors.error}
-                                onChange={(e) => handleColorChange('error', e.target.value)}
+                                onChange={(e) => handleColorChange("error", e.target.value)}
                                 className={styles.colorInput}
                             />
                         </div>
@@ -322,7 +318,7 @@ const ThemeSettings = () => {
                             <input
                                 type="color"
                                 value={customColors.warning}
-                                onChange={(e) => handleColorChange('warning', e.target.value)}
+                                onChange={(e) => handleColorChange("warning", e.target.value)}
                                 className={styles.colorInput}
                             />
                         </div>
@@ -337,13 +333,11 @@ const ThemeSettings = () => {
                     {borderThicknesses.map((option) => (
                         <button
                             key={option.id}
-                            className={`${styles.borderThicknessButton} ${
-                                borderThickness === option.value ? styles.activeThickness : ""
-                            }`}
+                            className={`${styles.borderThicknessButton} ${borderThickness === option.value ? styles.activeThickness : ""}`}
                             onClick={() => setBorderThickness(option.value)}
                             aria-pressed={borderThickness === option.value}
                         >
-                            <div 
+                            <div
                                 className={styles.thicknessPreview}
                                 style={{ borderWidth: `${option.value}px` }}
                             />
@@ -358,30 +352,18 @@ const ThemeSettings = () => {
                 <h3 className={styles.fontOptionsHeader}>Reading Support</h3>
 
                 <div className={styles.fontToggle}>
-                    <span className={styles.toggleLabel}>
-                        Dyslexia-Friendly Font
-                    </span>
+                    <span className={styles.toggleLabel}>Dyslexia-Friendly Font</span>
                     <button
-                        className={`${styles.toggleSwitch} ${
-                            useDyslexiaFont ? styles.toggleSwitchActive : ""
-                        }`}
+                        className={`${styles.toggleSwitch} ${useDyslexiaFont ? styles.toggleSwitchActive : ""}`}
                         onClick={() => setUseDyslexiaFont(!useDyslexiaFont)}
                         role="switch"
                         aria-checked={useDyslexiaFont}
                     >
-                        <span
-                            className={`${styles.toggleHandle} ${
-                                useDyslexiaFont ? styles.toggleHandleActive : ""
-                            }`}
-                        />
+                        <span className={`${styles.toggleHandle} ${useDyslexiaFont ? styles.toggleHandleActive : ""}`} />
                     </button>
                 </div>
 
-                <p className={styles.fontDescription}>
-                    {useDyslexiaFont
-                        ? "Using OpenDyslexic font to improve readability"
-                        : "Using standard font"}
-                </p>
+                <p className={styles.fontDescription}>{useDyslexiaFont ? "Using OpenDyslexic font to improve readability" : "Using standard font"}</p>
             </div>
         </div>
     );
