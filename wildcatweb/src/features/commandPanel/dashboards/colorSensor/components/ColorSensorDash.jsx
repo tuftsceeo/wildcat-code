@@ -103,9 +103,7 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
 
     return (
         <div className={styles.colorSensorControl}>
-            <div className={styles.portLabel}>Port {port}</div>
-            <div className={styles.connectionStatus}>{isConnected ? "Connected" : "Not Connected"}</div>
-
+            <div className={styles.portLabel}>Color Sensor {port}</div>
             {/* Live sensor reading */}
             {isConnected && (
                 <div className={styles.liveReading}>

@@ -13,21 +13,21 @@
    ============================================ */
 :root {
     /* Scale factor reference (1.0 is base) */
-    --scale-factor: 1.0;
-    
+    --scale-factor: 1;
+
     /* Panel dimensions - core layout components */
     --panel-width-step: 300px;
     --panel-width-code: 300px;
     --panel-width-control: 616px;
     --panel-spacing: 16px;
-    
+
     /* Border Widths - always visible with minimum values */
     --border-width-none: 0;
     --border-width-thin: 2px;
     --border-width-standard: 4px;
     --border-width-thick: 6px;
     --border-width-extra: 8px;
-    
+
     /* Spacing Scale */
     --spacing-1: 4px;
     --spacing-2: 8px;
@@ -40,7 +40,7 @@
     --spacing-12: 48px;
     --spacing-16: 64px;
     --spacing-20: 80px;
-    
+
     /* Border Radius */
     --radius-none: 0;
     --radius-sm: 4px;
@@ -48,7 +48,7 @@
     --radius-lg: 12px;
     --radius-xl: 16px;
     --radius-full: 9999px;
-    
+
     /* Font Sizes */
     --font-size-xxs: 12px;
     --font-size-xs: 14px;
@@ -58,60 +58,59 @@
     --font-size-xl: 32px;
     --font-size-2xl: 40px;
     --font-size-3xl: 48px;
-    
+
     /* Component dimensions */
     --header-height: 56px;
     --bluetooth-button-size: 40px;
     --bluetooth-icon-size: 24px;
     --bluetooth-status-indicator-size: 10px;
-    
+
     /* Z-index scale */
     --z-index-base: 0;
     --z-index-raised: 10;
     --z-index-dropdown: 100;
     --z-index-modal: 1000;
-    
+
     /* Dialog dimensions */
     --dialog-width: 400px;
     --dialog-height: 250px;
     --dialog-icon-size: 30px;
-    
+
     /* Overlay dimensions */
     --overlay-max-width: 500px;
-    
+
     /* Motor visualization dimensions */
     --motor-bar-base-width: 10px;
     --motor-bar-width-increment: 2px;
-    
+
     /* Font Weights */
     --font-weight-regular: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
-    
+
     /* Line Heights */
     --line-height-tight: 1.2;
     --line-height-normal: 1.5;
     --line-height-relaxed: 1.75;
-    
+
     /* Letter Spacing */
     --letter-spacing-tight: -0.025em;
     --letter-spacing-normal: 0;
     --letter-spacing-wide: 0.025em;
     --letter-spacing-wider: 0.05em;
     --letter-spacing-widest: 0.1em;
-    
+
     /* Animation and Transition - Enhanced for game-like feel */
     --transition-duration-fast: 150ms;
     --transition-duration-normal: 250ms;
     --transition-duration-slow: 350ms;
     --transition-duration-game: 500ms;
 
-
     /* Transition presets for consistent motion */
-    --transition-selection: var(--transition-duration-fast)  cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --transition-color: var(--transition-duration-slow)  ease;
-    --transition-position: var(--transition-duration-normal)  cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-selection: var(--transition-duration-fast) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-color: var(--transition-duration-slow) ease;
+    --transition-position: var(--transition-duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Easing Functions */
     --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -120,7 +119,7 @@
     --transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --transition-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --transition-easing-pulse: cubic-bezier(0.4, 0, 0.6, 1);
-    
+
     /* Complete transitions */
     --transition-standard: var(--transition-duration-normal) var(--transition-easing-standard);
     --transition-fast: var(--transition-duration-fast) var(--transition-easing-standard);
@@ -128,16 +127,16 @@
     --transition-bounce: var(--transition-duration-game) var(--transition-easing-bounce);
     --transition-spring: var(--transition-duration-game) var(--transition-easing-spring);
     --transition-pulse: var(--transition-duration-game) var(--transition-easing-pulse);
-    
+
     /* Game-like Effects */
     --glow-intensity-low: 0.3;
     --glow-intensity-medium: 0.5;
     --glow-intensity-high: 0.7;
-        /* Selection and feedback effects */
+    /* Selection and feedback effects */
     --selection-glow: 0 var(--radius-sm) var(--radius-md) rgba(var(--color-text-rgb), 0.2);
     --selection-glow-secondary: 0 var(--radius-sm) var(--radius-md) rgba(var(--color-secondary-main-rgb-rgb), 0.2);
     --selection-scale: scale(1.05);
-    
+
     /* Button Scale Transforms */
     --button-scale-default: scale(1);
     --button-scale-hover: scale(1.05);
@@ -145,12 +144,12 @@
     --button-scale-success: scale(1.1);
     --button-scale-error: scale(0.9);
     --button-scale-pulse: scale(1.05);
-    
+
     /* Animation Keyframes durations */
     --animation-duration-short: 0.3s;
     --animation-duration-medium: 0.5s;
     --animation-duration-long: 0.8s;
-    
+
     /* Sound Effect Tokens (for accessibility) */
     --sound-effect-volume: 0.5;
     --sound-effect-duration: 0.3s;
@@ -165,19 +164,19 @@
 @media (min-width: 1921px) {
     :root {
         --scale-factor: 1.5;
-        
+
         /* Panel dimensions */
         --panel-width-step: 450px;
         --panel-width-code: 450px;
         --panel-width-control: 924px;
         --panel-spacing: 24px;
-        
+
         /* Border Widths - maintain minimum visibility */
         --border-width-thin: 3px;
         --border-width-standard: 6px;
         --border-width-thick: 9px;
         --border-width-extra: 12px;
-        
+
         /* Spacing Scale */
         --spacing-1: 6px;
         --spacing-2: 12px;
@@ -190,13 +189,13 @@
         --spacing-12: 72px;
         --spacing-16: 96px;
         --spacing-20: 120px;
-        
+
         /* Border Radius */
         --radius-sm: 6px;
         --radius-md: 12px;
         --radius-lg: 18px;
         --radius-xl: 24px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 18px;
         --font-size-xs: 21px;
@@ -206,21 +205,21 @@
         --font-size-xl: 48px;
         --font-size-2xl: 60px;
         --font-size-3xl: 72px;
-        
+
         /* Component dimensions */
         --header-height: 84px;
         --bluetooth-button-size: 60px;
         --bluetooth-icon-size: 36px;
         --bluetooth-status-indicator-size: 15px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 600px;
         --dialog-height: 375px;
         --dialog-icon-size: 45px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 750px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 15px;
         --motor-bar-width-increment: 3px;
@@ -231,19 +230,19 @@
 @media (min-width: 1681px) and (max-width: 1920px) {
     :root {
         --scale-factor: 1.25;
-        
+
         /* Panel dimensions */
         --panel-width-step: 375px;
         --panel-width-code: 375px;
         --panel-width-control: 770px;
         --panel-spacing: 20px;
-        
+
         /* Border Widths */
         --border-width-thin: 2.5px;
         --border-width-standard: 5px;
         --border-width-thick: 7.5px;
         --border-width-extra: 10px;
-        
+
         /* Spacing Scale */
         --spacing-1: 5px;
         --spacing-2: 10px;
@@ -256,13 +255,13 @@
         --spacing-12: 60px;
         --spacing-16: 80px;
         --spacing-20: 100px;
-        
+
         /* Border Radius */
         --radius-sm: 5px;
         --radius-md: 10px;
         --radius-lg: 15px;
         --radius-xl: 20px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 15px;
         --font-size-xs: 17.5px;
@@ -272,21 +271,21 @@
         --font-size-xl: 40px;
         --font-size-2xl: 50px;
         --font-size-3xl: 60px;
-        
+
         /* Component dimensions */
         --header-height: 70px;
         --bluetooth-button-size: 50px;
         --bluetooth-icon-size: 30px;
         --bluetooth-status-indicator-size: 12.5px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 500px;
         --dialog-height: 312.5px;
         --dialog-icon-size: 37.5px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 625px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 12.5px;
         --motor-bar-width-increment: 2.5px;
@@ -297,19 +296,19 @@
 @media (min-width: 1367px) and (max-width: 1680px) {
     :root {
         --scale-factor: 1.1;
-        
+
         /* Panel dimensions */
         --panel-width-step: 330px;
         --panel-width-code: 330px;
         --panel-width-control: 678px;
         --panel-spacing: 17.6px;
-        
+
         /* Border Widths */
         --border-width-thin: 2.2px;
         --border-width-standard: 4.4px;
         --border-width-thick: 6.6px;
         --border-width-extra: 8.8px;
-        
+
         /* Spacing Scale */
         --spacing-1: 4.4px;
         --spacing-2: 8.8px;
@@ -322,13 +321,13 @@
         --spacing-12: 52.8px;
         --spacing-16: 70.4px;
         --spacing-20: 88px;
-        
+
         /* Border Radius */
         --radius-sm: 4.4px;
         --radius-md: 8.8px;
         --radius-lg: 13.2px;
         --radius-xl: 17.6px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 13.2px;
         --font-size-xs: 15.4px;
@@ -338,21 +337,21 @@
         --font-size-xl: 35.2px;
         --font-size-2xl: 44px;
         --font-size-3xl: 52.8px;
-        
+
         /* Component dimensions */
         --header-height: 61.6px;
         --bluetooth-button-size: 44px;
         --bluetooth-icon-size: 26.4px;
         --bluetooth-status-indicator-size: 11px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 440px;
         --dialog-height: 275px;
         --dialog-icon-size: 33px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 550px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 11px;
         --motor-bar-width-increment: 2.2px;
@@ -368,19 +367,19 @@
 @media (min-width: 1025px) and (max-width: 1280px) {
     :root {
         --scale-factor: 0.85;
-        
+
         /* Panel dimensions */
         --panel-width-step: 255px;
         --panel-width-code: 255px;
         --panel-width-control: 524px;
         --panel-spacing: 13.6px;
-        
+
         /* Border Widths - maintain minimum visibility */
         --border-width-thin: 2px; /* minimum for visibility */
         --border-width-standard: 3.4px;
         --border-width-thick: 5.1px;
         --border-width-extra: 6.8px;
-        
+
         /* Spacing Scale */
         --spacing-1: 3.4px;
         --spacing-2: 6.8px;
@@ -393,13 +392,13 @@
         --spacing-12: 40.8px;
         --spacing-16: 54.4px;
         --spacing-20: 68px;
-        
+
         /* Border Radius */
         --radius-sm: 3.4px;
         --radius-md: 6.8px;
         --radius-lg: 10.2px;
         --radius-xl: 13.6px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 10.2px;
         --font-size-xs: 11.9px;
@@ -409,21 +408,21 @@
         --font-size-xl: 27.2px;
         --font-size-2xl: 34px;
         --font-size-3xl: 40.8px;
-        
+
         /* Component dimensions */
         --header-height: 47.6px;
         --bluetooth-button-size: 34px;
         --bluetooth-icon-size: 20.4px;
         --bluetooth-status-indicator-size: 8.5px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 340px;
         --dialog-height: 212.5px;
         --dialog-icon-size: 25.5px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 425px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 8.5px;
         --motor-bar-width-increment: 1.7px;
@@ -434,19 +433,19 @@
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
     :root {
         --scale-factor: 0.7;
-        
+
         /* Panel dimensions */
         --panel-width-step: 210px;
         --panel-width-code: 210px;
         --panel-width-control: 431px;
         --panel-spacing: 11.2px;
-        
+
         /* Border Widths - maintain minimum visibility */
         --border-width-thin: 2px; /* minimum for visibility */
         --border-width-standard: 3px;
         --border-width-thick: 4.2px;
         --border-width-extra: 5.6px;
-        
+
         /* Spacing Scale */
         --spacing-1: 2.8px;
         --spacing-2: 5.6px;
@@ -459,13 +458,13 @@
         --spacing-12: 33.6px;
         --spacing-16: 44.8px;
         --spacing-20: 56px;
-        
+
         /* Border Radius */
         --radius-sm: 2.8px;
         --radius-md: 5.6px;
         --radius-lg: 8.4px;
         --radius-xl: 11.2px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 8.4px;
         --font-size-xs: 9.8px;
@@ -475,21 +474,21 @@
         --font-size-xl: 22.4px;
         --font-size-2xl: 28px;
         --font-size-3xl: 33.6px;
-        
+
         /* Component dimensions */
         --header-height: 39.2px;
         --bluetooth-button-size: 28px;
         --bluetooth-icon-size: 16.8px;
         --bluetooth-status-indicator-size: 7px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 280px;
         --dialog-height: 175px;
         --dialog-icon-size: 21px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 350px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 7px;
         --motor-bar-width-increment: 1.4px;
@@ -500,19 +499,19 @@
 @media (max-width: 1366px) and (max-height: 768px) {
     :root {
         --scale-factor: 0.8;
-        
+
         /* Panel dimensions */
         --panel-width-step: 240px;
         --panel-width-code: 240px;
         --panel-width-control: 493px;
         --panel-spacing: 12.8px;
-        
+
         /* Border Widths - maintain minimum visibility */
         --border-width-thin: 2px; /* minimum for visibility */
         --border-width-standard: 3.2px;
         --border-width-thick: 4.8px;
         --border-width-extra: 6.4px;
-        
+
         /* Spacing Scale */
         --spacing-1: 3.2px;
         --spacing-2: 6.4px;
@@ -525,13 +524,13 @@
         --spacing-12: 38.4px;
         --spacing-16: 51.2px;
         --spacing-20: 64px;
-        
+
         /* Border Radius */
         --radius-sm: 3.2px;
         --radius-md: 6.4px;
         --radius-lg: 9.6px;
         --radius-xl: 12.8px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 9.6px;
         --font-size-xs: 11.2px;
@@ -541,21 +540,21 @@
         --font-size-xl: 25.6px;
         --font-size-2xl: 32px;
         --font-size-3xl: 38.4px;
-        
+
         /* Component dimensions */
         --header-height: 44.8px;
         --bluetooth-button-size: 32px;
         --bluetooth-icon-size: 19.2px;
         --bluetooth-status-indicator-size: 8px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 320px;
         --dialog-height: 200px;
         --dialog-icon-size: 24px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 400px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 8px;
         --motor-bar-width-increment: 1.6px;
@@ -569,7 +568,7 @@
         --panel-width-step: min(90vw, 300px);
         --panel-width-code: min(90vw, 300px);
         --panel-width-control: min(90vw, 616px);
-        
+
         /* Font Sizes - slightly smaller for portrait */
         --font-size-xxs: 10px;
         --font-size-xs: 12px;
@@ -579,7 +578,7 @@
         --font-size-xl: 28px;
         --font-size-2xl: 34px;
         --font-size-3xl: 40px;
-        
+
         /* Spacing - adjusted for portrait */
         --spacing-1: 3px;
         --spacing-2: 6px;
@@ -592,30 +591,30 @@
         --spacing-12: 36px;
         --spacing-16: 48px;
         --spacing-20: 60px;
-        
+
         /* Border Widths - maintain visibility */
         --border-width-thin: 2px;
         --border-width-standard: 3px;
         --border-width-thick: 4px;
         --border-width-extra: 6px;
-        
+
         /* Border Radius */
         --radius-sm: 3px;
         --radius-md: 6px;
         --radius-lg: 9px;
         --radius-xl: 12px;
-        
+
         /* Component dimensions */
         --header-height: 48px;
         --bluetooth-button-size: 36px;
         --bluetooth-icon-size: 20px;
         --bluetooth-status-indicator-size: 8px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 85vw;
         --dialog-height: 250px;
         --dialog-icon-size: 28px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 90vw;
     }
@@ -625,19 +624,19 @@
 @media (min-width: 1280px) and (max-height: 800px) {
     :root {
         --scale-factor: 0.9;
-        
+
         /* Panel dimensions */
         --panel-width-step: 270px;
         --panel-width-code: 270px;
         --panel-width-control: 554px;
         --panel-spacing: 14.4px;
-        
+
         /* Border Widths - maintain minimum visibility */
         --border-width-thin: 2px; /* minimum for visibility */
         --border-width-standard: 3.6px;
         --border-width-thick: 5.4px;
         --border-width-extra: 7.2px;
-        
+
         /* Spacing Scale */
         --spacing-1: 3.6px;
         --spacing-2: 7.2px;
@@ -650,13 +649,13 @@
         --spacing-12: 43.2px;
         --spacing-16: 57.6px;
         --spacing-20: 72px;
-        
+
         /* Border Radius */
         --radius-sm: 3.6px;
         --radius-md: 7.2px;
         --radius-lg: 10.8px;
         --radius-xl: 14.4px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 10.8px;
         --font-size-xs: 12.6px;
@@ -666,21 +665,21 @@
         --font-size-xl: 28.8px;
         --font-size-2xl: 36px;
         --font-size-3xl: 43.2px;
-        
+
         /* Component dimensions */
         --header-height: 50.4px;
         --bluetooth-button-size: 36px;
         --bluetooth-icon-size: 21.6px;
         --bluetooth-status-indicator-size: 9px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 360px;
         --dialog-height: 225px;
         --dialog-icon-size: 27px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 450px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 9px;
         --motor-bar-width-increment: 1.8px;
@@ -691,19 +690,19 @@
 @media (width: 1024px) and (orientation: landscape) {
     :root {
         --scale-factor: 0.65;
-        
+
         /* Panel dimensions */
         --panel-width-step: 195px;
         --panel-width-code: 195px;
         --panel-width-control: 400px;
         --panel-spacing: 10.4px;
-        
+
         /* Border Widths - maintain minimum visibility */
         --border-width-thin: 2px; /* minimum for visibility */
         --border-width-standard: 3px;
         --border-width-thick: 4px;
         --border-width-extra: 5.2px;
-        
+
         /* Spacing Scale */
         --spacing-1: 2.6px;
         --spacing-2: 5.2px;
@@ -716,13 +715,13 @@
         --spacing-12: 31.2px;
         --spacing-16: 41.6px;
         --spacing-20: 52px;
-        
+
         /* Border Radius */
         --radius-sm: 2.6px;
         --radius-md: 5.2px;
         --radius-lg: 7.8px;
         --radius-xl: 10.4px;
-        
+
         /* Font Sizes */
         --font-size-xxs: 7.8px;
         --font-size-xs: 9.1px;
@@ -732,21 +731,21 @@
         --font-size-xl: 20.8px;
         --font-size-2xl: 26px;
         --font-size-3xl: 31.2px;
-        
+
         /* Component dimensions */
         --header-height: 36.4px;
         --bluetooth-button-size: 26px;
         --bluetooth-icon-size: 15.6px;
         --bluetooth-status-indicator-size: 6.5px;
-        
+
         /* Dialog dimensions */
         --dialog-width: 260px;
         --dialog-height: 162.5px;
         --dialog-icon-size: 19.5px;
-        
+
         /* Overlay dimensions */
         --overlay-max-width: 325px;
-        
+
         /* Motor visualization dimensions */
         --motor-bar-base-width: 6.5px;
         --motor-bar-width-increment: 1.3px;
@@ -1161,11 +1160,11 @@ body[data-theme="pastel"] {
 
     /* Button States - Outlined */
     --button-default-bg: transparent;
-    --button-default-text: var(--color-primary-main);
+    --button-default-text: var(--color-text);
     --button-default-border: var(--color-primary-main);
 
     --button-selected-bg: transparent;
-    --button-selected-text: var(--color-secondary-main);
+    --button-selected-text: var(--color-secondary-high);
     --button-selected-border: var(--color-secondary-main);
 
     --button-disabled-bg: transparent;

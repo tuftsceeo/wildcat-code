@@ -14,7 +14,7 @@
     position: relative;
     /* Custom scrollbar styling */
     scrollbar-width: thin;
-    scrollbar-color: var(--color-primary-high) var(--color-gray-subtle);
+    scrollbar-color: var(--color-gray-bold) var(--color-gray-subtle);
 }
 
 /* Webkit scrollbar styling */
@@ -28,13 +28,13 @@
 }
 
 .menuBackground::-webkit-scrollbar-thumb {
-    background: var(--color-primary-high);
+    background: var(--color-gray-bold);
     border-radius: var(--radius-full);
     border: 2px solid var(--color-gray-subtle);
 }
 
 .menuBackground::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-main);
+    background: var(--color-text);
 }
 
 .menuContent {
@@ -49,7 +49,6 @@
     padding: var(--spacing-4) 0;
     /* Custom scrollbar styling */
     scrollbar-width: thin;
-    scrollbar-color: var(--color-primary-high) var(--color-gray-subtle);
 }
 
 /* Webkit scrollbar styling */
@@ -118,10 +117,9 @@
 .stepsContainer {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
     width: 100%;
-    max-width: 300px; /* Limit button width for better readability */
-    margin: 0 auto;
+    margin: var(--spacing-1);
     padding: 12px; /* Increased padding to prevent scaled borders from being cut off */
 }
 
@@ -138,36 +136,11 @@
     cursor: pointer;
     width: 100%;
     position: relative;
-    margin: 0 auto;
 
     /* Layout for content */
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-/* Only apply transitions and transforms when not being dragged */
-.stepButton:not(.dragging) {
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-    transform-origin: center;
-    margin: 8px 0; /* Add vertical margin to prevent overlap during scale */
-}
-
-.stepButton:not(.dragging):hover:not(:disabled) {
-    transform: var(--button-scale-hover);
-}
-
-.stepButton:not(.dragging):active:not(:disabled) {
-    transform: var(--button-scale-active);
-}
-
-/* When dragging, disable all hover and active states */
-.stepButton.dragging,
-.stepButton.dragging:hover,
-.stepButton.dragging:active {
-    transform: none;
-    transition: none;
 }
 
 .stepButton.active,
@@ -180,6 +153,8 @@
 /* Command icon styling - now on the right side */
 .commandIcon {
     color: var(--button-default-text);
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
 }
 
 .stepButton.current .commandIcon,
@@ -319,9 +294,23 @@
     width: 100%;
 }
 
+.draggableContainer:not(.dragging) {
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+    transform-origin: center;
+}
+
+.draggableContainer:not(.dragging):hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.draggableContainer:not(.dragging):active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
 .draggableContainer.dragging {
     opacity: 0.5;
-    transform: scale(1.02);
+    transform: none;
     z-index: var(--z-index-above);
     transition: none; /* Remove transition during drag */
 }
@@ -330,6 +319,29 @@
     transform: translateY(2px);
     transition: none; /* Remove transition during drop */
 }
+
+/* Only apply transitions and transforms when not being dragged
+.stepButton:not(.dragging) {
+    transition: transform var(--transition-normal);
+    transform: var(--button-scale-default);
+    transform-origin: center;
+}
+
+.stepButton:not(.dragging):hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.stepButton:not(.dragging):active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+/* When dragging, disable all hover and active states */
+/* .stepButton.dragging,
+.stepButton.dragging:hover,
+.stepButton.dragging:active {
+    transform: none;
+    transition: none;
+}  */
 
 /* Drag handle styles */
 .dragHandle {
@@ -340,25 +352,18 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    opacity: 0.6;
+    opacity: 0.4;
     transition: opacity var(--transition-normal);
     cursor: grab;
     z-index: 1;
 }
 
 .draggableContainer:hover .dragHandle {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .dragHandle:active {
     cursor: grabbing;
-}
-
-.dot {
-    width: 4px;
-    height: 4px;
-    background-color: var(--button-default-text);
-    border-radius: 50%;
 }
 
 /* Ensure the drag handle is visible in all button states */

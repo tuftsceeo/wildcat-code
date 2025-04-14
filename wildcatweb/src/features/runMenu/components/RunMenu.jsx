@@ -23,6 +23,7 @@ import {
     Clock9,
     Disc,
     ArchiveRestore,
+    ArchiveX,
     Timer,
     Plus,
     Lock,
@@ -35,7 +36,7 @@ import {
 import DraggableStepButton from "./DraggableStepButton";
 
 const FilledCircleStop = (props) => {
-    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
+    return React.cloneElement(<CircleStop />, { fill: "#EB3327", stroke: "white", ...props });
 };
 
 const COLOR_MAPPING = {
@@ -61,27 +62,27 @@ const INSTRUCTION_DISPLAY = {
     action: {
         motor: {
             name: "Speed",
-            icon: <RotateCw size={24} />,
+            icon: <RotateCw className={styles.commandIcon} />,
         },
     },
     input: {
         time: {
             name: "Wait",
-            icon: <Timer size={24} />,
+            icon: <Timer className={styles.commandIcon} />,
         },
         button: {
             name: "Button",
-            icon: <ArchiveRestore size={24} />,
+            icon: <ArchiveRestore className={styles.commandIcon} />,
         },
         color: {
             name: "Color",
-            icon: <Droplet size={24} />,
+            icon: <Droplet className={styles.commandIcon} />,
         },
     },
     special: {
         stop: {
             name: "Stop",
-            icon: <CircleStop size={24} />,
+            icon: <FilledCircleStop className={styles.commandIcon} />,
         },
     },
 };
@@ -218,12 +219,7 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
         if (index === missionSteps - 1) {
             return {
                 name: "Stop",
-                icon: (
-                    <CircleStop
-                        size={24}
-                        className={styles.commandIcon}
-                    />
-                ),
+                icon: <CircleStop className={styles.commandIcon} />,
             };
         }
 
@@ -235,8 +231,6 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                     <QuestionMarkIcon
                         className={styles.commandIcon}
                         fill="currentColor"
-                        width={30}
-                        height={30}
                     />
                 ) : null,
             };
@@ -253,8 +247,6 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                     <QuestionMarkIcon
                         className={styles.commandIcon}
                         fill="currentColor"
-                        width={30}
-                        height={30}
                     />
                 ),
             };
@@ -262,13 +254,15 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
 
         // Special case for button instruction
         if (type === "input" && subtype === "button") {
+            // Check if this is a release condition (not pressed)
+            const isReleaseCondition = configuration?.waitCondition === "released";
+
             return {
                 name: INSTRUCTION_DISPLAY[type][subtype].name,
-                icon: (
-                    <ArchiveRestore
-                        size={24}
-                        className={styles.commandIcon + " " + styles.flippedVertically}
-                    />
+                icon: isReleaseCondition ? (
+                    <ArchiveX className={styles.commandIcon + " " + styles.flippedVertically} />
+                ) : (
+                    <ArchiveRestore className={styles.commandIcon + " " + styles.flippedVertically} />
                 ),
             };
         }
@@ -298,15 +292,15 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                 // Determine which icon to use based on speed
                 let speedIcon;
                 if (speed === 0) {
-                    speedIcon = <CircleStop size={24} />;
+                    speedIcon = <FilledCircleStop className={styles.commandIcon} />;
                 } else if (absSpeed <= 330) {
                     // SLOW_THRESHOLD
-                    speedIcon = <Snail size={24} />;
+                    speedIcon = <Snail className={styles.commandIcon} />;
                 } else if (absSpeed <= 660) {
                     // MEDIUM_THRESHOLD
-                    speedIcon = <Turtle size={24} />;
+                    speedIcon = <Turtle className={styles.commandIcon} />;
                 } else {
-                    speedIcon = <Rabbit size={24} />;
+                    speedIcon = <Rabbit className={styles.commandIcon} />;
                 }
 
                 // Add flipped class if the motor is going clockwise
@@ -587,10 +581,7 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                 aria-current={currSlotNumber === stopStepIndex ? "step" : false}
             >
                 <span className={styles.stepName}>Stop</span>
-                <CircleStop
-                    size={24}
-                    className={styles.stopIcon}
-                />
+                <CircleStop className={styles.stopIcon} />
             </button>,
         );
 
@@ -617,7 +608,7 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                                 disabled={stepCount >= MAX_STEPS}
                                 aria-label="Add new step"
                             >
-                                <Plus size={20} />
+                                <Plus className={styles.commandIcon} />
                                 Add Step
                             </button>
                         </div>
@@ -628,7 +619,7 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
             {/* Gradient overlay */}
             <div className={styles.gradientOverlay}>
                 <ChevronDown
-                    size={24}
+                    className={styles.commandIcon}
                     color="var(--panel-text)"
                 />
             </div>

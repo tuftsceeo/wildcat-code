@@ -13,7 +13,7 @@ import { BluetoothSearching, RefreshCwOff, Rabbit, Turtle, CircleStop, Snail } f
 import DashMotorAnimation from "./DashMotorAnimation";
 
 const FilledCircleStop = (props) => {
-    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
+    return React.cloneElement(<CircleStop />, { fill: "#EB3327", ...props });
 };
 
 /**
@@ -154,36 +154,21 @@ const SingleMotorDash = memo(({ port, onUpdate, configuration, isDisconnected, o
     // The icons for each position
     const positionIcons = [
         {
-            icon: (
-                <Rabbit
-                    className={styles.flippedHorizontally}
-                    size={20}
-                />
-            ),
+            icon: <Rabbit className={styles.iconSize + " " + styles.flippedHorizontally} />,
             label: "Fast Counterclockwise",
         },
         {
-            icon: (
-                <Turtle
-                    className={styles.flippedHorizontally}
-                    size={20}
-                />
-            ),
+            icon: <Turtle className={styles.iconSize + " " + styles.flippedHorizontally} />,
             label: "Medium Counterclockwise",
         },
         {
-            icon: (
-                <Snail
-                    className={styles.flippedHorizontally}
-                    size={20}
-                />
-            ),
+            icon: <Snail className={styles.iconSize + " " + styles.flippedHorizontally} />,
             label: "Slow Counterclockwise",
         },
-        { icon: <CircleStop size={16} />, label: "Stop" },
-        { icon: <Snail size={20} />, label: "Slow Clockwise" },
-        { icon: <Turtle size={20} />, label: "Medium Clockwise" },
-        { icon: <Rabbit size={20} />, label: "Fast Clockwise" },
+        { icon: <FilledCircleStop className={styles.iconSize} />, label: "Stop" },
+        { icon: <Snail className={styles.iconSize} />, label: "Slow Clockwise" },
+        { icon: <Turtle className={styles.iconSize} />, label: "Medium Clockwise" },
+        { icon: <Rabbit className={styles.iconSize} />, label: "Fast Clockwise" },
     ];
 
     return (

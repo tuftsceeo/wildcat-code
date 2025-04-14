@@ -168,11 +168,20 @@
 
 /* Icon within subtype buttons */
 .subtypeButton .icon {
-    width: 24px;
-    height: 24px;
+    width: calc(var(--font-size-base) * 1.5);
+    height: calc(var(--font-size-base) * 1.5);
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.flippedVertically {
+    transform: scaleY(-1);
+}
+
+.commandIcon {
+    width: calc(var(--font-size-base) * 1.5);
+    height: calc(var(--font-size-base) * 1.5);
 }
 
 /* Text justification in buttons */
@@ -313,10 +322,9 @@
 .stopIcon {
     color: var(--color-error-main);
     animation: pulse 2s infinite;
-    flex: .25;
+    flex: 0.25;
     align-content: flex-end;
 }
-
 
 .stopText {
     color: var(--panel-text);
@@ -324,6 +332,6 @@
     font-size: var(--font-size-xl);
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
-    flex: .75;
+    flex: 0.75;
     align-content: flex-start;
 }

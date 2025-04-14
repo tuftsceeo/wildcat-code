@@ -32,7 +32,7 @@ const CONTROL_TYPES = {
         motor: {
             name: "Speed",
             component: MotorDash,
-            icon: <RotateCw size={32} />,
+            icon: <RotateCw className={styles.commandIcon} />,
         },
         // hub: {
         //     name: "Hub",
@@ -49,25 +49,25 @@ const CONTROL_TYPES = {
         time: {
             name: "Wait",
             component: TimeDash,
-            icon: <Timer size={32} />,
+            icon: <Timer className={styles.commandIcon} />,
         },
         button: {
             // Updated - Kept subtype name but changed display name
             name: "Button", // Changed from "Force Sensor" to "Button"
             component: ButtonDash,
-            icon: <ArchiveRestore size={32} />, // Using Disc icon for button
+            icon: <ArchiveRestore className={`${styles.commandIcon} ${styles.flippedVertically}`} />, // Using Disc icon for button
         },
         color: {
             name: "Color",
             component: ColorSensorDash,
-            icon: <Droplet size={32} />,
+            icon: <Droplet className={styles.commandIcon} />,
         },
     },
     special: {
         stop: {
             name: "Stop",
             component: null,
-            icon: <CircleStop size={32} />,
+            icon: <CircleStop className={styles.commandIcon} />,
         },
     },
 };
