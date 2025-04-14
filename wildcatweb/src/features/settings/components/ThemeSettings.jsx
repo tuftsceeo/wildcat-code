@@ -8,6 +8,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useCustomization } from "../../../context/CustomizationContext";
 import styles from "../styles/ThemeSettings.module.css";
+import { Blocks, Flower, Sparkles } from "lucide-react";
 
 const STORAGE_KEY = "wildcat-custom-colors";
 
@@ -187,36 +188,42 @@ const ThemeSettings = () => {
             id: "retro",
             name: "RETRO",
             description: "Neon arcade style with vibrant animations",
-            colors: ["#00ff00", "#00bfff", "#ff00ff"],
+            icon: Blocks,
+            colors: ["rgb(var(--color-primary-main-rgb))", "rgb(var(--color-secondary-main-rgb))", "rgb(var(--color-info-main-rgb))"],
             preview: {
-                bg: "#000000",
-                text: "#00ff00",
-                buttonBg: "#00bfff",
-                buttonText: "#000000",
+                bg: "rgb(var(--color-background-rgb))",
+                text: "rgb(var(--color-text-rgb))",
+                buttonBg: "rgb(var(--color-primary-main-rgb))",
+                buttonText: "rgb(var(--color-primary-contrast-rgb))",
+                fontFamily: "var(--font-family-primary)",
             },
         },
         {
             id: "pastel",
-            name: "PASTEL",
+            name: "ANTIQUE",
             description: "Soft colors with gentle contrast",
-            colors: ["#78C2AD", "#6CC3D5", "#F3969A"],
+            icon: Flower,
+            colors: ["rgb(var(--color-primary-main-rgb))", "rgb(var(--color-secondary-main-rgb))", "rgb(var(--color-info-main-rgb))"],
             preview: {
-                bg: "#fffaf0",
-                text: "#3E4551",
-                buttonBg: "#78C2AD",
-                buttonText: "#FFFFFF",
+                bg: "rgb(var(--color-background-rgb))",
+                text: "rgb(var(--color-text-rgb))",
+                buttonBg: "rgb(var(--color-primary-main-rgb))",
+                buttonText: "rgb(var(--color-primary-contrast-rgb))",
+                fontFamily: "var(--font-family-primary)",
             },
         },
         {
             id: "clean",
-            name: "CLEAN",
+            name: "MODERN",
             description: "High contrast with clean layout",
-            colors: ["#00AA55", "#0066CC", "#FF6600"],
+            icon: Sparkles,
+            colors: ["rgb(var(--color-primary-main-rgb))", "rgb(var(--color-secondary-main-rgb))", "rgb(var(--color-info-main-rgb))"],
             preview: {
-                bg: "#FFFFFF",
-                text: "#000000",
-                buttonBg: "#00AA55",
-                buttonText: "#FFFFFF",
+                bg: "rgb(var(--color-background-rgb))",
+                text: "rgb(var(--color-text-rgb))",
+                buttonBg: "rgb(var(--color-primary-main-rgb))",
+                buttonText: "rgb(var(--color-primary-contrast-rgb))",
+                fontFamily: "var(--font-family-primary)",
             },
         },
     ];
@@ -229,30 +236,87 @@ const ThemeSettings = () => {
         { id: "extra", name: "Extra Thick", value: 8 },
     ];
 
+    // Function to apply theme for preview
+    const applyThemeForPreview = (themeId) => {
+        // Store current theme
+        const currentTheme = document.body.getAttribute("data-theme");
+
+        // Apply the preview theme
+        document.body.setAttribute("data-theme", themeId);
+
+        // Get computed styles for the theme
+        const computedStyle = getComputedStyle(document.body);
+
+        // Create theme preview object with actual computed values
+        const preview = {
+            bg: computedStyle.getPropertyValue("--color-background").trim(),
+            text: computedStyle.getPropertyValue("--color-text").trim(),
+            buttonContained: computedStyle.getPropertyValue("--button-contained-default-bg").trim(),
+            motorClockwise: computedStyle.getPropertyValue("--color-motor-clockwise").trim(),
+            motorCountercw: computedStyle.getPropertyValue("--color-motor-countercw").trim(),
+            fontFamily: computedStyle.getPropertyValue("--font-family-primary").trim(),
+        };
+
+        // Restore original theme
+        document.body.setAttribute("data-theme", currentTheme || "retro");
+
+        return preview;
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.title}>Choose Theme</div>
 
             <div className={styles.themesContainer}>
-                {themes.map((themeOption) => (
-                    <button
-                        key={themeOption.id}
-                        className={`${styles.themeButton} ${theme === themeOption.id ? styles.activeTheme : ""}`}
-                        onClick={() => setTheme(themeOption.id)}
-                        aria-pressed={theme === themeOption.id}
-                    >
-                        <div className={styles.themeSwatches}>
-                            {themeOption.colors.map((color, i) => (
+                {themes.map((themeOption) => {
+                    // Get the actual computed values for this theme
+                    const themePreview = applyThemeForPreview(themeOption.id);
+
+                    return (
+                        <button
+                            key={themeOption.id}
+                            className={`${styles.themeButton} ${theme === themeOption.id ? styles.activeTheme : ""}`}
+                            onClick={() => setTheme(themeOption.id)}
+                            aria-pressed={theme === themeOption.id}
+                            data-active={theme === themeOption.id}
+                            style={{
+                                backgroundColor: themePreview.bg,
+                                color: themePreview.text,
+                                fontFamily: themePreview.fontFamily,
+                            }}
+                        >
+                            <div className={styles.themeSwatches}>
                                 <div
-                                    key={i}
                                     className={styles.colorSwatch}
-                                    style={{ backgroundColor: color }}
+                                    style={{ backgroundColor: themePreview.buttonContained }}
                                 />
-                            ))}
-                        </div>
-                        <span className={styles.themeName}>{themeOption.name}</span>
-                    </button>
-                ))}
+                                <div
+                                    className={styles.colorSwatch}
+                                    style={{ border: `var(--border-width-standard) solid ${themePreview.motorClockwise}` }}
+                                />
+                                <div
+                                    className={styles.colorSwatch}
+                                    style={{ backgroundColor: themePreview.motorCountercw }}
+                                />
+                            </div>
+                            <div className={styles.themeIcon}>
+                                {React.createElement(themeOption.icon, {
+                                    size: 24,
+                                    color: themePreview.text,
+                                })}
+                            </div>
+                            <span
+                                className={styles.themeName}
+                                style={{
+                                    color: themePreview.text,
+                                    fontFamily: themePreview.fontFamily,
+                                }}
+                            >
+                                {themeOption.name}
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
 
             {/* High Contrast Toggle */}

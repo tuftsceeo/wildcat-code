@@ -71,23 +71,16 @@ export const BLEProvider = ({ children }) => {
             message.messages.forEach((msg) => {
                 // Handle different device types
                 if (msg.name === "Motor") {
-                    const portLetter = String.fromCharCode(
-                        65 + msg.values.port,
-                    );
+                    const portLetter = String.fromCharCode(65 + msg.values.port);
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.MOTOR,
                         type: DEVICE_TYPES.MOTOR, // Keep both for compatibility
                         connected: true,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Motor on port ${portLetter}`,
-                        msg.values,
-                    );
+                    console.log(`BLEContext: Detected Motor on port ${portLetter}`, msg.values);
                 } else if (msg.name === "Force") {
-                    const portLetter = String.fromCharCode(
-                        65 + msg.values.port,
-                    );
+                    const portLetter = String.fromCharCode(65 + msg.values.port);
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.FORCE_SENSOR,
                         type: DEVICE_TYPES.FORCE_SENSOR, // Keep both for compatibility
@@ -96,33 +89,54 @@ export const BLEProvider = ({ children }) => {
                         measuredValue: msg.values.measuredValue,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Force Sensor on port ${portLetter}`,
-                        msg.values,
-                    );
+                    console.log(`BLEContext: Detected Force Sensor on port ${portLetter}`, msg.values);
                 } else if (msg.name === "Color") {
-                    const portLetter = String.fromCharCode(
-                        65 + msg.values.port,
-                    );
-                    
+                    const portLetter = String.fromCharCode(65 + msg.values.port);
+
                     // Map color value to a readable name based on LEGO SPIKE Prime color constants
                     let colorName = "Unknown";
                     switch (msg.values.color) {
-                        case 0: colorName = "Black"; break;
-                        case 1: colorName = "Magenta"; break;
-                        case 2: colorName = "Purple"; break;
-                        case 3: colorName = "Blue"; break;
-                        case 4: colorName = "Azure"; break;
-                        case 5: colorName = "Turquoise"; break;
-                        case 6: colorName = "Green"; break;
-                        case 7: colorName = "Yellow"; break;
-                        case 8: colorName = "Orange"; break;
-                        case 9: colorName = "Red"; break;
-                        case 10: colorName = "White"; break;
-                        case -1: colorName = "Unknown"; break;
-                        default: colorName = "Unknown"; break;
+                        case 0:
+                            colorName = "Black";
+                            break;
+                        case 1:
+                            colorName = "Pink";
+                            break;
+                        case 2:
+                            colorName = "Purple";
+                            break;
+                        case 3:
+                            colorName = "Blue";
+                            break;
+                        case 4:
+                            colorName = "Light Blue";
+                            break;
+                        case 5:
+                            colorName = "Teal";
+                            break;
+                        case 6:
+                            colorName = "Green";
+                            break;
+                        case 7:
+                            colorName = "Yellow";
+                            break;
+                        case 8:
+                            colorName = "Orange";
+                            break;
+                        case 9:
+                            colorName = "Red";
+                            break;
+                        case 10:
+                            colorName = "White";
+                            break;
+                        case -1:
+                            colorName = "Unknown";
+                            break;
+                        default:
+                            colorName = "Unknown";
+                            break;
                     }
-                    
+
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.COLOR_SENSOR,
                         type: DEVICE_TYPES.COLOR_SENSOR, // Keep both for compatibility
@@ -135,10 +149,7 @@ export const BLEProvider = ({ children }) => {
                         rawBlue: msg.values.rawBlue,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Color Sensor on port ${portLetter}`,
-                        msg.values,
-                    );
+                    console.log(`BLEContext: Detected Color Sensor on port ${portLetter}`, msg.values);
                 }
                 // Handle other device types as needed...
             });
@@ -147,16 +158,10 @@ export const BLEProvider = ({ children }) => {
             setPortStates(newPortStates);
         };
 
-        window.addEventListener(
-            "spikeDeviceNotification",
-            handleDeviceNotification,
-        );
+        window.addEventListener("spikeDeviceNotification", handleDeviceNotification);
 
         return () => {
-            window.removeEventListener(
-                "spikeDeviceNotification",
-                handleDeviceNotification,
-            );
+            window.removeEventListener("spikeDeviceNotification", handleDeviceNotification);
         };
     }, []);
 

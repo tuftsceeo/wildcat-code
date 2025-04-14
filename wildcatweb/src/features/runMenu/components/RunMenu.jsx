@@ -41,11 +41,11 @@ const FilledCircleStop = (props) => {
 
 const COLOR_MAPPING = {
     black: "#000000",
-    magenta: "#D432A3",
+    pink: "#D432A3",
     purple: "#8A2BE2",
     blue: "#3C90EE",
     azure: "#93E6FC",
-    turquoise: "#40E0D0",
+    teal: "#40E0D0",
     green: "#4BA551",
     yellow: "#FBE376",
     orange: "#FFA500",

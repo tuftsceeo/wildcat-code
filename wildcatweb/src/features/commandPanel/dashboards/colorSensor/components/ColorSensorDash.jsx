@@ -12,11 +12,11 @@ import styles from "../styles/ColorSensorDash.module.css";
 // Color options with their display names, values, and hex colors
 const COLOR_OPTIONS = [
     { value: "black", label: "Black", hex: "#000000" },
-    { value: "magenta", label: "Magenta", hex: "#D432A3" },
+    { value: "pink", label: "Pink", hex: "#D432A3" },
     { value: "purple", label: "Purple", hex: "#8A2BE2" },
     { value: "blue", label: "Blue", hex: "#3C90EE" },
-    { value: "azure", label: "Azure", hex: "#93E6FC" },
-    { value: "turquoise", label: "Turquoise", hex: "#40E0D0" },
+    { value: "azure", label: "Light Blue", hex: "#93E6FC" },
+    { value: "teal", label: "Teal", hex: "#40E0D0" },
     { value: "green", label: "Green", hex: "#4BA551" },
     { value: "yellow", label: "Yellow", hex: "#FBE376" },
     { value: "orange", label: "Orange", hex: "#FFA500" },
@@ -135,7 +135,7 @@ const ColorSensorControl = ({ port, onUpdate, configuration }) => {
 
             {/* Color palette */}
             <div className={styles.colorPalette}>
-                <div className={styles.paletteLabel}>Select a color to wait for:</div>
+                <div className={styles.paletteLabel}>WAIT FOR COLOR</div>
                 <div className={styles.colorCircles}>
                     {COLOR_OPTIONS.map((option) => (
                         <button

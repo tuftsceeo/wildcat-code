@@ -23,11 +23,12 @@ import {
 // Color mapping for color sensor icons
 const COLOR_MAPPING = {
     black: "#000000",
-    magenta: "#D432A3",
+    pink: "#D432A3",
     purple: "#8A2BE2",
     blue: "#3C90EE",
     azure: "#93E6FC",
-    turquoise: "#40E0D0",
+    lightblue: "#93E6FC",
+    teal: "#40E0D0",
     green: "#4BA551",
     yellow: "#FBE376",
     orange: "#FFA500",
@@ -227,12 +228,21 @@ export function segmentDescriptionText(text, includeBreaks = false) {
         const cleanWord = word.replace(/[.,;:!?]$/, "");
         const lowerWord = cleanWord.toLowerCase();
 
+        // Get the previous word if it exists
+        const prevWord = index > 0 ? words[index - 1].replace(/[.,;:!?]$/, "").toLowerCase() : null;
+
         // Check if we have an icon mapping for this word
         let iconType = null;
         let numberValue = null;
 
-        // Color words
-        if (Object.keys(COLOR_MAPPING).includes(lowerWord)) iconType = lowerWord;
+        // Check for multi-word color concepts first
+        if (prevWord === "light" && lowerWord === "blue") {
+            // Handle "light blue" as a single color concept
+            iconType = "lightblue";
+        } else if (Object.keys(COLOR_MAPPING).includes(lowerWord)) {
+            // Single word color
+            iconType = lowerWord;
+        }
         // Direction words
         else if (lowerWord === "clockwise" || lowerWord === "clockwise" || lowerWord === "horario") iconType = "clockwise";
         else if (lowerWord === "countercw" || lowerWord === "counterclockwise" || lowerWord === "antihorario") iconType = "countercw";

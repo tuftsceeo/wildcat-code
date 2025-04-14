@@ -17,11 +17,11 @@ const COLOR_MAP = {
     yellow: "#FBE376",
     white: "#FFFFFF",
     black: "#000000",
-    magenta: "#D432A3",
+    pink: "#D432A3",
     orange: "#FFA500",
     azure: "#93E6FC",
     purple: "#8A2BE2",
-    turquoise: "#40E0D0",
+    teal: "#40E0D0",
     unknown: "#FFFFFF",
 };
 

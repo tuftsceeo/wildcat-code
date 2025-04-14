@@ -194,9 +194,10 @@
 }
 
 .paletteLabel {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-lg);
     color: var(--panel-text);
-    margin-bottom: var(--spacing-2);
+    text-align: center;
+    margin-top: var(--spacing-2);
     opacity: 0.8;
 }
 

@@ -55,9 +55,10 @@
         "yellow": "yellow",
         "white": "white",
         "black": "black",
-        "magenta": "magenta",
+        "pink": "pink",
         "orange": "orange",
-        "azure": "azure"
+        "lightblue": "light blue",
+        "azure": "light blue"
     },
 
     "complexity": {
