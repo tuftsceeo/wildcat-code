@@ -9,7 +9,7 @@ import React, { useState, useEffect, useCallback, memo } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
 import styles from "../styles/MotorDash.module.css";
 import { validateSpeed, sliderPositionToSpeed, speedToSliderPosition } from "../utils/motorSpeedUtils";
-import { BluetoothSearching, RefreshCwOff, Rabbit, Turtle, CircleStop, Snail } from "lucide-react";
+import { BluetoothSearching, RefreshCwOff, Rabbit, Turtle, CircleStop, Snail, Cable } from "lucide-react";
 import DashMotorAnimation from "./DashMotorAnimation";
 
 const FilledCircleStop = (props) => {
@@ -366,7 +366,7 @@ export const MotorDash = ({ onUpdate, configuration, slotData, currSlotNumber, i
                 </div>
             ) : Object.keys(activeMotors).length === 0 && disconnectedPorts.length === 0 ? (
                 <div className={styles.noMotors}>
-                    <RefreshCwOff size={24} />
+                    <Cable />
                     <span>Connect motor</span>
                 </div>
             ) : (

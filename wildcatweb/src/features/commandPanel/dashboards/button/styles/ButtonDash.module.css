@@ -352,11 +352,7 @@
     position: absolute;
     width: 80px;
     height: 40px;
-    background: linear-gradient(
-        to bottom,
-        var(--color-gray-faint) 33%,
-        var(--color-gray-bold) 33%
-    );
+    background: linear-gradient(to bottom, var(--color-gray-faint) 33%, var(--color-gray-bold) 33%);
     border: 2px solid var(--color-gray-extreme);
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     border-top: none;
@@ -369,11 +365,7 @@
     position: absolute;
     width: 40px;
     height: 20px;
-    background: linear-gradient(
-        to bottom,
-        var(--color-gray-faint) 33%,
-        var(--color-gray-bold) 33%
-    );
+    background: linear-gradient(to bottom, var(--color-gray-faint) 33%, var(--color-gray-bold) 33%);
     border: 2px solid var(--color-gray-extreme);
     border-radius: 0 0 var(--radius-sm) var(--radius-sm);
     border-top: none;
@@ -533,6 +525,8 @@
 .noConnection svg,
 .noButtons svg {
     animation: pulse 2s infinite;
+    width: calc(var(--font-size-sm) * 1.5);
+    height: calc(var(--font-size-sm) * 1.5);
 }
 
 @keyframes pulse {

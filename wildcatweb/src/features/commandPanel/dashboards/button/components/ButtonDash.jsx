@@ -7,12 +7,7 @@
 
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
-import {
-    Disc,
-    RefreshCwOff,
-    BluetoothSearching,
-    BluetoothConnected,
-} from "lucide-react";
+import { Disc, Cable, BluetoothSearching, BluetoothConnected } from "lucide-react";
 import styles from "../styles/ButtonDash.module.css";
 
 /**
@@ -32,21 +27,9 @@ import styles from "../styles/ButtonDash.module.css";
  * @returns {JSX.Element} Single button dashboard
  */
 const SingleButtonDash = memo(
-    ({
-        port,
-        onUpdate,
-        configuration,
-        isDisconnected,
-        onDismiss,
-        showLabels = true,
-        isMissionMode = false,
-        dispatchTaskEvent = null,
-        currSlotNumber,
-    }) => {
+    ({ port, onUpdate, configuration, isDisconnected, onDismiss, showLabels = true, isMissionMode = false, dispatchTaskEvent = null, currSlotNumber }) => {
         // Initialize state from props or defaults
-        const [waitCondition, setWaitCondition] = useState(
-            configuration?.waitCondition || "pressed",
-        );
+        const [waitCondition, setWaitCondition] = useState(configuration?.waitCondition || "pressed");
 
         // Get BLE context to access live button state
         const { portStates, DEVICE_TYPES } = useBLE();
@@ -56,20 +39,12 @@ const SingleButtonDash = memo(
 
         // Only update when configuration changes externally
         useEffect(() => {
-            if (
-                configuration?.waitCondition !== undefined &&
-                configuration.waitCondition !== waitCondition
-            ) {
+            if (configuration?.waitCondition !== undefined && configuration.waitCondition !== waitCondition) {
                 setWaitCondition(configuration.waitCondition);
             }
 
             // Send initial configuration if needed
-            if (
-                !initialUpdateSent.current &&
-                onUpdate &&
-                port &&
-                !configuration?.waitCondition
-            ) {
+            if (!initialUpdateSent.current && onUpdate && port && !configuration?.waitCondition) {
                 const initialConfig = { port, waitCondition };
                 onUpdate(initialConfig);
                 initialUpdateSent.current = true;
@@ -81,8 +56,7 @@ const SingleButtonDash = memo(
          * Now calls onUpdate directly to avoid effect-based update loops
          */
         const handleWaitConditionChange = () => {
-            const newWaitCondition =
-                waitCondition === "pressed" ? "released" : "pressed";
+            const newWaitCondition = waitCondition === "pressed" ? "released" : "pressed";
             setWaitCondition(newWaitCondition);
 
             if (onUpdate && port) {
@@ -104,12 +78,7 @@ const SingleButtonDash = memo(
 
         // Get current sensor state if connected
         const getSensorState = () => {
-            if (
-                isDisconnected ||
-                !portStates ||
-                !portStates[port] ||
-                portStates[port].deviceType !== DEVICE_TYPES.FORCE_SENSOR
-            ) {
+            if (isDisconnected || !portStates || !portStates[port] || portStates[port].deviceType !== DEVICE_TYPES.FORCE_SENSOR) {
                 return null;
             }
 
@@ -122,9 +91,7 @@ const SingleButtonDash = memo(
 
         return (
             <div
-                className={`${styles.singleButtonDash} ${
-                    isDisconnected ? styles.disconnected : ""
-                }`}
+                className={`${styles.singleButtonDash} ${isDisconnected ? styles.disconnected : ""}`}
                 data-port={port}
             >
                 {/* Button header */}
@@ -132,9 +99,7 @@ const SingleButtonDash = memo(
                     <span className={styles.portLabel}>BUTTON {port}</span>
                     {isDisconnected && (
                         <>
-                            <span className={styles.disconnectedLabel}>
-                                Disconnected
-                            </span>
+                            <span className={styles.disconnectedLabel}>Disconnected</span>
                             <button
                                 className={styles.dismissButton}
                                 onClick={() => onDismiss?.(port)}
@@ -150,27 +115,17 @@ const SingleButtonDash = memo(
                 <div className={styles.sliderControl}>
                     {/* Command section - shows programmed condition */}
 
-                    <div
-                        className={`${styles.sliderWithLabels} ${
-                            waitCondition === "pressed" ? styles.active : ""
-                        }`}
-                    >
-                        {showLabels && (
-                            <div className={styles.releasedLabel}>RELEASED</div>
-                        )}
+                    <div className={`${styles.sliderWithLabels} ${waitCondition === "pressed" ? styles.active : ""}`}>
+                        {showLabels && <div className={styles.releasedLabel}>RELEASED</div>}
 
                         <div
-                            className={`${styles.sliderTrack} ${
-                                waitCondition === "pressed" ? styles.active : ""
-                            }`}
+                            className={`${styles.sliderTrack} ${waitCondition === "pressed" ? styles.active : ""}`}
                             onClick={handleWaitConditionChange}
                         >
                             <div className={styles.sliderThumb}></div>
                         </div>
 
-                        {showLabels && (
-                            <div className={styles.pressedLabel}>PRESSED</div>
-                        )}
+                        {showLabels && <div className={styles.pressedLabel}>PRESSED</div>}
                     </div>
                 </div>
                 {/* Large button visualization for the command (as coded) */}
@@ -178,28 +133,12 @@ const SingleButtonDash = memo(
                     <div className={styles.buttonVisualContainer}>
                         <div className={styles.sensorContainer}>
                             <div className={styles.sensorBody}></div>
-                            <div
-                                className={`${styles.sensorButton} ${
-                                    waitCondition === "pressed"
-                                        ? styles.pressed
-                                        : ""
-                                }`}
-                            ></div>
+                            <div className={`${styles.sensorButton} ${waitCondition === "pressed" ? styles.pressed : ""}`}></div>
                             <div className={styles.sensorMask}></div>
-                            <div
-                                className={`${styles.arrowIndicator} ${
-                                    waitCondition === "pressed"
-                                        ? styles.arrowDown
-                                        : styles.arrowUp
-                                }`}
-                            ></div>
+                            <div className={`${styles.arrowIndicator} ${waitCondition === "pressed" ? styles.arrowDown : styles.arrowUp}`}></div>
                         </div>
 
-                        <div className={styles.buttonStatus}>
-                            {waitCondition === "pressed"
-                                ? "PRESSED"
-                                : "RELEASED"}
-                        </div>
+                        <div className={styles.buttonStatus}>{waitCondition === "pressed" ? "PRESSED" : "RELEASED"}</div>
                     </div>
 
                     {/* Live state section - shows current sensor state */}
@@ -212,19 +151,9 @@ const SingleButtonDash = memo(
                         <div className={styles.liveVisualContainer}>
                             <div className={styles.liveSensorContainer}>
                                 <div className={styles.sensorBodySmall}></div>
-                                <div
-                                    className={`${styles.sensorButtonSmall} ${
-                                        isCurrentlyPressed ? styles.pressed : ""
-                                    }`}
-                                ></div>
+                                <div className={`${styles.sensorButtonSmall} ${isCurrentlyPressed ? styles.pressed : ""}`}></div>
                                 <div className={styles.sensorMaskSmall}></div>
-                                <div
-                                    className={`${styles.arrowIndicatorSmall} ${
-                                        isCurrentlyPressed
-                                            ? styles.arrowDownSmall
-                                            : styles.arrowUpSmall
-                                    }`}
-                                ></div>
+                                <div className={`${styles.arrowIndicatorSmall} ${isCurrentlyPressed ? styles.arrowDownSmall : styles.arrowUpSmall}`}></div>
                             </div>
                         </div>
                     </div>
@@ -247,14 +176,7 @@ const SingleButtonDash = memo(
  * @param {Function} props.dispatchTaskEvent - Function to dispatch task events
  * @returns {JSX.Element} Button dashboard component
  */
-export const ButtonDash = ({
-    onUpdate,
-    configuration,
-    slotData,
-    currSlotNumber,
-    isMissionMode = false,
-    dispatchTaskEvent = null,
-}) => {
+export const ButtonDash = ({ onUpdate, configuration, slotData, currSlotNumber, isMissionMode = false, dispatchTaskEvent = null }) => {
     const { portStates, isConnected, DEVICE_TYPES } = useBLE();
     const [dismissedPorts, setDismissedPorts] = useState(new Set());
 
@@ -262,32 +184,22 @@ export const ButtonDash = ({
     const configuredPorts = React.useMemo(() => {
         const configuredSet = new Set();
         if (slotData) {
-            console.log(
-                `ButtonDash: Calculating configuredPorts for slot ${currSlotNumber}`,
-                {
-                    currentSlot: currSlotNumber,
-                },
-            );
+            console.log(`ButtonDash: Calculating configuredPorts for slot ${currSlotNumber}`, {
+                currentSlot: currSlotNumber,
+            });
 
             Object.values(slotData).forEach((slot, index) => {
                 if (slot?.type === "input" && slot?.subtype === "button") {
-                    console.log(
-                        `ButtonDash: Checking slot ${index} for button configs`,
-                    );
+                    console.log(`ButtonDash: Checking slot ${index} for button configs`);
                     const config = slot.configuration;
                     if (config?.port) {
                         configuredSet.add(config.port);
-                        console.log(
-                            `ButtonDash: Added port ${config.port} from slot ${index}`,
-                        );
+                        console.log(`ButtonDash: Added port ${config.port} from slot ${index}`);
                     }
                 }
             });
         }
-        console.log(
-            `ButtonDash: Calculated configuredPorts:`,
-            Array.from(configuredSet),
-        );
+        console.log(`ButtonDash: Calculated configuredPorts:`, Array.from(configuredSet));
         return configuredSet;
     }, [slotData, currSlotNumber]);
 
@@ -323,9 +235,7 @@ export const ButtonDash = ({
                 if (dismissedPorts.has(port)) {
                     newDismissedPorts.delete(port);
                     dismissedPortsChanged = true;
-                    console.log(
-                        `ButtonDash: Port ${port} reconnected, removing from dismissed list`,
-                    );
+                    console.log(`ButtonDash: Port ${port} reconnected, removing from dismissed list`);
                 }
             }
         });
@@ -339,9 +249,7 @@ export const ButtonDash = ({
         }
 
         // Find configured but disconnected buttons
-        const disconnected = Array.from(configuredPorts).filter(
-            (port) => !active[port] && !newDismissedPorts.has(port),
-        );
+        const disconnected = Array.from(configuredPorts).filter((port) => !active[port] && !newDismissedPorts.has(port));
 
         console.log("ButtonDash: Active and disconnected buttons calculated", {
             activeButtons: Object.keys(active),
@@ -357,20 +265,14 @@ export const ButtonDash = ({
         (port, config) => {
             if (!onUpdate) return;
 
-            console.log(
-                `ButtonDash: handleButtonUpdate called for port ${port}`,
-                {
-                    hasConfig: !!config,
-                    configDetails: config ? JSON.stringify(config) : "null",
-                    currentConfig: JSON.stringify(configuration),
-                },
-            );
+            console.log(`ButtonDash: handleButtonUpdate called for port ${port}`, {
+                hasConfig: !!config,
+                configDetails: config ? JSON.stringify(config) : "null",
+                currentConfig: JSON.stringify(configuration),
+            });
 
             if (config) {
-                console.log(
-                    "ButtonDash: Calling onUpdate with config:",
-                    JSON.stringify(config),
-                );
+                console.log("ButtonDash: Calling onUpdate with config:", JSON.stringify(config));
                 onUpdate(config);
 
                 // Dispatch button configured event for mission tracking
@@ -384,19 +286,11 @@ export const ButtonDash = ({
                     });
                 }
             } else {
-                console.log(
-                    "ButtonDash: Calling onUpdate with null (no config)",
-                );
+                console.log("ButtonDash: Calling onUpdate with null (no config)");
                 onUpdate(null);
             }
         },
-        [
-            onUpdate,
-            configuration,
-            isMissionMode,
-            dispatchTaskEvent,
-            currSlotNumber,
-        ],
+        [onUpdate, configuration, isMissionMode, dispatchTaskEvent, currSlotNumber],
     );
 
     // Handle dismissing a disconnected button
@@ -410,10 +304,7 @@ export const ButtonDash = ({
             // Add to dismissed ports set
             setDismissedPorts((prev) => {
                 const newSet = new Set([...prev, port]);
-                console.log(
-                    "ButtonDash: Updated dismissedPorts",
-                    Array.from(newSet),
-                );
+                console.log("ButtonDash: Updated dismissedPorts", Array.from(newSet));
                 return newSet;
             });
 
@@ -445,10 +336,9 @@ export const ButtonDash = ({
                     <BluetoothSearching size={24} />
                     <span>Connect robot</span>
                 </div>
-            ) : Object.keys(activeButtons).length === 0 &&
-              disconnectedButtons.length === 0 ? (
+            ) : Object.keys(activeButtons).length === 0 && disconnectedButtons.length === 0 ? (
                 <div className={styles.noButtons}>
-                    <RefreshCwOff size={24} />
+                    <Cable />
                     <span>Connect button</span>
                 </div>
             ) : (
@@ -458,14 +348,8 @@ export const ButtonDash = ({
                         <SingleButtonDash
                             key={port}
                             port={port}
-                            onUpdate={(config) =>
-                                handleButtonUpdate(port, config)
-                            }
-                            configuration={
-                                configuration?.port === port
-                                    ? configuration
-                                    : null
-                            }
+                            onUpdate={(config) => handleButtonUpdate(port, config)}
+                            configuration={configuration?.port === port ? configuration : null}
                             isDisconnected={false}
                             isMissionMode={isMissionMode}
                             dispatchTaskEvent={dispatchTaskEvent}
@@ -478,14 +362,8 @@ export const ButtonDash = ({
                         <SingleButtonDash
                             key={`disconnected-${port}`}
                             port={port}
-                            onUpdate={(config) =>
-                                handleButtonUpdate(port, config)
-                            }
-                            configuration={
-                                configuration?.port === port
-                                    ? configuration
-                                    : null
-                            }
+                            onUpdate={(config) => handleButtonUpdate(port, config)}
+                            configuration={configuration?.port === port ? configuration : null}
                             isDisconnected={true}
                             onDismiss={handleDismiss}
                             isMissionMode={isMissionMode}

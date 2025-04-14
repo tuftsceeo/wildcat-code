@@ -6,19 +6,7 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import {
-    X,
-    Type,
-    Palette,
-    Volume2,
-    Layers,
-    Globe,
-    Accessibility,
-    UserRound,
-    MessageCircleMore,
-    Users,
-    ChevronDown,
-} from "lucide-react";
+import { X, Type, Palette, Volume2, Layers, Globe, Accessibility, UserRound, SlidersHorizontal, MessageCircleMore, Users, ChevronDown } from "lucide-react";
 import Portal from "../../../common/components/Portal";
 import { useCustomization } from "../../../context/CustomizationContext";
 import ThemeSettings from "./ThemeSettings";
@@ -84,16 +72,15 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
 
         const contentElement = contentRef.current?.querySelector(`.${styles.settingsContent}`);
         if (contentElement) {
-            contentElement.addEventListener('scroll', handleScroll);
+            contentElement.addEventListener("scroll", handleScroll);
             // Check initial position
             handleScroll();
-            return () => contentElement.removeEventListener('scroll', handleScroll);
+            return () => contentElement.removeEventListener("scroll", handleScroll);
         }
     }, []);
 
     // Define all settings tabs with their properties
     const tabs = [
-
         {
             id: "themes",
             icon: <Palette size={32} />,
@@ -110,7 +97,7 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
             available: true,
             priority: "high",
         },
-     
+
         {
             id: "voice",
             icon: <MessageCircleMore size={32} />,
@@ -137,8 +124,8 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
         },
         {
             id: "accessibility",
-            icon: <Accessibility size={32} />,
-            name: "Accessibility",
+            icon: <SlidersHorizontal size={32} />,
+            name: "More",
             color: "#ff8800",
             available: true,
             priority: "high",
@@ -243,15 +230,16 @@ const CustomizationPage = ({ close, slotData = [], updateMissionSteps }) => {
                     />
 
                     {/* Content area for the active tab */}
-                    <div 
+                    <div
                         ref={contentRef}
-                        className={`${styles.settingsContentWrapper} ${isScrollable ? styles.scrollable : ''} ${isAtBottom ? styles.atBottom : ''}`}
+                        className={`${styles.settingsContentWrapper} ${isScrollable ? styles.scrollable : ""} ${isAtBottom ? styles.atBottom : ""}`}
                     >
-                        <div className={styles.settingsContent}>
-                            {renderTabContent()}
-                        </div>
+                        <div className={styles.settingsContent}>{renderTabContent()}</div>
                         <div className={styles.gradientOverlay}>
-                            <ChevronDown size={24} color="var(--panel-text)" />
+                            <ChevronDown
+                                size={24}
+                                color="var(--panel-text)"
+                            />
                         </div>
                     </div>
                 </div>

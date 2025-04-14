@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useBLE } from "../../../../bluetooth/context/BLEContext";
-import { XCircle } from "lucide-react";
+import { XCircle, Cable } from "lucide-react";
 import styles from "../styles/ColorSensorDash.module.css";
 
 // Color options with their display names, values, and hex colors
@@ -227,7 +227,12 @@ export const ColorSensorDash = ({ onUpdate, configuration, slotData, currSlotNum
                 ))}
             </div>
 
-            {availablePorts.length === 0 && <div className={styles.noSensors}>No color sensors detected. Please connect a color sensor and try again.</div>}
+            {availablePorts.length === 0 && (
+                <div className={styles.noSensors}>
+                    <Cable />
+                    <span>Connect Color Sensor</span>
+                </div>
+            )}
         </div>
     );
 };

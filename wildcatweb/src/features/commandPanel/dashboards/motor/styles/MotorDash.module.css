@@ -247,6 +247,8 @@
 .noConnection svg,
 .noMotors svg {
     animation: pulse 2s infinite;
+    width: calc(var(--font-size-sm) * 1.5);
+    height: calc(var(--font-size-sm) * 1.5);
 }
 
 @keyframes pulse {
