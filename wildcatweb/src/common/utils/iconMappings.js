@@ -12,7 +12,8 @@ import {
     Turtle, // For medium speed
     Snail, // For slow speed
     CircleStop, // For stop
-    MousePointerClick, // For pressed
+    ArchiveRestore, // For pressed
+    ArchiveX, // For released
     Ban, // For released
     Timer, // For wait/timer operations
     Clock, // For seconds
@@ -153,9 +154,19 @@ export function getIconForConcept(concept, props = {}) {
 
         // Button state icons
         case "pressed":
-            return <MousePointerClick {...props} />;
+            return (
+                <ArchiveRestore
+                    style={{ transform: "scaleY(-1)" }}
+                    {...props}
+                />
+            );
         case "released":
-            return <Ban {...props} />;
+            return (
+                <ArchiveX
+                    style={{ transform: "scaleY(-1)" }}
+                    {...props}
+                />
+            );
 
         // Timer icons
         case "wait":
@@ -167,7 +178,7 @@ export function getIconForConcept(concept, props = {}) {
         case "seleccionar":
             return <MousePointer {...props} />;
 
-        // Choice icons
+        /*         // Choice icons
         case "or":
         case "o": // Spanish "or"
             return (
@@ -181,7 +192,7 @@ export function getIconForConcept(concept, props = {}) {
                 >
                     ?
                 </span>
-            );
+            ); */
 
         // Port icons - just return the port letter
         default:

@@ -11,11 +11,7 @@ import { useCustomization } from "../../../../context/CustomizationContext";
 import { generateDescription } from "../../../../code-generation/InstructionDescriptionGenerator";
 import { COMPLEXITY_LEVELS, getTranslatedText } from "../../../../translations/loader";
 import { speakWithRobotVoice } from "../../../../common/utils/speechUtils";
-import {
-    getIconForConcept,
-    segmentDescriptionText,
-    addTTSPauses,
-} from "../../../../common/utils/iconMappings";
+import { getIconForConcept, segmentDescriptionText, addTTSPauses } from "../../../../common/utils/iconMappings";
 import styles from "../styles/InstructionDescriptionPanel.module.css";
 
 /**
@@ -30,23 +26,15 @@ import styles from "../styles/InstructionDescriptionPanel.module.css";
  * @param {number} props.slotNumber - Current slot number (for sequencing words)
  * @returns {JSX.Element} Instruction description panel
  */
-const InstructionDescriptionPanel = ({
-    instruction,
-    showAudio = true,
-    onPlayAudio,
-    slotNumber = 0,
-}) => {
+const InstructionDescriptionPanel = ({ instruction, showAudio = true, onPlayAudio, slotNumber = 0 }) => {
     // Get settings from context
     const { language, readingLevel, voice, volume } = useCustomization();
 
     // Get complexity level configuration
-    const complexity =
-        COMPLEXITY_LEVELS[readingLevel] || COMPLEXITY_LEVELS.intermediate;
+    const complexity = COMPLEXITY_LEVELS[readingLevel] || COMPLEXITY_LEVELS.intermediate;
 
     // Check if this is a stop instruction
-    const isStopInstruction =
-        instruction?.isStopInstruction === true ||
-        (instruction?.type === "special" && instruction?.subtype === "stop");
+    const isStopInstruction = instruction?.isStopInstruction === true || (instruction?.type === "special" && instruction?.subtype === "stop");
 
     // Generate description text using translations for special cases
     const descriptionText = isStopInstruction
@@ -59,10 +47,7 @@ const InstructionDescriptionPanel = ({
     const isMultiInstruction = descriptionText.split(". ").length > 1;
 
     // Segment the text for icon display - include breaks for icon-only mode
-    const segments = segmentDescriptionText(
-        descriptionText,
-        isMultiInstruction && readingLevel === "icon_only",
-    );
+    const segments = segmentDescriptionText(descriptionText, isMultiInstruction && readingLevel === "icon_only");
 
     /**
      * Handle play button click to read text aloud
@@ -75,9 +60,7 @@ const InstructionDescriptionPanel = ({
             // Use our speech utility with the selected voice settings
             const languageCode = language === "es" ? "es-ES" : "en-US";
             // Add pauses between instructions for multi-instruction descriptions
-            const textWithPauses = isMultiInstruction
-                ? addTTSPauses(descriptionText)
-                : descriptionText;
+            const textWithPauses = isMultiInstruction ? addTTSPauses(descriptionText) : descriptionText;
 
             speakWithRobotVoice(textWithPauses, voice, volume, languageCode);
         }
@@ -108,20 +91,14 @@ const InstructionDescriptionPanel = ({
      */
     const renderIconOnly = () => {
         // Filter to just segments that have icons or are separators
-        const iconSegments = segments.filter(
-            (segment) => segment.iconType || segment.isSeparator,
-        );
+        const iconSegments = segments.filter((segment) => segment.iconType || segment.isSeparator);
 
         return (
             <div className={styles.iconContainer}>
                 {iconSegments.map((segment, index) => (
                     <div
                         key={index}
-                        className={
-                            segment.isSeparator
-                                ? styles.separatorWrapper
-                                : styles.iconWrapper
-                        }
+                        className={segment.isSeparator ? styles.separatorWrapper : styles.iconWrapper}
                     >
                         {segment.iconType === "number"
                             ? // Render numbers directly for wait times
@@ -133,9 +110,7 @@ const InstructionDescriptionPanel = ({
                             : // Render regular icons or separators
                               getIconForConcept(segment.iconType, {
                                   size: segment.isSeparator ? 36 : 36,
-                                  className: segment.isSeparator
-                                      ? styles.separatorIcon
-                                      : styles.iconOnlyIcon,
+                                  className: segment.isSeparator ? styles.separatorIcon : styles.iconOnlyIcon,
                               })}
                     </div>
                 ))}
@@ -157,43 +132,19 @@ const InstructionDescriptionPanel = ({
                                 key={index}
                                 className={styles.textIconPair}
                             >
-                                {/* Text part */}
-                                <div className={styles.pairText}>
-                                    {segment.text}
-                                </div>
+                                {/* Text and icon in a single line */}
+                                <div className={styles.inlineTextIcon}>
+                                    <span className={styles.pairText}>{segment.text}</span>
 
-                                {/* Icon part - only show for specific words, not port letters */}
-                                <div className={styles.pairIcon}>
-                                    {segment.iconType &&
-                                    !/^[A-F]$/.test(segment.iconType) ? (
-                                        segment.iconType === "number" ? (
-                                            // Use numberValue for number type
-                                            getIconForConcept(
-                                                segment.iconType,
-                                                {
-                                                    size: 28,
-                                                    className:
-                                                        styles.conceptIcon,
-                                                    numberValue:
-                                                        segment.numberValue,
-                                                },
-                                            )
-                                        ) : (
-                                            // Regular icon
-                                            getIconForConcept(
-                                                segment.iconType,
-                                                {
-                                                    size: 28,
-                                                    className:
-                                                        styles.conceptIcon,
-                                                },
-                                            )
-                                        )
-                                    ) : (
-                                        <div
-                                            className={styles.iconPlaceholder}
-                                        ></div>
-                                    )}
+                                    {/* Icon part - only show for specific words, not port letters */}
+                                    {segment.iconType && !/^[A-F]$/.test(segment.iconType) ? (
+                                        <span className={styles.pairIcon}>
+                                            {getIconForConcept(segment.iconType, {
+                                                size: 28,
+                                                className: styles.conceptIcon,
+                                            })}
+                                        </span>
+                                    ) : null}
                                 </div>
                             </div>
                         ),
@@ -208,9 +159,7 @@ const InstructionDescriptionPanel = ({
     const renderContent = () => {
         // For text-only reading levels
         if (readingLevel === "text_only" || readingLevel === "advanced") {
-            return (
-                <div className={styles.descriptionText}>{descriptionText}</div>
-            );
+            return <div className={styles.descriptionText}>{descriptionText}</div>;
         }
 
         // For icon-only reading level
@@ -223,23 +172,14 @@ const InstructionDescriptionPanel = ({
     };
 
     // Calculate panel height class based on reading level
-    const panelHeightClass =
-        readingLevel === "icon_only" ||
-        readingLevel === "beginner" ||
-        readingLevel === "intermediate"
-            ? styles.panelWithIcons
-            : "";
+    const panelHeightClass = readingLevel === "icon_only" || readingLevel === "beginner" || readingLevel === "intermediate" ? styles.panelWithIcons : "";
 
     return (
         <div
             className={`${styles.panel} ${panelHeightClass}`}
             data-reading-level={readingLevel}
         >
-            <div
-                className={`${styles.contentWrapper} ${getReadingLevelClass()}`}
-            >
-                {renderContent()}
-            </div>
+            <div className={`${styles.contentWrapper} ${getReadingLevelClass()}`}>{renderContent()}</div>
 
             {showAudio && (
                 <button
