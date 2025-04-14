@@ -161,8 +161,51 @@ const generatePythonCode = (slots, portStates = {}) => {
         } else if (slot.type === "input" && slot.subtype === "color") {
             const config = slot.configuration || {};
             const portLetter = config.port || "A";
-            const color = config.color || "red";
+            let color = config.color || "red";
 
+            // Map the color names to the correct LEGO SPIKE Prime color constants
+            switch (color) {
+                case "pink":
+                    color = "MAGENTA";
+                    break;
+                case "orange":
+                    color = "ORANGE";
+                    break;
+                case "yellow":
+                    color = "YELLOW";
+                    break;
+                case "green":
+                    color = "GREEN";
+                    break;
+                case "blue":
+                    color = "BLUE";
+                    break;
+                case "black":
+                    color = "BLACK";
+                    break;
+                case "white":
+                    color = "WHITE";
+                    break;
+                case "purple":
+                    color = "PURPLE";
+                    break;
+                case "red":
+                    color = "RED";
+                    break;
+                case "azure":
+                    color = "AZURE";
+                    break;
+                case "turquoise":
+                    color = "TURQUOISE";
+                    break;
+                case "gray":
+                    color = "UNKNOWN";
+                    break;
+                default:
+                    // If the color doesn't match any known value, default to RED
+                    color = "RED";
+                    break;
+            }
             console.log(`generatePythonCode: Color Sensor port: ${portLetter}, color: ${color}`);
 
             // Check if color sensor is connected - Using device type check
@@ -327,8 +370,48 @@ const generateSlotCode = (slot, portStates = {}) => {
     } else if (slot.type === "input" && slot.subtype === "color") {
         const config = slot.configuration || {};
         const portLetter = config.port || "A";
-        const color = config.color || "red";
+        let color = config.color || "red";
 
+        // Map the color names to the correct LEGO SPIKE Prime color constants
+        switch (color) {
+            case "pink":
+                color = "MAGENTA";
+                break;
+            case "orange":
+                color = "ORANGE";
+                break;
+            case "yellow":
+                color = "YELLOW";
+                break;
+            case "green":
+                color = "GREEN";
+                break;
+            case "blue":
+                color = "BLUE";
+                break;
+            case "black":
+                color = "BLACK";
+                break;
+            case "white":
+                color = "WHITE";
+                break;
+            case "purple":
+                color = "PURPLE";
+                break;
+            case "red":
+                color = "RED";
+                break;
+            case "azure":
+                color = "AZURE";
+                break;
+            case "teal":
+                color = "TURQUOISE";
+                break;
+            default:
+                // If the color doesn't match any known value, default to UNKNOWN
+                color = "UNKNOWN";
+                break;
+        }
         console.log(`generatePythonCode: Color Sensor port: ${portLetter}, color: ${color}`);
 
         // Check if color sensor is connected - Using device type check
