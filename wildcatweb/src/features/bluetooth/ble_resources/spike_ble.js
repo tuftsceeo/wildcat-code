@@ -124,7 +124,7 @@ class SpikeBLE {
         }
 
         // Dispatch disconnection event
-        window.dispatchEvent(new CustomEvent('spikeDisconnected'));
+        window.dispatchEvent(new CustomEvent("spikeDisconnected"));
     };
 
     // Method to clean up stale pending responses
@@ -271,7 +271,7 @@ class SpikeBLE {
     onReceive = (event) => {
         try {
             let dataArray = Buffer.from(event.target.value.buffer);
-            
+
             // Check if the message ends with the delimiter (0x02)
             if (dataArray[dataArray.length - 1] !== 0x02) {
                 console.error("Received incomplete message:", dataArray);
@@ -280,7 +280,14 @@ class SpikeBLE {
 
             // Decode message using COBS
             const data = cobsUnpack(dataArray);
-            
+            // console.log("After COBS unpacking, data length:", data.length);
+            // console.log(
+            //     "Unpacked data first 20 bytes:",
+            //     Array.from(data.slice(0, Math.min(20, data.length)))
+            //         .map((b) => b.toString(16).padStart(2, "0"))
+            //         .join(" "),
+            // );
+
             // Deserialize the received data
             const message = messages.deserialize(data);
 
@@ -295,29 +302,39 @@ class SpikeBLE {
             // eslint-disable-next-line default-case
             switch (message.id) {
                 case messages.DeviceNotification.ID:
-                    window.dispatchEvent(new CustomEvent('spikeDeviceNotification', { 
-                        detail: message 
-                    }));
+                    window.dispatchEvent(
+                        new CustomEvent("spikeDeviceNotification", {
+                            detail: message,
+                        }),
+                    );
                     break;
                 case messages.InfoResponse.ID:
-                    window.dispatchEvent(new CustomEvent('spikeInfoResponse', { 
-                        detail: message 
-                    }));
+                    window.dispatchEvent(
+                        new CustomEvent("spikeInfoResponse", {
+                            detail: message,
+                        }),
+                    );
                     break;
                 case messages.ProgramFlowResponse.ID:
-                    window.dispatchEvent(new CustomEvent('spikeProgramFlowResponse', { 
-                        detail: message 
-                    }));
+                    window.dispatchEvent(
+                        new CustomEvent("spikeProgramFlowResponse", {
+                            detail: message,
+                        }),
+                    );
                     break;
                 case messages.ProgramFlowNotification.ID:
-                    window.dispatchEvent(new CustomEvent('spikeProgramFlowNotification', { 
-                        detail: message 
-                    }));
+                    window.dispatchEvent(
+                        new CustomEvent("spikeProgramFlowNotification", {
+                            detail: message,
+                        }),
+                    );
                     break;
                 case messages.ConsoleNotification.ID:
-                    window.dispatchEvent(new CustomEvent('spikeConsoleNotification', { 
-                        detail: message 
-                    }));
+                    window.dispatchEvent(
+                        new CustomEvent("spikeConsoleNotification", {
+                            detail: message,
+                        }),
+                    );
                     break;
                 // Add other message types as needed
             }

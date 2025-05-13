@@ -71,16 +71,23 @@ export const BLEProvider = ({ children }) => {
             message.messages.forEach((msg) => {
                 // Handle different device types
                 if (msg.name === "Motor") {
-                    const portLetter = String.fromCharCode(65 + msg.values.port);
+                    const portLetter = String.fromCharCode(
+                        65 + msg.values.port,
+                    );
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.MOTOR,
                         type: DEVICE_TYPES.MOTOR, // Keep both for compatibility
                         connected: true,
                         ...msg.values,
                     };
-                    console.log(`BLEContext: Detected Motor on port ${portLetter}`, msg.values);
+                    console.log(
+                        `BLEContext: Detected Motor on port ${portLetter}`,
+                        msg.values,
+                    );
                 } else if (msg.name === "Force") {
-                    const portLetter = String.fromCharCode(65 + msg.values.port);
+                    const portLetter = String.fromCharCode(
+                        65 + msg.values.port,
+                    );
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.FORCE_SENSOR,
                         type: DEVICE_TYPES.FORCE_SENSOR, // Keep both for compatibility
@@ -89,9 +96,14 @@ export const BLEProvider = ({ children }) => {
                         measuredValue: msg.values.measuredValue,
                         ...msg.values,
                     };
-                    console.log(`BLEContext: Detected Force Sensor on port ${portLetter}`, msg.values);
+                    console.log(
+                        `BLEContext: Detected Force Sensor on port ${portLetter}`,
+                        msg.values,
+                    );
                 } else if (msg.name === "Color") {
-                    const portLetter = String.fromCharCode(65 + msg.values.port);
+                    const portLetter = String.fromCharCode(
+                        65 + msg.values.port,
+                    );
 
                     // Map color value to a readable name based on LEGO SPIKE Prime color constants
                     let colorName = "Unknown";
@@ -139,17 +151,26 @@ export const BLEProvider = ({ children }) => {
 
                     newPortStates[portLetter] = {
                         deviceType: DEVICE_TYPES.COLOR_SENSOR,
-                        type: DEVICE_TYPES.COLOR_SENSOR, // Keep both for compatibility
+                        type: DEVICE_TYPES.COLOR_SENSOR,
                         connected: true,
                         color: msg.values.color,
                         colorName: colorName,
-                        displayValue: colorName, // Add this for UI display
-                        rawRed: msg.values.rawRed,
-                        rawGreen: msg.values.rawGreen,
-                        rawBlue: msg.values.rawBlue,
+                        displayValue: colorName,
+                        // Scale raw values to 0-1023 range
+                        rawRed: Math.round(msg.values.rawRed / 64),
+                        rawGreen: Math.round(msg.values.rawGreen / 64),
+                        rawBlue: Math.round(msg.values.rawBlue / 64),
+                        // Keep original values for reference
+                        rawRedOriginal: msg.values.rawRed,
+                        rawGreenOriginal: msg.values.rawGreen,
+                        rawBlueOriginal: msg.values.rawBlue,
+                        extraField: msg.values.extraField,
                         ...msg.values,
                     };
-                    console.log(`BLEContext: Detected Color Sensor on port ${portLetter}`, msg.values);
+                    console.log(
+                        `BLEContext: Detected Color Sensor on port ${portLetter}`,
+                        msg.values,
+                    );
                 }
                 // Handle other device types as needed...
             });
@@ -158,10 +179,16 @@ export const BLEProvider = ({ children }) => {
             setPortStates(newPortStates);
         };
 
-        window.addEventListener("spikeDeviceNotification", handleDeviceNotification);
+        window.addEventListener(
+            "spikeDeviceNotification",
+            handleDeviceNotification,
+        );
 
         return () => {
-            window.removeEventListener("spikeDeviceNotification", handleDeviceNotification);
+            window.removeEventListener(
+                "spikeDeviceNotification",
+                handleDeviceNotification,
+            );
         };
     }, []);
 
