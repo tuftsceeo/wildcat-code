@@ -16,29 +16,14 @@ import { getTranslatedText, getUIText } from "../translations/loader";
  * @param {number} slotNumber - Current slot number for sequencing context (0-based)
  * @returns {string} Human-readable description
  */
-export const generateDescription = (
-    instruction,
-    language = "en",
-    complexityLevel = "intermediate",
-    slotNumber = 0,
-) => {
+export const generateDescription = (instruction, language = "en", complexityLevel = "intermediate", slotNumber = 0) => {
     if (!instruction || !instruction.type) {
         return "Empty slot";
     }
 
     // First, check if this is a multi-motor instruction
-    if (
-        instruction.type === "action" &&
-        instruction.subtype === "motor" &&
-        Array.isArray(instruction.configuration) &&
-        instruction.configuration.length > 1
-    ) {
-        return generateMultiMotorDescription(
-            instruction,
-            language,
-            complexityLevel,
-            slotNumber,
-        );
+    if (instruction.type === "action" && instruction.subtype === "motor" && Array.isArray(instruction.configuration) && instruction.configuration.length > 1) {
+        return generateMultiMotorDescription(instruction, language, complexityLevel, slotNumber);
     }
 
     // Normal single instruction description
@@ -47,20 +32,10 @@ export const generateDescription = (
 
         if (Array.isArray(config) && config.length === 1) {
             // Single motor in array
-            return generateSingleDescription(
-                config[0],
-                language,
-                complexityLevel,
-                slotNumber,
-            );
+            return generateSingleDescription(config[0], language, complexityLevel, slotNumber);
         } else if (config.port) {
             // Single motor configuration
-            return generateSingleDescription(
-                config,
-                language,
-                complexityLevel,
-                slotNumber,
-            );
+            return generateSingleDescription(config, language, complexityLevel, slotNumber);
         }
 
         return "Motor action (not set up)";
@@ -71,19 +46,10 @@ export const generateDescription = (
 
         // Modify the template key based on whether it's the first slot
         const templateKey = "wait_action";
-        let translatedText = getTranslatedText(
-            templateKey,
-            language,
-            complexityLevel,
-            { seconds },
-        );
+        let translatedText = getTranslatedText(templateKey, language, complexityLevel, { seconds });
 
         // For text_only and advanced levels, adjust for first slot if needed
-        if (
-            (complexityLevel === "text_only" ||
-                complexityLevel === "advanced") &&
-            slotNumber === 0
-        ) {
+        if ((complexityLevel === "text_only" || complexityLevel === "advanced") && slotNumber === 0) {
             // Replace "Next" with "First" for the first slot
             translatedText = translatedText.replace(/^Next,|^Then,/i, "First,");
         }
@@ -94,25 +60,30 @@ export const generateDescription = (
     if (instruction.type === "input" && instruction.subtype === "button") {
         const config = instruction.configuration || {};
         const portText = getUIText(`button${config.port || "A"}`, language);
-        const condition = getUIText(
-            config.waitCondition || "pressed",
-            language,
-        );
+        const condition = getUIText(config.waitCondition || "pressed", language);
 
         // Get translated text from the appropriate template
-        let translatedText = getTranslatedText(
-            "button_action",
-            language,
-            complexityLevel,
-            { port: portText, condition },
-        );
+        let translatedText = getTranslatedText("button_action", language, complexityLevel, { port: portText, condition });
 
         // For text_only and advanced levels, adjust for first slot if needed
-        if (
-            (complexityLevel === "text_only" ||
-                complexityLevel === "advanced") &&
-            slotNumber === 0
-        ) {
+        if ((complexityLevel === "text_only" || complexityLevel === "advanced") && slotNumber === 0) {
+            // Replace "Next" with "First" for the first slot
+            translatedText = translatedText.replace(/^Next,|^Then,/i, "First,");
+        }
+
+        return translatedText;
+    }
+
+    if (instruction.type === "input" && instruction.subtype === "color") {
+        const config = instruction.configuration || {};
+        const portText = getUIText(`color${config.port || "A"}`, language);
+        const color = config.color || "red";
+
+        // Get translated text from the appropriate template
+        let translatedText = getTranslatedText("color_action", language, complexityLevel, { port: portText, color });
+
+        // For text_only and advanced levels, adjust for first slot if needed
+        if ((complexityLevel === "text_only" || complexityLevel === "advanced") && slotNumber === 0) {
             // Replace "Next" with "First" for the first slot
             translatedText = translatedText.replace(/^Next,|^Then,/i, "First,");
         }
@@ -121,9 +92,7 @@ export const generateDescription = (
     }
 
     // Default for unknown instruction types
-    return `${instruction.type === "action" ? "Action" : "Input"}: ${
-        instruction.subtype || "unknown"
-    }`;
+    return `${instruction.type === "action" ? "Action" : "Input"}: ${instruction.subtype || "unknown"}`;
 };
 
 /**
@@ -135,12 +104,7 @@ export const generateDescription = (
  * @param {number} slotNumber - Current slot number (0-based)
  * @returns {string} Human-readable description
  */
-function generateSingleDescription(
-    config,
-    language,
-    complexityLevel,
-    slotNumber,
-) {
+function generateSingleDescription(config, language, complexityLevel, slotNumber) {
     if (!config || !config.port) return "Motor action (not set up)";
 
     const port = config.port;
@@ -149,19 +113,10 @@ function generateSingleDescription(
 
     if (speed === 0) {
         // Get stop text from the appropriate template
-        let translatedText = getTranslatedText(
-            "motor_stop",
-            language,
-            complexityLevel,
-            { port: portText },
-        );
+        let translatedText = getTranslatedText("motor_stop", language, complexityLevel, { port: portText });
 
         // For text_only and advanced levels, adjust for first slot if needed
-        if (
-            (complexityLevel === "text_only" ||
-                complexityLevel === "advanced") &&
-            slotNumber === 0
-        ) {
+        if ((complexityLevel === "text_only" || complexityLevel === "advanced") && slotNumber === 0) {
             // Replace "Next" with "First" for the first slot
             translatedText = translatedText.replace(/^Next,|^Then,/i, "First,");
         }
@@ -172,22 +127,14 @@ function generateSingleDescription(
     const { level, direction } = getSpeedDescription(speed);
 
     // Get motor action text from the appropriate template
-    let translatedText = getTranslatedText(
-        "motor_action",
-        language,
-        complexityLevel,
-        {
-            port: portText,
-            direction,
-            speed: level,
-        },
-    );
+    let translatedText = getTranslatedText("motor_action", language, complexityLevel, {
+        port: portText,
+        direction,
+        speed: level,
+    });
 
     // For text_only and advanced levels, adjust for first slot if needed
-    if (
-        (complexityLevel === "text_only" || complexityLevel === "advanced") &&
-        slotNumber === 0
-    ) {
+    if ((complexityLevel === "text_only" || complexityLevel === "advanced") && slotNumber === 0) {
         // Replace "Next" with "First" for the first slot
         translatedText = translatedText.replace(/^Next,|^Then,/i, "First,");
     }
@@ -204,16 +151,8 @@ function generateSingleDescription(
  * @param {number} slotNumber - Current slot number (0-based)
  * @returns {string} Combined human-readable description
  */
-function generateMultiMotorDescription(
-    instruction,
-    language,
-    complexityLevel,
-    slotNumber,
-) {
-    if (
-        !Array.isArray(instruction.configuration) ||
-        instruction.configuration.length === 0
-    ) {
+function generateMultiMotorDescription(instruction, language, complexityLevel, slotNumber) {
+    if (!Array.isArray(instruction.configuration) || instruction.configuration.length === 0) {
         return "Motor action (not set up)";
     }
 
@@ -228,48 +167,28 @@ function generateMultiMotorDescription(
 
         if (speed === 0) {
             // Get base stop text without connector words
-            description = getTranslatedText(
-                "motor_stop",
-                language,
-                complexityLevel,
-                { port: portText },
-            );
+            description = getTranslatedText("motor_stop", language, complexityLevel, { port: portText });
         } else {
             // Get base action text without connector words
             const { level, direction } = getSpeedDescription(speed);
-            description = getTranslatedText(
-                "motor_action",
-                language,
-                complexityLevel,
-                {
-                    port: portText,
-                    direction,
-                    speed: level,
-                },
-            );
+            description = getTranslatedText("motor_action", language, complexityLevel, {
+                port: portText,
+                direction,
+                speed: level,
+            });
         }
 
         // Remove leading connectors for all formats
         description = description.replace(/^Next,\s+|^Then,\s+/i, "");
 
         // For first motor in first slot (index 0, slotNumber 0), add "First," prefix
-        if (
-            index === 0 &&
-            slotNumber === 0 &&
-            complexityLevel === "text_only"
-        ) {
+        if (index === 0 && slotNumber === 0 && complexityLevel === "text_only") {
             // Convert first letter to lowercase after adding "First,"
-            description =
-                "First, " +
-                description.charAt(0).toLowerCase() +
-                description.slice(1);
+            description = "First, " + description.charAt(0).toLowerCase() + description.slice(1);
         }
         if (index === 0 && slotNumber > 0 && complexityLevel === "text_only") {
             // Convert first letter to lowercase after adding "First,"
-            description =
-                "Next, " +
-                description.charAt(0).toLowerCase() +
-                description.slice(1);
+            description = "Next, " + description.charAt(0).toLowerCase() + description.slice(1);
         }
 
         return description;
@@ -283,27 +202,19 @@ function generateMultiMotorDescription(
             const firstDesc = descriptions[0];
 
             // Convert first letter of second description to lowercase
-            const secondDesc =
-                descriptions[1].charAt(0).toLowerCase() +
-                descriptions[1].slice(1);
+            const secondDesc = descriptions[1].charAt(0).toLowerCase() + descriptions[1].slice(1);
 
             // Remove period from first description if it exists
-            const cleanFirstDesc = firstDesc.endsWith(".")
-                ? firstDesc.slice(0, -1)
-                : firstDesc;
+            const cleanFirstDesc = firstDesc.endsWith(".") ? firstDesc.slice(0, -1) : firstDesc;
 
             return `${cleanFirstDesc} while ${secondDesc}`;
         } else {
             // For 3+ motors, use commas and "while" for the last one
             // "Motor A spins clockwise, Motor B spins countercw, while Motor C stops."
-            const lastDesc =
-                descriptions[descriptions.length - 1].charAt(0).toLowerCase() +
-                descriptions[descriptions.length - 1].slice(1);
+            const lastDesc = descriptions[descriptions.length - 1].charAt(0).toLowerCase() + descriptions[descriptions.length - 1].slice(1);
 
             // Remove periods from all but the last description
-            const firstDescriptions = descriptions
-                .slice(0, -1)
-                .map((desc) => (desc.endsWith(".") ? desc.slice(0, -1) : desc));
+            const firstDescriptions = descriptions.slice(0, -1).map((desc) => (desc.endsWith(".") ? desc.slice(0, -1) : desc));
 
             return `${firstDescriptions.join(", ")} while ${lastDesc}`;
         }

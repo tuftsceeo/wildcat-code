@@ -100,6 +100,77 @@ export const BLEProvider = ({ children }) => {
                         `BLEContext: Detected Force Sensor on port ${portLetter}`,
                         msg.values,
                     );
+                } else if (msg.name === "Color") {
+                    const portLetter = String.fromCharCode(
+                        65 + msg.values.port,
+                    );
+
+                    // Map color value to a readable name based on LEGO SPIKE Prime color constants
+                    let colorName = "Unknown";
+                    switch (msg.values.color) {
+                        case 0:
+                            colorName = "Black";
+                            break;
+                        case 1:
+                            colorName = "Pink";
+                            break;
+                        case 2:
+                            colorName = "Purple";
+                            break;
+                        case 3:
+                            colorName = "Blue";
+                            break;
+                        case 4:
+                            colorName = "Light Blue";
+                            break;
+                        case 5:
+                            colorName = "Teal";
+                            break;
+                        case 6:
+                            colorName = "Green";
+                            break;
+                        case 7:
+                            colorName = "Yellow";
+                            break;
+                        case 8:
+                            colorName = "Orange";
+                            break;
+                        case 9:
+                            colorName = "Red";
+                            break;
+                        case 10:
+                            colorName = "White";
+                            break;
+                        case -1:
+                            colorName = "Unknown";
+                            break;
+                        default:
+                            colorName = "Unknown";
+                            break;
+                    }
+
+                    newPortStates[portLetter] = {
+                        deviceType: DEVICE_TYPES.COLOR_SENSOR,
+                        type: DEVICE_TYPES.COLOR_SENSOR,
+                        connected: true,
+                        color: msg.values.color,
+                        colorName: colorName,
+                        displayValue: colorName,
+                        // Scale raw values to 0-1023 range
+                        rawRed: Math.round(msg.values.rawRed / 64),
+                        rawGreen: Math.round(msg.values.rawGreen / 64),
+                        rawBlue: Math.round(msg.values.rawBlue / 64),
+                        // Keep original values for reference
+                        rawRedOriginal: msg.values.rawRed,
+                        rawGreenOriginal: msg.values.rawGreen,
+                        rawBlueOriginal: msg.values.rawBlue,
+                        extraField: msg.values.extraField,
+                        ...msg.values,
+                    };
+                    console.log(
+                        `BLEContext: Detected Color Sensor on port ${portLetter}`,
+                        msg.values,
+                    );
                 }
                 // Handle other device types as needed...
             });

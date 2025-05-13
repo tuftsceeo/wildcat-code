@@ -10,13 +10,10 @@ import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
 import { useCustomization } from "../../../context/CustomizationContext";
-import { useMission } from '../../../context/MissionContext.js';
+import { useMission } from "../../../context/MissionContext.js";
 import { Buffer } from "buffer";
 import { ReactComponent as QuestionMarkIcon } from "../../../assets/images/question-mark.svg";
-import {
-    ClearSlotRequest,
-    ClearSlotResponse,
-} from "../../../features/bluetooth/ble_resources/messages";
+import { ClearSlotRequest, ClearSlotResponse } from "../../../features/bluetooth/ble_resources/messages";
 import {
     AlertTriangle,
     AlertCircleStop,
@@ -26,15 +23,35 @@ import {
     Clock9,
     Disc,
     ArchiveRestore,
+    ArchiveX,
     Timer,
     Plus,
     Lock,
     ChevronDown,
+    Droplet,
+    Snail,
+    Turtle,
+    Rabbit,
 } from "lucide-react";
 import DraggableStepButton from "./DraggableStepButton";
 
 const FilledCircleStop = (props) => {
-    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
+    return React.cloneElement(<CircleStop />, { fill: "#EB3327", stroke: "white", ...props });
+};
+
+const COLOR_MAPPING = {
+    black: "#000000",
+    pink: "#D432A3",
+    purple: "#8A2BE2",
+    blue: "#3C90EE",
+    azure: "#93E6FC",
+    teal: "#40E0D0",
+    green: "#4BA551",
+    yellow: "#FBE376",
+    orange: "#FFA500",
+    red: "#EB3327",
+    white: "#FFFFFF",
+    unknown: "#FFFFFF",
 };
 
 /**
@@ -45,23 +62,27 @@ const INSTRUCTION_DISPLAY = {
     action: {
         motor: {
             name: "Speed",
-            icon: <RotateCw size={24} />,
+            icon: <RotateCw className={styles.commandIcon} />,
         },
     },
     input: {
         time: {
             name: "Wait",
-            icon: <Timer size={24} />,
+            icon: <Timer className={styles.commandIcon} />,
         },
         button: {
             name: "Button",
-            icon: <ArchiveRestore size={24} />,
+            icon: <ArchiveRestore className={styles.commandIcon} />,
+        },
+        color: {
+            name: "Color",
+            icon: <Droplet className={styles.commandIcon} />,
         },
     },
     special: {
         stop: {
             name: "Stop",
-            icon: <CircleStop size={24} />,
+            icon: <FilledCircleStop className={styles.commandIcon} />,
         },
     },
 };
@@ -79,35 +100,16 @@ const INSTRUCTION_DISPLAY = {
  * @param {Array} props.slotData - Data for all coding slots
  * @returns {JSX.Element} RunMenu component
  */
-export const RunMenu = ({
-    pyCode,
-    canRun,
-    currSlotNumber,
-    setCurrSlotNumber,
-    missionSteps,
-    slotData,
-}) => {
+export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, missionSteps, slotData }) => {
     console.log("RunMenu: Rendering with missionSteps =", missionSteps);
 
     const { ble, isConnected, portStates } = useBLE();
 
     // Get user preferences from CustomizationContext
-    const { 
-        requireSequentialCompletion, 
-        useCommandLabels,
-        stepCount,
-        setStepCount,
-        MAX_STEPS
-    } = useCustomization();
+    const { requireSequentialCompletion, useCommandLabels, stepCount, setStepCount, MAX_STEPS } = useCustomization();
 
     // Get mission context
-    const {
-        isMissionMode,
-        currentMission,
-        dispatchTaskEvent,
-        isTaskCompleted,
-        getCurrentTask
-    } = useMission();
+    const { isMissionMode, currentMission, dispatchTaskEvent, isTaskCompleted, getCurrentTask } = useMission();
 
     // Add state to track when reordering is in progress
     const [isReordering, setIsReordering] = useState(false);
@@ -120,9 +122,7 @@ export const RunMenu = ({
         // The slotData array should be exactly missionSteps in length
         // (we're now treating missionSteps as the COUNT of steps, not the max index)
         if (slotData && slotData.length !== missionSteps) {
-            console.warn(
-                "RunMenu: Inconsistency detected - slotData length doesn't match missionSteps",
-            );
+            console.warn("RunMenu: Inconsistency detected - slotData length doesn't match missionSteps");
         }
     }, [missionSteps, slotData]);
 
@@ -163,10 +163,10 @@ export const RunMenu = ({
 
         const menuElement = document.querySelector(`.${styles.menuContent}`);
         if (menuElement) {
-            menuElement.addEventListener('scroll', handleScroll);
+            menuElement.addEventListener("scroll", handleScroll);
             // Check initial position
             handleScroll();
-            return () => menuElement.removeEventListener('scroll', handleScroll);
+            return () => menuElement.removeEventListener("scroll", handleScroll);
         }
     }, []);
 
@@ -177,11 +177,7 @@ export const RunMenu = ({
      * @returns {boolean} Whether the step is completed
      */
     const isStepCompleted = (index) => {
-        return !!(
-            slotData &&
-            slotData[index]?.type &&
-            slotData[index]?.subtype
-        );
+        return !!(slotData && slotData[index]?.type && slotData[index]?.subtype);
     };
 
     /**
@@ -223,12 +219,7 @@ export const RunMenu = ({
         if (index === missionSteps - 1) {
             return {
                 name: "Stop",
-                icon: (
-                    <CircleStop
-                        size={24}
-                        className={styles.commandIcon}
-                    />
-                ),
+                icon: <CircleStop className={styles.commandIcon} />,
             };
         }
 
@@ -240,15 +231,13 @@ export const RunMenu = ({
                     <QuestionMarkIcon
                         className={styles.commandIcon}
                         fill="currentColor"
-                        width={30}
-                        height={30}
                     />
                 ) : null,
             };
         }
 
         // Get the type and subtype from the slot data
-        const { type, subtype } = slotData[index];
+        const { type, subtype, configuration } = slotData[index];
 
         // If command labels are disabled, use "Step X" format even for completed steps
         if (!useCommandLabels) {
@@ -258,8 +247,6 @@ export const RunMenu = ({
                     <QuestionMarkIcon
                         className={styles.commandIcon}
                         fill="currentColor"
-                        width={30}
-                        height={30}
                     />
                 ),
             };
@@ -267,17 +254,65 @@ export const RunMenu = ({
 
         // Special case for button instruction
         if (type === "input" && subtype === "button") {
+            // Check if this is a release condition (not pressed)
+            const isReleaseCondition = configuration?.waitCondition === "released";
+
             return {
                 name: INSTRUCTION_DISPLAY[type][subtype].name,
-                icon: (
-                    <ArchiveRestore
-                        size={24}
-                        className={
-                            styles.commandIcon + " " + styles.flippedVertically
-                        }
-                    />
+                icon: isReleaseCondition ? (
+                    <ArchiveX className={styles.commandIcon + " " + styles.flippedVertically} />
+                ) : (
+                    <ArchiveRestore className={styles.commandIcon + " " + styles.flippedVertically} />
                 ),
             };
+        }
+
+        // Special case for color instruction - fill the droplet with the specified color
+        if (type === "input" && subtype === "color" && configuration && configuration.color) {
+            const colorValue = COLOR_MAPPING[configuration.color] || COLOR_MAPPING.unknown;
+            return {
+                name: INSTRUCTION_DISPLAY[type][subtype].name,
+                icon: React.cloneElement(INSTRUCTION_DISPLAY[type][subtype].icon, {
+                    className: styles.commandIcon,
+                    fill: colorValue,
+                }),
+            };
+        }
+
+        // Special case for motor instruction - use different icons based on speed
+        if (type === "action" && subtype === "motor" && configuration) {
+            // Get the first motor configuration if it's an array
+            const motorConfig = Array.isArray(configuration) ? configuration.sort((a, b) => (a.port || "").localeCompare(b.port || ""))[0] : configuration;
+
+            if (motorConfig) {
+                const speed = motorConfig.speed || 0;
+                const absSpeed = Math.abs(speed);
+                const isClockwise = speed > 0;
+
+                // Determine which icon to use based on speed
+                let speedIcon;
+                if (speed === 0) {
+                    speedIcon = <FilledCircleStop className={styles.commandIcon} />;
+                } else if (absSpeed <= 330) {
+                    // SLOW_THRESHOLD
+                    speedIcon = <Snail className={styles.commandIcon} />;
+                } else if (absSpeed <= 660) {
+                    // MEDIUM_THRESHOLD
+                    speedIcon = <Turtle className={styles.commandIcon} />;
+                } else {
+                    speedIcon = <Rabbit className={styles.commandIcon} />;
+                }
+
+                // Add flipped class if the motor is going clockwise
+                const iconClassName = isClockwise ? styles.commandIcon + " " + styles.flippedHorizontally : styles.commandIcon;
+
+                return {
+                    name: INSTRUCTION_DISPLAY[type][subtype].name,
+                    icon: React.cloneElement(speedIcon, {
+                        className: iconClassName,
+                    }),
+                };
+            }
         }
 
         // Try to get the display info from our mapping
@@ -299,9 +334,7 @@ export const RunMenu = ({
         const disconnectedPorts = [];
         slots.forEach((slot, index) => {
             if (slot?.type === "action" && slot?.subtype === "motor") {
-                const configs = Array.isArray(slot.configuration)
-                    ? slot.configuration
-                    : [slot.configuration];
+                const configs = Array.isArray(slot.configuration) ? slot.configuration : [slot.configuration];
 
                 configs.forEach((config) => {
                     if (config?.port && !portStates[config.port]) {
@@ -322,9 +355,7 @@ export const RunMenu = ({
     const handleRunAllSlots = async () => {
         try {
             if (!isConnected) {
-                console.warn(
-                    "Robot not connected. Please connect via Bluetooth first.",
-                );
+                console.warn("Robot not connected. Please connect via Bluetooth first.");
                 return;
             }
 
@@ -332,21 +363,14 @@ export const RunMenu = ({
             console.log("Generated Python Code for all slots:", code);
 
             // Clear the program slot
-            const clearResponse = await ble.sendRequest(
-                new ClearSlotRequest(0),
-                ClearSlotResponse,
-            );
+            const clearResponse = await ble.sendRequest(new ClearSlotRequest(0), ClearSlotResponse);
 
             if (!clearResponse.success) {
                 console.warn("Failed to clear program slot"); // Warning ok, sometimes the program slot is empty
             }
 
             // Upload and transfer the program
-            await ble.uploadProgramFile(
-                "program.py",
-                0,
-                Buffer.from(code, "utf-8"),
-            );
+            await ble.uploadProgramFile("program.py", 0, Buffer.from(code, "utf-8"));
 
             // Start the program
             await ble.startProgram(0);
@@ -357,13 +381,13 @@ export const RunMenu = ({
                     slots: slotData.length,
                     currentSlot: currSlotNumber,
                     isMissionMode,
-                    currentMission: currentMission
+                    currentMission: currentMission,
                 });
-                
+
                 dispatchTaskEvent("RUN_PROGRAM", {
                     slots: slotData.length,
                     currentSlot: currSlotNumber,
-                    type: "RUN_PROGRAM" // Explicitly set the event type
+                    type: "RUN_PROGRAM", // Explicitly set the event type
                 });
             }
         } catch (error) {
@@ -379,10 +403,7 @@ export const RunMenu = ({
     const handleStepClick = (stepIndex) => {
         // Only allow clicking on accessible steps
         if (isStepAccessible(stepIndex)) {
-            console.log(
-                "RunMenu: Clicked on step",
-                stepIndex === missionSteps - 1 ? "Stop" : stepIndex + 1
-            );
+            console.log("RunMenu: Clicked on step", stepIndex === missionSteps - 1 ? "Stop" : stepIndex + 1);
 
             // Dispatch navigation event for mission tracking
             if (isMissionMode) {
@@ -401,9 +422,7 @@ export const RunMenu = ({
 
     // Check for any disconnected motors in the current configuration
     const disconnectedMotors = checkDisconnectedMotors(slotData);
-    const currentSlotDisconnected = checkDisconnectedMotors([
-        slotData[currSlotNumber],
-    ]);
+    const currentSlotDisconnected = checkDisconnectedMotors([slotData[currSlotNumber]]);
 
     /**
      * Check if a step has been configured in mission mode
@@ -413,26 +432,17 @@ export const RunMenu = ({
      * @returns {boolean} Whether step is configured in mission mode
      */
     const isStepConfiguredInMission = (slotIndex) => {
-        if (!isMissionMode || !currentMission)
-            return isStepCompleted(slotIndex);
+        if (!isMissionMode || !currentMission) return isStepCompleted(slotIndex);
 
         // Find tasks that target this slot
-        const tasksForSlot = currentMission.tasks.filter(
-            (task) => task.targetSlot === slotIndex,
-        );
+        const tasksForSlot = currentMission.tasks.filter((task) => task.targetSlot === slotIndex);
 
         if (tasksForSlot.length === 0) return isStepCompleted(slotIndex);
 
         // Check if configuration tasks for this slot are completed
         return tasksForSlot.some((task) => {
             // Only consider configuration-related tasks
-            if (
-                ![
-                    "MOTOR_CONFIGURATION",
-                    "TIMER_SETTING",
-                    "BUTTON_CONFIGURATION",
-                ].includes(task.type)
-            ) {
+            if (!["MOTOR_CONFIGURATION", "TIMER_SETTING", "BUTTON_CONFIGURATION"].includes(task.type)) {
                 return false;
             }
 
@@ -443,7 +453,7 @@ export const RunMenu = ({
 
     /**
      * Move a step to a new position
-     * 
+     *
      * @param {number} fromIndex - Source index
      * @param {number} toIndex - Destination index
      */
@@ -470,9 +480,11 @@ export const RunMenu = ({
         }
 
         // Dispatch event to update slot data
-        window.dispatchEvent(new CustomEvent('updateSlotData', { 
-            detail: { slotData: newSlotData } 
-        }));
+        window.dispatchEvent(
+            new CustomEvent("updateSlotData", {
+                detail: { slotData: newSlotData },
+            }),
+        );
     };
 
     /**
@@ -502,9 +514,11 @@ export const RunMenu = ({
         setStepCount(stepCount + 1);
 
         // Dispatch event to update slot data
-        window.dispatchEvent(new CustomEvent('updateSlotData', { 
-            detail: { slotData: newSlotData } 
-        }));
+        window.dispatchEvent(
+            new CustomEvent("updateSlotData", {
+                detail: { slotData: newSlotData },
+            }),
+        );
     };
 
     /**
@@ -518,9 +532,7 @@ export const RunMenu = ({
         const buttons = [];
         // Create regular step buttons (excluding the stop step)
         for (let i = 0; i < missionSteps - 1; i++) {
-            const completed = isMissionMode
-                ? isStepConfiguredInMission(i)
-                : isStepCompleted(i);
+            const completed = isMissionMode ? isStepConfiguredInMission(i) : isStepCompleted(i);
             const accessible = isStepAccessible(i);
             const { name, icon } = getStepDisplayInfo(i);
 
@@ -528,27 +540,17 @@ export const RunMenu = ({
                 <button
                     key={i}
                     className={`${styles.stepButton} 
-                              ${
-                                  isConnected &&
-                                  checkDisconnectedMotors([slotData?.[i]])
-                                      .length > 0
-                                      ? styles.warning
-                                      : ""
-                              } 
+                              ${isConnected && checkDisconnectedMotors([slotData?.[i]]).length > 0 ? styles.warning : ""} 
                               ${completed ? styles.completed : ""}
                               ${slotData?.[i]?.type ? styles.configured : ""} 
                               ${i === currSlotNumber ? styles.current : ""}`}
                     onClick={() => handleStepClick(i)}
                     disabled={!accessible}
-                    aria-label={`${name}${
-                        i === currSlotNumber ? " (current)" : ""
-                    }${completed ? " (completed)" : ""}`}
+                    aria-label={`${name}${i === currSlotNumber ? " (current)" : ""}${completed ? " (completed)" : ""}`}
                     aria-current={i === currSlotNumber ? "step" : false}
                 >
                     <span className={styles.stepName}>{name}</span>
-                    {icon && (
-                        <span className={styles.iconContainer}>{icon}</span>
-                    )}
+                    {icon && <span className={styles.iconContainer}>{icon}</span>}
                 </button>
             );
 
@@ -561,7 +563,7 @@ export const RunMenu = ({
                     isMissionMode={isMissionMode}
                 >
                     {stepButton}
-                </DraggableStepButton>
+                </DraggableStepButton>,
             );
         }
 
@@ -572,20 +574,15 @@ export const RunMenu = ({
         buttons.push(
             <button
                 key="stop"
-                className={`${styles.stepButton} ${styles.stopButton} ${
-                    currSlotNumber === stopStepIndex ? styles.current : ""
-                }`}
+                className={`${styles.stepButton} ${styles.stopButton} ${currSlotNumber === stopStepIndex ? styles.current : ""}`}
                 onClick={() => handleStepClick(stopStepIndex)}
                 disabled={!stopAccessible}
                 aria-label="Stop"
                 aria-current={currSlotNumber === stopStepIndex ? "step" : false}
             >
                 <span className={styles.stepName}>Stop</span>
-                <CircleStop
-                    size={24}
-                    className={styles.stopIcon}
-                />
-            </button>
+                <CircleStop className={styles.stopIcon} />
+            </button>,
         );
 
         return buttons;
@@ -593,16 +590,14 @@ export const RunMenu = ({
 
     return (
         <div className={styles.menuBackground}>
-            <div className={`${styles.menuContent} ${isScrollable ? styles.scrollable : ''} ${isAtBottom ? styles.atBottom : ''}`}>
+            <div className={`${styles.menuContent} ${isScrollable ? styles.scrollable : ""} ${isAtBottom ? styles.atBottom : ""}`}>
                 {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>CODE STEPS</div>
 
                 {/* Content wrapper */}
                 <div className={styles.menuContentWrapper}>
                     {/* Step buttons */}
-                    <div className={styles.stepsContainer}>
-                        {renderStepButtons()}
-                    </div>
+                    <div className={styles.stepsContainer}>{renderStepButtons()}</div>
 
                     {/* Add Step button - only show in sandbox mode */}
                     {!isMissionMode && (
@@ -613,7 +608,7 @@ export const RunMenu = ({
                                 disabled={stepCount >= MAX_STEPS}
                                 aria-label="Add new step"
                             >
-                                <Plus size={20} />
+                                <Plus className={styles.commandIcon} />
                                 Add Step
                             </button>
                         </div>
@@ -623,7 +618,10 @@ export const RunMenu = ({
 
             {/* Gradient overlay */}
             <div className={styles.gradientOverlay}>
-                <ChevronDown size={24} color="var(--panel-text)" />
+                <ChevronDown
+                    className={styles.commandIcon}
+                    color="var(--panel-text)"
+                />
             </div>
 
             {/* Play button */}

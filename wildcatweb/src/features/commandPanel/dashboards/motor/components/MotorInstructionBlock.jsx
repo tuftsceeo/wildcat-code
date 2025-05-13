@@ -33,10 +33,17 @@ const MotorInstructionBlock = ({ configuration }) => {
     if (Array.isArray(configuration) && configuration.length > 0) {
         // If there are multiple motors, render them together
         if (configuration.length > 1) {
+            // Sort motors by port letter
+            const sortedConfiguration = [...configuration].sort((a, b) => {
+                const portA = (a.port || "A").toUpperCase();
+                const portB = (b.port || "A").toUpperCase();
+                return portA.localeCompare(portB);
+            });
+
             return (
                 <BaseInstructionBlock>
                     <div className={styles.multiMotorContainer}>
-                        {configuration.map((config, index) => (
+                        {sortedConfiguration.map((config, index) => (
                             <div
                                 key={`motor-${config.port || index}`}
                                 className={styles.motorContainer}
@@ -46,9 +53,7 @@ const MotorInstructionBlock = ({ configuration }) => {
                                     active={true}
                                     port={config.port || "A"}
                                 />
-                                <div className={styles.motorLabel}>
-                                    MOTOR {config.port || "A"}
-                                </div>
+                                <div className={styles.motorLabel}>MOTOR {config.port || "A"}</div>
                             </div>
                         ))}
                     </div>
@@ -65,9 +70,7 @@ const MotorInstructionBlock = ({ configuration }) => {
                     active={true}
                     port={config.port || "A"}
                 />
-                <div className={styles.motorLabel}>
-                    MOTOR {config.port || "A"}
-                </div>
+                <div className={styles.motorLabel}>MOTOR {config.port || "A"}</div>
             </BaseInstructionBlock>
         );
     }
@@ -80,9 +83,7 @@ const MotorInstructionBlock = ({ configuration }) => {
                 active={true}
                 port={configuration.port || "A"}
             />
-            <div className={styles.motorLabel}>
-                MOTOR {configuration.port || "A"}
-            </div>
+            <div className={styles.motorLabel}>MOTOR {configuration.port || "A"}</div>
         </BaseInstructionBlock>
     );
 };

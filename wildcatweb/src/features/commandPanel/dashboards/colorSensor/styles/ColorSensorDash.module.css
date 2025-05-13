@@ -1,0 +1,289 @@
+/* ColorSensorDash.module.css - Improved styling for consistency */
+
+.colorSensorDash {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: var(--spacing-1);
+}
+
+.header h3 {
+    font-size: var(--font-size-lg);
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--spacing-1);
+}
+
+.header p {
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+    opacity: 0.8;
+}
+
+.sensorsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.colorSensorControl {
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--color-transparent);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3);
+    width: 100%;
+    transition: all var(--transition-normal);
+}
+
+.colorSensorControl.disconnected {
+    background-color: rgba(var(--color-error-main-rgb), 0.1);
+    border-color: var(--color-error-main);
+}
+
+/* Port header styling */
+.portHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.portLabel {
+    color: var(--panel-text);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    flex-grow: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.disconnectedLabel {
+    color: var(--color-error-main);
+    font-size: var(--font-size-sm);
+    margin-right: 8px;
+    padding: 2px 5px;
+    background-color: rgba(var(--color-error-main-rgb), 0.2);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.dismissButton {
+    background: transparent;
+    border: 1px solid var(--color-error-main);
+    color: var(--color-error-main);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-left: 5px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-normal);
+}
+
+.dismissButton:hover {
+    background-color: var(--color-error-main);
+    color: var(--color-background);
+    transform: var(--button-scale-hover);
+}
+
+.dismissButton:active {
+    transform: var(--button-scale-active);
+}
+
+/* Live reading and color palette in single container */
+.sensorContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+/* Live reading styles - more compact */
+.liveReading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2);
+    background-color: var(--color-gray-faint);
+    border-radius: var(--radius-md);
+}
+
+/* Main sensor container */
+.sensorVisual {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Outermost layer - white square with text color outline */
+.sensorBody {
+    position: relative;
+    width: calc(var(--font-size-3xl) * 2);
+    height: calc(var(--font-size-3xl) * 2);
+    background-color: white;
+    border: var(--border-width-thin) solid var(--color-text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Second layer - black rounded corner square */
+.sensorFrame {
+    width: 75%;
+    height: 75%;
+    background-color: #111111;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Third layer - white circle */
+.sensorLens {
+    width: 75%; /* 50% of the original sensor body */
+    height: 75%;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Fourth layer (innermost) - color indicating circle */
+.sensorColor {
+    width: 90%; /* 37.4% of the original sensor body */
+    height: 90%;
+    border-radius: 50%;
+    transition: all var(--transition-color);
+    border: var(--border-width-thin) solid black;
+}
+
+.unknownIndicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(var(--font-size-2xl) * 0.75);
+    height: calc(var(--font-size-2xl) * 0.75);
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+}
+
+.readingLabel {
+    flex: 1;
+    font-size: var(--font-size-sm);
+    color: var(--panel-text);
+}
+
+.colorValue {
+    font-weight: var(--font-weight-medium);
+    color: var(--panel-text);
+}
+
+/* Color palette styles - more interactive */
+.colorPalette {
+    padding: var(--spacing-2);
+}
+
+.paletteLabel {
+    font-size: var(--font-size-lg);
+    color: var(--panel-text);
+    text-align: center;
+    margin-top: var(--spacing-2);
+    opacity: 0.8;
+}
+
+.colorCircles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-2);
+}
+
+.colorCircle {
+    width: calc(var(--font-size-xl) * 1.2);
+    height: calc(var(--font-size-xl) * 1.2);
+    border-radius: 50%;
+    border: var(--border-width-thin) solid var(--panel-border);
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-selection);
+    transform: var(--button-scale-default);
+}
+
+.colorCircle:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    box-shadow: var(--selection-glow);
+}
+
+.colorCircle:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.colorCircle.selected {
+    border: var(--border-width-thin) solid var(--color-primary-high);
+    box-shadow: var(--selection-glow);
+    transform: var(--selection-scale);
+}
+
+.selectedIndicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--font-size-xs) * 1.2);
+    height: calc(var(--font-size-xs) * 1.2);
+    background-color: white;
+    border-radius: 50%;
+    border: var(--border-width-thin) solid var(--panel-border);
+    animation: pulse 2s infinite;
+}
+
+.colorCircle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Connection feedback messages */
+.noSensors {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    justify-content: center;
+    padding: var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    background-color: rgba(var(--color-warning-main-rgb), 0.1);
+    color: var(--color-warning-main);
+    border: var(--border-width-standard) solid var(--color-warning-main);
+}
+
+.noSensors svg {
+    animation: pulse 2s infinite;
+    width: calc(var(--font-size-sm) * 1.5);
+    height: calc(var(--font-size-sm) * 1.5);
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}

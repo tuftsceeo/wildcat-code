@@ -7,19 +7,11 @@
 import React from "react";
 import styles from "../styles/MotorVisualization.module.css";
 import { validateSpeed, getSpeedDescription } from "./motorSpeedUtils";
-import {
-    Rabbit,
-    Turtle,
-    CircleStop,
-    ArrowLeft,
-    ArrowRight,
-    MoveLeft,
-    MoveRight,
-} from "lucide-react";
+import { Rabbit, Turtle, CircleStop, Snail } from "lucide-react";
 
- const FilledCircleStop = (props) => {
-        return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
-      };
+const FilledCircleStop = (props) => {
+    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
+};
 
 /**
  * Motor visualization component with vertical bars and animal icons
@@ -37,9 +29,7 @@ const MotorVisualization = ({ configuration, showLabels = true }) => {
     }
 
     // Handle different configuration formats
-    const configs = Array.isArray(configuration)
-        ? configuration
-        : [configuration];
+    const configs = Array.isArray(configuration) ? configuration : [configuration];
 
     // Only show for valid motor configuration
     if (configs.length === 0 || !configs.some((c) => c && c.port)) {
@@ -101,17 +91,13 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
             } else if (direction === "clockwise" && isClockwise) {
                 // Clockwise motion - light up appropriate green bars
                 if (level === "slow" && intensityLevel <= 0) isActive = true;
-                else if (level === "medium" && intensityLevel <= 1)
-                    isActive = true;
-                else if (level === "fast" && intensityLevel <= 2)
-                    isActive = true;
+                else if (level === "medium" && intensityLevel <= 1) isActive = true;
+                else if (level === "fast" && intensityLevel <= 2) isActive = true;
             } else if (direction === "countercw" && !isClockwise) {
                 // Counterclockwise motion - light up appropriate yellow bars
                 if (level === "slow" && intensityLevel <= 0) isActive = true;
-                else if (level === "medium" && intensityLevel <= 1)
-                    isActive = true;
-                else if (level === "fast" && intensityLevel <= 2)
-                    isActive = true;
+                else if (level === "medium" && intensityLevel <= 1) isActive = true;
+                else if (level === "fast" && intensityLevel <= 2) isActive = true;
             }
 
             // Add this bar's status to our array
@@ -150,18 +136,14 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                 {bars.map((bar, index) => (
                     <div
                         key={index}
-                        className={`${styles.bar} ${bar.className} ${
-                            bar.isActive ? styles.active : ""
-                        }`}
+                        className={`${styles.bar} ${bar.className} ${bar.isActive ? styles.active : ""}`}
                         style={{
                             /* Height varies by intensity level */
                             height: `${55 + bar.intensityLevel * 15}%`,
                             /* More intense bars are slightly wider */
                             width: `${10 + bar.intensityLevel * 2}px`,
                             /* Opacity based on activity and level */
-                            opacity: bar.isActive
-                                ? 0.7 + bar.intensityLevel * 0.1
-                                : 0.2,
+                            opacity: bar.isActive ? 0.7 + bar.intensityLevel * 0.1 : 0.2,
                         }}
                     />
                 ))}
@@ -180,13 +162,7 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
             {/* Animal icons for direction and speed */}
             <div className={styles.animalIcons}>
                 {/* Fast Counterclockwise (Rabbit) */}
-                <div
-                    className={`${styles.animalIcon} ${
-                        direction === "countercw" && level === "fast"
-                            ? styles.active
-                            : ""
-                    }`}
-                >
+                <div className={`${styles.animalIcon} ${direction === "countercw" && level === "fast" ? styles.active : ""}`}>
                     <Rabbit
                         className={styles.flippedHorizontally}
                         size={24}
@@ -194,81 +170,46 @@ const SingleMotorVisualization = ({ config, showLabels }) => {
                 </div>
 
                 {/* Medium Counterclockwise (Arrow) */}
-                <div
-                    className={`${styles.animalIcon} ${
-                        direction === "countercw" && level === "medium"
-                            ? styles.active
-                            : ""
-                    }`}
-                >
-                    <MoveLeft size={24} />
+                <div className={`${styles.animalIcon} ${direction === "countercw" && level === "medium" ? styles.active : ""}`}>
+                    <Turtle
+                        size={24}
+                        className={styles.flippedHorizontally}
+                    />
                 </div>
 
                 {/* Slow Counterclockwise (Turtle) */}
-                <div
-                    className={`${styles.animalIcon} ${
-                        direction === "countercw" && level === "slow"
-                            ? styles.active
-                            : ""
-                    }`}
-                >
-                    <Turtle
+                <div className={`${styles.animalIcon} ${direction === "countercw" && level === "slow" ? styles.active : ""}`}>
+                    <Snail
                         className={styles.flippedHorizontally}
                         size={24}
                     />
                 </div>
 
                 {/* Stop (CircleStop) */}
-                <div
-    className={`${styles.animalIcon} ${
-        speed === 0 ? styles.active : ""
-    }`}
->
-    <CircleStop 
-        size={20} 
-        color="var(--color-error-main)" 
-    />
-</div>
+                <div className={`${styles.animalIcon} ${speed === 0 ? styles.active : ""}`}>
+                    <CircleStop
+                        size={20}
+                        color="var(--color-error-main)"
+                    />
+                </div>
                 {/* Slow Clockwise (Turtle) */}
-                <div
-                    className={`${styles.animalIcon} ${
-                        direction === "clockwise" && level === "slow"
-                            ? styles.active
-                            : ""
-                    }`}
-                >
-                    <Turtle size={24} />
+                <div className={`${styles.animalIcon} ${direction === "clockwise" && level === "slow" ? styles.active : ""}`}>
+                    <Snail size={24} />
                 </div>
 
                 {/* Medium Clockwise (Arrow) */}
-                <div
-                    className={`${styles.animalIcon} ${
-                        direction === "clockwise" && level === "medium"
-                            ? styles.active
-                            : ""
-                    }`}
-                >
-                    <MoveRight size={24} />
+                <div className={`${styles.animalIcon} ${direction === "clockwise" && level === "medium" ? styles.active : ""}`}>
+                    <Turtle size={24} />
                 </div>
 
                 {/* Fast Clockwise (Rabbit) */}
-                <div
-                    className={`${styles.animalIcon} ${
-                        direction === "clockwise" && level === "fast"
-                            ? styles.active
-                            : ""
-                    }`}
-                >
+                <div className={`${styles.animalIcon} ${direction === "clockwise" && level === "fast" ? styles.active : ""}`}>
                     <Rabbit size={24} />
                 </div>
             </div>
 
             {/* Speed and direction text (only shown when labels are enabled) */}
-            {showLabels && (
-                <div className={styles.speedLabel}>
-                    {speed === 0 ? "Stop" : `${level} ${direction}`}
-                </div>
-            )}
+            {showLabels && <div className={styles.speedLabel}>{speed === 0 ? "Stop" : `${level} ${direction}`}</div>}
         </div>
     );
 };

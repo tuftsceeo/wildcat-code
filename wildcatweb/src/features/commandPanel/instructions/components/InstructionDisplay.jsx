@@ -6,27 +6,14 @@
 
 import React from "react";
 import { useCustomization } from "./CustomizationContext";
-import {
-    COMPLEXITY_LEVELS,
-    getTranslatedText,
-    getUIText,
-} from "./translations/loader";
+import { COMPLEXITY_LEVELS, getTranslatedText, getUIText } from "./translations/loader";
 import { getSpeedDescription } from "./motorSpeedUtils";
-import {
-    Rabbit,
-    Turtle,
-    CircleStop,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-} from "lucide-react";
+import { Rabbit, Turtle, CircleStop, Snail, Clock } from "lucide-react";
 import styles from "../styles/InstructionDisplay.module.css";
 
-
- const FilledCircleStop = (props) => {
-        return React.cloneElement(<FilledCircleStop />, { fill: "currentColor", ...props });
-      };
-
+const FilledCircleStop = (props) => {
+    return React.cloneElement(<FilledCircleStop />, { fill: "currentColor", ...props });
+};
 
 /**
  * Component to display instructions with configurable complexity
@@ -41,8 +28,7 @@ const InstructionDisplay = ({ instruction }) => {
     const { readingLevel, language } = useCustomization();
 
     // Get complexity level configuration
-    const complexity =
-        COMPLEXITY_LEVELS[readingLevel] || COMPLEXITY_LEVELS.intermediate;
+    const complexity = COMPLEXITY_LEVELS[readingLevel] || COMPLEXITY_LEVELS.intermediate;
 
     // Return empty display if no instruction
     if (!instruction || !instruction.type) {
@@ -78,8 +64,7 @@ const InstructionDisplay = ({ instruction }) => {
     return (
         <div className={styles.unknownInstruction}>
             <p className={styles.unknownText}>
-                Unknown instruction type: {instruction.type} -{" "}
-                {instruction.subtype}
+                Unknown instruction type: {instruction.type} - {instruction.subtype}
             </p>
         </div>
     );
@@ -145,24 +130,18 @@ const SingleMotorDisplay = ({ config, complexity, language }) => {
     // Motor is stopped
     if (speed === 0) {
         // Use the motor_stop template
-        const translatedText = getTranslatedText(
-            "motor_stop",
-            language,
-            complexity.id,
-            { port: portText },
-        );
+        const translatedText = getTranslatedText("motor_stop", language, complexity.id, { port: portText });
 
         return (
             <div className={styles.instructionDisplay}>
                 {/* Show icon if not text-only */}
                 {complexity.id !== "text_only" && (
                     <div className={styles.iconContainer}>
-                        <div
-                            className={`${styles.iconStop} ${
-                                styles[getIconSizeClass(complexity)]
-                            }`}
-                        >
-                            <CircleStop size={24} color={'var(--color-error-main)'} />
+                        <div className={`${styles.iconStop} ${styles[getIconSizeClass(complexity)]}`}>
+                            <CircleStop
+                                size={24}
+                                color={"var(--color-error-main)"}
+                            />
                         </div>
                     </div>
                 )}
@@ -170,9 +149,7 @@ const SingleMotorDisplay = ({ config, complexity, language }) => {
                 {/* Show text if not icon-only */}
                 {complexity.id !== "icon_only" && (
                     <div className={styles.textContainer}>
-                        <p className={styles.instructionText}>
-                            {translatedText}
-                        </p>
+                        <p className={styles.instructionText}>{translatedText}</p>
                     </div>
                 )}
             </div>
@@ -180,29 +157,18 @@ const SingleMotorDisplay = ({ config, complexity, language }) => {
     }
 
     // Motor is moving
-    const translatedText = getTranslatedText(
-        "motor_action",
-        language,
-        complexity.id,
-        {
-            port: portText,
-            direction: direction,
-            speed: level,
-        },
-    );
+    const translatedText = getTranslatedText("motor_action", language, complexity.id, {
+        port: portText,
+        direction: direction,
+        speed: level,
+    });
 
     return (
         <div className={styles.instructionDisplay}>
             {/* Show icon if not text-only */}
             {complexity.id !== "text_only" && (
                 <div className={styles.iconContainer}>
-                    <div
-                        className={`${styles.icon} ${
-                            styles[getIconSizeClass(complexity)]
-                        }`}
-                    >
-                        {getDirectionIcon(direction, level)}
-                    </div>
+                    <div className={`${styles.icon} ${styles[getIconSizeClass(complexity)]}`}>{getDirectionIcon(direction, level)}</div>
                 </div>
             )}
 
@@ -230,23 +196,14 @@ const TimerInstructionDisplay = ({ configuration, complexity, language }) => {
     const { seconds = 3 } = configuration || {};
 
     // Use the wait_action template
-    const translatedText = getTranslatedText(
-        "wait_action",
-        language,
-        complexity.id,
-        { seconds },
-    );
+    const translatedText = getTranslatedText("wait_action", language, complexity.id, { seconds });
 
     return (
         <div className={styles.instructionDisplay}>
             {/* Show icon if not text-only */}
             {complexity.id !== "text_only" && (
                 <div className={styles.iconContainer}>
-                    <div
-                        className={`${styles.icon} ${
-                            styles[getIconSizeClass(complexity)]
-                        }`}
-                    >
+                    <div className={`${styles.icon} ${styles[getIconSizeClass(complexity)]}`}>
                         <Clock size={24} />
                     </div>
                     <div className={styles.timerValue}>{seconds}</div>
@@ -272,18 +229,24 @@ const TimerInstructionDisplay = ({ configuration, complexity, language }) => {
  */
 function getDirectionIcon(direction, level) {
     if (direction === "clockwise") {
-        if (level === "slow") return <Turtle size={24} />;
-        if (level === "medium") return <ChevronRight size={24} />;
+        if (level === "slow") return <Snail size={24} />;
+        if (level === "medium") return <Turtle size={24} />;
         return <Rabbit size={24} />;
     } else if (direction === "countercw") {
         if (level === "slow")
+            return (
+                <Snail
+                    size={24}
+                    style={{ transform: "scaleX(-1)" }}
+                />
+            );
+        if (level === "medium")
             return (
                 <Turtle
                     size={24}
                     style={{ transform: "scaleX(-1)" }}
                 />
             );
-        if (level === "medium") return <ChevronLeft size={24} />;
         return (
             <Rabbit
                 size={24}
@@ -292,7 +255,12 @@ function getDirectionIcon(direction, level) {
         );
     } else {
         // This is for 'stop' case
-        return <CircleStop size={24} color="var(--color-error-main)" />;
+        return (
+            <CircleStop
+                size={24}
+                color="var(--color-error-main)"
+            />
+        );
     }
 }
 

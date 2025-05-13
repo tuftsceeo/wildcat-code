@@ -33,14 +33,14 @@
 }
 
 .portLabel {
-    background-color: rgba(var(--color-background-rgb),.9);
+    background-color: rgba(var(--color-background-rgb), 0.9);
     color: var(--color-text);
     font-family: var(--font-family-active);
     font-size: var(--font-size-base);
     flex-grow: 0;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wide);
-    z-index: 2;
+    z-index: 3;
 }
 
 .disconnectedLabel {
@@ -84,17 +84,18 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-1);
+    position: relative; /* Establish a positioning context */
 }
 
 .motorAnimationWrapper {
-    width: 65%;
+    height: 200%;
     border-radius: 50%;
     aspect-ratio: 1 / 1; /* Maintain a perfect circle */
     position: absolute;
     left: 50%;
     top: 0; /* Position at top */
-    transform: translate(-50%, -50%); /* Pull it up so it's partially hidden */
-    z-index: 1;
+    transform: translate(-50%, -75%); /* Pull it up so it's partially hidden */
+    z-index: 2; /* Ensure animation stays on top of bars */
 }
 
 /* Bar visualization styles */
@@ -106,6 +107,8 @@
     width: 100%;
     margin-bottom: var(--spacing-1);
     padding: 0 var(--spacing-1);
+    position: relative; /* Add position relative to establish a stacking context */
+    z-index: 1; /* Ensure bars are above the base layer but below the animation */
 }
 
 .bar {
@@ -115,14 +118,15 @@
     background-color: var(--color-gray-bold);
     cursor: pointer;
     border: none;
-    transition: all var(--transition-normal);
     padding: 0;
+    transition: all var(--transition-normal);
     transform: var(--button-scale-default);
     position: relative; /* For positioning the icon */
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
+    will-change: transform; /* Optimize for animations */
 }
 
 /* Icon at the bottom of bar */
@@ -135,8 +139,19 @@
     justify-content: center;
 }
 
+.iconSize {
+    height: calc(var(--font-size-base) * 1.5);
+    width: calc(var(--font-size-base) * 1.5);
+}
+
+/* Ensure hover effect is applied correctly */
 .bar:hover:not(:disabled) {
-    transform: scale(var(--button-scale-hover));
+    transform: var(--button-scale-hover);
+}
+
+/* Ensure default state is applied correctly */
+.bar:not(:hover):not(:disabled) {
+    transform: var(--button-scale-default);
 }
 
 .bar:focus-visible {
@@ -147,30 +162,18 @@
     background-color: var(--color-gray-bold);
 }
 
-
-
 .stopBar {
     background-color: var(--color-gray-bold);
 }
 
-.stopBar svg{
-    stroke: var(--color-error-main);
-    /* fill: var(--color-error-main); */
-}
-
-.stopBar.active {
-    background-color: rgba(var(--color-error-main-rgb),.6);
+.stopBar.active:not(:hover):not(:disabled) {
+    background-color: rgba(var(--color-error-main-rgb), 0.6);
     transform: scale(1.2);
     box-shadow: var(--glow-error);
 }
 
 .stopBar.active:hover {
-    transform: scale(0,1.2);
-}
-
-.stopBar.active svg{
-    stroke: white;
-    fill: var(--color-error-main);
+    transform: scale(1.2);
 }
 
 .clockwiseBar.active {
@@ -178,12 +181,12 @@
     box-shadow: var(--glow-secondary);
 }
 
-.clockwiseBar.active  svg {
+.clockwiseBar.active svg {
     color: var(--color-background);
 }
 
-.clockwiseBar  svg {
-    color: var(--color-background); 
+.clockwiseBar svg {
+    color: var(--color-background);
 }
 
 .countercwBar {
@@ -195,12 +198,12 @@
     box-shadow: var(--glow-warning);
 }
 
-.countercwBar.active  svg {
+.countercwBar.active svg {
     color: var(--color-background);
 }
 
-.countercwBar  svg {
-    color: var(--color-background); 
+.countercwBar svg {
+    color: var(--color-background);
 }
 
 /* For icons that need to be flipped horizontally */
@@ -244,6 +247,8 @@
 .noConnection svg,
 .noMotors svg {
     animation: pulse 2s infinite;
+    width: calc(var(--font-size-sm) * 1.5);
+    height: calc(var(--font-size-sm) * 1.5);
 }
 
 @keyframes pulse {

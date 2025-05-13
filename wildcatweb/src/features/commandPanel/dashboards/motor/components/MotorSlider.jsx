@@ -5,21 +5,8 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import {
-    sliderPositionToSpeed,
-    speedToSliderPosition,
-    SPEED_PRESETS,
-    validateSpeed,
-} from "./motorSpeedUtils";
-import {
-    SkipBack,
-    SkipClockwise,
-    ChevronsLeft,
-    ChevronsRight,
-    ChevronLeft,
-    ChevronRight,
-    Square, CircleStop,
-} from "lucide-react";
+import { sliderPositionToSpeed, speedToSliderPosition, SPEED_PRESETS, validateSpeed } from "./motorSpeedUtils";
+import { SkipBack, SkipClockwise, Square, MoveLeft, MoveRight, CircleStop } from "lucide-react";
 import styles from "../styles/MotorSlider.module.css";
 
 /**
@@ -37,9 +24,7 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
     const validatedValue = validateSpeed(value);
 
     // Convert the initial value to a slider position (0-6)
-    const [position, setPosition] = useState(
-        speedToSliderPosition(validatedValue),
-    );
+    const [position, setPosition] = useState(speedToSliderPosition(validatedValue));
     const sliderRef = useRef(null);
 
     // Update position when value changes externally
@@ -56,10 +41,7 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
         const clickX = e.clientX - rect.left;
 
         // Calculate position (0-6) based on where the user clicked
-        const newPosition = Math.min(
-            6,
-            Math.max(0, Math.round((clickX / width) * 6)),
-        );
+        const newPosition = Math.min(6, Math.max(0, Math.round((clickX / width) * 6)));
         setPosition(newPosition);
 
         // Convert position to speed value and notify parent
@@ -83,11 +65,20 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
     // Position labels with Lucide icons
     const positionLabels = [
         { icon: <SkipBack size={16} />, label: "Fast" },
-        { icon: <ChevronsLeft size={16} />, label: "Medium" },
-        { icon: <ChevronLeft size={16} />, label: "Slow" },
-        { icon: <CircleStop color="var(--color-error-main)" fill="var(--color-error-main)" size={14} />, label: "Stop" },
-        { icon: <ChevronRight size={16} />, label: "Slow" },
-        { icon: <ChevronsRight size={16} />, label: "Medium" },
+        { icon: <MoveLeft size={16} />, label: "Medium" },
+        { icon: <MoveLeft size={16} />, label: "Slow" },
+        {
+            icon: (
+                <CircleStop
+                    color="var(--color-error-main)"
+                    fill="var(--color-error-main)"
+                    size={14}
+                />
+            ),
+            label: "Stop",
+        },
+        { icon: <MoveRight size={16} />, label: "Slow" },
+        { icon: <MoveRight size={16} />, label: "Medium" },
         { icon: <SkipClockwise size={16} />, label: "Fast" },
     ];
 
@@ -96,9 +87,7 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
 
     return (
         <div
-            className={`${styles.sliderContainer} ${
-                disabled ? styles.disabled : ""
-            }`}
+            className={`${styles.sliderContainer} ${disabled ? styles.disabled : ""}`}
             role="group"
             aria-label="Motor speed control"
         >
@@ -120,13 +109,7 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
                 aria-valuetext={`${
                     currentSpeed === 0
                         ? "Stopped"
-                        : `${
-                              Math.abs(currentSpeed) <= 330
-                                  ? "Slow"
-                                  : Math.abs(currentSpeed) <= 660
-                                  ? "Medium"
-                                  : "Fast"
-                          } 
+                        : `${Math.abs(currentSpeed) <= 330 ? "Slow" : Math.abs(currentSpeed) <= 660 ? "Medium" : "Fast"} 
           ${currentSpeed < 0 ? "Counterclockwise" : "Clockwise"}`
                 }`}
                 aria-disabled={disabled}
@@ -144,9 +127,7 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
                     {[0, 1, 2, 3, 4, 5, 6].map((pos) => (
                         <div
                             key={pos}
-                            className={`${styles.positionIndicator} ${
-                                position === pos ? styles.active : ""
-                            }`}
+                            className={`${styles.positionIndicator} ${position === pos ? styles.active : ""}`}
                             role="presentation"
                         />
                     ))}
@@ -165,18 +146,10 @@ const MotorSlider = ({ value = 0, onChange, disabled = false }) => {
                 {positionLabels.map((pos, index) => (
                     <button
                         key={index}
-                        className={`${styles.positionIcon} ${
-                            position === index ? styles.active : ""
-                        }`}
+                        className={`${styles.positionIcon} ${position === index ? styles.active : ""}`}
                         onClick={() => handlePositionClick(index)}
                         disabled={disabled}
-                        aria-label={`${pos.label} ${
-                            index < 3
-                                ? "countercw"
-                                : index > 3
-                                ? "clockwise"
-                                : "stop"
-                        }`}
+                        aria-label={`${pos.label} ${index < 3 ? "countercw" : index > 3 ? "clockwise" : "stop"}`}
                         aria-pressed={position === index}
                     >
                         <div className={styles.iconWrapper}>{pos.icon}</div>

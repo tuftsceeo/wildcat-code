@@ -16,7 +16,7 @@ import colorSensorGreen from "./assets/color-sensor-green.svg";
 import colorSensorAzure from "./assets/color-sensor-azure.svg";
 import colorSensorBlue from "./assets/color-sensor-blue.svg";
 import colorSensorCyan from "./assets/color-sensor-cyan.svg";
-import colorSensorMagenta from "./assets/color-sensor-magenta.svg";
+import colorSensorPink from "./assets/color-sensor-pink.svg";
 import colorSensorPurple from "./assets/color-sensor-purple.svg";
 import colorSensorBlack from "./assets/color-sensor-black.svg";
 import colorSensorWhite from "./assets/color-sensor-white.svg";
@@ -76,9 +76,7 @@ export const SensorDash = () => {
             <div className={styles.colorPalette}>
                 <ColorSensorButtons
                     color="#FF00FF"
-                    onClick={() =>
-                        handleSvgChange(colorSensorMagenta, "magenta")
-                    }
+                    onClick={() => handleSvgChange(colorSensorPink, "pink")}
                 />
                 <ColorSensorButtons
                     color="#FF0000"

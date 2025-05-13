@@ -20,7 +20,7 @@
 
 /* Panel with increased height for icon display */
 .panelWithIcons {
-    min-height: 130px; /* Increased height for larger icons */
+    min-height: 100px; /* Reduced height since icons are now inline */
     padding-top: var(--spacing-2);
     padding-bottom: var(--spacing-2);
 }
@@ -120,41 +120,38 @@
 /* Text and icon display for beginner and intermediate modes */
 .textIconContainer {
     display: flex;
-    align-items: flex-start; /* Align items at the top */
+    align-items: center; /* Changed from flex-start to center */
     justify-content: center;
     flex-wrap: wrap;
-    gap: var(--spacing-3) 0;
+    gap: var(--spacing-2) 0;
     width: 100%;
 }
 
 .textIconPair {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin: 0 var(--spacing-1); 
+    margin: 0 var(--spacing-1);
+}
+
+/* New inline text and icon container */
+.inlineTextIcon {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
 }
 
 .pairText {
-    line-height: 1.5;
-    text-align: center;
-    padding-bottom: var(--spacing-1);
+    line-height: var(--line-height-normal);
     white-space: nowrap;
-    height: 24px; /* Fixed height to ensure alignment */
-    display: flex;
+    display: inline-flex;
     align-items: center;
 }
 
 .pairIcon {
-    height: 28px; /* Fixed height for icon area */
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-}
-
-.iconPlaceholder {
-    width: 2px;
-    height: 28px;
-    display: block;
+    margin-left: var(--spacing-1);
 }
 
 /* Icon styling for mixed text/icon modes */
@@ -208,7 +205,7 @@ body[data-theme="retro"] .separatorIcon {
     color: var(--color-text);
 }
 
-body[data-theme="retro"]  .conceptIcon {
+body[data-theme="retro"] .conceptIcon {
     color: var(--color-primary-high);
 }
 
@@ -232,4 +229,3 @@ body[data-theme="clean"] .iconOnlyIcon,
 body[data-theme="clean"] .separatorIcon {
     color: var(--color-text);
 }
-

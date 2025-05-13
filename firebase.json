@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "wildcatweb\\build",
+    "public": "/wildcatweb/build",
     "ignore": [
       "firebase.json",
       "**/.*",

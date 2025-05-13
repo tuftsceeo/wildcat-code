@@ -53,19 +53,30 @@ const generatePythonCode = (slots, portStates = {}) => {
     // Generate imports
     let code = ["import runloop", "import time", "from hub import port, sound", "import motor"];
 
-    // First pass: check if we need force_sensor import
+    // First pass: check if we need force_sensor or color_sensor import
     let needsForceSensorImport = false;
+    let needsColorSensorImport = false;
     slots.forEach((slot) => {
-        if (slot?.type === "input" && slot?.subtype === "button") {
-            needsForceSensorImport = true;
-            console.log("generatePythonCode: Force Sensor detected, will add import");
+        if (slot?.type === "input") {
+            if (slot?.subtype === "button") {
+                needsForceSensorImport = true;
+                console.log("generatePythonCode: Force Sensor detected, will add import");
+            } else if (slot?.subtype === "color") {
+                needsColorSensorImport = true;
+                console.log("generatePythonCode: Color Sensor detected, will add import");
+            }
         }
     });
 
-    // Add force_sensor import if needed - BEFORE the main function declaration
+    // Add imports if needed - BEFORE the main function declaration
     if (needsForceSensorImport) {
         code.push("import force_sensor");
         console.log("generatePythonCode: Added force_sensor import");
+    }
+    if (needsColorSensorImport) {
+        code.push("import color_sensor");
+        code.push("import color");
+        console.log("generatePythonCode: Added color_sensor import");
     }
 
     // Add empty line and main function declaration
@@ -147,6 +158,66 @@ const generatePythonCode = (slots, portStates = {}) => {
                     slotCode.push(`${indent}    await runloop.sleep_ms(50)`);
                 }
             }
+        } else if (slot.type === "input" && slot.subtype === "color") {
+            const config = slot.configuration || {};
+            const portLetter = config.port || "A";
+            let color = config.color || "red";
+
+            // Map the color names to the correct LEGO SPIKE Prime color constants
+            switch (color) {
+                case "pink":
+                    color = "MAGENTA";
+                    break;
+                case "orange":
+                    color = "ORANGE";
+                    break;
+                case "yellow":
+                    color = "YELLOW";
+                    break;
+                case "green":
+                    color = "GREEN";
+                    break;
+                case "blue":
+                    color = "BLUE";
+                    break;
+                case "black":
+                    color = "BLACK";
+                    break;
+                case "white":
+                    color = "WHITE";
+                    break;
+                case "purple":
+                    color = "PURPLE";
+                    break;
+                case "red":
+                    color = "RED";
+                    break;
+                case "azure":
+                    color = "AZURE";
+                    break;
+                case "turquoise":
+                    color = "TURQUOISE";
+                    break;
+                case "gray":
+                    color = "UNKNOWN";
+                    break;
+                default:
+                    // If the color doesn't match any known value, default to RED
+                    color = "RED";
+                    break;
+            }
+            console.log(`generatePythonCode: Color Sensor port: ${portLetter}, color: ${color}`);
+
+            // Check if color sensor is connected - Using device type check
+            if (!isDeviceConnected(portStates, portLetter, DEVICE_TYPES.COLOR_SENSOR)) {
+                slotCode.push(`${indent}# Color sensor on port ${portLetter} is disconnected or not detected`);
+                slotCode.push(`${indent}pass  # Skipping command for disconnected sensor`);
+            } else {
+                // Generate code to wait for the specified color
+                slotCode.push(`${indent}# Wait until color sensor on port ${portLetter} detects ${color}`);
+                slotCode.push(`${indent}while color_sensor.color(port.${portLetter}) != color.${color.toUpperCase()}:`);
+                slotCode.push(`${indent}    await runloop.sleep_ms(50)`);
+            }
         }
 
         // Add comment to indicate which slot this code belongs to
@@ -178,17 +249,30 @@ const generateSlotCode = (slot, portStates = {}) => {
     // Generate imports
     let code = ["import runloop", "import time", "from hub import port, sound", "import motor"];
 
-    // First pass: check if we need force_sensor import
+    // First pass: check if we need force_sensor or color_sensor import
     let needsForceSensorImport = false;
-    if (slot?.type === "input" && slot?.subtype === "button") {
-        needsForceSensorImport = true;
-        console.log("generatePythonCode: Force Sensor detected, will add import");
+    let needsColorSensorImport = false;
+    if (slot?.type === "input") {
+        if (slot?.subtype === "button") {
+            needsForceSensorImport = true;
+            console.log("generatePythonCode: Force Sensor detected, will add import");
+        } else if (slot?.subtype === "color") {
+            needsColorSensorImport = true;
+            console.log("generatePythonCode: Color Sensor detected, will add import");
+        }
     }
 
     // Add force_sensor import if needed - BEFORE the main function declaration
     if (needsForceSensorImport) {
         code.push("import force_sensor");
         console.log("generatePythonCode: Added force_sensor import");
+    }
+
+    // Add color_sensor import if needed - BEFORE the main function declaration
+    if (needsColorSensorImport) {
+        code.push("import color_sensor");
+        code.push("import color");
+        console.log("generatePythonCode: Added color_sensor import");
     }
 
     // Add empty line and main function declaration
@@ -242,9 +326,14 @@ const generateSlotCode = (slot, portStates = {}) => {
     } else if (slot.type === "input" && slot.subtype === "time") {
         const config = slot.configuration || {};
         const milliseconds = Math.max(0, (config.seconds || 1) * 1000); // Convert seconds to milliseconds, ensure non-negative
+        slotCode.push(`${indent}await sound.beep((440), 250, release=50)`);
         slotCode.push(`${indent}for i in range(${config.seconds || 1}):`);
-        slotCode.push(`${indent}${indent}await sound.beep((440+80*(i%2)), 50, release=40+10*(i%2))`);
+
         slotCode.push(`${indent}${indent}await runloop.sleep_ms(900)`);
+        slotCode.push(`${indent}${indent}await sound.beep((440+80*(i%2)), 50, release=40+10*(i%2))`);
+        slotCode.push(`${indent}await sound.beep((440), 100)`);
+        slotCode.push(`${indent}await runloop.sleep_ms(50)`);
+        slotCode.push(`${indent}await sound.beep((300), 100, release=10)`);
 
         console.log(`generatePythonCode: Wait time: ${milliseconds}ms`);
     } else if (slot.type === "input" && slot.subtype === "button") {
@@ -262,13 +351,82 @@ const generateSlotCode = (slot, portStates = {}) => {
             // Generate code based on wait condition
             if (waitCondition === "pressed") {
                 slotCode.push(`${indent}# Wait until force sensor on port ${portLetter} is pressed`);
+                slotCode.push(`${indent}await sound.beep((440), 250, release=50)`);
                 slotCode.push(`${indent}while not force_sensor.pressed(port.${portLetter}):`);
                 slotCode.push(`${indent}    await runloop.sleep_ms(50)`);
+                slotCode.push(`${indent}await sound.beep((440), 100)`);
+                slotCode.push(`${indent}await runloop.sleep_ms(50)`);
+                slotCode.push(`${indent}await sound.beep((300), 100, release=10)`);
             } else {
                 slotCode.push(`${indent}# Wait until force sensor on port ${portLetter} is released`);
+                slotCode.push(`${indent}await sound.beep((440), 250, release=50)`);
                 slotCode.push(`${indent}while force_sensor.pressed(port.${portLetter}):`);
                 slotCode.push(`${indent}    await runloop.sleep_ms(50)`);
+                slotCode.push(`${indent}await sound.beep((440), 100)`);
+                slotCode.push(`${indent}await runloop.sleep_ms(50)`);
+                slotCode.push(`${indent}await sound.beep((300), 100, release=10)`);
             }
+        }
+    } else if (slot.type === "input" && slot.subtype === "color") {
+        const config = slot.configuration || {};
+        const portLetter = config.port || "A";
+        let color = config.color || "red";
+
+        // Map the color names to the correct LEGO SPIKE Prime color constants
+        switch (color) {
+            case "pink":
+                color = "MAGENTA";
+                break;
+            case "orange":
+                color = "ORANGE";
+                break;
+            case "yellow":
+                color = "YELLOW";
+                break;
+            case "green":
+                color = "GREEN";
+                break;
+            case "blue":
+                color = "BLUE";
+                break;
+            case "black":
+                color = "BLACK";
+                break;
+            case "white":
+                color = "WHITE";
+                break;
+            case "purple":
+                color = "PURPLE";
+                break;
+            case "red":
+                color = "RED";
+                break;
+            case "azure":
+                color = "AZURE";
+                break;
+            case "teal":
+                color = "TURQUOISE";
+                break;
+            default:
+                // If the color doesn't match any known value, default to UNKNOWN
+                color = "UNKNOWN";
+                break;
+        }
+        console.log(`generatePythonCode: Color Sensor port: ${portLetter}, color: ${color}`);
+
+        // Check if color sensor is connected - Using device type check
+        if (!isDeviceConnected(portStates, portLetter, DEVICE_TYPES.COLOR_SENSOR)) {
+            slotCode.push(`${indent}# Color sensor on port ${portLetter} is disconnected or not detected`);
+            slotCode.push(`${indent}pass  # Skipping command for disconnected sensor`);
+        } else {
+            // Generate code to wait for the specified color
+            slotCode.push(`${indent}await sound.beep((440), 250, release=50)`);
+            slotCode.push(`${indent}# Wait until color sensor on port ${portLetter} detects ${color}`);
+            slotCode.push(`${indent}while color_sensor.color(port.${portLetter}) != color.${color.toUpperCase()}:`);
+            slotCode.push(`${indent}    await runloop.sleep_ms(50)`);
+            slotCode.push(`${indent}await sound.beep((440), 100)`);
+            slotCode.push(`${indent}await runloop.sleep_ms(50)`);
+            slotCode.push(`${indent}await sound.beep((300), 100, release=10)`);
         }
     }
 

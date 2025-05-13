@@ -11,7 +11,7 @@
     height: 100%;
     border-radius: 50%;
     background-color: var(--color-background);
-    border:  var(--border-width-extra) solid var(--color-background);
+    border: var(--border-width-standard) solid var(--color-background);
     overflow: hidden;
 }
 
