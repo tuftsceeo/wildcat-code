@@ -1,8 +1,9 @@
 /**
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
- * running individual slots or the complete program. Enhanced with command-specific
- * names and icons for completed steps. Updated for flat task structure.
+ * running individual slots or the complete program. Enhanced with five visual states
+ * for step buttons to prevent mode confusion and accidental overwrites.
+ * Updated for flat task structure and editing mode workflow.
  */
 
 import React, { useEffect, useState, useRef } from "react";
@@ -13,12 +14,14 @@ import { useCustomization } from "../../../context/CustomizationContext";
 import { useMission } from "../../../context/MissionContext.js";
 import { Buffer } from "buffer";
 import { ReactComponent as QuestionMarkIcon } from "../../../assets/images/question-mark.svg";
-import { ClearSlotRequest, ClearSlotResponse } from "../../../features/bluetooth/ble_resources/messages";
+import {
+    ClearSlotRequest,
+    ClearSlotResponse,
+} from "../../../features/bluetooth/ble_resources/messages";
 import {
     AlertTriangle,
     AlertCircleStop,
     CircleStop,
-    HelpCircle,
     RotateCw,
     Clock9,
     Disc,
@@ -32,11 +35,17 @@ import {
     Snail,
     Turtle,
     Rabbit,
+    Check,
+    Pencil,
 } from "lucide-react";
 import DraggableStepButton from "./DraggableStepButton";
 
 const FilledCircleStop = (props) => {
-    return React.cloneElement(<CircleStop />, { fill: "#EB3327", stroke: "white", ...props });
+    return React.cloneElement(<CircleStop />, {
+        fill: "#EB3327",
+        stroke: "white",
+        ...props,
+    });
 };
 
 const COLOR_MAPPING = {
@@ -88,7 +97,7 @@ const INSTRUCTION_DISPLAY = {
 };
 
 /**
- * RunMenu component for navigating and executing code
+ * RunMenu component for navigating and executing code with editing mode support
  *
  * @component
  * @param {Object} props - Component props
@@ -98,18 +107,41 @@ const INSTRUCTION_DISPLAY = {
  * @param {Function} props.setCurrSlotNumber - Function to set current slot
  * @param {number} props.missionSteps - Total number of mission steps
  * @param {Array} props.slotData - Data for all coding slots
+ * @param {boolean} props.isEditingMode - Whether currently in editing mode
+ * @param {Function} props.onStepClick - Handler for step button clicks
  * @returns {JSX.Element} RunMenu component
  */
-export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, missionSteps, slotData }) => {
+export const RunMenu = ({
+    pyCode,
+    canRun,
+    currSlotNumber,
+    setCurrSlotNumber,
+    missionSteps,
+    slotData,
+    isEditingMode = false,
+    onStepClick,
+}) => {
     console.log("RunMenu: Rendering with missionSteps =", missionSteps);
 
     const { ble, isConnected, portStates } = useBLE();
 
     // Get user preferences from CustomizationContext
-    const { requireSequentialCompletion, useCommandLabels, stepCount, setStepCount, MAX_STEPS } = useCustomization();
+    const {
+        requireSequentialCompletion,
+        useCommandLabels,
+        stepCount,
+        setStepCount,
+        MAX_STEPS,
+    } = useCustomization();
 
     // Get mission context
-    const { isMissionMode, currentMission, dispatchTaskEvent, isTaskCompleted, getCurrentTask } = useMission();
+    const {
+        isMissionMode,
+        currentMission,
+        dispatchTaskEvent,
+        isTaskCompleted,
+        getCurrentTask,
+    } = useMission();
 
     // Add state to track when reordering is in progress
     const [isReordering, setIsReordering] = useState(false);
@@ -122,14 +154,18 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
         // The slotData array should be exactly missionSteps in length
         // (we're now treating missionSteps as the COUNT of steps, not the max index)
         if (slotData && slotData.length !== missionSteps) {
-            console.warn("RunMenu: Inconsistency detected - slotData length doesn't match missionSteps");
+            console.warn(
+                "RunMenu: Inconsistency detected - slotData length doesn't match missionSteps",
+            );
         }
     }, [missionSteps, slotData]);
 
     // Check if content is scrollable
     useEffect(() => {
         const checkScrollable = () => {
-            const menuElement = document.querySelector(`.${styles.menuContent}`);
+            const menuElement = document.querySelector(
+                `.${styles.menuContent}`,
+            );
             if (menuElement) {
                 const { scrollHeight, clientHeight } = menuElement;
                 setIsScrollable(scrollHeight > clientHeight);
@@ -150,7 +186,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
     // Check if we're at the bottom of the content
     useEffect(() => {
         const handleScroll = () => {
-            const menuElement = document.querySelector(`.${styles.menuContent}`);
+            const menuElement = document.querySelector(
+                `.${styles.menuContent}`,
+            );
             if (menuElement) {
                 const { scrollTop, scrollHeight, clientHeight } = menuElement;
                 // Add a small threshold to account for rounding errors
@@ -166,9 +204,31 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
             menuElement.addEventListener("scroll", handleScroll);
             // Check initial position
             handleScroll();
-            return () => menuElement.removeEventListener("scroll", handleScroll);
+            return () =>
+                menuElement.removeEventListener("scroll", handleScroll);
         }
     }, []);
+
+    /**
+     * Determine the visual state of a step button for styling and badges
+     *
+     * @param {number} stepIndex - Index of the step to check
+     * @returns {string} Visual state: 'empty', 'viewing', 'editing', 'configured', or 'stop'
+     */
+    const getStepVisualState = (stepIndex) => {
+        const isStepConfigured = !!(
+            slotData[stepIndex]?.type && slotData[stepIndex]?.subtype
+        );
+        const isCurrentSlot = stepIndex === currSlotNumber;
+        const isStopStep = stepIndex === missionSteps - 1;
+
+        if (isStopStep) return "stop";
+        if (isCurrentSlot && isEditingMode) return "editing";
+        if (isCurrentSlot && !isEditingMode && isStepConfigured)
+            return "viewing";
+        if (isStepConfigured) return "configured";
+        return "empty";
+    };
 
     /**
      * Check if a step is completed (has instructions assigned)
@@ -177,7 +237,11 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
      * @returns {boolean} Whether the step is completed
      */
     const isStepCompleted = (index) => {
-        return !!(slotData && slotData[index]?.type && slotData[index]?.subtype);
+        return !!(
+            slotData &&
+            slotData[index]?.type &&
+            slotData[index]?.subtype
+        );
     };
 
     /**
@@ -209,12 +273,14 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
     };
 
     /**
-     * Get display info (name and icon) for a step based on user preferences
+     * Get display info (name and icon) for a step based on user preferences and visual state
      *
      * @param {number} index - Step index
      * @returns {Object} Object with name and icon for the step
      */
     const getStepDisplayInfo = (index) => {
+        const visualState = getStepVisualState(index);
+
         // If this is the stop step (last step)
         if (index === missionSteps - 1) {
             return {
@@ -255,34 +321,56 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
         // Special case for button instruction
         if (type === "input" && subtype === "button") {
             // Check if this is a release condition (not pressed)
-            const isReleaseCondition = configuration?.waitCondition === "released";
+            const isReleaseCondition =
+                configuration?.waitCondition === "released";
 
             return {
                 name: INSTRUCTION_DISPLAY[type][subtype].name,
                 icon: isReleaseCondition ? (
-                    <ArchiveX className={styles.commandIcon + " " + styles.flippedVertically} />
+                    <ArchiveX
+                        className={
+                            styles.commandIcon + " " + styles.flippedVertically
+                        }
+                    />
                 ) : (
-                    <ArchiveRestore className={styles.commandIcon + " " + styles.flippedVertically} />
+                    <ArchiveRestore
+                        className={
+                            styles.commandIcon + " " + styles.flippedVertically
+                        }
+                    />
                 ),
             };
         }
 
         // Special case for color instruction - fill the droplet with the specified color
-        if (type === "input" && subtype === "color" && configuration && configuration.color) {
-            const colorValue = COLOR_MAPPING[configuration.color] || COLOR_MAPPING.unknown;
+        if (
+            type === "input" &&
+            subtype === "color" &&
+            configuration &&
+            configuration.color
+        ) {
+            const colorValue =
+                COLOR_MAPPING[configuration.color] || COLOR_MAPPING.unknown;
             return {
                 name: INSTRUCTION_DISPLAY[type][subtype].name,
-                icon: React.cloneElement(INSTRUCTION_DISPLAY[type][subtype].icon, {
-                    className: styles.commandIcon,
-                    fill: colorValue,
-                }),
+                icon: React.cloneElement(
+                    INSTRUCTION_DISPLAY[type][subtype].icon,
+                    {
+                        className: styles.commandIcon,
+                        fill: colorValue,
+                    },
+                ),
             };
         }
 
         // Special case for motor instruction - use different icons based on speed
         if (type === "action" && subtype === "motor" && configuration) {
             // Get the first motor configuration if it's an array
-            const motorConfig = Array.isArray(configuration) ? configuration.sort((a, b) => (a.port || "").localeCompare(b.port || ""))[0] : configuration;
+            const motorConfig = Array.isArray(configuration)
+                ? configuration.sort((a, b) =>
+                      (a.port || "").localeCompare(b.port || ""),
+                  )[0]
+                : configuration;
 
             if (motorConfig) {
                 const speed = motorConfig.speed || 0;
@@ -292,7 +380,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                 // Determine which icon to use based on speed
                 let speedIcon;
                 if (speed === 0) {
-                    speedIcon = <FilledCircleStop className={styles.commandIcon} />;
+                    speedIcon = (
+                        <FilledCircleStop className={styles.commandIcon} />
+                    );
                 } else if (absSpeed <= 330) {
                     // SLOW_THRESHOLD
                     speedIcon = <Snail className={styles.commandIcon} />;
@@ -304,7 +394,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
                 }
 
                 // Add flipped class if the motor is going clockwise
-                const iconClassName = isClockwise ? styles.commandIcon + " " + styles.flippedHorizontally : styles.commandIcon;
+                const iconClassName = isClockwise
+                    ? styles.commandIcon + " " + styles.flippedHorizontally
+                    : styles.commandIcon;
 
                 return {
                     name: INSTRUCTION_DISPLAY[type][subtype].name,
@@ -325,6 +417,33 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
     };
 
     /**
+     * Get the appropriate corner badge for a step based on its visual state
+     *
+     * @param {string} visualState - The visual state of the step
+     * @returns {JSX.Element|null} Corner badge component or null
+     */
+    const getCornerBadge = (visualState) => {
+        switch (visualState) {
+            case "editing":
+                return (
+                    <div className={`${styles.cornerBadge} ${styles.editing}`}>
+                        <Pencil className={styles.cornerIcon} />
+                    </div>
+                );
+            case "configured":
+                return (
+                    <div
+                        className={`${styles.cornerBadge} ${styles.configured}`}
+                    >
+                        <Check className={styles.cornerIcon} />
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    /**
      * Check for disconnected motors in configurations
      *
      * @param {Array} slots - Slot configurations to check
@@ -334,7 +453,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
         const disconnectedPorts = [];
         slots.forEach((slot, index) => {
             if (slot?.type === "action" && slot?.subtype === "motor") {
-                const configs = Array.isArray(slot.configuration) ? slot.configuration : [slot.configuration];
+                const configs = Array.isArray(slot.configuration)
+                    ? slot.configuration
+                    : [slot.configuration];
 
                 configs.forEach((config) => {
                     if (config?.port && !portStates[config.port]) {
@@ -355,7 +476,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
     const handleRunAllSlots = async () => {
         try {
             if (!isConnected) {
-                console.warn("Robot not connected. Please connect via Bluetooth first.");
+                console.warn(
+                    "Robot not connected. Please connect via Bluetooth first.",
+                );
                 return;
             }
 
@@ -363,14 +486,21 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
             console.log("Generated Python Code for all slots:", code);
 
             // Clear the program slot
-            const clearResponse = await ble.sendRequest(new ClearSlotRequest(0), ClearSlotResponse);
+            const clearResponse = await ble.sendRequest(
+                new ClearSlotRequest(0),
+                ClearSlotResponse,
+            );
 
             if (!clearResponse.success) {
                 console.warn("Failed to clear program slot"); // Warning ok, sometimes the program slot is empty
             }
 
             // Upload and transfer the program
-            await ble.uploadProgramFile("program.py", 0, Buffer.from(code, "utf-8"));
+            await ble.uploadProgramFile(
+                "program.py",
+                0,
+                Buffer.from(code, "utf-8"),
+            );
 
             // Start the program
             await ble.startProgram(0);
@@ -396,33 +526,44 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
     };
 
     /**
-     * Handle clicking on a step button
+     * Handle clicking on a step button - uses new onStepClick prop
      *
      * @param {number} stepIndex - Index of the clicked step
      */
     const handleStepClick = (stepIndex) => {
-        // Only allow clicking on accessible steps
-        if (isStepAccessible(stepIndex)) {
-            console.log("RunMenu: Clicked on step", stepIndex === missionSteps - 1 ? "Stop" : stepIndex + 1);
+        // Use the provided onStepClick handler if available, otherwise fallback to direct slot setting
+        if (onStepClick) {
+            onStepClick(stepIndex);
+        } else {
+            // Fallback behavior for backward compatibility
+            if (isStepAccessible(stepIndex)) {
+                console.log(
+                    "RunMenu: Clicked on step",
+                    stepIndex === missionSteps - 1 ? "Stop" : stepIndex + 1,
+                );
 
-            // Dispatch navigation event for mission tracking
-            if (isMissionMode) {
-                dispatchTaskEvent("NAVIGATION", {
-                    fromSlot: currSlotNumber,
-                    toSlot: stepIndex,
-                    direction: currSlotNumber < stepIndex ? "next" : "previous",
-                    currentSlot: stepIndex,
-                });
+                // Dispatch navigation event for mission tracking
+                if (isMissionMode) {
+                    dispatchTaskEvent("NAVIGATION", {
+                        fromSlot: currSlotNumber,
+                        toSlot: stepIndex,
+                        direction:
+                            currSlotNumber < stepIndex ? "next" : "previous",
+                        currentSlot: stepIndex,
+                    });
+                }
+
+                // Update current slot
+                setCurrSlotNumber(stepIndex);
             }
-
-            // Update current slot
-            setCurrSlotNumber(stepIndex);
         }
     };
 
     // Check for any disconnected motors in the current configuration
     const disconnectedMotors = checkDisconnectedMotors(slotData);
-    const currentSlotDisconnected = checkDisconnectedMotors([slotData[currSlotNumber]]);
+    const currentSlotDisconnected = checkDisconnectedMotors([
+        slotData[currSlotNumber],
+    ]);
 
     /**
      * Check if a step has been configured in mission mode
@@ -432,17 +573,26 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
      * @returns {boolean} Whether step is configured in mission mode
      */
     const isStepConfiguredInMission = (slotIndex) => {
-        if (!isMissionMode || !currentMission) return isStepCompleted(slotIndex);
+        if (!isMissionMode || !currentMission)
+            return isStepCompleted(slotIndex);
 
         // Find tasks that target this slot
-        const tasksForSlot = currentMission.tasks.filter((task) => task.targetSlot === slotIndex);
+        const tasksForSlot = currentMission.tasks.filter(
+            (task) => task.targetSlot === slotIndex,
+        );
 
         if (tasksForSlot.length === 0) return isStepCompleted(slotIndex);
 
         // Check if configuration tasks for this slot are completed
         return tasksForSlot.some((task) => {
             // Only consider configuration-related tasks
-            if (!["MOTOR_CONFIGURATION", "TIMER_SETTING", "BUTTON_CONFIGURATION"].includes(task.type)) {
+            if (
+                ![
+                    "MOTOR_CONFIGURATION",
+                    "TIMER_SETTING",
+                    "BUTTON_CONFIGURATION",
+                ].includes(task.type)
+            ) {
                 return false;
             }
 
@@ -532,25 +682,43 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
         const buttons = [];
         // Create regular step buttons (excluding the stop step)
         for (let i = 0; i < missionSteps - 1; i++) {
-            const completed = isMissionMode ? isStepConfiguredInMission(i) : isStepCompleted(i);
+            const completed = isMissionMode
+                ? isStepConfiguredInMission(i)
+                : isStepCompleted(i);
             const accessible = isStepAccessible(i);
+            const visualState = getStepVisualState(i);
             const { name, icon } = getStepDisplayInfo(i);
+            const cornerBadge = getCornerBadge(visualState);
 
             const stepButton = (
                 <button
                     key={i}
                     className={`${styles.stepButton} 
-                              ${isConnected && checkDisconnectedMotors([slotData?.[i]]).length > 0 ? styles.warning : ""} 
+                              ${styles[visualState]} 
+                              ${
+                                  isConnected &&
+                                  checkDisconnectedMotors([slotData?.[i]])
+                                      .length > 0
+                                      ? styles.warning
+                                      : ""
+                              } 
                               ${completed ? styles.completed : ""}
                               ${slotData?.[i]?.type ? styles.configured : ""} 
                               ${i === currSlotNumber ? styles.current : ""}`}
                     onClick={() => handleStepClick(i)}
                     disabled={!accessible}
-                    aria-label={`${name}${i === currSlotNumber ? " (current)" : ""}${completed ? " (completed)" : ""}`}
+                    aria-label={`${name}${
+                        i === currSlotNumber ? " (current)" : ""
+                    }${completed ? " (completed)" : ""}${
+                        visualState === "editing" ? " (editing)" : ""
+                    }${visualState === "viewing" ? " (viewing)" : ""}`}
                     aria-current={i === currSlotNumber ? "step" : false}
                 >
                     <span className={styles.stepName}>{name}</span>
-                    {icon && <span className={styles.iconContainer}>{icon}</span>}
+                    {icon && (
+                        <span className={styles.iconContainer}>{icon}</span>
+                    )}
+                    {cornerBadge}
                 </button>
             );
 
@@ -574,7 +742,9 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
         buttons.push(
             <button
                 key="stop"
-                className={`${styles.stepButton} ${styles.stopButton} ${currSlotNumber === stopStepIndex ? styles.current : ""}`}
+                className={`${styles.stepButton} ${styles.stopButton} ${
+                    currSlotNumber === stopStepIndex ? styles.current : ""
+                }`}
                 onClick={() => handleStepClick(stopStepIndex)}
                 disabled={!stopAccessible}
                 aria-label="Stop"
@@ -590,14 +760,20 @@ export const RunMenu = ({ pyCode, canRun, currSlotNumber, setCurrSlotNumber, mis
 
     return (
         <div className={styles.menuBackground}>
-            <div className={`${styles.menuContent} ${isScrollable ? styles.scrollable : ""} ${isAtBottom ? styles.atBottom : ""}`}>
+            <div
+                className={`${styles.menuContent} ${
+                    isScrollable ? styles.scrollable : ""
+                } ${isAtBottom ? styles.atBottom : ""}`}
+            >
                 {/* Title hidden by CSS */}
                 <div className={styles.menuTitle}>CODE STEPS</div>
 
                 {/* Content wrapper */}
                 <div className={styles.menuContentWrapper}>
                     {/* Step buttons */}
-                    <div className={styles.stepsContainer}>{renderStepButtons()}</div>
+                    <div className={styles.stepsContainer}>
+                        {renderStepButtons()}
+                    </div>
 
                     {/* Add Step button - only show in sandbox mode */}
                     {!isMissionMode && (

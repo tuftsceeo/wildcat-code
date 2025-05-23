@@ -1,4 +1,4 @@
-/* RunMenu.module.css - Revised with icons instead of checkmarks */
+/* RunMenu.module.css - Original styling with corner badges added */
 
 .menuBackground {
     height: 100%;
@@ -120,7 +120,9 @@
     gap: var(--spacing-2);
     width: 100%;
     margin: var(--spacing-1);
-    padding: 12px; /* Increased padding to prevent scaled borders from being cut off */
+    padding: calc(
+        1.25 * var(--spacing-4)
+    ); /* Increased padding to prevent scaled borders from being cut off */
 }
 
 /* Step buttons styled with theme tokens */
@@ -148,6 +150,59 @@
     border-color: var(--button-selected-border);
     color: var(--button-selected-text);
     background-color: var(--button-selected-bg);
+}
+
+/* Visual state styling for corner badges - minimal changes to border colors only */
+/* Empty state - uses default button styling (no additional rules needed) */
+
+/* Viewing state - blue border for current slot in view mode */
+.stepButton.viewing {
+    border-color: var(--color-primary-high);
+    color: var(--button-default-text);
+}
+
+/* Editing state - green border and subtle background for current slot in edit mode */
+.stepButton.editing {
+    border-color: var(--color-secondary-high);
+    background-color: rgba(var(--color-secondary-main-rgb), 0.15);
+    color: var(--button-default-text);
+}
+
+/* Configured state - blue border for completed steps */
+.stepButton.configured:not(.current):not(.viewing):not(.editing) {
+    border-color: var(--color-primary-high);
+    color: var(--button-default-text);
+}
+/* === CORNER BADGE SYSTEM === */
+.cornerBadge {
+    position: absolute;
+    top: calc(-1 * var(--spacing-4));
+    right: calc(-1 * var(--spacing-4));
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-width-standard) solid var(--color-background);
+    z-index: var(--z-index-raised);
+    pointer-events: none;
+}
+
+.cornerIcon {
+    color: var(--button-default-text);
+    width: calc(var(--font-size-md));
+    height: calc(var(--font-size-md));
+}
+
+.cornerBadge.editing {
+    background-color: var(--color-secondary-low);
+    color: var(--color-text);
+}
+
+.cornerBadge.configured {
+    background-color: var(--color-primary-low);
+    color: var(--color-text);
 }
 
 /* Command icon styling - now on the right side */
@@ -178,10 +233,10 @@
 }
 
 /* Inactive steps */
-.stepButton.configured:not(.current) {
-    border-color: var(--button-default-border);
+/* .stepButton.configured:not(.current) {
+      border-color: var(--button-default-border);
     color: var(--button-default-text);
-}
+} */
 
 /* Warning styling when needed */
 .stepButton.warning {
@@ -319,29 +374,6 @@
     transform: translateY(2px);
     transition: none; /* Remove transition during drop */
 }
-
-/* Only apply transitions and transforms when not being dragged
-.stepButton:not(.dragging) {
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-    transform-origin: center;
-}
-
-.stepButton:not(.dragging):hover:not(:disabled) {
-    transform: var(--button-scale-hover);
-}
-
-.stepButton:not(.dragging):active:not(:disabled) {
-    transform: var(--button-scale-active);
-}
-
-/* When dragging, disable all hover and active states */
-/* .stepButton.dragging,
-.stepButton.dragging:hover,
-.stepButton.dragging:active {
-    transform: none;
-    transition: none;
-}  */
 
 /* Drag handle styles */
 .dragHandle {
