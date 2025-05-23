@@ -1,7 +1,10 @@
 /**
  * @file App.js
- * @description Main application component with support for reading level, step count, and missions.
- * Updated to include MissionProvider and handle first-time setup.
+ * @description Main application component with support for reading level, step count, missions,
+ * and new editing mode functionality. Updated to include editing mode state management
+ * and feature flag for mission disable during development.
+ * @author Jennifer Cross with support from Claude
+ * @updated February 2025
  */
 
 import React, { useState, useEffect } from "react";
@@ -12,7 +15,7 @@ import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
 import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
 import { KnobProvider } from "./context/KnobContext.js";
 import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
-import { MissionProvider, useMission } from './context/MissionContext.js';
+import { MissionProvider, useMission } from "./context/MissionContext.js";
 import HintSystem from "./features/missions/components/HintSystem";
 import "./common/styles/App.css";
 import CodeTrack from "./features/codeTrack/components/CodeTrack.jsx";
@@ -28,6 +31,9 @@ import { preloadVoices } from "./common/utils/speechUtils";
 import logo from "./assets/images/logo.svg";
 import "./common/styles/App.css";
 import reportWebVitals from "./common/utils/reportWebVitals";
+
+// Feature flag for temporarily disabling mission mode during editing mode development
+export const ENABLE_MISSION_MODE = false;
 
 /**
  * The top-level App component with all providers
@@ -57,9 +63,15 @@ function App() {
  */
 function AppWithCustomizationContext() {
     // Get customization settings
-    const { readingLevel, language, highContrast, customColors } = useCustomization();
-    const { activeHint } = useMission();
-  
+    const { readingLevel, language, highContrast, customColors } =
+        useCustomization();
+
+    // Always call useMission hook (Rules of Hooks), but use feature flag to control behavior
+    const missionContext = useMission();
+    const { activeHint } = ENABLE_MISSION_MODE
+        ? missionContext
+        : { activeHint: null };
+
     // Apply reading level to body data attribute
     useEffect(() => {
         document.body.dataset.readingLevel = readingLevel;
@@ -70,33 +82,35 @@ function AppWithCustomizationContext() {
     useEffect(() => {
         // Handle high contrast mode
         if (highContrast) {
-            document.body.classList.add('high-contrast');
+            document.body.classList.add("high-contrast");
         } else {
-            document.body.classList.remove('high-contrast');
+            document.body.classList.remove("high-contrast");
         }
 
         // Handle custom colors
         if (highContrast && Object.keys(customColors).length > 0) {
             // Create or update style element for custom colors
-            let styleElement = document.getElementById('app-custom-theme-vars');
+            let styleElement = document.getElementById("app-custom-theme-vars");
             if (!styleElement) {
-                styleElement = document.createElement('style');
-                styleElement.id = 'app-custom-theme-vars';
+                styleElement = document.createElement("style");
+                styleElement.id = "app-custom-theme-vars";
                 document.head.appendChild(styleElement);
             }
 
             // Generate CSS rules for all custom colors
-            const cssRules = Object.entries(customColors).map(([colorType, value]) => {
-                // Convert hex to RGB for rgba support
-                const r = parseInt(value.slice(1, 3), 16);
-                const g = parseInt(value.slice(3, 5), 16);
-                const b = parseInt(value.slice(5, 7), 16);
-                
-                // Calculate relative luminance to determine contrast color
-                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                const contrastColor = luminance > 0.5 ? '#1E1E1E' : '#FFFFFF';
+            const cssRules = Object.entries(customColors)
+                .map(([colorType, value]) => {
+                    // Convert hex to RGB for rgba support
+                    const r = parseInt(value.slice(1, 3), 16);
+                    const g = parseInt(value.slice(3, 5), 16);
+                    const b = parseInt(value.slice(5, 7), 16);
 
-                let rules = `
+                    // Calculate relative luminance to determine contrast color
+                    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                    const contrastColor =
+                        luminance > 0.5 ? "#1E1E1E" : "#FFFFFF";
+
+                    let rules = `
                     :root {
                         --color-${colorType}-main: ${value};
                         --color-${colorType}-high: ${value};
@@ -113,9 +127,9 @@ function AppWithCustomizationContext() {
                     }
                 `;
 
-                // Add component-specific variables based on color type
-                if (colorType === 'primary') {
-                    rules += `
+                    // Add component-specific variables based on color type
+                    if (colorType === "primary") {
+                        rules += `
                         body.high-contrast {
                             /* Default button states (outlined) */
                             --button-default-bg: transparent;
@@ -142,8 +156,8 @@ function AppWithCustomizationContext() {
                             --color-timer-main: ${value};
                         }
                     `;
-                } else if (colorType === 'secondary') {
-                    rules += `
+                    } else if (colorType === "secondary") {
+                        rules += `
                         body.high-contrast {
                             /* Selected/Active button states (outlined) */
                             --button-selected-bg: transparent;
@@ -168,8 +182,8 @@ function AppWithCustomizationContext() {
                             --color-sensor-main: ${value};
                         }
                     `;
-                } else if (colorType === 'accent') {
-                    rules += `
+                    } else if (colorType === "accent") {
+                        rules += `
                         body.high-contrast {
                             /* Warning states */
                             --color-warning-main: ${value};
@@ -202,11 +216,11 @@ function AppWithCustomizationContext() {
                             --state-important-text: ${contrastColor};
                         }
                     `;
-                }
+                    }
 
-                // Add disabled states with a fixed color (white with opacity)
-                if (colorType === 'primary') {
-                    rules += `
+                    // Add disabled states with a fixed color (white with opacity)
+                    if (colorType === "primary") {
+                        rules += `
                         body.high-contrast {
                             /* Disabled states */
                             --button-disabled-bg: rgba(255, 255, 255, 0.3);
@@ -220,15 +234,18 @@ function AppWithCustomizationContext() {
                             --input-disabled-text: rgba(255, 255, 255, 0.5);
                         }
                     `;
-                }
+                    }
 
-                return rules;
-            }).join('\n');
+                    return rules;
+                })
+                .join("\n");
 
             styleElement.textContent = cssRules;
         } else {
             // Remove custom theme styles if high contrast is off or no custom colors
-            const styleElement = document.getElementById('app-custom-theme-vars');
+            const styleElement = document.getElementById(
+                "app-custom-theme-vars",
+            );
             if (styleElement) {
                 styleElement.remove();
             }
@@ -236,18 +253,20 @@ function AppWithCustomizationContext() {
 
         // Cleanup function
         return () => {
-            const styleElement = document.getElementById('app-custom-theme-vars');
+            const styleElement = document.getElementById(
+                "app-custom-theme-vars",
+            );
             if (styleElement) {
                 styleElement.remove();
             }
         };
     }, [highContrast, customColors]);
-  
+
     return (
         <>
             <AppContent />
-            {/* Add the HintSystem component to apply visual hints */}
-            <HintSystem activeHint={activeHint} />
+            {/* Add the HintSystem component to apply visual hints - only if missions enabled */}
+            {ENABLE_MISSION_MODE && <HintSystem activeHint={activeHint} />}
         </>
     );
 }
@@ -260,14 +279,27 @@ function AppWithCustomizationContext() {
 function AppContent() {
     // Get step count directly from CustomizationContext
     const { stepCount: missionSteps } = useCustomization();
-    
+
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
-    // Get currSlotNumber from MissionContext
-    const { currSlotNumber, setCurrSlotNumber } = useMission();
+    // Editing Mode State Management
+    // Always get mission context (Rules of Hooks), but use feature flag to control usage
+    const missionContext = useMission();
+
+    // Local state for non-mission mode
+    const [localCurrSlotNumber, setLocalCurrSlotNumber] = useState(0);
+    const [isEditingMode, setIsEditingMode] = useState(true); // Start in editing mode
+
+    // Choose which slot state to use based on mission mode
+    const currSlotNumber = ENABLE_MISSION_MODE
+        ? missionContext.currSlotNumber
+        : localCurrSlotNumber;
+    const setCurrSlotNumber = ENABLE_MISSION_MODE
+        ? missionContext.setCurrSlotNumber
+        : setLocalCurrSlotNumber;
 
     // Define interface for slot data
     const createEmptySlot = () => ({
@@ -309,9 +341,9 @@ function AppContent() {
             setSlotData(newSlotData);
         };
 
-        window.addEventListener('updateSlotData', handleSlotDataUpdate);
+        window.addEventListener("updateSlotData", handleSlotDataUpdate);
         return () => {
-            window.removeEventListener('updateSlotData', handleSlotDataUpdate);
+            window.removeEventListener("updateSlotData", handleSlotDataUpdate);
         };
     }, []);
 
@@ -319,7 +351,7 @@ function AppContent() {
     useEffect(() => {
         // Check localStorage for a first launch flag
         const hasLaunched = localStorage.getItem("hasLaunched");
-        if (!hasLaunched) {
+        if (!hasLaunched && ENABLE_MISSION_MODE) {
             setIsFirstLaunch(true);
             // Set the flag for future launches
             localStorage.setItem("hasLaunched", "true");
@@ -337,7 +369,7 @@ function AppContent() {
         const hasAtLeastOneInstruction = slotData
             .slice(0, -1) // Exclude the stop step
             .some((slot) => slot?.type && slot?.subtype && slot?.configuration);
-        
+
         setCanRun(hasAtLeastOneInstruction);
     }, [slotData]);
 
@@ -351,6 +383,92 @@ function AppContent() {
             };
             return newData;
         });
+    };
+
+    /**
+     * Handle editing mode transitions
+     * @param {number} slotIndex - Target slot index
+     * @param {boolean} editingMode - Whether to enter editing mode
+     */
+    const handleEditingModeChange = (slotIndex, editingMode) => {
+        console.log(
+            `App.js: Changing to slot ${slotIndex}, editing mode: ${editingMode}`,
+        );
+
+        // Update slot if different
+        if (slotIndex !== currSlotNumber) {
+            setCurrSlotNumber(slotIndex);
+        }
+
+        // Update editing mode
+        setIsEditingMode(editingMode);
+    };
+
+    /**
+     * Handle step clicks from RunMenu
+     * Implements the five-state logic for step button behavior
+     * @param {number} stepIndex - Index of clicked step
+     */
+    const handleStepClick = (stepIndex) => {
+        console.log(`App.js: Step ${stepIndex} clicked`);
+
+        // Check if step is configured
+        const isStepConfigured = !!(
+            slotData[stepIndex]?.type && slotData[stepIndex]?.subtype
+        );
+
+        if (isStepConfigured) {
+            // Configured step: Enter viewing mode
+            handleEditingModeChange(stepIndex, false);
+        } else {
+            // Empty step: Enter editing mode automatically
+            handleEditingModeChange(stepIndex, true);
+        }
+    };
+
+    /**
+     * Handle entering editing mode from CodingTrack "Edit Step" button
+     */
+    const handleEnterEditingMode = () => {
+        console.log(
+            `App.js: Entering editing mode for current slot ${currSlotNumber}`,
+        );
+        setIsEditingMode(true);
+    };
+
+    /**
+     * Handle saving and exiting editing mode from CommandPanel
+     * @param {Object} slotConfig - Configuration to save
+     * @param {boolean} shouldProgress - Whether to progress to next empty slot
+     */
+    const handleSaveAndExit = (slotConfig, shouldProgress = false) => {
+        console.log(
+            `App.js: Saving slot ${currSlotNumber}, progress: ${shouldProgress}`,
+        );
+
+        // Save the configuration
+        if (slotConfig) {
+            handleSlotUpdate(slotConfig);
+        }
+
+        if (shouldProgress) {
+            // Find next empty slot
+            const nextEmptySlot = slotData.findIndex(
+                (slot, index) =>
+                    index > currSlotNumber && (!slot?.type || !slot?.subtype),
+            );
+
+            if (nextEmptySlot !== -1) {
+                // Progress to next empty slot in editing mode
+                handleEditingModeChange(nextEmptySlot, true);
+            } else {
+                // No more empty slots, exit editing mode
+                setIsEditingMode(false);
+            }
+        } else {
+            // Just exit editing mode, stay on current slot
+            setIsEditingMode(false);
+        }
     };
 
     // Generate Python code from slot configurations
@@ -407,6 +525,8 @@ function AppContent() {
                     setCurrSlotNumber={setCurrSlotNumber}
                     missionSteps={missionSteps}
                     slotData={slotData}
+                    isEditingMode={isEditingMode}
+                    onStepClick={handleStepClick}
                 />
             </div>
 
@@ -419,6 +539,8 @@ function AppContent() {
                     setCurrSlotNumber={setCurrSlotNumber}
                     missionSteps={missionSteps}
                     slotData={slotData}
+                    isEditingMode={isEditingMode}
+                    onEnterEditingMode={handleEnterEditingMode}
                 />
             </div>
 
@@ -437,6 +559,8 @@ function AppContent() {
                     onSlotUpdate={handleSlotUpdate}
                     slotData={slotData}
                     missionSteps={missionSteps}
+                    isEditingMode={isEditingMode}
+                    onSaveAndExit={handleSaveAndExit}
                 />
             </div>
 
@@ -454,17 +578,17 @@ function AppContent() {
                 />
             )}
 
-            {/* First launch mission selector */}
-            {isFirstLaunch && (
-                <MissionSelector 
-                    isOpen={true} 
-                    onClose={handleCloseFirstLaunch} 
+            {/* First launch mission selector - only if missions enabled */}
+            {isFirstLaunch && ENABLE_MISSION_MODE && (
+                <MissionSelector
+                    isOpen={true}
+                    onClose={handleCloseFirstLaunch}
                     initialSetup={true}
                 />
             )}
 
-            {/* Mission overlay component for instructions, success messages, etc. */}
-            <MissionOverlay />
+            {/* Mission overlay component - only if missions enabled */}
+            {ENABLE_MISSION_MODE && <MissionOverlay />}
         </div>
     );
 }
