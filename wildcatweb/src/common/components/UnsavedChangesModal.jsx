@@ -2,12 +2,13 @@
  * @file UnsavedChangesModal.jsx
  * @description Modal component that appears when user tries to navigate away from
  * editing mode with unsaved changes. Provides options to save, discard, or cancel.
+ * Located in common/components for reusability across the application.
  * @author Jennifer Cross with support from Claude
  * @created February 2025
  */
 
 import React from "react";
-import Portal from "../../../common/components/Portal";
+import Portal from "./Portal";
 import { AlertTriangle, Save, X, Ban } from "lucide-react";
 import styles from "../styles/UnsavedChangesModal.module.css";
 
@@ -30,32 +31,58 @@ const UnsavedChangesModal = ({
     onCancel,
     targetStepNumber,
 }) => {
+    // Don't render if not open
     if (!isOpen) {
         return null;
     }
 
+    // Handle keyboard events for accessibility
+    const handleKeyDown = (event) => {
+        if (event.key === "Escape") {
+            onCancel();
+        }
+    };
+
     return (
         <Portal>
-            <div className={styles.overlay}>
+            <div
+                className={styles.overlay}
+                onKeyDown={handleKeyDown}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="unsaved-changes-title"
+                aria-describedby="unsaved-changes-message"
+            >
                 <div className={styles.modalContainer}>
                     {/* Header with warning icon */}
                     <div className={styles.header}>
                         <AlertTriangle
                             size={48}
                             className={styles.warningIcon}
+                            aria-hidden="true"
                         />
-                        <h2 className={styles.title}>Unsaved Changes</h2>
+                        <h2
+                            id="unsaved-changes-title"
+                            className={styles.title}
+                        >
+                            Unsaved Changes
+                        </h2>
                     </div>
 
                     {/* Content */}
                     <div className={styles.content}>
-                        <p className={styles.message}>
+                        <p
+                            id="unsaved-changes-message"
+                            className={styles.message}
+                        >
                             You have unsaved changes in this step.
                         </p>
-                        <p className={styles.submessage}>
-                            What would you like to do before going to Step{" "}
-                            {targetStepNumber + 1}?
-                        </p>
+                        {targetStepNumber !== null && (
+                            <p className={styles.submessage}>
+                                What would you like to do before going to Step{" "}
+                                {targetStepNumber + 1}?
+                            </p>
+                        )}
                     </div>
 
                     {/* Action buttons */}
@@ -64,6 +91,7 @@ const UnsavedChangesModal = ({
                             className={`${styles.actionButton} ${styles.saveButton}`}
                             onClick={onSaveAndContinue}
                             aria-label="Save changes and continue to selected step"
+                            autoFocus
                         >
                             <Save className={styles.buttonIcon} />
                             Save & Continue

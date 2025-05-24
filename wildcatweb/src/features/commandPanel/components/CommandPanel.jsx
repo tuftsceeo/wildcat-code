@@ -3,8 +3,8 @@
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
  * Updated to work with the Task Registry Mission System and dispatch events.
- * Enhanced with confirmation workflow to prevent accidental overwrites
- * and Edit button support for viewing mode.
+ * Enhanced with confirmation workflow to prevent accidental overwrites,
+ * Edit button support for viewing mode, and unsaved changes communication.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -111,6 +111,7 @@ const CONTROL_TYPES = {
  * @param {boolean} props.isEditingMode - Whether currently in editing mode
  * @param {Function} props.onSaveAndExit - Callback for confirmation with auto-progression logic
  * @param {Function} props.onEnterEditingMode - Callback to enter editing mode from viewing mode
+ * @param {Function} props.onUnsavedChangesUpdate - Callback to communicate unsaved changes status
  * @returns {JSX.Element} Complete command panel interface
  */
 export const CommandPanel = ({
@@ -121,6 +122,7 @@ export const CommandPanel = ({
     isEditingMode = false,
     onSaveAndExit,
     onEnterEditingMode,
+    onUnsavedChangesUpdate,
 }) => {
     const [selectedType, setSelectedType] = useState(null);
     const [selectedSubtype, setSelectedSubtype] = useState(null);
@@ -187,6 +189,13 @@ export const CommandPanel = ({
             JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
         );
     })();
+
+    // Communicate unsaved changes status to parent
+    useEffect(() => {
+        if (onUnsavedChangesUpdate) {
+            onUnsavedChangesUpdate(hasUnsavedChanges);
+        }
+    }, [hasUnsavedChanges, onUnsavedChangesUpdate]);
 
     /**
      * Get the appropriate button text based on next slot state

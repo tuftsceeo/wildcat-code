@@ -1,0 +1,234 @@
+/* UnsavedChangesModal.module.css - Styled with design token system */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-modal);
+    animation: fadeIn 0.3s ease;
+}
+
+.modalContainer {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-family-active);
+    color: var(--panel-text);
+    box-shadow: var(--glow-primary);
+    animation: slideIn 0.3s ease-out;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-6) var(--spacing-4) var(--spacing-4);
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--color-gray-bold);
+}
+
+.warningIcon {
+    color: var(--color-warning-main);
+    margin-bottom: var(--spacing-3);
+    animation: pulse 2s infinite;
+}
+
+.title {
+    font-size: var(--font-size-xl);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    margin: 0;
+    color: var(--panel-text);
+}
+
+.content {
+    padding: var(--spacing-4);
+    text-align: center;
+    flex: 1;
+}
+
+.message {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--spacing-3);
+    color: var(--panel-text);
+}
+
+.submessage {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+    color: var(--panel-text);
+    opacity: 0.8;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: var(--spacing-4);
+    border-top: 1px solid var(--color-gray-bold);
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    border: none;
+    width: 100%;
+    min-height: 48px;
+}
+
+.actionButton:hover {
+    transform: var(--button-scale-hover);
+}
+
+.actionButton:active {
+    transform: var(--button-scale-active);
+}
+
+.saveButton {
+    background-color: var(--color-secondary-main);
+    color: var(--color-secondary-contrast);
+    border: var(--border-width-standard) solid var(--color-secondary-main);
+}
+
+.saveButton:hover {
+    background-color: var(--color-secondary-high);
+    border-color: var(--color-secondary-high);
+    box-shadow: var(--glow-secondary);
+}
+
+.discardButton {
+    background-color: var(--color-warning-main);
+    color: var(--color-warning-contrast);
+    border: var(--border-width-standard) solid var(--color-warning-main);
+}
+
+.discardButton:hover {
+    background-color: var(--color-warning-high);
+    border-color: var(--color-warning-high);
+    box-shadow: var(--glow-warning);
+}
+
+.cancelButton {
+    background-color: var(--button-default-bg);
+    color: var(--button-default-text);
+    border: var(--border-width-standard) solid var(--button-default-border);
+}
+
+.cancelButton:hover {
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+}
+
+.buttonIcon {
+    width: calc(var(--font-size-base) * 1.2);
+    height: calc(var(--font-size-base) * 1.2);
+    flex-shrink: 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* High contrast mode adjustments */
+body.high-contrast .modalContainer {
+    border-width: var(--border-width-thick);
+}
+
+body.high-contrast .actionButton {
+    border-width: var(--border-width-thick);
+}
+
+body.high-contrast .saveButton {
+    background-color: var(--color-secondary-main);
+    color: var(--color-background);
+    border-color: var(--color-secondary-main);
+}
+
+body.high-contrast .discardButton {
+    background-color: var(--color-warning-main);
+    color: var(--color-background);
+    border-color: var(--color-warning-main);
+}
+
+body.high-contrast .cancelButton {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border-color: var(--color-text);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modalContainer {
+        width: 95%;
+        margin: var(--spacing-4);
+    }
+
+    .header {
+        padding: var(--spacing-4);
+    }
+
+    .title {
+        font-size: var(--font-size-lg);
+    }
+
+    .actions {
+        gap: var(--spacing-3);
+    }
+}
