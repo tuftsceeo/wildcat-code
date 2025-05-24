@@ -9,7 +9,7 @@
 
 import React from "react";
 import Portal from "./Portal";
-import { AlertTriangle, Save, X, Ban } from "lucide-react";
+import { CircleCheckBig, Trash2, Pencil } from "lucide-react";
 import styles from "../styles/UnsavedChangesModal.module.css";
 
 /**
@@ -54,18 +54,18 @@ const UnsavedChangesModal = ({
                 aria-describedby="unsaved-changes-message"
             >
                 <div className={styles.modalContainer}>
-                    {/* Header with warning icon */}
+                    {/* Header with friendly work icon */}
                     <div className={styles.header}>
-                        <AlertTriangle
-                            size={48}
-                            className={styles.warningIcon}
+                        <Pencil
+                            size={64}
+                            className={styles.workIcon}
                             aria-hidden="true"
                         />
                         <h2
                             id="unsaved-changes-title"
                             className={styles.title}
                         >
-                            Unsaved Changes
+                            Save work?
                         </h2>
                     </div>
 
@@ -75,14 +75,8 @@ const UnsavedChangesModal = ({
                             id="unsaved-changes-message"
                             className={styles.message}
                         >
-                            You have unsaved changes in this step.
+                            Changes are not saved.
                         </p>
-                        {targetStepNumber !== null && (
-                            <p className={styles.submessage}>
-                                What would you like to do before going to Step{" "}
-                                {targetStepNumber + 1}?
-                            </p>
-                        )}
                     </div>
 
                     {/* Action buttons */}
@@ -93,26 +87,26 @@ const UnsavedChangesModal = ({
                             aria-label="Save changes and continue to selected step"
                             autoFocus
                         >
-                            <Save className={styles.buttonIcon} />
-                            Save & Continue
-                        </button>
-
-                        <button
-                            className={`${styles.actionButton} ${styles.discardButton}`}
-                            onClick={onDiscardChanges}
-                            aria-label="Discard changes and continue to selected step"
-                        >
-                            <Ban className={styles.buttonIcon} />
-                            Discard Changes
+                            <CircleCheckBig className={styles.buttonIcon} />
+                            Save
                         </button>
 
                         <button
                             className={`${styles.actionButton} ${styles.cancelButton}`}
                             onClick={onCancel}
-                            aria-label="Cancel navigation and continue editing"
+                            aria-label="Cancel and continue editing"
                         >
-                            <X className={styles.buttonIcon} />
-                            Stay Here
+                            <Pencil className={styles.buttonIcon} />
+                            Back to Edits
+                        </button>
+
+                        <button
+                            className={`${styles.actionButton} ${styles.discardButton}`}
+                            onClick={onDiscardChanges}
+                            aria-label="Don't save changes and continue to selected step"
+                        >
+                            <Trash2 className={styles.buttonIcon} />
+                            No Save
                         </button>
                     </div>
                 </div>
