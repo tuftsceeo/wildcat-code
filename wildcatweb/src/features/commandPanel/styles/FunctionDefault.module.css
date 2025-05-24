@@ -359,6 +359,10 @@
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
     min-width: calc(var(--spacing-20));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
 }
 
 .confirmButtonEnabled {
@@ -380,4 +384,46 @@
     color: var(--color-background);
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+/* Edit button styling - uses secondary (green) colors to match editing theme */
+.editButton {
+    background-color: var(--color-secondary-main);
+    color: var(--color-secondary-contrast);
+    border: var(--border-width-standard) solid var(--color-secondary-main);
+}
+
+.editButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-secondary-high);
+    border-color: var(--color-secondary-high);
+    box-shadow: var(--glow-secondary);
+}
+
+.editButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.editButton:focus {
+    outline: var(--border-width-standard) solid var(--color-secondary-high);
+    outline-offset: var(--spacing-1);
+}
+
+/* Spacer elements to maintain layout when selectors are hidden in viewing mode */
+.typeSelectorSpacer {
+    /* Match the height and spacing of the actionSenseButtonGroup */
+    height: calc(
+        var(--font-size-base) + calc(var(--spacing-3) * 2) + 16px
+    ); /* padding + button height + container padding */
+    width: 100%;
+    margin-bottom: 0;
+    visibility: hidden; /* Takes up space but invisible */
+}
+
+.contentSpacer {
+    /* Match the typical height of the content container */
+    height: calc(var(--spacing-16) * 4); /* Approximate content area height */
+    width: 100%;
+    flex: 1;
+    visibility: hidden; /* Takes up space but invisible */
 }

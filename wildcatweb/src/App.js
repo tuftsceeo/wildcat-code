@@ -4,6 +4,7 @@
  * and new editing mode functionality. Updated to include editing mode state management
  * and feature flag for mission disable during development.
  * Updated for Option B: Stop step is real in slotData.
+ * Enhanced with Edit button support in CommandPanel.
  * @author Jennifer Cross with support from Claude
  * @updated February 2025
  */
@@ -15,7 +16,10 @@ import { CommandPanel } from "./features/commandPanel/components/CommandPanel.js
 import { RunMenu } from "./features/runMenu/components/RunMenu.jsx";
 import { BluetoothUI } from "./features/bluetooth/components/BluetoothUI.jsx";
 import { KnobProvider } from "./context/KnobContext.js";
-import { BLEProvider } from "./features/bluetooth/context/BLEContext.js";
+import {
+    BLEProvider,
+    useBLE,
+} from "./features/bluetooth/context/BLEContext.js";
 import { MissionProvider, useMission } from "./context/MissionContext.js";
 import HintSystem from "./features/missions/components/HintSystem";
 import "./common/styles/App.css";
@@ -281,6 +285,9 @@ function AppContent() {
     // Get step count directly from CustomizationContext
     const { stepCount: missionSteps } = useCustomization();
 
+    // Get BLE context for error detection
+    const { portStates } = useBLE();
+
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -458,6 +465,32 @@ function AppContent() {
     };
 
     /**
+     * Check for disconnected motors in configurations
+     * @param {Array} slots - Slot configurations to check
+     * @returns {Array} Array of disconnected port objects
+     */
+    const checkDisconnectedMotors = (slots) => {
+        const disconnectedPorts = [];
+        slots.forEach((slot, index) => {
+            if (slot?.type === "action" && slot?.subtype === "motor") {
+                const configs = Array.isArray(slot.configuration)
+                    ? slot.configuration
+                    : [slot.configuration];
+
+                configs.forEach((config) => {
+                    if (config?.port && !portStates[config.port]) {
+                        disconnectedPorts.push({
+                            slot: index + 1,
+                            port: config.port,
+                        });
+                    }
+                });
+            }
+        });
+        return disconnectedPorts;
+    };
+
+    /**
      * Handle step clicks from RunMenu
      * Implements the five-state logic for step button behavior
      * @param {number} stepIndex - Index of clicked step
@@ -478,8 +511,20 @@ function AppContent() {
         );
 
         if (isStepConfigured) {
-            // Configured step: Enter viewing mode
-            handleEditingModeChange(stepIndex, false);
+            // Check if this configured step has errors/warnings
+            const stepErrors = checkDisconnectedMotors([slotData[stepIndex]]);
+            const hasErrors = stepErrors.length > 0;
+
+            if (hasErrors) {
+                // Step has errors: Go straight to editing mode to fix issues
+                console.log(
+                    `App.js: Step ${stepIndex} has errors, entering editing mode`,
+                );
+                handleEditingModeChange(stepIndex, true);
+            } else {
+                // Configured step without errors: Enter viewing mode
+                handleEditingModeChange(stepIndex, false);
+            }
         } else {
             // Empty step: Enter editing mode automatically
             handleEditingModeChange(stepIndex, true);
@@ -487,7 +532,7 @@ function AppContent() {
     };
 
     /**
-     * Handle entering editing mode from CodingTrack "Edit Step" button
+     * Handle entering editing mode from CommandPanel "Edit Step" button
      */
     const handleEnterEditingMode = () => {
         console.log(
@@ -626,6 +671,7 @@ function AppContent() {
                     missionSteps={missionSteps}
                     isEditingMode={isEditingMode}
                     onSaveAndExit={handleSaveAndExit}
+                    onEnterEditingMode={handleEnterEditingMode}
                 />
             </div>
 

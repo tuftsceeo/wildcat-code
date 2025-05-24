@@ -3,7 +3,8 @@
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
  * Updated to work with the Task Registry Mission System and dispatch events.
- * Enhanced with confirmation workflow to prevent accidental overwrites.
+ * Enhanced with confirmation workflow to prevent accidental overwrites
+ * and Edit button support for viewing mode.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -21,6 +22,7 @@ import {
     CircleStop,
     ArchiveRestore,
     Droplet,
+    Edit3,
 } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
@@ -105,6 +107,7 @@ const CONTROL_TYPES = {
  * @param {number} props.missionSteps - Total number of steps including stop step
  * @param {boolean} props.isEditingMode - Whether currently in editing mode
  * @param {Function} props.onSaveAndExit - Callback for confirmation with auto-progression logic
+ * @param {Function} props.onEnterEditingMode - Callback to enter editing mode from viewing mode
  * @returns {JSX.Element} Complete command panel interface
  */
 export const CommandPanel = ({
@@ -114,6 +117,7 @@ export const CommandPanel = ({
     missionSteps,
     isEditingMode = false,
     onSaveAndExit,
+    onEnterEditingMode,
 }) => {
     const [selectedType, setSelectedType] = useState(null);
     const [selectedSubtype, setSelectedSubtype] = useState(null);
@@ -215,6 +219,18 @@ export const CommandPanel = ({
         } else {
             // Fallback to direct slot update for backward compatibility
             onSlotUpdate(instruction);
+        }
+    };
+
+    /**
+     * Handle entering editing mode for current configured step
+     */
+    const handleEditStep = () => {
+        console.log(
+            `CommandPanel: Entering editing mode for slot ${currSlotNumber}`,
+        );
+        if (onEnterEditingMode) {
+            onEnterEditingMode();
         }
     };
 
@@ -621,18 +637,24 @@ export const CommandPanel = ({
 
             {/* Type Selector (ACTION/SENSE) or Stop indicator for stop step */}
             {!isStopStep ? (
-                (shouldApplyMissionConstraints &&
-                    isComponentVisible("type-selector")) ||
-                !shouldApplyMissionConstraints ? (
-                    <TypeSelector
-                        selectedType={selectedType}
-                        onTypeChange={handleTypeSelect}
-                        disabled={
-                            shouldApplyMissionConstraints &&
-                            !isComponentEnabled("type-selector")
-                        }
-                    />
-                ) : null
+                // Only show type selector in editing mode, but maintain space in viewing mode
+                isEditingMode ? (
+                    (shouldApplyMissionConstraints &&
+                        isComponentVisible("type-selector")) ||
+                    !shouldApplyMissionConstraints ? (
+                        <TypeSelector
+                            selectedType={selectedType}
+                            onTypeChange={handleTypeSelect}
+                            disabled={
+                                shouldApplyMissionConstraints &&
+                                !isComponentEnabled("type-selector")
+                            }
+                        />
+                    ) : null
+                ) : (
+                    // Placeholder spacer to maintain layout when type selector is hidden
+                    <div className={styles.typeSelectorSpacer}></div>
+                )
             ) : (
                 <div className={styles.stopStepIndicator}>
                     <CircleStop
@@ -643,15 +665,41 @@ export const CommandPanel = ({
                 </div>
             )}
 
-            {/* Content area with two-column layout - only show for non-stop steps */}
-            {selectedType && !isStopStep && (
-                <div className={styles.contentContainer}>
-                    {/* Left column - ACTION subtype or SENSE dashboard */}
-                    <div className={styles.leftColumn}>
-                        {selectedType === "action" ? (
-                            (shouldApplyMissionConstraints &&
-                                isComponentVisible("subtype-selector")) ||
-                            !shouldApplyMissionConstraints ? (
+            {/* Content area with two-column layout - show in editing mode, or spacer in viewing mode */}
+            {!isStopStep &&
+                (isEditingMode && selectedType ? (
+                    <div className={styles.contentContainer}>
+                        {/* Left column - ACTION subtype or SENSE dashboard */}
+                        <div className={styles.leftColumn}>
+                            {selectedType === "action" ? (
+                                (shouldApplyMissionConstraints &&
+                                    isComponentVisible("subtype-selector")) ||
+                                !shouldApplyMissionConstraints ? (
+                                    <SubtypeSelector
+                                        controlTypes={CONTROL_TYPES}
+                                        selectedType={selectedType}
+                                        selectedSubtype={selectedSubtype}
+                                        onSubtypeSelect={handleSubtypeSelect}
+                                        disabled={
+                                            shouldApplyMissionConstraints &&
+                                            !isComponentEnabled(
+                                                "subtype-selector",
+                                            )
+                                        }
+                                    />
+                                ) : null
+                            ) : (
+                                renderDashboard()
+                            )}
+                        </div>
+
+                        {/* Right column - ACTION dashboard or SENSE subtype */}
+                        <div className={styles.rightColumn}>
+                            {selectedType === "action" ? (
+                                renderDashboard()
+                            ) : (shouldApplyMissionConstraints &&
+                                  isComponentVisible("subtype-selector")) ||
+                              !shouldApplyMissionConstraints ? (
                                 <SubtypeSelector
                                     controlTypes={CONTROL_TYPES}
                                     selectedType={selectedType}
@@ -662,35 +710,31 @@ export const CommandPanel = ({
                                         !isComponentEnabled("subtype-selector")
                                     }
                                 />
-                            ) : null
-                        ) : (
-                            renderDashboard()
-                        )}
+                            ) : null}
+                        </div>
                     </div>
+                ) : (
+                    // Placeholder spacer to maintain layout when content is hidden
+                    !isEditingMode && (
+                        <div className={styles.contentSpacer}></div>
+                    )
+                ))}
 
-                    {/* Right column - ACTION dashboard or SENSE subtype */}
-                    <div className={styles.rightColumn}>
-                        {selectedType === "action" ? (
-                            renderDashboard()
-                        ) : (shouldApplyMissionConstraints &&
-                              isComponentVisible("subtype-selector")) ||
-                          !shouldApplyMissionConstraints ? (
-                            <SubtypeSelector
-                                controlTypes={CONTROL_TYPES}
-                                selectedType={selectedType}
-                                selectedSubtype={selectedSubtype}
-                                onSubtypeSelect={handleSubtypeSelect}
-                                disabled={
-                                    shouldApplyMissionConstraints &&
-                                    !isComponentEnabled("subtype-selector")
-                                }
-                            />
-                        ) : null}
-                    </div>
+            {/* Edit button - positioned where confirmation button would be - only show in viewing mode */}
+            {!isEditingMode && hasValidConfiguration && !isStopStep && (
+                <div className={styles.confirmationContainer}>
+                    <button
+                        className={`${styles.confirmButton} ${styles.editButton}`}
+                        onClick={handleEditStep}
+                        aria-label="Edit current step configuration"
+                    >
+                        <Edit3 size={20} />
+                        Edit Step
+                    </button>
                 </div>
             )}
 
-            {/* Confirmation button - positioned between content and description panel */}
+            {/* Confirmation button - positioned between content and description panel - only show in editing mode */}
             {isEditingMode && hasValidConfiguration && (
                 <div className={styles.confirmationContainer}>
                     <button
