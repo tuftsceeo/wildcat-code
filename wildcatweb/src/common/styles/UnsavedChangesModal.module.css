@@ -44,11 +44,14 @@
 .workIcon {
     color: var(--color-primary-high);
     margin-bottom: var(--spacing-3);
-    animation: float 3s ease-in-out infinite;
+    animation: write 6s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    width: calc(1 * var(--spacing-20));
+    height: calc(1 * var(--spacing-20));
 }
 
 .title {
     font-size: var(--font-size-xl);
+    text-transform: uppercase;
     letter-spacing: var(--letter-spacing-wider);
     margin: 0;
     color: var(--panel-text);
@@ -78,9 +81,26 @@
 .actions {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: var(--spacing-3);
     padding: var(--spacing-4);
     border-top: 1px solid var(--color-gray-bold);
+}
+
+.primaryAction {
+    /* Full width primary button */
+    width: 100%;
+}
+
+.secondaryActions {
+    /* Container for side-by-side secondary buttons */
+    display: flex;
+    gap: var(--spacing-2);
+    width: 100%;
+}
+
+.secondaryAction {
+    /* Half width secondary buttons */
+    flex: 1;
 }
 
 .actionButton {
@@ -88,17 +108,14 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
     border-radius: var(--radius-md);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
     letter-spacing: var(--letter-spacing-wide);
     cursor: pointer;
     transition: all var(--transition-normal);
     transform: var(--button-scale-default);
     border: none;
-    width: 100%;
 }
 
 .actionButton:hover {
@@ -110,54 +127,64 @@
 }
 
 .saveButton {
+    /* Primary green contained button - full visual weight */
     background-color: var(--color-secondary-main);
     color: var(--color-secondary-contrast);
     border: var(--border-width-standard) solid var(--color-secondary-main);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    min-height: 56px;
 }
 
 .saveButton:hover {
-    background-color: var(--color-secondary-high);
-    border-color: var(--color-secondary-high);
-    box-shadow: var(--glow-secondary);
+    /* Subtle darkening for hover */
+    opacity: 0.9;
+}
+
+.discardButton,
+.cancelButton {
+    /* Secondary outline buttons - reduced visual weight */
+    background-color: var(--button-default-bg);
+    color: var(--button-default-text);
+    border: var(--border-width-thin) solid var(--button-default-border);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    min-height: 44px;
 }
 
 .discardButton {
-    background-color: var(--color-warning-main);
-    color: var(--color-warning-contrast);
-    border: var(--border-width-standard) solid var(--color-warning-main);
+    /* Warning color for discard action */
+    color: var(--color-warning-main);
+    border-color: var(--color-warning-main);
 }
 
 .discardButton:hover {
-    background-color: var(--color-warning-high);
-    border-color: var(--color-warning-high);
-    box-shadow: var(--glow-warning);
-}
-
-.cancelButton {
-    background-color: var(--button-default-bg);
-    color: var(--button-default-text);
-    border: var(--border-width-standard) solid var(--button-default-border);
+    /* Fill on hover */
+    background-color: var(--color-warning-main);
+    color: var(--color-warning-contrast);
 }
 
 .cancelButton:hover {
-    border-color: var(--button-selected-border);
-    color: var(--button-selected-text);
+    /* Fill on hover */
+    background-color: var(--button-default-border);
+    color: var(--button-contained-default-text);
+}
+
+/* Icon sizing based on button importance */
+.saveButton .buttonIcon {
+    width: calc(var(--font-size-base) * 1.2);
+    height: calc(var(--font-size-base) * 1.2);
+}
+
+.discardButton .buttonIcon,
+.cancelButton .buttonIcon {
+    width: calc(var(--font-size-sm) * 1.2);
+    height: calc(var(--font-size-sm) * 1.2);
 }
 
 .buttonIcon {
     width: calc(var(--font-size-base) * 1.2);
     height: calc(var(--font-size-base) * 1.2);
-    flex-shrink: 0;
-}
-
-.smallButton {
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-1) var(--spacing-3);
-}
-
-.smallButtonIcon {
-    width: calc(var(--font-size-sm) * 1.2);
-    height: calc(var(--font-size-sm) * 1.2);
     flex-shrink: 0;
 }
 
@@ -192,6 +219,16 @@
     }
 }
 
+@keyframes write {
+    0%,
+    100% {
+        transform: translateX(calc(-0.12 * var(--spacing-20)));
+    }
+    50% {
+        transform: translateX(calc(0.25 * var(--spacing-20)));
+    }
+}
+
 @keyframes pulse {
     0%,
     100% {
@@ -214,21 +251,31 @@ body.high-contrast .actionButton {
 }
 
 body.high-contrast .saveButton {
-    background-color: var(--color-secondary-main);
-    color: var(--color-background);
-    border-color: var(--color-secondary-main);
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+    border-color: var(--button-contained-default-border);
 }
 
 body.high-contrast .discardButton {
-    background-color: var(--color-warning-main);
-    color: var(--color-background);
+    background-color: var(--button-default-bg);
+    color: var(--color-warning-main);
     border-color: var(--color-warning-main);
 }
 
+body.high-contrast .discardButton:hover {
+    background-color: var(--color-warning-main);
+    color: var(--color-warning-contrast);
+}
+
 body.high-contrast .cancelButton {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    border-color: var(--color-text);
+    background-color: var(--button-default-bg);
+    color: var(--button-default-text);
+    border-color: var(--button-default-border);
+}
+
+body.high-contrast .cancelButton:hover {
+    background-color: var(--button-default-border);
+    color: var(--button-contained-default-text);
 }
 
 /* Responsive adjustments */

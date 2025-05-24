@@ -9,7 +9,16 @@
 
 import React from "react";
 import Portal from "./Portal";
-import { CircleCheckBig, Trash2, Pencil } from "lucide-react";
+import {
+    Save,
+    X,
+    Ban,
+    Edit3,
+    Trash2,
+    CircleArrowLeft,
+    Pencil,
+    CircleCheckBig,
+} from "lucide-react";
 import styles from "../styles/UnsavedChangesModal.module.css";
 
 /**
@@ -57,7 +66,7 @@ const UnsavedChangesModal = ({
                     {/* Header with friendly work icon */}
                     <div className={styles.header}>
                         <Pencil
-                            size={64}
+                            size={48}
                             className={styles.workIcon}
                             aria-hidden="true"
                         />
@@ -65,7 +74,7 @@ const UnsavedChangesModal = ({
                             id="unsaved-changes-title"
                             className={styles.title}
                         >
-                            Save work?
+                            Save Edits?
                         </h2>
                     </div>
 
@@ -75,14 +84,15 @@ const UnsavedChangesModal = ({
                             id="unsaved-changes-message"
                             className={styles.message}
                         >
-                            Changes are not saved.
+                            Edits are not saved.
                         </p>
                     </div>
 
                     {/* Action buttons */}
                     <div className={styles.actions}>
+                        {/* Primary action - full width */}
                         <button
-                            className={`${styles.actionButton} ${styles.saveButton}`}
+                            className={`${styles.actionButton} ${styles.saveButton} ${styles.primaryAction}`}
                             onClick={onSaveAndContinue}
                             aria-label="Save changes and continue to selected step"
                             autoFocus
@@ -91,23 +101,28 @@ const UnsavedChangesModal = ({
                             Save
                         </button>
 
-                        <button
-                            className={`${styles.actionButton} ${styles.cancelButton}`}
-                            onClick={onCancel}
-                            aria-label="Cancel and continue editing"
-                        >
-                            <Pencil className={styles.buttonIcon} />
-                            Back to Edits
-                        </button>
+                        {/* Secondary actions - side by side */}
+                        <div className={styles.secondaryActions}>
+                            <button
+                                className={`${styles.actionButton} ${styles.cancelButton} ${styles.secondaryAction}`}
+                                onClick={onCancel}
+                                aria-label="Cancel and continue editing"
+                            >
+                                <CircleArrowLeft
+                                    className={styles.buttonIcon}
+                                />
+                                Back
+                            </button>
 
-                        <button
-                            className={`${styles.actionButton} ${styles.discardButton}`}
-                            onClick={onDiscardChanges}
-                            aria-label="Don't save changes and continue to selected step"
-                        >
-                            <Trash2 className={styles.buttonIcon} />
-                            No Save
-                        </button>
+                            <button
+                                className={`${styles.actionButton} ${styles.discardButton} ${styles.secondaryAction}`}
+                                onClick={onDiscardChanges}
+                                aria-label="Don't save changes and continue to selected step"
+                            >
+                                <Trash2 className={styles.buttonIcon} />
+                                Skip
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
