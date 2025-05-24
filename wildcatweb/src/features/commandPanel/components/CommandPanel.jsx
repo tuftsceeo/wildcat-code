@@ -112,6 +112,7 @@ const CONTROL_TYPES = {
  * @param {Function} props.onSaveAndExit - Callback for confirmation with auto-progression logic
  * @param {Function} props.onEnterEditingMode - Callback to enter editing mode from viewing mode
  * @param {Function} props.onUnsavedChangesUpdate - Callback to communicate unsaved changes status
+ * @param {boolean} props.triggerSave - External trigger to force save operation
  * @returns {JSX.Element} Complete command panel interface
  */
 export const CommandPanel = ({
@@ -123,6 +124,7 @@ export const CommandPanel = ({
     onSaveAndExit,
     onEnterEditingMode,
     onUnsavedChangesUpdate,
+    triggerSave = false,
 }) => {
     const [selectedType, setSelectedType] = useState(null);
     const [selectedSubtype, setSelectedSubtype] = useState(null);
@@ -196,6 +198,14 @@ export const CommandPanel = ({
             onUnsavedChangesUpdate(hasUnsavedChanges);
         }
     }, [hasUnsavedChanges, onUnsavedChangesUpdate]);
+
+    // Handle external save trigger (e.g., from "Save & Continue" modal)
+    useEffect(() => {
+        if (triggerSave && hasValidConfiguration && hasUnsavedChanges) {
+            console.log("CommandPanel: External save trigger activated");
+            handleConfirmAndSave();
+        }
+    }, [triggerSave, hasValidConfiguration, hasUnsavedChanges]);
 
     /**
      * Get the appropriate button text based on next slot state
@@ -316,155 +326,40 @@ export const CommandPanel = ({
         currentTask,
     ]);
 
-    // Modified auto-save logic - only save when not in editing mode or when explicitly confirmed
+    // Update instruction display whenever configuration changes (for live preview)
     useEffect(() => {
-        console.log("CommandPanel: dashboardConfig effect triggered", {
-            hasConfig: !!dashboardConfig,
-            currentSlot: currSlotNumber,
-            isEditingMode: isEditingMode,
-        });
+        console.log(
+            "CommandPanel: Configuration changed - updating instruction display",
+            {
+                hasConfig: !!dashboardConfig,
+                currentSlot: currSlotNumber,
+                selectedType,
+                selectedSubtype,
+            },
+        );
 
-        if (!dashboardConfig) {
-            console.log(
-                "CommandPanel: No dashboard config, checking if we need to update",
-            );
+        if (selectedType && selectedSubtype && dashboardConfig) {
+            // Create instruction for display purposes
+            const instruction = {
+                type: selectedType,
+                subtype: selectedSubtype,
+                configuration: dashboardConfig,
+            };
 
-            // If we had a previous config but it was nullified, we should update the slot
-            if (lastSavedConfig) {
-                console.log(
-                    "CommandPanel: Config was cleared, updating slot to null",
-                );
+            // Always update instruction display for live preview
+            setCurrentInstruction(instruction);
 
-                if (selectedType && selectedSubtype) {
-                    // Create an instruction with null configuration
-                    const instruction = {
-                        type: selectedType,
-                        subtype: selectedSubtype,
-                        configuration: null,
-                    };
-
-                    // Only auto-save if not in editing mode
-                    if (!isEditingMode) {
-                        onSlotUpdate(instruction);
-                        setLastSavedConfig(null);
-                    }
-                    setCurrentInstruction(instruction);
-                } else {
-                    // If no type/subtype, clear the slot entirely
-                    if (!isEditingMode) {
-                        onSlotUpdate(null);
-                        setLastSavedConfig(null);
-                    }
-                    setCurrentInstruction(null);
-                }
-            }
-            return;
-        }
-
-        // Check if the configuration has actually changed
-        if (
-            JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
-        ) {
-            console.log("CommandPanel: Configuration changed", {
-                from: JSON.stringify(lastSavedConfig),
-                to: JSON.stringify(dashboardConfig),
-                isEditingMode: isEditingMode,
+            console.log("CommandPanel: Updated instruction display", {
+                instruction: JSON.stringify(instruction),
             });
-
-            if (selectedType && selectedSubtype) {
-                // Create the instruction
-                const instruction = {
-                    type: selectedType,
-                    subtype: selectedSubtype,
-                    configuration: dashboardConfig,
-                };
-
-                // Always update currentInstruction for preview
-                setCurrentInstruction(instruction);
-
-                // Only auto-save if NOT in editing mode
-                if (!isEditingMode) {
-                    // In mission mode, validate against mission requirements
-                    if (shouldApplyMissionConstraints) {
-                        const validation =
-                            validateStepConfiguration(instruction);
-                        if (!validation.isValid) {
-                            console.warn(
-                                `CommandPanel: Configuration doesn't meet mission requirements: ${validation.message}`,
-                            );
-                            // We could add UI feedback here about the invalid configuration
-                            // For now, we'll still allow it but could restrict it if needed
-                        } else if (
-                            currentTask?.type === "MOTOR_CONFIGURATION"
-                        ) {
-                            // Complete the task if it's a motor configuration task and the configuration is valid
-                            console.log(
-                                "CommandPanel: Motor configuration meets requirements, completing task",
-                            );
-                            completeTask(currentTaskIndex, {
-                                configuration: instruction.configuration,
-                            });
-                        } else if (currentTask?.type === "TIMER_SETTING") {
-                            // Complete the task if it's a timer setting task and the configuration is valid
-                            console.log(
-                                "CommandPanel: Timer configuration meets requirements, completing task",
-                            );
-                            completeTask(currentTaskIndex, {
-                                configuration: instruction.configuration,
-                            });
-                        }
-                    }
-
-                    // Update slot and set current instruction
-                    console.log(
-                        "CommandPanel: Calling onSlotUpdate with instruction",
-                        {
-                            instruction: JSON.stringify(instruction),
-                            slot: currSlotNumber,
-                        },
-                    );
-
-                    onSlotUpdate(instruction);
-                    setLastSavedConfig(dashboardConfig);
-
-                    // Check if we should show the test prompt for this mission step
-                    if (
-                        shouldApplyMissionConstraints &&
-                        currentTask?.testPrompt?.showPrompt
-                    ) {
-                        setShowTestPrompt(true);
-                    }
-
-                    // Dispatch configuration changed event for mission tracking
-                    if (isMissionMode) {
-                        dispatchTaskEvent("CONFIGURATION_CHANGED", {
-                            slotIndex: currSlotNumber,
-                            configType: selectedType,
-                            configSubtype: selectedSubtype,
-                            configuration: dashboardConfig,
-                            currentSlot: currSlotNumber,
-                        });
-                    }
-                }
-            }
+        } else {
+            // Clear instruction display if configuration is incomplete
+            setCurrentInstruction(null);
+            console.log(
+                "CommandPanel: Cleared instruction display (incomplete config)",
+            );
         }
-    }, [
-        dashboardConfig,
-        lastSavedConfig,
-        selectedType,
-        selectedSubtype,
-        onSlotUpdate,
-        currSlotNumber,
-        shouldApplyMissionConstraints,
-        currentTask,
-        validateStepConfiguration,
-        setShowTestPrompt,
-        isMissionMode,
-        dispatchTaskEvent,
-        completeTask,
-        currentTaskIndex,
-        isEditingMode, // Added to dependencies
-    ]);
+    }, [selectedType, selectedSubtype, dashboardConfig, currSlotNumber]);
 
     // Handle updates from the dashboard components
     const handleDashboardUpdate = useCallback(

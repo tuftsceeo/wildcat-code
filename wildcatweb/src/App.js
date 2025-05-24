@@ -305,6 +305,7 @@ function AppContent() {
         useState(false);
     const [pendingSlotNumber, setPendingSlotNumber] = useState(null);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [triggerSave, setTriggerSave] = useState(false);
 
     // Choose which slot state to use based on mission mode
     const currSlotNumber = ENABLE_MISSION_MODE
@@ -626,17 +627,19 @@ function AppContent() {
             `App.js: Saving changes and continuing to step ${pendingSlotNumber}`,
         );
 
-        // The save action will be handled by CommandPanel's confirmation system
-        // We just need to close the modal and proceed after save is complete
+        // Close the modal
         setShowUnsavedChangesModal(false);
 
-        // Trigger save in CommandPanel by simulating a "Done" action
-        // This is a bit of a workaround - ideally we'd have a direct save method
-        // For now, we'll proceed directly and let the natural save flow handle it
-        proceedToStep(pendingSlotNumber);
+        // Trigger save in CommandPanel
+        setTriggerSave(true);
 
-        // Clear pending navigation
-        setPendingSlotNumber(null);
+        // Navigate to target step after save completes
+        // Use setTimeout to ensure save completes first
+        setTimeout(() => {
+            proceedToStep(pendingSlotNumber);
+            setPendingSlotNumber(null);
+            setTriggerSave(false);
+        }, 0);
     };
 
     /**
@@ -766,6 +769,7 @@ function AppContent() {
                     onSaveAndExit={handleSaveAndExit}
                     onEnterEditingMode={handleEnterEditingMode}
                     onUnsavedChangesUpdate={handleUnsavedChangesUpdate}
+                    triggerSave={triggerSave}
                 />
             </div>
 

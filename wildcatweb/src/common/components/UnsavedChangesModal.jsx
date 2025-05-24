@@ -66,7 +66,6 @@ const UnsavedChangesModal = ({
                     {/* Header with friendly work icon */}
                     <div className={styles.header}>
                         <Pencil
-                            size={48}
                             className={styles.workIcon}
                             aria-hidden="true"
                         />
