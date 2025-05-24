@@ -155,29 +155,30 @@
 /* Visual state styling for corner badges - minimal changes to border colors only */
 /* Empty state - uses default button styling (no additional rules needed) */
 
-/* Viewing state - blue border for current slot in view mode */
+/* Viewing state - secondary (green) border for current slot in view mode */
 .stepButton.viewing {
-    border-color: var(--color-primary-high);
-    color: var(--button-default-text);
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    background-color: var(--button-default-bg);
 }
 
-/* Editing state - green border and subtle background for current slot in edit mode */
+/* Editing state - secondary (green) border and secondary-low fill for current slot in edit mode */
 .stepButton.editing {
-    border-color: var(--color-secondary-high);
-    background-color: rgba(var(--color-secondary-main-rgb), 0.15);
+    border-color: var(--button-selected-border);
+    background-color: rgba(var(--color-secondary-main-rgb), 0.5);
     color: var(--button-default-text);
 }
 
 /* Configured state - blue border for completed steps */
 .stepButton.configured:not(.current):not(.viewing):not(.editing) {
-    border-color: var(--color-primary-high);
+    border-color: var(--button-default-border);
     color: var(--button-default-text);
 }
 /* === CORNER BADGE SYSTEM === */
 .cornerBadge {
     position: absolute;
-    top: calc(-1 * var(--spacing-4));
-    right: calc(-1 * var(--spacing-4));
+    top: calc(-1 * var(--spacing-3));
+    right: calc(-1 * var(--spacing-3));
     width: var(--spacing-8);
     height: var(--spacing-8);
     border-radius: var(--radius-full);

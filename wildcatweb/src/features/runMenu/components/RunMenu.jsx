@@ -448,7 +448,21 @@ export const RunMenu = ({
                     <div
                         className={`${styles.cornerBadge} ${styles.configured}`}
                     >
-                        <Check className={styles.cornerIcon} />
+                        <Check
+                            className={styles.cornerIcon}
+                            strokeWidth={3}
+                        />
+                    </div>
+                );
+            case "viewing": // ADD THIS LINE
+                return (
+                    <div
+                        className={`${styles.cornerBadge} ${styles.configured}`}
+                    >
+                        <Check
+                            className={styles.cornerIcon}
+                            strokeWidth={3}
+                        />
                     </div>
                 );
             default:

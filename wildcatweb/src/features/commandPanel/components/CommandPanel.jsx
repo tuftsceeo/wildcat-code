@@ -154,7 +154,7 @@ export const CommandPanel = ({
     const showTaskPanel = currentTask !== null;
 
     // Determine if the current slot is the special stop step
-    const isStopStep = currSlotNumber === missionSteps - 1;
+    const isStopStep = slotData?.[currSlotNumber]?.type === "special";
 
     // Determine if we should apply mission constraints to this slot
     const shouldApplyMissionConstraints =
@@ -187,9 +187,11 @@ export const CommandPanel = ({
      */
     const getButtonText = () => {
         const nextSlotIndex = currSlotNumber + 1;
-        const isNextSlotEmpty = !slotData[nextSlotIndex]?.type;
-        const isSecondToLast = currSlotNumber === missionSteps - 2;
-        return isNextSlotEmpty && !isSecondToLast ? "Next" : "Done";
+        // Show "Next" if next slot exists and is configurable (not special like stop)
+        const hasNextConfigurableSlot =
+            nextSlotIndex < slotData.length &&
+            slotData[nextSlotIndex]?.type !== "special";
+        return hasNextConfigurableSlot ? "Next" : "Done";
     };
 
     /**
