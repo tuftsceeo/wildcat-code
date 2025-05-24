@@ -335,3 +335,49 @@
     flex: 0.75;
     align-content: flex-start;
 }
+
+/* Add these CSS rules to wildcatweb/src/features/commandPanel/styles/FunctionDefault.module.css */
+
+/* Confirmation system styles */
+.confirmationContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--spacing-4);
+    margin-top: var(--spacing-2);
+}
+
+.confirmButton {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    min-width: calc(var(--spacing-20));
+}
+
+.confirmButtonEnabled {
+    background-color: var(--color-secondary-main);
+    color: var(--color-secondary-contrast);
+}
+
+.confirmButtonEnabled:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-secondary-high);
+}
+
+.confirmButtonEnabled:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.confirmButtonDisabled {
+    background-color: var(--color-gray-medium);
+    color: var(--color-background);
+    cursor: not-allowed;
+    opacity: 0.7;
+}

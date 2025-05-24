@@ -3,7 +3,7 @@
  * @description Side panel for navigating and executing code, with support for
  * running individual slots or the complete program. Enhanced with five visual states
  * for step buttons to prevent mode confusion and accidental overwrites.
- * Updated for flat task structure and editing mode workflow.
+ * Updated for Option B: Stop step is real in slotData.
  */
 
 import React, { useEffect, useState, useRef } from "react";
@@ -149,13 +149,12 @@ export const RunMenu = ({
     const [isAtBottom, setIsAtBottom] = useState(false);
     const contentRef = useRef(null);
 
-    // Log any inconsistencies between missionSteps and slotData length
+    // Verify slotData consistency - should now match missionSteps exactly with Option B
     useEffect(() => {
-        // The slotData array should be exactly missionSteps in length
-        // (we're now treating missionSteps as the COUNT of steps, not the max index)
         if (slotData && slotData.length !== missionSteps) {
             console.warn(
                 "RunMenu: Inconsistency detected - slotData length doesn't match missionSteps",
+                { slotDataLength: slotData.length, missionSteps },
             );
         }
     }, [missionSteps, slotData]);
@@ -216,11 +215,10 @@ export const RunMenu = ({
      * @returns {string} Visual state: 'empty', 'viewing', 'editing', 'configured', or 'stop'
      */
     const getStepVisualState = (stepIndex) => {
-        const isStepConfigured = !!(
-            slotData[stepIndex]?.type && slotData[stepIndex]?.subtype
-        );
+        const slot = slotData[stepIndex];
+        const isStepConfigured = !!(slot?.type && slot?.subtype);
         const isCurrentSlot = stepIndex === currSlotNumber;
-        const isStopStep = stepIndex === missionSteps - 1;
+        const isStopStep = slot?.type === "special";
 
         if (isStopStep) return "stop";
         if (isCurrentSlot && isEditingMode) return "editing";
@@ -237,20 +235,28 @@ export const RunMenu = ({
      * @returns {boolean} Whether the step is completed
      */
     const isStepCompleted = (index) => {
-        return !!(
-            slotData &&
-            slotData[index]?.type &&
-            slotData[index]?.subtype
-        );
+        const slot = slotData?.[index];
+        // Special steps (like stop) are always considered "completed"
+        if (slot?.type === "special") return true;
+        // Regular steps need type and subtype
+        return !!(slot?.type && slot?.subtype);
     };
 
     /**
      * Check if a step is accessible based on user preferences and previous steps completion
+     * Special handling: Stop steps are always accessible
      *
      * @param {number} index - Step index to check
      * @returns {boolean} Whether the step is accessible
      */
     const isStepAccessible = (index) => {
+        const slot = slotData?.[index];
+
+        // STOP STEP SPECIAL CASE: Always accessible
+        if (slot?.type === "special") {
+            return true;
+        }
+
         // If sequential completion is disabled or we're reordering, all steps are accessible
         if (!requireSequentialCompletion || isReordering) {
             return true;
@@ -258,11 +264,6 @@ export const RunMenu = ({
 
         // First step is always accessible
         if (index === 0) return true;
-
-        // The stop step is a special case - it's accessible if the second-to-last step is completed
-        if (index === missionSteps - 1) {
-            return isStepCompleted(missionSteps - 2);
-        }
 
         // A regular step is accessible if all previous steps are completed
         for (let i = 0; i < index; i++) {
@@ -279,13 +280,17 @@ export const RunMenu = ({
      * @returns {Object} Object with name and icon for the step
      */
     const getStepDisplayInfo = (index) => {
+        const slot = slotData?.[index];
         const visualState = getStepVisualState(index);
 
-        // If this is the stop step (last step)
-        if (index === missionSteps - 1) {
+        // Handle special steps (like stop)
+        if (slot?.type === "special") {
+            const displayInfo = INSTRUCTION_DISPLAY[slot.type]?.[slot.subtype];
             return {
-                name: "Stop",
-                icon: <CircleStop className={styles.commandIcon} />,
+                name: displayInfo?.name || "Special",
+                icon: displayInfo?.icon || (
+                    <CircleStop className={styles.commandIcon} />
+                ),
             };
         }
 
@@ -303,7 +308,7 @@ export const RunMenu = ({
         }
 
         // Get the type and subtype from the slot data
-        const { type, subtype, configuration } = slotData[index];
+        const { type, subtype, configuration } = slot;
 
         // If command labels are disabled, use "Step X" format even for completed steps
         if (!useCommandLabels) {
@@ -408,11 +413,19 @@ export const RunMenu = ({
         }
 
         // Try to get the display info from our mapping
+        const displayInfo = INSTRUCTION_DISPLAY[type]?.[subtype];
         return {
-            name: INSTRUCTION_DISPLAY[type][subtype].name,
-            icon: React.cloneElement(INSTRUCTION_DISPLAY[type][subtype].icon, {
-                className: styles.commandIcon,
-            }),
+            name: displayInfo?.name || `${type}-${subtype}`,
+            icon: displayInfo?.icon ? (
+                React.cloneElement(displayInfo.icon, {
+                    className: styles.commandIcon,
+                })
+            ) : (
+                <QuestionMarkIcon
+                    className={styles.commandIcon}
+                    fill="currentColor"
+                />
+            ),
         };
     };
 
@@ -537,10 +550,10 @@ export const RunMenu = ({
         } else {
             // Fallback behavior for backward compatibility
             if (isStepAccessible(stepIndex)) {
-                console.log(
-                    "RunMenu: Clicked on step",
-                    stepIndex === missionSteps - 1 ? "Stop" : stepIndex + 1,
-                );
+                const slot = slotData?.[stepIndex];
+                const stepName =
+                    slot?.type === "special" ? "Stop" : `${stepIndex + 1}`;
+                console.log(`RunMenu: Clicked on step ${stepName}`);
 
                 // Dispatch navigation event for mission tracking
                 if (isMissionMode) {
@@ -602,13 +615,37 @@ export const RunMenu = ({
     };
 
     /**
-     * Move a step to a new position
+     * Move a step to a new position (only for non-special steps)
+     * Special handling to prevent moving to/from stop step positions
      *
      * @param {number} fromIndex - Source index
      * @param {number} toIndex - Destination index
      */
     const moveStep = (fromIndex, toIndex) => {
         if (isMissionMode) return;
+
+        // STOP STEP PROTECTION: Prevent any moves involving special steps
+        const fromSlot = slotData[fromIndex];
+        const toSlot = slotData[toIndex];
+
+        // Don't allow moving special steps (like stop)
+        if (fromSlot?.type === "special") {
+            console.log("RunMenu: Cannot move special step (stop)");
+            return;
+        }
+
+        // Don't allow moving TO a special step position (would displace stop)
+        if (toSlot?.type === "special") {
+            console.log("RunMenu: Cannot move to special step position");
+            return;
+        }
+
+        // Don't allow moving past the stop step (toIndex should be < last configurable slot)
+        const lastConfigurableIndex = slotData.length - 1 - 1; // -1 for array index, -1 for stop step
+        if (toIndex > lastConfigurableIndex) {
+            console.log("RunMenu: Cannot move past the last configurable slot");
+            return;
+        }
 
         // Set reordering state to true
         setIsReordering(true);
@@ -656,9 +693,9 @@ export const RunMenu = ({
             configuration: {},
         };
 
-        // Insert new slot before the stop step
+        // Insert new slot before the last slot (which should be the stop step)
         const newSlotData = [...slotData];
-        newSlotData.splice(missionSteps - 1, 0, newSlot);
+        newSlotData.splice(slotData.length - 1, 0, newSlot);
 
         // Update step count
         setStepCount(stepCount + 1);
@@ -672,38 +709,37 @@ export const RunMenu = ({
     };
 
     /**
-     * Generate buttons for each mission step
+     * Generate buttons for each step - now simplified with Option B
      *
      * @returns {Array} Array of step button elements
      */
     const renderStepButtons = () => {
-        console.log("RunMenu: Rendering", missionSteps, "step buttons");
+        console.log("RunMenu: Rendering", slotData.length, "step buttons");
 
-        const buttons = [];
-        // Create regular step buttons (excluding the stop step)
-        for (let i = 0; i < missionSteps - 1; i++) {
+        return slotData.map((slot, i) => {
             const completed = isMissionMode
                 ? isStepConfiguredInMission(i)
                 : isStepCompleted(i);
             const accessible = isStepAccessible(i);
             const visualState = getStepVisualState(i);
             const { name, icon } = getStepDisplayInfo(i);
-            const cornerBadge = getCornerBadge(visualState);
+            const isStopStep = slot?.type === "special";
+            const cornerBadge = getCornerBadge(visualState, isStopStep);
 
             const stepButton = (
                 <button
                     key={i}
                     className={`${styles.stepButton} 
                               ${styles[visualState]} 
+                              ${isStopStep ? styles.stopButton : ""}
                               ${
                                   isConnected &&
-                                  checkDisconnectedMotors([slotData?.[i]])
-                                      .length > 0
+                                  checkDisconnectedMotors([slot]).length > 0
                                       ? styles.warning
                                       : ""
                               } 
                               ${completed ? styles.completed : ""}
-                              ${slotData?.[i]?.type ? styles.configured : ""} 
+                              ${slot?.type ? styles.configured : ""} 
                               ${i === currSlotNumber ? styles.current : ""}`}
                     onClick={() => handleStepClick(i)}
                     disabled={!accessible}
@@ -722,40 +758,23 @@ export const RunMenu = ({
                 </button>
             );
 
-            // Wrap the button in DraggableStepButton if not in mission mode
-            buttons.push(
-                <DraggableStepButton
-                    key={i}
-                    index={i}
-                    moveStep={moveStep}
-                    isMissionMode={isMissionMode}
-                >
-                    {stepButton}
-                </DraggableStepButton>,
-            );
-        }
-
-        // Add the special Stop button
-        const stopStepIndex = missionSteps - 1;
-        const stopAccessible = isStepAccessible(stopStepIndex);
-
-        buttons.push(
-            <button
-                key="stop"
-                className={`${styles.stepButton} ${styles.stopButton} ${
-                    currSlotNumber === stopStepIndex ? styles.current : ""
-                }`}
-                onClick={() => handleStepClick(stopStepIndex)}
-                disabled={!stopAccessible}
-                aria-label="Stop"
-                aria-current={currSlotNumber === stopStepIndex ? "step" : false}
-            >
-                <span className={styles.stepName}>Stop</span>
-                <CircleStop className={styles.stopIcon} />
-            </button>,
-        );
-
-        return buttons;
+            // Wrap the button in DraggableStepButton if not in mission mode and not a special step
+            if (!isMissionMode && !isStopStep) {
+                return (
+                    <DraggableStepButton
+                        key={i}
+                        index={i}
+                        moveStep={moveStep}
+                        isMissionMode={isMissionMode}
+                    >
+                        {stepButton}
+                    </DraggableStepButton>
+                );
+            } else {
+                // Non-draggable button (special steps or mission mode)
+                return stepButton;
+            }
+        });
     };
 
     return (

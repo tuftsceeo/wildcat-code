@@ -3,10 +3,25 @@
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
  * Updated to work with the Task Registry Mission System and dispatch events.
+ * Enhanced with confirmation workflow to prevent accidental overwrites.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Check, RefreshCcwDot, Plus, Zap, Disc, Lightbulb, RotateCw, Volume, Timer, Clock9, CircleStop, ArchiveRestore, Droplet } from "lucide-react";
+import {
+    Check,
+    RefreshCcwDot,
+    Plus,
+    Zap,
+    Disc,
+    Lightbulb,
+    RotateCw,
+    Volume,
+    Timer,
+    Clock9,
+    CircleStop,
+    ArchiveRestore,
+    Droplet,
+} from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
 import { MotorDash } from "../dashboards/motor/components/MotorDash.jsx";
@@ -23,7 +38,10 @@ import { useMission } from "../../../context/MissionContext.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
 
 const FilledCircleStop = (props) => {
-    return React.cloneElement(<CircleStop />, { fill: "currentColor", ...props });
+    return React.cloneElement(<CircleStop />, {
+        fill: "currentColor",
+        ...props,
+    });
 };
 
 // Define the control types and their configurations
@@ -55,7 +73,11 @@ const CONTROL_TYPES = {
             // Updated - Kept subtype name but changed display name
             name: "Button", // Changed from "Force Sensor" to "Button"
             component: ButtonDash,
-            icon: <ArchiveRestore className={`${styles.commandIcon} ${styles.flippedVertically}`} />, // Using Disc icon for button
+            icon: (
+                <ArchiveRestore
+                    className={`${styles.commandIcon} ${styles.flippedVertically}`}
+                />
+            ), // Using Disc icon for button
         },
         color: {
             name: "Color",
@@ -81,9 +103,18 @@ const CONTROL_TYPES = {
  * @param {Function} props.onSlotUpdate - Callback function when slot configuration changes
  * @param {Array} props.slotData - Array of slot configurations
  * @param {number} props.missionSteps - Total number of steps including stop step
+ * @param {boolean} props.isEditingMode - Whether currently in editing mode
+ * @param {Function} props.onSaveAndExit - Callback for confirmation with auto-progression logic
  * @returns {JSX.Element} Complete command panel interface
  */
-export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSteps }) => {
+export const CommandPanel = ({
+    currSlotNumber,
+    onSlotUpdate,
+    slotData,
+    missionSteps,
+    isEditingMode = false,
+    onSaveAndExit,
+}) => {
     const [selectedType, setSelectedType] = useState(null);
     const [selectedSubtype, setSelectedSubtype] = useState(null);
     const [dashboardConfig, setDashboardConfig] = useState(null);
@@ -114,7 +145,9 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
 
     // Get current task for the mission
     const currentTask = getCurrentTask();
-    const isCurrentTaskCompleted = currentTask ? isTaskCompleted(currentTaskIndex) : false;
+    const isCurrentTaskCompleted = currentTask
+        ? isTaskCompleted(currentTaskIndex)
+        : false;
 
     // Determine if we should show the task panel
     // Simply check if currentTask exists
@@ -124,7 +157,64 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
     const isStopStep = currSlotNumber === missionSteps - 1;
 
     // Determine if we should apply mission constraints to this slot
-    const shouldApplyMissionConstraints = isMissionMode && currentMission && currentTask !== null;
+    const shouldApplyMissionConstraints =
+        isMissionMode && currentMission && currentTask !== null;
+
+    // Helper functions for confirmation system
+    const hasValidConfiguration = !!(
+        selectedType &&
+        selectedSubtype &&
+        dashboardConfig
+    );
+
+    // Improved unsaved changes detection
+    const hasUnsavedChanges = (() => {
+        // If we don't have a valid configuration, no changes to save
+        if (!hasValidConfiguration) return false;
+
+        // If lastSavedConfig is null but we have a configuration, that's an unsaved change
+        if (lastSavedConfig === null && dashboardConfig !== null) return true;
+
+        // Otherwise compare the stringified versions
+        return (
+            JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
+        );
+    })();
+
+    /**
+     * Get the appropriate button text based on next slot state
+     * @returns {string} "Next" or "Done"
+     */
+    const getButtonText = () => {
+        const nextSlotIndex = currSlotNumber + 1;
+        const isNextSlotEmpty = !slotData[nextSlotIndex]?.type;
+        const isSecondToLast = currSlotNumber === missionSteps - 2;
+        return isNextSlotEmpty && !isSecondToLast ? "Next" : "Done";
+    };
+
+    /**
+     * Handle confirmation and save with improved state management
+     */
+    const handleConfirmAndSave = () => {
+        const instruction = {
+            type: selectedType,
+            subtype: selectedSubtype,
+            configuration: dashboardConfig,
+        };
+
+        const shouldProgress = getButtonText() === "Next";
+
+        // Update last saved config immediately to prevent race conditions
+        setLastSavedConfig(dashboardConfig);
+
+        // Call the save and exit handler if provided
+        if (onSaveAndExit) {
+            onSaveAndExit(instruction, shouldProgress);
+        } else {
+            // Fallback to direct slot update for backward compatibility
+            onSlotUpdate(instruction);
+        }
+    };
 
     // Reset state when slot number changes
     useEffect(() => {
@@ -152,18 +242,24 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
         } else if (shouldApplyMissionConstraints && currentTask) {
             // Apply mission preset type/subtype if available
             if (currentTask.requiredType) {
-                console.log(`CommandPanel: Applying mission preset type: ${currentTask.requiredType}`);
+                console.log(
+                    `CommandPanel: Applying mission preset type: ${currentTask.requiredType}`,
+                );
                 setSelectedType(currentTask.requiredType);
 
                 // If subtype is also specified, apply it too
                 if (currentTask.requiredSubtype) {
-                    console.log(`CommandPanel: Applying mission preset subtype: ${currentTask.requiredSubtype}`);
+                    console.log(
+                        `CommandPanel: Applying mission preset subtype: ${currentTask.requiredSubtype}`,
+                    );
                     setSelectedSubtype(currentTask.requiredSubtype);
                 }
             }
         } else {
             // Reset everything when there's no valid slot data
-            console.log(`CommandPanel: No valid data for slot ${currSlotNumber}, resetting state`);
+            console.log(
+                `CommandPanel: No valid data for slot ${currSlotNumber}, resetting state`,
+            );
 
             setSelectedType(null);
             setSelectedSubtype(null);
@@ -171,21 +267,32 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
             setLastSavedConfig(null);
             setCurrentInstruction(null);
         }
-    }, [currSlotNumber, slotData, isStopStep, shouldApplyMissionConstraints, currentTask]);
+    }, [
+        currSlotNumber,
+        slotData,
+        isStopStep,
+        shouldApplyMissionConstraints,
+        currentTask,
+    ]);
 
-    // Auto-save when configuration changes
+    // Modified auto-save logic - only save when not in editing mode or when explicitly confirmed
     useEffect(() => {
         console.log("CommandPanel: dashboardConfig effect triggered", {
             hasConfig: !!dashboardConfig,
             currentSlot: currSlotNumber,
+            isEditingMode: isEditingMode,
         });
 
         if (!dashboardConfig) {
-            console.log("CommandPanel: No dashboard config, checking if we need to update");
+            console.log(
+                "CommandPanel: No dashboard config, checking if we need to update",
+            );
 
             // If we had a previous config but it was nullified, we should update the slot
             if (lastSavedConfig) {
-                console.log("CommandPanel: Config was cleared, updating slot to null");
+                console.log(
+                    "CommandPanel: Config was cleared, updating slot to null",
+                );
 
                 if (selectedType && selectedSubtype) {
                     // Create an instruction with null configuration
@@ -194,13 +301,19 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
                         subtype: selectedSubtype,
                         configuration: null,
                     };
-                    onSlotUpdate(instruction);
-                    setLastSavedConfig(null);
+
+                    // Only auto-save if not in editing mode
+                    if (!isEditingMode) {
+                        onSlotUpdate(instruction);
+                        setLastSavedConfig(null);
+                    }
                     setCurrentInstruction(instruction);
                 } else {
                     // If no type/subtype, clear the slot entirely
-                    onSlotUpdate(null);
-                    setLastSavedConfig(null);
+                    if (!isEditingMode) {
+                        onSlotUpdate(null);
+                        setLastSavedConfig(null);
+                    }
                     setCurrentInstruction(null);
                 }
             }
@@ -208,10 +321,13 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
         }
 
         // Check if the configuration has actually changed
-        if (JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)) {
-            console.log("CommandPanel: Configuration changed, auto-saving...", {
+        if (
+            JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
+        ) {
+            console.log("CommandPanel: Configuration changed", {
                 from: JSON.stringify(lastSavedConfig),
                 to: JSON.stringify(dashboardConfig),
+                isEditingMode: isEditingMode,
             });
 
             if (selectedType && selectedSubtype) {
@@ -222,52 +338,72 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
                     configuration: dashboardConfig,
                 };
 
-                // In mission mode, validate against mission requirements
-                if (shouldApplyMissionConstraints) {
-                    const validation = validateStepConfiguration(instruction);
-                    if (!validation.isValid) {
-                        console.warn(`CommandPanel: Configuration doesn't meet mission requirements: ${validation.message}`);
-                        // We could add UI feedback here about the invalid configuration
-                        // For now, we'll still allow it but could restrict it if needed
-                    } else if (currentTask?.type === "MOTOR_CONFIGURATION") {
-                        // Complete the task if it's a motor configuration task and the configuration is valid
-                        console.log("CommandPanel: Motor configuration meets requirements, completing task");
-                        completeTask(currentTaskIndex, {
-                            configuration: instruction.configuration,
-                        });
-                    } else if (currentTask?.type === "TIMER_SETTING") {
-                        // Complete the task if it's a timer setting task and the configuration is valid
-                        console.log("CommandPanel: Timer configuration meets requirements, completing task");
-                        completeTask(currentTaskIndex, {
-                            configuration: instruction.configuration,
-                        });
-                    }
-                }
-
-                // Update slot and set current instruction
-                console.log("CommandPanel: Calling onSlotUpdate with instruction", {
-                    instruction: JSON.stringify(instruction),
-                    slot: currSlotNumber,
-                });
-
-                onSlotUpdate(instruction);
-                setLastSavedConfig(dashboardConfig);
+                // Always update currentInstruction for preview
                 setCurrentInstruction(instruction);
 
-                // Check if we should show the test prompt for this mission step
-                if (shouldApplyMissionConstraints && currentTask?.testPrompt?.showPrompt) {
-                    setShowTestPrompt(true);
-                }
+                // Only auto-save if NOT in editing mode
+                if (!isEditingMode) {
+                    // In mission mode, validate against mission requirements
+                    if (shouldApplyMissionConstraints) {
+                        const validation =
+                            validateStepConfiguration(instruction);
+                        if (!validation.isValid) {
+                            console.warn(
+                                `CommandPanel: Configuration doesn't meet mission requirements: ${validation.message}`,
+                            );
+                            // We could add UI feedback here about the invalid configuration
+                            // For now, we'll still allow it but could restrict it if needed
+                        } else if (
+                            currentTask?.type === "MOTOR_CONFIGURATION"
+                        ) {
+                            // Complete the task if it's a motor configuration task and the configuration is valid
+                            console.log(
+                                "CommandPanel: Motor configuration meets requirements, completing task",
+                            );
+                            completeTask(currentTaskIndex, {
+                                configuration: instruction.configuration,
+                            });
+                        } else if (currentTask?.type === "TIMER_SETTING") {
+                            // Complete the task if it's a timer setting task and the configuration is valid
+                            console.log(
+                                "CommandPanel: Timer configuration meets requirements, completing task",
+                            );
+                            completeTask(currentTaskIndex, {
+                                configuration: instruction.configuration,
+                            });
+                        }
+                    }
 
-                // Dispatch configuration changed event for mission tracking
-                if (isMissionMode) {
-                    dispatchTaskEvent("CONFIGURATION_CHANGED", {
-                        slotIndex: currSlotNumber,
-                        configType: selectedType,
-                        configSubtype: selectedSubtype,
-                        configuration: dashboardConfig,
-                        currentSlot: currSlotNumber,
-                    });
+                    // Update slot and set current instruction
+                    console.log(
+                        "CommandPanel: Calling onSlotUpdate with instruction",
+                        {
+                            instruction: JSON.stringify(instruction),
+                            slot: currSlotNumber,
+                        },
+                    );
+
+                    onSlotUpdate(instruction);
+                    setLastSavedConfig(dashboardConfig);
+
+                    // Check if we should show the test prompt for this mission step
+                    if (
+                        shouldApplyMissionConstraints &&
+                        currentTask?.testPrompt?.showPrompt
+                    ) {
+                        setShowTestPrompt(true);
+                    }
+
+                    // Dispatch configuration changed event for mission tracking
+                    if (isMissionMode) {
+                        dispatchTaskEvent("CONFIGURATION_CHANGED", {
+                            slotIndex: currSlotNumber,
+                            configType: selectedType,
+                            configSubtype: selectedSubtype,
+                            configuration: dashboardConfig,
+                            currentSlot: currSlotNumber,
+                        });
+                    }
                 }
             }
         }
@@ -286,6 +422,7 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
         dispatchTaskEvent,
         completeTask,
         currentTaskIndex,
+        isEditingMode, // Added to dependencies
     ]);
 
     // Handle updates from the dashboard components
@@ -306,14 +443,22 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
     // Handle type selection
     const handleTypeSelect = (type) => {
         // Check if this selection is allowed in mission mode
-        if (shouldApplyMissionConstraints && currentTask?.requiredType && type !== currentTask.requiredType) {
+        if (
+            shouldApplyMissionConstraints &&
+            currentTask?.requiredType &&
+            type !== currentTask.requiredType
+        ) {
             // Type is restricted in this mission step
-            console.warn(`CommandPanel: Type ${type} is not allowed in this mission step. Required: ${currentTask.requiredType}`);
+            console.warn(
+                `CommandPanel: Type ${type} is not allowed in this mission step. Required: ${currentTask.requiredType}`,
+            );
             return; // Don't allow changing to an invalid type
         }
 
         if (type !== selectedType) {
-            console.log(`CommandPanel: Type changed from ${selectedType} to ${type}`);
+            console.log(
+                `CommandPanel: Type changed from ${selectedType} to ${type}`,
+            );
 
             setSelectedType(type);
             setSelectedSubtype(null);
@@ -323,15 +468,25 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
 
             // Dispatch type selection event for mission tracking
             if (isMissionMode) {
-                dispatchTaskEvent(type === "action" ? "ACTION_TYPE_SELECTED" : "INPUT_TYPE_SELECTED", {
-                    slotIndex: currSlotNumber,
-                    type: type,
-                    currentSlot: currSlotNumber,
-                });
+                dispatchTaskEvent(
+                    type === "action"
+                        ? "ACTION_TYPE_SELECTED"
+                        : "INPUT_TYPE_SELECTED",
+                    {
+                        slotIndex: currSlotNumber,
+                        type: type,
+                        currentSlot: currSlotNumber,
+                    },
+                );
 
                 // Complete the SELECT_INPUT_TYPE task if the user clicked SENSE
-                if (currentTask?.type === "SELECT_INPUT_TYPE" && type === "input") {
-                    console.log("CommandPanel: Input type selected, completing task");
+                if (
+                    currentTask?.type === "SELECT_INPUT_TYPE" &&
+                    type === "input"
+                ) {
+                    console.log(
+                        "CommandPanel: Input type selected, completing task",
+                    );
                     completeTask(currentTaskIndex, {
                         selectedType: type,
                     });
@@ -343,13 +498,21 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
     // Handle subtype selection
     const handleSubtypeSelect = (subtype) => {
         // Check if this selection is allowed in mission mode
-        if (shouldApplyMissionConstraints && currentTask?.requiredSubtype && subtype !== currentTask.requiredSubtype) {
+        if (
+            shouldApplyMissionConstraints &&
+            currentTask?.requiredSubtype &&
+            subtype !== currentTask.requiredSubtype
+        ) {
             // Subtype is restricted in this mission step
-            console.warn(`CommandPanel: Subtype ${subtype} is not allowed in this mission step. Required: ${currentTask.requiredSubtype}`);
+            console.warn(
+                `CommandPanel: Subtype ${subtype} is not allowed in this mission step. Required: ${currentTask.requiredSubtype}`,
+            );
             return; // Don't allow changing to an invalid subtype
         }
 
-        console.log(`CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype}`);
+        console.log(
+            `CommandPanel: Subtype changed from ${selectedSubtype} to ${subtype}`,
+        );
 
         setSelectedSubtype(subtype);
         setDashboardConfig(null);
@@ -357,7 +520,10 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
         setCurrentInstruction(null);
 
         // Apply prefilled values from mission if available
-        if (shouldApplyMissionConstraints && currentTask?.uiRestrictions?.prefilledValues) {
+        if (
+            shouldApplyMissionConstraints &&
+            currentTask?.uiRestrictions?.prefilledValues
+        ) {
             const prefills = currentTask.uiRestrictions.prefilledValues;
             if (Object.keys(prefills).length > 0) {
                 // Create a basic configuration with prefilled values
@@ -400,13 +566,19 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
         }
 
         // Additional safety check for the CONTROL_TYPES structure
-        if (!CONTROL_TYPES[selectedType] || !CONTROL_TYPES[selectedType][selectedSubtype]) {
-            console.error(`Invalid control type: ${selectedType}/${selectedSubtype}`);
+        if (
+            !CONTROL_TYPES[selectedType] ||
+            !CONTROL_TYPES[selectedType][selectedSubtype]
+        ) {
+            console.error(
+                `Invalid control type: ${selectedType}/${selectedSubtype}`,
+            );
             return <div className={styles.dashboardPlaceholder}></div>;
         }
 
         // Check if the component exists before trying to render it
-        const componentToRender = CONTROL_TYPES[selectedType][selectedSubtype].component;
+        const componentToRender =
+            CONTROL_TYPES[selectedType][selectedSubtype].component;
         if (!componentToRender) {
             return <div className={styles.dashboardPlaceholder}></div>;
         }
@@ -447,11 +619,16 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
 
             {/* Type Selector (ACTION/SENSE) or Stop indicator for stop step */}
             {!isStopStep ? (
-                (shouldApplyMissionConstraints && isComponentVisible("type-selector")) || !shouldApplyMissionConstraints ? (
+                (shouldApplyMissionConstraints &&
+                    isComponentVisible("type-selector")) ||
+                !shouldApplyMissionConstraints ? (
                     <TypeSelector
                         selectedType={selectedType}
                         onTypeChange={handleTypeSelect}
-                        disabled={shouldApplyMissionConstraints && !isComponentEnabled("type-selector")}
+                        disabled={
+                            shouldApplyMissionConstraints &&
+                            !isComponentEnabled("type-selector")
+                        }
                     />
                 ) : null
             ) : (
@@ -470,13 +647,18 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
                     {/* Left column - ACTION subtype or SENSE dashboard */}
                     <div className={styles.leftColumn}>
                         {selectedType === "action" ? (
-                            (shouldApplyMissionConstraints && isComponentVisible("subtype-selector")) || !shouldApplyMissionConstraints ? (
+                            (shouldApplyMissionConstraints &&
+                                isComponentVisible("subtype-selector")) ||
+                            !shouldApplyMissionConstraints ? (
                                 <SubtypeSelector
                                     controlTypes={CONTROL_TYPES}
                                     selectedType={selectedType}
                                     selectedSubtype={selectedSubtype}
                                     onSubtypeSelect={handleSubtypeSelect}
-                                    disabled={shouldApplyMissionConstraints && !isComponentEnabled("subtype-selector")}
+                                    disabled={
+                                        shouldApplyMissionConstraints &&
+                                        !isComponentEnabled("subtype-selector")
+                                    }
                                 />
                             ) : null
                         ) : (
@@ -488,16 +670,38 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
                     <div className={styles.rightColumn}>
                         {selectedType === "action" ? (
                             renderDashboard()
-                        ) : (shouldApplyMissionConstraints && isComponentVisible("subtype-selector")) || !shouldApplyMissionConstraints ? (
+                        ) : (shouldApplyMissionConstraints &&
+                              isComponentVisible("subtype-selector")) ||
+                          !shouldApplyMissionConstraints ? (
                             <SubtypeSelector
                                 controlTypes={CONTROL_TYPES}
                                 selectedType={selectedType}
                                 selectedSubtype={selectedSubtype}
                                 onSubtypeSelect={handleSubtypeSelect}
-                                disabled={shouldApplyMissionConstraints && !isComponentEnabled("subtype-selector")}
+                                disabled={
+                                    shouldApplyMissionConstraints &&
+                                    !isComponentEnabled("subtype-selector")
+                                }
                             />
                         ) : null}
                     </div>
+                </div>
+            )}
+
+            {/* Confirmation button - positioned between content and description panel */}
+            {isEditingMode && hasValidConfiguration && (
+                <div className={styles.confirmationContainer}>
+                    <button
+                        className={`${styles.confirmButton} ${
+                            hasUnsavedChanges
+                                ? styles.confirmButtonEnabled
+                                : styles.confirmButtonDisabled
+                        }`}
+                        onClick={handleConfirmAndSave}
+                        disabled={!hasUnsavedChanges}
+                    >
+                        {getButtonText()}
+                    </button>
                 </div>
             )}
 
@@ -508,7 +712,8 @@ export const CommandPanel = ({ currSlotNumber, onSlotUpdate, slotData, missionSt
                         ? {
                               type: "special",
                               subtype: "stop",
-                              description: "This step will stop all motors when the program ends.",
+                              description:
+                                  "This step will stop all motors when the program ends.",
                           }
                         : currentInstruction
                 }

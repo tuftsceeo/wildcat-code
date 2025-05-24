@@ -3,6 +3,7 @@
  * @description Main application component with support for reading level, step count, missions,
  * and new editing mode functionality. Updated to include editing mode state management
  * and feature flag for mission disable during development.
+ * Updated for Option B: Stop step is real in slotData.
  * @author Jennifer Cross with support from Claude
  * @updated February 2025
  */
@@ -319,15 +320,67 @@ function AppContent() {
         isStopInstruction: true, // Flag to identify this as a stop instruction
     });
 
-    // Initialize slot data with empty slots
+    // Initialize slot data with empty slots INCLUDING the stop step
     const [slotData, setSlotData] = useState(() => {
         const slots = [];
-        // Create N-1 slots for N steps (the last step is the stop step)
+        // Create N-1 slots for configurable steps
         for (let i = 0; i < missionSteps - 1; i++) {
             slots.push(createEmptySlot());
         }
+        // Add the stop step as the last element
+        slots.push(createStopInstruction());
         return slots;
     });
+
+    // Synchronize slotData with missionSteps changes
+    useEffect(() => {
+        console.log("App.js: Synchronizing slotData with missionSteps", {
+            missionSteps,
+            currentSlotDataLength: slotData.length,
+            expectedLength: missionSteps,
+        });
+
+        if (slotData.length !== missionSteps) {
+            const newSlotData = [];
+
+            // Copy existing slots or create new ones (excluding the stop step for now)
+            for (let i = 0; i < missionSteps - 1; i++) {
+                if (slotData[i] && slotData[i].type !== "special") {
+                    // Keep existing configurable slot data
+                    newSlotData[i] = slotData[i];
+                } else {
+                    // Create new empty slot
+                    newSlotData[i] = createEmptySlot();
+                }
+            }
+
+            // Always add the stop step as the last element
+            newSlotData[missionSteps - 1] = createStopInstruction();
+
+            // STOP STEP PROTECTION: Handle current slot position
+            // If current slot would be removed or is now pointing to the stop step inappropriately
+            if (currSlotNumber >= missionSteps - 1) {
+                // Move to the last configurable slot
+                const lastConfigurableSlot = missionSteps - 2;
+                if (lastConfigurableSlot >= 0) {
+                    console.log(
+                        `App.js: Moving currSlotNumber from ${currSlotNumber} to ${lastConfigurableSlot} (last configurable)`,
+                    );
+                    setCurrSlotNumber(lastConfigurableSlot);
+                    // Exit editing mode since we're force-moving
+                    setIsEditingMode(false);
+                }
+            }
+
+            console.log("App.js: Updating slotData", {
+                from: slotData.length,
+                to: newSlotData.length,
+                preservedStopStep: true,
+            });
+
+            setSlotData(newSlotData);
+        }
+    }, [missionSteps, currSlotNumber, setCurrSlotNumber, setIsEditingMode]); // Added dependencies
 
     // Log when missionSteps change for debugging
     useEffect(() => {
@@ -364,10 +417,10 @@ function AppContent() {
         setPyCode(newPyCode);
         console.log("App.js: Generated Python Code: ", newPyCode);
 
-        // Enable run if AT LEAST ONE regular slot has a complete configuration
-        // (excluding the stop step which is always at the end)
+        // Enable run if AT LEAST ONE configurable slot has a complete configuration
+        // (excluding special steps like stop)
         const hasAtLeastOneInstruction = slotData
-            .slice(0, -1) // Exclude the stop step
+            .filter((slot) => slot?.type !== "special") // Exclude special steps
             .some((slot) => slot?.type && slot?.subtype && slot?.configuration);
 
         setCanRun(hasAtLeastOneInstruction);
@@ -412,6 +465,13 @@ function AppContent() {
     const handleStepClick = (stepIndex) => {
         console.log(`App.js: Step ${stepIndex} clicked`);
 
+        // Check if step is the stop step
+        if (slotData[stepIndex]?.type === "special") {
+            // Stop step: Enter viewing mode (non-editable)
+            handleEditingModeChange(stepIndex, false);
+            return;
+        }
+
         // Check if step is configured
         const isStepConfigured = !!(
             slotData[stepIndex]?.type && slotData[stepIndex]?.subtype
@@ -452,18 +512,23 @@ function AppContent() {
         }
 
         if (shouldProgress) {
-            // Find next empty slot
-            const nextEmptySlot = slotData.findIndex(
-                (slot, index) =>
-                    index > currSlotNumber && (!slot?.type || !slot?.subtype),
-            );
+            // Calculate next slot based on current slot + 1
+            const nextSlotIndex = currSlotNumber + 1;
 
-            if (nextEmptySlot !== -1) {
-                // Progress to next empty slot in editing mode
-                handleEditingModeChange(nextEmptySlot, true);
+            // Check if next slot exists and is not a special step (like stop)
+            if (
+                nextSlotIndex < slotData.length &&
+                slotData[nextSlotIndex]?.type !== "special"
+            ) {
+                // Progress to next configurable slot in editing mode
+                handleEditingModeChange(nextSlotIndex, true);
             } else {
-                // No more empty slots, exit editing mode
+                // No more configurable slots, exit editing mode
                 setIsEditingMode(false);
+                // TODO: Add celebration/completion logic here for UX
+                console.log(
+                    "App.js: Reached end of configurable slots - program complete!",
+                );
             }
         } else {
             // Just exit editing mode, stay on current slot
@@ -475,10 +540,10 @@ function AppContent() {
     const generatePythonCode = (slots) => {
         let code = [];
 
-        // Process all slots except the stop instruction
+        // Process all slots, skipping special ones like stop
         slots.forEach((slot, index) => {
-            // Skip the stop step which would be at the end
-            if (slot?.isStopInstruction) return;
+            // Skip special steps (like stop)
+            if (slot?.type === "special") return;
 
             if (slot?.type === "action" && slot?.subtype === "motor") {
                 const { buttonType, knobAngle, port } =
