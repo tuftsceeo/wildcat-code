@@ -163,6 +163,13 @@
 }
 
 /* Editing state - secondary (green) border and secondary-low fill for current slot in edit mode */
+/* Warning styling when needed */
+.stepButton.warning {
+    /* border-color: var(--color-warning-main); */
+    background-color: rgba(var(--color-warning-main-rgb), 0.2);
+    /* color: var(--color-warning-high); */
+}
+
 .stepButton.editing {
     border-color: var(--button-selected-border);
     background-color: rgba(var(--color-secondary-main-rgb), 0.5);
@@ -170,6 +177,7 @@
 }
 
 /* Configured state - blue border for completed steps */
+/* .stepButton.configured:not(.current):not(.viewing):not(.editing):not(.warning) { */
 .stepButton.configured:not(.current):not(.viewing):not(.editing) {
     border-color: var(--button-default-border);
     color: var(--button-default-text);
@@ -179,8 +187,8 @@
     position: absolute;
     top: calc(-1 * var(--spacing-3));
     right: calc(-1 * var(--spacing-3));
-    width: var(--spacing-8);
-    height: var(--spacing-8);
+    width: calc(1 * var(--spacing-8));
+    height: calc(1 * var(--spacing-8));
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
@@ -191,19 +199,66 @@
 }
 
 .cornerIcon {
-    color: var(--button-default-text);
-    width: calc(var(--font-size-md));
-    height: calc(var(--font-size-md));
+    color: var(--color-primary-contrast); /*var(--button-default-text);*/
+    width: calc(0.6 * var(--spacing-8));
+    height: calc(0.6 * var(--spacing-8));
 }
 
 .cornerBadge.editing {
-    background-color: var(--color-secondary-low);
+    background-color: var(--color-secondary-high);
     color: var(--color-text);
 }
 
 .cornerBadge.configured {
-    background-color: var(--color-primary-low);
-    color: var(--color-text);
+    background-color: var(--panel-bg);
+    color: var(--color-primary-high);
+}
+
+.cornerIcon.configured {
+    color: var(--color-primary-high);
+    width: calc(0.9 * var(--spacing-8));
+    height: calc(0.9 * var(--spacing-8));
+}
+
+.cornerBadge.viewing {
+    background-color: var(--panel-bg);
+    color: var(--color-secondary-high);
+}
+
+.cornerIcon.viewing {
+    color: var(--color-secondary-high);
+    width: calc(0.9 * var(--spacing-8));
+    height: calc(0.9 * var(--spacing-8));
+}
+
+.cornerBadge.warning {
+    background-color: var(--panel-bg);
+    color: var(--color-warning-high);
+    animation: error-shake 2s var(--transition-easing-accelerate) 5;
+}
+
+.cornerIcon.warning {
+    color: var(--color-warning-high);
+    width: calc(0.9 * var(--spacing-8));
+    height: calc(0.9 * var(--spacing-8));
+}
+
+@keyframes error-shake {
+    0% {
+        transform: translateX(0);
+    }
+    1% {
+        transform: translateX(-3px);
+    }
+    2% {
+        transform: translateX(3px);
+    }
+    3% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 /* Command icon styling - now on the right side */
@@ -238,11 +293,6 @@
       border-color: var(--button-default-border);
     color: var(--button-default-text);
 } */
-
-/* Warning styling when needed */
-.stepButton.warning {
-    border-color: var(--color-warning-main);
-}
 
 /* Disabled step styling */
 .stepButton:disabled {

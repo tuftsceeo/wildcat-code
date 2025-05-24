@@ -21,7 +21,9 @@ import {
 import {
     AlertTriangle,
     AlertCircleStop,
+    CircleCheckBig,
     CircleStop,
+    CircleAlert,
     RotateCw,
     Clock9,
     Disc,
@@ -123,7 +125,7 @@ export const RunMenu = ({
 }) => {
     console.log("RunMenu: Rendering with missionSteps =", missionSteps);
 
-    const { ble, isConnected, portStates } = useBLE();
+    const { ble, isConnected, portStates, DEVICE_TYPES } = useBLE();
 
     // Get user preferences from CustomizationContext
     const {
@@ -435,12 +437,30 @@ export const RunMenu = ({
      * @param {string} visualState - The visual state of the step
      * @returns {JSX.Element|null} Corner badge component or null
      */
-    const getCornerBadge = (visualState) => {
+    const getCornerBadge = (
+        visualState,
+        isStopStep = false,
+        hasWarning = false,
+    ) => {
+        // Priority: Warning badge overrides other badges
+        if (hasWarning) {
+            return (
+                <div className={`${styles.cornerBadge} ${styles.warning}`}>
+                    <CircleAlert
+                        className={`${styles.cornerIcon} ${styles.warning}`}
+                        strokeWidth={2}
+                    />
+                </div>
+            );
+        }
         switch (visualState) {
             case "editing":
                 return (
                     <div className={`${styles.cornerBadge} ${styles.editing}`}>
-                        <Pencil className={styles.cornerIcon} />
+                        <Pencil
+                            className={styles.cornerIcon}
+                            strokeWidth={3}
+                        />
                     </div>
                 );
             case "configured":
@@ -448,20 +468,18 @@ export const RunMenu = ({
                     <div
                         className={`${styles.cornerBadge} ${styles.configured}`}
                     >
-                        <Check
-                            className={styles.cornerIcon}
-                            strokeWidth={3}
+                        <CircleCheckBig
+                            className={`${styles.cornerIcon} ${styles.configured}`}
+                            strokeWidth={2}
                         />
                     </div>
                 );
             case "viewing": // ADD THIS LINE
                 return (
-                    <div
-                        className={`${styles.cornerBadge} ${styles.configured}`}
-                    >
-                        <Check
-                            className={styles.cornerIcon}
-                            strokeWidth={3}
+                    <div className={`${styles.cornerBadge} ${styles.viewing}`}>
+                        <CircleCheckBig
+                            className={`${styles.cornerIcon} ${styles.viewing}`}
+                            strokeWidth={2}
                         />
                     </div>
                 );
@@ -471,30 +489,93 @@ export const RunMenu = ({
     };
 
     /**
-     * Check for disconnected motors in configurations
+     * Check for disconnected devices in configurations
      *
      * @param {Array} slots - Slot configurations to check
-     * @returns {Array} Array of disconnected port objects
+     * @returns {Array} Array of disconnected device objects
      */
-    const checkDisconnectedMotors = (slots) => {
-        const disconnectedPorts = [];
-        slots.forEach((slot, index) => {
-            if (slot?.type === "action" && slot?.subtype === "motor") {
-                const configs = Array.isArray(slot.configuration)
-                    ? slot.configuration
-                    : [slot.configuration];
+    const checkDisconnectedDevices = (slots) => {
+        const disconnectedDevices = [];
 
-                configs.forEach((config) => {
-                    if (config?.port && !portStates[config.port]) {
-                        disconnectedPorts.push({
-                            slot: index + 1,
-                            port: config.port,
-                        });
-                    }
-                });
-            }
+        slots.forEach((slot, index) => {
+            if (!slot?.type || !slot?.subtype || !slot?.configuration) return;
+
+            const configs = Array.isArray(slot.configuration)
+                ? slot.configuration
+                : [slot.configuration];
+
+            configs.forEach((config) => {
+                if (!config?.port) return;
+
+                const portState = portStates[config.port];
+                const isConnected =
+                    portState?.connected ||
+                    portState?.deviceType ||
+                    portState?.type;
+
+                if (!isConnected) {
+                    disconnectedDevices.push({
+                        slot: index + 1,
+                        port: config.port,
+                        type: slot.type,
+                        subtype: slot.subtype,
+                        deviceName: getDeviceName(slot.type, slot.subtype),
+                    });
+                    return;
+                }
+
+                // Check if the connected device matches the expected type
+                const expectedDeviceType = getExpectedDeviceType(
+                    slot.type,
+                    slot.subtype,
+                );
+                const actualDeviceType = portState.deviceType || portState.type;
+
+                if (
+                    expectedDeviceType &&
+                    actualDeviceType !== expectedDeviceType
+                ) {
+                    disconnectedDevices.push({
+                        slot: index + 1,
+                        port: config.port,
+                        type: slot.type,
+                        subtype: slot.subtype,
+                        deviceName: getDeviceName(slot.type, slot.subtype),
+                        mismatch: true,
+                        expected: expectedDeviceType,
+                        actual: actualDeviceType,
+                    });
+                }
+            });
         });
-        return disconnectedPorts;
+
+        return disconnectedDevices;
+    };
+
+    /**
+     * Get expected device type for a slot configuration
+     */
+    const getExpectedDeviceType = (type, subtype) => {
+        if (type === "action" && subtype === "motor") return DEVICE_TYPES.MOTOR;
+        if (type === "input" && subtype === "button")
+            return DEVICE_TYPES.FORCE_SENSOR;
+        if (type === "input" && subtype === "color")
+            return DEVICE_TYPES.COLOR_SENSOR;
+        if (type === "input" && subtype === "distance")
+            return DEVICE_TYPES.DISTANCE_SENSOR;
+        return null;
+    };
+
+    /**
+     * Get human-readable device name
+     */
+    const getDeviceName = (type, subtype) => {
+        if (type === "action" && subtype === "motor") return "Motor";
+        if (type === "input" && subtype === "button") return "Force Sensor";
+        if (type === "input" && subtype === "color") return "Color Sensor";
+        if (type === "input" && subtype === "distance")
+            return "Distance Sensor";
+        return "Device";
     };
 
     /**
@@ -587,8 +668,8 @@ export const RunMenu = ({
     };
 
     // Check for any disconnected motors in the current configuration
-    const disconnectedMotors = checkDisconnectedMotors(slotData);
-    const currentSlotDisconnected = checkDisconnectedMotors([
+    const disconnectedDevices = checkDisconnectedDevices(slotData);
+    const currentSlotDisconnected = checkDisconnectedDevices([
         slotData[currSlotNumber],
     ]);
 
@@ -738,23 +819,27 @@ export const RunMenu = ({
             const visualState = getStepVisualState(i);
             const { name, icon } = getStepDisplayInfo(i);
             const isStopStep = slot?.type === "special";
-            const cornerBadge = getCornerBadge(visualState, isStopStep);
+
+            const hasDeviceWarning =
+                isConnected &&
+                checkDisconnectedDevices([slotData?.[i]]).length > 0;
+            const cornerBadge = getCornerBadge(
+                visualState,
+                isStopStep,
+                hasDeviceWarning,
+            );
 
             const stepButton = (
                 <button
                     key={i}
-                    className={`${styles.stepButton} 
-                              ${styles[visualState]} 
-                              ${isStopStep ? styles.stopButton : ""}
-                              ${
-                                  isConnected &&
-                                  checkDisconnectedMotors([slot]).length > 0
-                                      ? styles.warning
-                                      : ""
-                              } 
-                              ${completed ? styles.completed : ""}
-                              ${slot?.type ? styles.configured : ""} 
-                              ${i === currSlotNumber ? styles.current : ""}`}
+                    className={`${styles.stepButton}
+                            ${hasDeviceWarning ? styles.warning : ""} 
+                            ${styles[visualState]} 
+                            ${isStopStep ? styles.stopButton : ""}
+                            
+                            ${completed ? styles.completed : ""}
+                            ${slot?.type ? styles.configured : ""} 
+                            ${i === currSlotNumber ? styles.current : ""}`}
                     onClick={() => handleStepClick(i)}
                     disabled={!accessible}
                     aria-label={`${name}${

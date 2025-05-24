@@ -108,9 +108,11 @@
     --transition-duration-game: 500ms;
 
     /* Transition presets for consistent motion */
-    --transition-selection: var(--transition-duration-fast) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-selection: var(--transition-duration-fast)
+        cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --transition-color: var(--transition-duration-slow) ease;
-    --transition-position: var(--transition-duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-position: var(--transition-duration-normal)
+        cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Easing Functions */
     --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -121,20 +123,28 @@
     --transition-easing-pulse: cubic-bezier(0.4, 0, 0.6, 1);
 
     /* Complete transitions */
-    --transition-standard: var(--transition-duration-normal) var(--transition-easing-standard);
-    --transition-fast: var(--transition-duration-fast) var(--transition-easing-standard);
-    --transition-slow: var(--transition-duration-slow) var(--transition-easing-standard);
-    --transition-bounce: var(--transition-duration-game) var(--transition-easing-bounce);
-    --transition-spring: var(--transition-duration-game) var(--transition-easing-spring);
-    --transition-pulse: var(--transition-duration-game) var(--transition-easing-pulse);
+    --transition-standard: var(--transition-duration-normal)
+        var(--transition-easing-standard);
+    --transition-fast: var(--transition-duration-fast)
+        var(--transition-easing-standard);
+    --transition-slow: var(--transition-duration-slow)
+        var(--transition-easing-standard);
+    --transition-bounce: var(--transition-duration-game)
+        var(--transition-easing-bounce);
+    --transition-spring: var(--transition-duration-game)
+        var(--transition-easing-spring);
+    --transition-pulse: var(--transition-duration-game)
+        var(--transition-easing-pulse);
 
     /* Game-like Effects */
     --glow-intensity-low: 0.3;
     --glow-intensity-medium: 0.5;
     --glow-intensity-high: 0.7;
     /* Selection and feedback effects */
-    --selection-glow: 0 var(--radius-sm) var(--radius-md) rgba(var(--color-text-rgb), 0.2);
-    --selection-glow-secondary: 0 var(--radius-sm) var(--radius-md) rgba(var(--color-secondary-main-rgb-rgb), 0.2);
+    --selection-glow: 0 var(--radius-sm) var(--radius-md)
+        rgba(var(--color-text-rgb), 0.2);
+    --selection-glow-secondary: 0 var(--radius-sm) var(--radius-md)
+        rgba(var(--color-secondary-main-rgb-rgb), 0.2);
     --selection-scale: scale(1.05);
 
     /* Button Scale Transforms */
@@ -1284,9 +1294,18 @@ body.high-contrast {
     --button-default-text: var(--color-text);
     --button-default-border: var(--color-primary-main, #000000);
 
-    --button-selected-bg: var(--button-selected-bg, var(--color-secondary-main, #000000));
-    --button-selected-text: var(--button-selected-text, var(--color-secondary-contrast, #ffffff));
-    --button-selected-border: var(--button-selected-border, var(--color-secondary-main, #000000));
+    --button-selected-bg: var(
+        --button-selected-bg,
+        var(--color-secondary-main, #000000)
+    );
+    --button-selected-text: var(
+        --button-selected-text,
+        var(--color-secondary-contrast, #ffffff)
+    );
+    --button-selected-border: var(
+        --button-selected-border,
+        var(--color-secondary-main, #000000)
+    );
 
     --button-disabled-bg: var(--color-background);
     --button-disabled-text: var(--color-text);
@@ -1294,13 +1313,31 @@ body.high-contrast {
     --button-disabled-opacity: 0.5;
 
     /* Button States - Contained - Use custom colors if set */
-    --button-contained-default-bg: var(--button-contained-default-bg, var(--color-primary-main, #000000));
-    --button-contained-default-text: var(--button-contained-default-text, var(--color-primary-contrast, #ffffff));
-    --button-contained-default-border: var(--button-contained-default-border, var(--color-primary-main, #000000));
+    --button-contained-default-bg: var(
+        --button-contained-default-bg,
+        var(--color-primary-main, #000000)
+    );
+    --button-contained-default-text: var(
+        --button-contained-default-text,
+        var(--color-primary-contrast, #ffffff)
+    );
+    --button-contained-default-border: var(
+        --button-contained-default-border,
+        var(--color-primary-main, #000000)
+    );
 
-    --button-contained-selected-bg: var(--button-contained-selected-bg, var(--color-secondary-main, #000000));
-    --button-contained-selected-text: var(--button-contained-selected-text, var(--color-secondary-contrast, #ffffff));
-    --button-contained-selected-border: var(--button-contained-selected-border, var(--color-secondary-main, #000000));
+    --button-contained-selected-bg: var(
+        --button-contained-selected-bg,
+        var(--color-secondary-main, #000000)
+    );
+    --button-contained-selected-text: var(
+        --button-contained-selected-text,
+        var(--color-secondary-contrast, #ffffff)
+    );
+    --button-contained-selected-border: var(
+        --button-contained-selected-border,
+        var(--color-secondary-main, #000000)
+    );
 
     --button-contained-disabled-bg: var(--color-background);
     --button-contained-disabled-text: var(--color-text);
@@ -1314,7 +1351,10 @@ body.high-contrast {
 
     --input-focus-bg: var(--color-background);
     --input-focus-text: var(--color-text);
-    --input-focus-border: var(--input-focus-border, var(--color-primary-main, #000000));
+    --input-focus-border: var(
+        --input-focus-border,
+        var(--color-primary-main, #000000)
+    );
     --input-focus-outline: 0 0 0 4px var(--color-primary-main, #000000);
 
     --input-disabled-bg: var(--color-background);
@@ -1330,9 +1370,18 @@ body.high-contrast {
     --color-gray-extreme: var(--color-text);
 
     /* Active/Inactive/Disabled States - Use custom colors if set */
-    --state-active-bg: var(--state-active-bg, var(--color-secondary-main, #000000));
-    --state-active-text: var(--state-active-text, var(--color-secondary-contrast, #ffffff));
-    --state-active-border: var(--state-active-border, var(--color-secondary-main, #000000));
+    --state-active-bg: var(
+        --state-active-bg,
+        var(--color-secondary-main, #000000)
+    );
+    --state-active-text: var(
+        --state-active-text,
+        var(--color-secondary-contrast, #ffffff)
+    );
+    --state-active-border: var(
+        --state-active-border,
+        var(--color-secondary-main, #000000)
+    );
 
     --state-inactive-bg: var(--color-background);
     --state-inactive-text: var(--color-text);
@@ -1344,7 +1393,10 @@ body.high-contrast {
     --state-disabled-opacity: 0.5;
 
     /* Focus States */
-    --focus-ring-color: var(--focus-ring-color, var(--color-primary-main, #000000));
+    --focus-ring-color: var(
+        --focus-ring-color,
+        var(--color-primary-main, #000000)
+    );
     --focus-ring-width: 4px;
 
     /* Disable glow effects in high contrast mode */
@@ -1370,7 +1422,8 @@ body.high-contrast {
     }
 
     .wildcat-button.contained {
-        border: var(--border-width-standard) solid var(--button-contained-default-border);
+        border: var(--border-width-standard) solid
+            var(--button-contained-default-border);
         background-color: var(--button-contained-default-bg);
         color: var(--button-contained-default-text);
     }
@@ -1462,7 +1515,8 @@ body.large-text {
 /* Placeholder for OpenDyslexic font */
 @font-face {
     font-family: "OpenDyslexic";
-    src: local("OpenDyslexic"), url(../assets/fonts/OpenDyslexic-Regular.woff) format("woff");
+    src: local("OpenDyslexic"),
+        url(../assets/fonts/OpenDyslexic-Regular.woff) format("woff");
     font-weight: normal;
     font-style: normal;
 }
