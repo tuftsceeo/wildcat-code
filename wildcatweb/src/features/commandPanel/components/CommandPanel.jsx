@@ -23,6 +23,9 @@ import {
     ArchiveRestore,
     Droplet,
     Edit3,
+    ChevronRight,
+    CircleArrowRight,
+    CheckCircle,
 } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
@@ -191,11 +194,22 @@ export const CommandPanel = ({
      */
     const getButtonText = () => {
         const nextSlotIndex = currSlotNumber + 1;
-        // Show "Next" if next slot exists and is configurable (not special like stop)
-        const hasNextConfigurableSlot =
-            nextSlotIndex < slotData.length &&
-            slotData[nextSlotIndex]?.type !== "special";
-        return hasNextConfigurableSlot ? "Next" : "Done";
+
+        // Check if next slot exists and is not a special slot (like stop)
+        if (
+            nextSlotIndex >= slotData.length ||
+            slotData[nextSlotIndex]?.type === "special"
+        ) {
+            return "Done"; // No next configurable slot exists
+        }
+
+        // Check if next slot is unconfigured (empty)
+        const nextSlot = slotData[nextSlotIndex];
+        const isNextSlotEmpty = !(nextSlot?.type && nextSlot?.subtype);
+
+        // Show "Next" only if next slot is empty (so we can progress to configure it)
+        // Show "Done" if next slot is already configured (so we stay and return to viewing)
+        return isNextSlotEmpty ? "Next" : "Done";
     };
 
     /**
@@ -728,7 +742,7 @@ export const CommandPanel = ({
                         onClick={handleEditStep}
                         aria-label="Edit current step configuration"
                     >
-                        <Edit3 size={20} />
+                        <Edit3 className={styles.buttonIcon} />
                         Edit Step
                     </button>
                 </div>
@@ -746,6 +760,11 @@ export const CommandPanel = ({
                         onClick={handleConfirmAndSave}
                         disabled={!hasUnsavedChanges}
                     >
+                        {getButtonText() === "Next" ? (
+                            <CircleArrowRight className={styles.buttonIcon} />
+                        ) : (
+                            <CheckCircle className={styles.buttonIcon} />
+                        )}
                         {getButtonText()}
                     </button>
                 </div>

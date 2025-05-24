@@ -409,6 +409,13 @@
     outline-offset: var(--spacing-1);
 }
 
+/* Button icon styling - consistent with RunMenu pattern */
+.buttonIcon {
+    width: calc(var(--font-size-base) * 1.2);
+    height: calc(var(--font-size-base) * 1.2);
+    flex-shrink: 0;
+}
+
 /* Spacer elements to maintain layout when selectors are hidden in viewing mode */
 .typeSelectorSpacer {
     /* Match the height and spacing of the actionSenseButtonGroup */
