@@ -11,10 +11,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { 
-    useBLE, 
-    isMotorType, 
-    getNormalizedMotorType, 
-    getMotorTypeName 
+    useBLE
 } from "../../bluetooth/context/BLEContext";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { useMission } from "../../../context/MissionContext.js";
@@ -136,9 +133,7 @@ export const RunMenu = ({
         isConnected, 
         portStates, 
         DEVICE_TYPES,
-        isMotorType: checkIsMotorType,
-        getNormalizedMotorType: getNormMotorType,
-        getMotorTypeName: getMotorName
+        checkDisconnectedDevices,
     } = useBLE();
 
     // Get user preferences from CustomizationContext
@@ -156,14 +151,12 @@ export const RunMenu = ({
         currentMission,
         dispatchTaskEvent,
         isTaskCompleted,
-        getCurrentTask,
     } = useMission();
 
     // Add state to track when reordering is in progress
     const [isReordering, setIsReordering] = useState(false);
     const [isScrollable, setIsScrollable] = useState(false);
     const [isAtBottom, setIsAtBottom] = useState(false);
-    const contentRef = useRef(null);
 
     // Verify slotData consistency - should now match missionSteps exactly with Option B
     useEffect(() => {
@@ -503,141 +496,6 @@ export const RunMenu = ({
     };
 
     /**
-     * Check for disconnected devices in configurations
-     * Updated to properly handle all motor types without false warnings
-     *
-     * @param {Array} slots - Slot configurations to check
-     * @returns {Array} Array of disconnected device objects
-     */
-    const checkDisconnectedDevices = (slots) => {
-        const disconnectedDevices = [];
-
-        slots.forEach((slot, index) => {
-            if (!slot?.type || !slot?.subtype || !slot?.configuration) return;
-
-            const configs = Array.isArray(slot.configuration)
-                ? slot.configuration
-                : [slot.configuration];
-
-            configs.forEach((config) => {
-                if (!config?.port) return;
-
-                const portState = portStates[config.port];
-                const isConnected =
-                    portState?.connected ||
-                    portState?.deviceType ||
-                    portState?.type;
-
-                if (!isConnected) {
-                    disconnectedDevices.push({
-                        slot: index + 1,
-                        port: config.port,
-                        type: slot.type,
-                        subtype: slot.subtype,
-                        deviceName: getDeviceName(slot.type, slot.subtype),
-                    });
-                    return;
-                }
-
-                // Check if the connected device matches the expected type
-                const expectedDeviceType = getExpectedDeviceType(
-                    slot.type,
-                    slot.subtype,
-                );
-                const actualDeviceType = portState.deviceType || portState.type;
-
-                // Use enhanced motor type checking
-                if (!isDeviceTypeCompatible(expectedDeviceType, actualDeviceType)) {
-                    disconnectedDevices.push({
-                        slot: index + 1,
-                        port: config.port,
-                        type: slot.type,
-                        subtype: slot.subtype,
-                        deviceName: getDeviceName(slot.type, slot.subtype),
-                        mismatch: true,
-                        expected: expectedDeviceType,
-                        actual: actualDeviceType,
-                        // Add helpful info for motor mismatches
-                        expectedMotorName: checkIsMotorType(expectedDeviceType) 
-                            ? getMotorName(expectedDeviceType) 
-                            : null,
-                        actualMotorName: checkIsMotorType(actualDeviceType) 
-                            ? getMotorName(actualDeviceType) 
-                            : null,
-                    });
-                }
-            });
-        });
-
-        return disconnectedDevices;
-    };
-
-    /**
-     * Get expected device type for a slot configuration
-     * Updated to return any motor type as the expected type for motor instructions
-     * 
-     * @param {string} type - Instruction type ('action', 'input', etc.)
-     * @param {string} subtype - Instruction subtype ('motor', 'button', etc.)
-     * @returns {number|null} Expected device type constant or null if no specific type required
-     */
-    const getExpectedDeviceType = (type, subtype) => {
-        if (type === "action" && subtype === "motor") {
-            // For motor instructions, we accept any motor type
-            // Return Medium Motor as the "expected" type for compatibility
-            return DEVICE_TYPES.MOTOR_MEDIUM;
-        }
-        if (type === "input" && subtype === "button")
-            return DEVICE_TYPES.FORCE_SENSOR;
-        if (type === "input" && subtype === "color")
-            return DEVICE_TYPES.COLOR_SENSOR;
-        if (type === "input" && subtype === "distance")
-            return DEVICE_TYPES.DISTANCE_SENSOR;
-        return null;
-    };
-
-    /**
-     * Check if an actual device type is compatible with the expected device type
-     * This handles motor type interchangeability
-     * 
-     * @param {number} expectedType - The expected device type
-     * @param {number} actualType - The actual connected device type
-     * @returns {boolean} True if the types are compatible
-     */
-    const isDeviceTypeCompatible = (expectedType, actualType) => {
-        // If no expected type, any device is compatible
-        if (!expectedType || !actualType) {
-            return true;
-        }
-
-        // Check if both are motors - if so, they're compatible regardless of specific type
-        if (checkIsMotorType(expectedType) && checkIsMotorType(actualType)) {
-            console.log(`Motor compatibility check: Expected ${getMotorName(expectedType)}, Got ${getMotorName(actualType)} - Compatible`);
-            return true;
-        }
-
-        // For non-motor devices, require exact match
-        const isExactMatch = expectedType === actualType;
-        console.log(`Device type check: Expected ${expectedType}, Got ${actualType} - ${isExactMatch ? 'Compatible' : 'Incompatible'}`);
-        return isExactMatch;
-    };
-
-    /**
-     * Get human-readable device name
-     * 
-     * @param {string} type - Instruction type
-     * @param {string} subtype - Instruction subtype
-     * @returns {string} Human-readable device name
-     */
-    const getDeviceName = (type, subtype) => {
-        if (type === "action" && subtype === "motor") return "Motor";
-        if (type === "input" && subtype === "button") return "Force Sensor";
-        if (type === "input" && subtype === "color") return "Color Sensor";
-        if (type === "input" && subtype === "distance")
-            return "Distance Sensor";
-        return "Device";
-    };
-
-    /**
      * Run all slots sequentially
      */
     const handleRunAllSlots = async () => {
@@ -726,11 +584,11 @@ export const RunMenu = ({
         }
     };
 
-    // Check for any disconnected motors in the current configuration
-    const disconnectedDevices = checkDisconnectedDevices(slotData);
-    const currentSlotDisconnected = checkDisconnectedDevices([
-        slotData[currSlotNumber],
-    ]);
+    // Check for any disconnected devices in the current configuration using centralized function
+    const hasDeviceWarnings = (slotIndex) => {
+        return isConnected && 
+               checkDisconnectedDevices([slotData?.[slotIndex]]).length > 0;
+    };
 
     /**
      * Check if a step has been configured in mission mode
@@ -879,9 +737,7 @@ export const RunMenu = ({
             const { name, icon } = getStepDisplayInfo(i);
             const isStopStep = slot?.type === "special";
 
-            const hasDeviceWarning =
-                isConnected &&
-                checkDisconnectedDevices([slotData?.[i]]).length > 0;
+        const hasDeviceWarning = hasDeviceWarnings(i);
             const cornerBadge = getCornerBadge(
                 visualState,
                 isStopStep,

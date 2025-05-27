@@ -62,6 +62,66 @@ export const getMotorTypeName = (deviceType) => {
     }
 };
 
+/**
+ * Get expected device type for a slot configuration
+ * @param {string} type - Instruction type ('action', 'input', etc.)
+ * @param {string} subtype - Instruction subtype ('motor', 'button', etc.)
+ * @returns {number|null} Expected device type constant or null if no specific type required
+ */
+export const getExpectedDeviceType = (type, subtype) => {
+    if (type === "action" && subtype === "motor") {
+        // For motor instructions, we accept any motor type
+        // Return Medium Motor as the "expected" type for compatibility
+        return DEVICE_TYPES.MOTOR_MEDIUM;
+    }
+    if (type === "input" && subtype === "button")
+        return DEVICE_TYPES.FORCE_SENSOR;
+    if (type === "input" && subtype === "color")
+        return DEVICE_TYPES.COLOR_SENSOR;
+    if (type === "input" && subtype === "distance")
+        return DEVICE_TYPES.DISTANCE_SENSOR;
+    return null;
+};
+
+/**
+ * Check if an actual device type is compatible with the expected device type
+ * This handles motor type interchangeability
+ * @param {number} expectedType - The expected device type
+ * @param {number} actualType - The actual connected device type
+ * @returns {boolean} True if the types are compatible
+ */
+export const isDeviceTypeCompatible = (expectedType, actualType) => {
+    // If no expected type, any device is compatible
+    if (!expectedType || !actualType) {
+        return true;
+    }
+
+    // Check if both are motors - if so, they're compatible regardless of specific type
+    if (isMotorType(expectedType) && isMotorType(actualType)) {
+        console.log(`Motor compatibility check: Expected ${getMotorTypeName(expectedType)}, Got ${getMotorTypeName(actualType)} - Compatible`);
+        return true;
+    }
+
+    // For non-motor devices, require exact match
+    const isExactMatch = expectedType === actualType;
+    console.log(`Device type check: Expected ${expectedType}, Got ${actualType} - ${isExactMatch ? 'Compatible' : 'Incompatible'}`);
+    return isExactMatch;
+};
+
+/**
+ * Get human-readable device name for UI display
+ * @param {string} type - Instruction type
+ * @param {string} subtype - Instruction subtype
+ * @returns {string} Human-readable device name
+ */
+export const getDeviceName = (type, subtype) => {
+    if (type === "action" && subtype === "motor") return "Motor";
+    if (type === "input" && subtype === "button") return "Force Sensor";
+    if (type === "input" && subtype === "color") return "Color Sensor";
+    if (type === "input" && subtype === "distance") return "Distance Sensor";
+    return "Device";
+};
+
 export const useBLE = () => {
     const context = useContext(BLEContext);
     if (!context) {
@@ -263,6 +323,70 @@ export const BLEProvider = ({ children }) => {
         }
     }, [isConnected]);
 
+    // Define the function inside the provider so it has access to current portStates
+    const checkDisconnectedDevices = (slots) => {
+        const disconnectedDevices = [];
+
+        slots.forEach((slot, index) => {
+            if (!slot?.type || !slot?.subtype || !slot?.configuration) return;
+
+            const configs = Array.isArray(slot.configuration)
+                ? slot.configuration
+                : [slot.configuration];
+
+            configs.forEach((config) => {
+                if (!config?.port) return;
+
+                const portState = portStates[config.port];
+                const isConnected =
+                    portState?.connected ||
+                    portState?.deviceType ||
+                    portState?.type;
+
+                if (!isConnected) {
+                    disconnectedDevices.push({
+                        slot: index + 1,
+                        port: config.port,
+                        type: slot.type,
+                        subtype: slot.subtype,
+                        deviceName: getDeviceName(slot.type, slot.subtype),
+                    });
+                    return;
+                }
+
+                // Check if the connected device matches the expected type
+                const expectedDeviceType = getExpectedDeviceType(
+                    slot.type,
+                    slot.subtype,
+                );
+                const actualDeviceType = portState.deviceType || portState.type;
+
+                // Use centralized device compatibility checking
+                if (!isDeviceTypeCompatible(expectedDeviceType, actualDeviceType)) {
+                    disconnectedDevices.push({
+                        slot: index + 1,
+                        port: config.port,
+                        type: slot.type,
+                        subtype: slot.subtype,
+                        deviceName: getDeviceName(slot.type, slot.subtype),
+                        mismatch: true,
+                        expected: expectedDeviceType,
+                        actual: actualDeviceType,
+                        // Add helpful info for motor mismatches
+                        expectedMotorName: isMotorType(expectedDeviceType) 
+                            ? getMotorTypeName(expectedDeviceType) 
+                            : null,
+                        actualMotorName: isMotorType(actualDeviceType) 
+                            ? getMotorTypeName(actualDeviceType) 
+                            : null,
+                    });
+                }
+            });
+        });
+
+        return disconnectedDevices;
+    };
+
     const value = {
         ble,
         isConnected,
@@ -273,6 +397,10 @@ export const BLEProvider = ({ children }) => {
         isMotorType,
         getNormalizedMotorType,
         getMotorTypeName,
+        getExpectedDeviceType,
+        isDeviceTypeCompatible,
+        getDeviceName,
+        checkDisconnectedDevices,
     };
 
     return <BLEContext.Provider value={value}>{children}</BLEContext.Provider>;
