@@ -4,12 +4,18 @@
  * running individual slots or the complete program. Enhanced with five visual states
  * for step buttons to prevent mode confusion and accidental overwrites.
  * Updated for Option B: Stop step is real in slotData.
+ * Fixed motor type detection to properly handle all motor variants without false warnings.
  */
 
 import React, { useEffect, useState, useRef } from "react";
 import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
-import { useBLE } from "../../bluetooth/context/BLEContext";
+import { 
+    useBLE, 
+    isMotorType, 
+    getNormalizedMotorType, 
+    getMotorTypeName 
+} from "../../bluetooth/context/BLEContext";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { useMission } from "../../../context/MissionContext.js";
 import { Buffer } from "buffer";
@@ -125,7 +131,15 @@ export const RunMenu = ({
 }) => {
     console.log("RunMenu: Rendering with missionSteps =", missionSteps);
 
-    const { ble, isConnected, portStates, DEVICE_TYPES } = useBLE();
+    const { 
+        ble, 
+        isConnected, 
+        portStates, 
+        DEVICE_TYPES,
+        isMotorType: checkIsMotorType,
+        getNormalizedMotorType: getNormMotorType,
+        getMotorTypeName: getMotorName
+    } = useBLE();
 
     // Get user preferences from CustomizationContext
     const {
@@ -490,6 +504,7 @@ export const RunMenu = ({
 
     /**
      * Check for disconnected devices in configurations
+     * Updated to properly handle all motor types without false warnings
      *
      * @param {Array} slots - Slot configurations to check
      * @returns {Array} Array of disconnected device objects
@@ -531,10 +546,8 @@ export const RunMenu = ({
                 );
                 const actualDeviceType = portState.deviceType || portState.type;
 
-                if (
-                    expectedDeviceType &&
-                    actualDeviceType !== expectedDeviceType
-                ) {
+                // Use enhanced motor type checking
+                if (!isDeviceTypeCompatible(expectedDeviceType, actualDeviceType)) {
                     disconnectedDevices.push({
                         slot: index + 1,
                         port: config.port,
@@ -544,6 +557,13 @@ export const RunMenu = ({
                         mismatch: true,
                         expected: expectedDeviceType,
                         actual: actualDeviceType,
+                        // Add helpful info for motor mismatches
+                        expectedMotorName: checkIsMotorType(expectedDeviceType) 
+                            ? getMotorName(expectedDeviceType) 
+                            : null,
+                        actualMotorName: checkIsMotorType(actualDeviceType) 
+                            ? getMotorName(actualDeviceType) 
+                            : null,
                     });
                 }
             });
@@ -554,9 +574,18 @@ export const RunMenu = ({
 
     /**
      * Get expected device type for a slot configuration
+     * Updated to return any motor type as the expected type for motor instructions
+     * 
+     * @param {string} type - Instruction type ('action', 'input', etc.)
+     * @param {string} subtype - Instruction subtype ('motor', 'button', etc.)
+     * @returns {number|null} Expected device type constant or null if no specific type required
      */
     const getExpectedDeviceType = (type, subtype) => {
-        if (type === "action" && subtype === "motor") return DEVICE_TYPES.MOTOR;
+        if (type === "action" && subtype === "motor") {
+            // For motor instructions, we accept any motor type
+            // Return Medium Motor as the "expected" type for compatibility
+            return DEVICE_TYPES.MOTOR_MEDIUM;
+        }
         if (type === "input" && subtype === "button")
             return DEVICE_TYPES.FORCE_SENSOR;
         if (type === "input" && subtype === "color")
@@ -567,7 +596,37 @@ export const RunMenu = ({
     };
 
     /**
+     * Check if an actual device type is compatible with the expected device type
+     * This handles motor type interchangeability
+     * 
+     * @param {number} expectedType - The expected device type
+     * @param {number} actualType - The actual connected device type
+     * @returns {boolean} True if the types are compatible
+     */
+    const isDeviceTypeCompatible = (expectedType, actualType) => {
+        // If no expected type, any device is compatible
+        if (!expectedType || !actualType) {
+            return true;
+        }
+
+        // Check if both are motors - if so, they're compatible regardless of specific type
+        if (checkIsMotorType(expectedType) && checkIsMotorType(actualType)) {
+            console.log(`Motor compatibility check: Expected ${getMotorName(expectedType)}, Got ${getMotorName(actualType)} - Compatible`);
+            return true;
+        }
+
+        // For non-motor devices, require exact match
+        const isExactMatch = expectedType === actualType;
+        console.log(`Device type check: Expected ${expectedType}, Got ${actualType} - ${isExactMatch ? 'Compatible' : 'Incompatible'}`);
+        return isExactMatch;
+    };
+
+    /**
      * Get human-readable device name
+     * 
+     * @param {string} type - Instruction type
+     * @param {string} subtype - Instruction subtype
+     * @returns {string} Human-readable device name
      */
     const getDeviceName = (type, subtype) => {
         if (type === "action" && subtype === "motor") return "Motor";

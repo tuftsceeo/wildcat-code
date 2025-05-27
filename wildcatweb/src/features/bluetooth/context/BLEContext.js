@@ -2,6 +2,7 @@
  * @file BLEContext.js
  * @description Context provider for Bluetooth Low Energy functionality, managing
  * connection state and port data for connected devices including motors and sensors.
+ * Updated to properly handle all motor types (Medium, Large, Small) as interchangeable.
  */
 
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -9,12 +10,56 @@ import { newSpikeBLE } from "../ble_resources/spike_ble";
 
 const BLEContext = createContext();
 
-// Device type constants
+// Device type constants - Updated to include all motor types
 export const DEVICE_TYPES = {
-    MOTOR: 0x30, // Motor device type
+    MOTOR_MEDIUM: 0x30, // Medium Motor
+    MOTOR_LARGE: 0x31,  // Large Motor
+    MOTOR_SMALL: 0x41,  // Small Motor
     FORCE_SENSOR: 0x3c, // Force sensor device type
     COLOR_SENSOR: 0x3d, // Color sensor device type
     DISTANCE_SENSOR: 0x3e, // Distance sensor device type
+    
+    // Legacy compatibility - keep MOTOR as Medium for backward compatibility
+    MOTOR: 0x30,
+};
+
+/**
+ * Helper function to check if a device type is any kind of motor
+ * @param {number} deviceType - The device type to check
+ * @returns {boolean} True if the device type is any motor variant
+ */
+export const isMotorType = (deviceType) => {
+    return deviceType === DEVICE_TYPES.MOTOR_MEDIUM || 
+           deviceType === DEVICE_TYPES.MOTOR_LARGE || 
+           deviceType === DEVICE_TYPES.MOTOR_SMALL;
+};
+
+/**
+ * Helper function to get the motor family type (normalized to Medium Motor)
+ * for compatibility with existing dashboard code
+ * @param {number} deviceType - The actual motor device type
+ * @returns {number} Normalized motor type (MOTOR_MEDIUM) or original type if not a motor
+ */
+export const getNormalizedMotorType = (deviceType) => {
+    return isMotorType(deviceType) ? DEVICE_TYPES.MOTOR_MEDIUM : deviceType;
+};
+
+/**
+ * Helper function to get human-readable motor type name
+ * @param {number} deviceType - The motor device type
+ * @returns {string} Human-readable motor type name
+ */
+export const getMotorTypeName = (deviceType) => {
+    switch (deviceType) {
+        case DEVICE_TYPES.MOTOR_MEDIUM:
+            return "Medium Motor";
+        case DEVICE_TYPES.MOTOR_LARGE:
+            return "Large Motor";
+        case DEVICE_TYPES.MOTOR_SMALL:
+            return "Small Motor";
+        default:
+            return "Unknown Motor";
+    }
 };
 
 export const useBLE = () => {
@@ -74,14 +119,24 @@ export const BLEProvider = ({ children }) => {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
                     );
+                    
+                    // Store the actual device type but also provide normalized type
+                    const actualDeviceType = msg.values.deviceType || DEVICE_TYPES.MOTOR_MEDIUM;
+                    
                     newPortStates[portLetter] = {
-                        deviceType: DEVICE_TYPES.MOTOR,
-                        type: DEVICE_TYPES.MOTOR, // Keep both for compatibility
+                        // Store actual device type for accurate reporting
+                        deviceType: actualDeviceType,
+                        actualMotorType: actualDeviceType,
+                        // Provide normalized type for backward compatibility
+                        type: getNormalizedMotorType(actualDeviceType),
                         connected: true,
+                        // Add motor type information for UI display
+                        motorTypeName: getMotorTypeName(actualDeviceType),
+                        isMotor: true,
                         ...msg.values,
                     };
                     console.log(
-                        `BLEContext: Detected Motor on port ${portLetter}`,
+                        `BLEContext: Detected ${getMotorTypeName(actualDeviceType)} on port ${portLetter}`,
                         msg.values,
                     );
                 } else if (msg.name === "Force") {
@@ -94,6 +149,7 @@ export const BLEProvider = ({ children }) => {
                         connected: true,
                         pressureDetected: msg.values.pressureDetected === 1,
                         measuredValue: msg.values.measuredValue,
+                        isMotor: false,
                         ...msg.values,
                     };
                     console.log(
@@ -165,6 +221,7 @@ export const BLEProvider = ({ children }) => {
                         rawGreenOriginal: msg.values.rawGreen,
                         rawBlueOriginal: msg.values.rawBlue,
                         extraField: msg.values.extraField,
+                        isMotor: false,
                         ...msg.values,
                     };
                     console.log(
@@ -212,6 +269,10 @@ export const BLEProvider = ({ children }) => {
         setIsConnected,
         portStates,
         DEVICE_TYPES,
+        // Export helper functions for use by other components
+        isMotorType,
+        getNormalizedMotorType,
+        getMotorTypeName,
     };
 
     return <BLEContext.Provider value={value}>{children}</BLEContext.Provider>;
