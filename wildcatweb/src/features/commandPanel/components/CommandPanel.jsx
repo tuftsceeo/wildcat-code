@@ -5,15 +5,19 @@
  * Updated to work with the Task Registry Mission System and dispatch events.
  * Enhanced with confirmation workflow to prevent accidental overwrites,
  * Edit button support for viewing mode, and unsaved changes communication.
+ * Added test button functionality and improved Done button logic.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
     Check,
     RefreshCcwDot,
+    LaptopMinimalCheck,
+    ArrowBigDown,
     Plus,
     Zap,
     Disc,
+    StepForward,
     Lightbulb,
     RotateCw,
     Volume,
@@ -26,6 +30,8 @@ import {
     ChevronRight,
     CircleArrowRight,
     CheckCircle,
+    Play,
+    CircleAlert,
 } from "lucide-react";
 
 import styles from "../styles/FunctionDefault.module.css";
@@ -41,6 +47,12 @@ import { useCustomization } from "../../../context/CustomizationContext";
 import { speakWithRobotVoice } from "../../../common/utils/speechUtils";
 import { useMission } from "../../../context/MissionContext.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
+import { generateSlotCode } from "../../../code-generation/codeGenerator";
+import {
+    ClearSlotRequest,
+    ClearSlotResponse,
+} from "../../bluetooth/ble_resources/messages";
+import { Buffer } from "buffer";
 
 const FilledCircleStop = (props) => {
     return React.cloneElement(<CircleStop />, {
@@ -154,6 +166,9 @@ export const CommandPanel = ({
     // Add state for test prompt
     const [showTestPrompt, setShowTestPrompt] = useState(false);
 
+    // Get BLE context for testing functionality
+    const { ble, isConnected, portStates, checkDisconnectedDevices } = useBLE();
+
     // Get current task for the mission
     const currentTask = getCurrentTask();
     const isCurrentTaskCompleted = currentTask
@@ -191,6 +206,25 @@ export const CommandPanel = ({
             JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
         );
     })();
+
+    /**
+     * Check if the current configuration has device connectivity issues
+     * @returns {boolean} True if there are disconnected devices for current config
+     */
+    const hasDeviceWarnings = () => {
+        if (!hasValidConfiguration || !isConnected) return false;
+
+        // Create temporary instruction object from current control panel state
+        const tempInstruction = {
+            type: selectedType,
+            subtype: selectedSubtype,
+            configuration: dashboardConfig,
+        };
+
+        // Check for disconnected devices using BLE context function
+        const disconnectedDevices = checkDisconnectedDevices([tempInstruction]);
+        return disconnectedDevices.length > 0;
+    };
 
     // Communicate unsaved changes status to parent
     useEffect(() => {
@@ -252,6 +286,90 @@ export const CommandPanel = ({
         } else {
             // Fallback to direct slot update for backward compatibility
             onSlotUpdate(instruction);
+        }
+    };
+
+    /**
+     * Handle testing the current control panel configuration
+     */
+    const handleTestCurrentConfig = async () => {
+        try {
+            // Check if the robot is connected
+            if (!isConnected) {
+                console.warn(
+                    "Robot not connected. Please connect via Bluetooth first.",
+                );
+                return;
+            }
+
+            // Make sure we have a valid configuration to test
+            if (!hasValidConfiguration) {
+                console.warn("No valid configuration to test");
+                return;
+            }
+
+            // Create instruction object from current control panel state
+            const tempInstruction = {
+                type: selectedType,
+                subtype: selectedSubtype,
+                configuration: dashboardConfig,
+            };
+
+            console.log(
+                "CommandPanel: Testing current configuration:",
+                tempInstruction,
+            );
+
+            // In mission mode, validate the instruction against mission requirements
+            if (shouldApplyMissionConstraints && currentTask?.targetSlot === currSlotNumber) {
+                const validation = validateStepConfiguration(tempInstruction);
+                if (!validation.isValid) {
+                    console.warn(
+                        "Configuration doesn't meet mission requirements:",
+                        validation.message,
+                    );
+                    return;
+                }
+            }
+
+            // Generate code specifically for this instruction
+            const code = generateSlotCode(tempInstruction, portStates);
+            console.log("CommandPanel: Generated Python Code for test:", code);
+
+            // Clear the program slot on the robot
+            const clearResponse = await ble.sendRequest(
+                new ClearSlotRequest(0),
+                ClearSlotResponse,
+            );
+
+            if (!clearResponse.success) {
+                console.warn("Failed to clear program slot");
+                return;
+            }
+
+            // Upload and transfer the program
+            await ble.uploadProgramFile(
+                "program.py",
+                0,
+                Buffer.from(code, "utf-8"),
+            );
+
+            // Start the program on the robot
+            await ble.startProgram(0);
+
+            // Dispatch test execution event for mission tracking if applicable
+            if (isMissionMode && currentTask?.type === "TEST_EXECUTION") {
+                console.log(
+                    "CommandPanel: Test execution successful, completing task",
+                );
+                dispatchTaskEvent("TEST_EXECUTION", {
+                    slotIndex: currSlotNumber,
+                    instruction: tempInstruction,
+                    currentSlot: currSlotNumber,
+                });
+            }
+        } catch (error) {
+            console.error("CommandPanel: Error running test program:", error);
         }
     };
 
@@ -652,20 +770,39 @@ export const CommandPanel = ({
                 </div>
             )}
 
-            {/* Confirmation button - positioned between content and description panel - only show in editing mode */}
+            {/* Button container - only show in editing mode with valid configuration */}
             {isEditingMode && hasValidConfiguration && (
                 <div className={styles.confirmationContainer}>
+                    {/* Test button - left side */}
                     <button
-                        className={`${styles.confirmButton} ${
-                            hasUnsavedChanges
-                                ? styles.confirmButtonEnabled
-                                : styles.confirmButtonDisabled
-                        }`}
+                        className={`${styles.testButton} ${hasDeviceWarnings() ? styles.testButtonWarning : ""}`}
+                        onClick={handleTestCurrentConfig}
+                        disabled={!isConnected || !hasValidConfiguration}
+                        aria-label="Test current configuration"
+                    >
+                        <StepForward className={styles.buttonIcon} />
+                        Test
+                        {/* Warning corner badge when device is disconnected */}
+                        {hasDeviceWarnings() && (
+                            <div className={`${styles.cornerBadge} ${styles.warning}`}>
+                                <CircleAlert
+                                    className={`${styles.cornerIcon} ${styles.warning}`}
+                                    strokeWidth={2}
+                                />
+                            </div>
+                        )}
+                    </button>
+
+                    {/* Done/Next button - right side */}
+                    <button
+                        className={`${styles.confirmButton} ${styles.confirmButtonEnabled}`}
                         onClick={handleConfirmAndSave}
-                        disabled={!hasUnsavedChanges}
+                        disabled={!hasValidConfiguration}
+                        aria-label={`${getButtonText()} - ${hasUnsavedChanges ? 'Save changes and' : ''} ${getButtonText() === 'Next' ? 'continue to next step' : 'exit editing mode'}`}
                     >
                         {getButtonText() === "Next" ? (
-                            <CircleArrowRight className={styles.buttonIcon} />
+                                <LaptopMinimalCheck className={styles.buttonIcon} />
+
                         ) : (
                             <CheckCircle className={styles.buttonIcon} />
                         )}
