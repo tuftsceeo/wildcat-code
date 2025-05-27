@@ -127,7 +127,7 @@
 
 /* Step buttons styled with theme tokens */
 .stepButton {
-    background-color: var(--button-default-bg);
+    background-color: var(--color-background);
     border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
     color: var(--button-default-text);
@@ -159,7 +159,7 @@
 .stepButton.viewing {
     border-color: var(--button-selected-border);
     color: var(--button-selected-text);
-    background-color: var(--button-default-bg);
+    background-color: var(--color-background);
 }
 
 /* Editing state - secondary (green) border and secondary-low fill for current slot in edit mode */
