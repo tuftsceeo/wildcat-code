@@ -6,7 +6,7 @@
  * Updated to delegate execution control to App.js for modal coordination.
  */
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
 import { useBLE } from "../../bluetooth/context/BLEContext";
@@ -168,24 +168,117 @@ export const RunMenu = ({
     const [isScrollable, setIsScrollable] = useState(false);
     const [isAtBottom, setIsAtBottom] = useState(false);
 
+    /**
+     * Run all slots sequentially - now delegates to RunMenu for actual execution
+     */
+    const handleRunAllSlots = useCallback(async () => {
+        try {
+            if (!isConnected) {
+                console.warn(
+                    "Robot not connected. Please connect via Bluetooth first.",
+                );
+                return;
+            }
+
+            const code = generatePythonCode(slotData, portStates);
+
+            if (DEBUG_RUN_MENU) {
+                console.log(
+                    "RunMenu: Generated Python Code for all slots:",
+                    code,
+                );
+            }
+
+            // Clear the program slot
+            const clearResponse = await ble.sendRequest(
+                new ClearSlotRequest(0),
+                ClearSlotResponse,
+            );
+
+            if (!clearResponse.success) {
+                console.warn("RunMenu: Failed to clear program slot");
+            }
+
+            // Upload and transfer the program
+            await ble.uploadProgramFile(
+                "program.py",
+                0,
+                Buffer.from(code, "utf-8"),
+            );
+
+            // Start the program
+            await ble.startProgram(0);
+
+            // Dispatch run program event for mission tracking
+            if (isMissionMode) {
+                if (DEBUG_RUN_MENU) {
+                    console.log("RunMenu: Dispatching RUN_PROGRAM event", {
+                        slots: slotData.length,
+                        currentSlot: currSlotNumber,
+                        isMissionMode,
+                        currentMission: currentMission,
+                    });
+                }
+
+                dispatchTaskEvent("RUN_PROGRAM", {
+                    slots: slotData.length,
+                    currentSlot: currSlotNumber,
+                    type: "RUN_PROGRAM",
+                });
+            }
+        } catch (error) {
+            console.error("RunMenu: Error running program:", error);
+        }
+    }, [
+        isConnected,
+        slotData,
+        portStates,
+        ble,
+        isMissionMode,
+        currentMission,
+        currSlotNumber,
+        dispatchTaskEvent,
+    ]);
+
+    /**
+     * Stop the currently running program
+     */
+    const handleStopProgram = useCallback(async () => {
+        try {
+            if (DEBUG_RUN_MENU) {
+                console.log("RunMenu: Stop button clicked");
+            }
+
+            const success = await stopRunningProgram();
+
+            if (!success) {
+                console.warn(
+                    "RunMenu: Stop command may have failed, but will wait for program flow notification",
+                );
+            }
+        } catch (error) {
+            console.error("RunMenu: Error stopping program:", error);
+        }
+    }, [stopRunningProgram]);
+
     // Phase 2: Listen for execution events from App.js
     useEffect(() => {
         const handleExecuteProgram = () => {
             handleRunAllSlots();
         };
 
-        const handleStopProgram = () => {
+        const handleStopProgramEvent = () => {
             handleStopProgram();
         };
 
         window.addEventListener("executeProgram", handleExecuteProgram);
-        window.addEventListener("stopProgram", handleStopProgram);
+        window.addEventListener("stopProgram", handleStopProgramEvent);
 
         return () => {
             window.removeEventListener("executeProgram", handleExecuteProgram);
-            window.removeEventListener("stopProgram", handleStopProgram);
+            window.removeEventListener("stopProgram", handleStopProgramEvent);
         };
-    }, []);
+    }, [handleRunAllSlots, handleStopProgram]); // ← Depend on memoized functions
 
     // Verify slotData consistency - should now match missionSteps exactly with Option B
     useEffect(() => {
@@ -558,90 +651,6 @@ export const RunMenu = ({
                 );
             default:
                 return null;
-        }
-    };
-
-    /**
-     * Run all slots sequentially - now delegates to RunMenu for actual execution
-     */
-    const handleRunAllSlots = async () => {
-        try {
-            if (!isConnected) {
-                console.warn(
-                    "Robot not connected. Please connect via Bluetooth first.",
-                );
-                return;
-            }
-
-            const code = generatePythonCode(slotData, portStates);
-
-            if (DEBUG_RUN_MENU) {
-                console.log(
-                    "RunMenu: Generated Python Code for all slots:",
-                    code,
-                );
-            }
-
-            // Clear the program slot
-            const clearResponse = await ble.sendRequest(
-                new ClearSlotRequest(0),
-                ClearSlotResponse,
-            );
-
-            if (!clearResponse.success) {
-                console.warn("RunMenu: Failed to clear program slot"); // Warning ok, sometimes the program slot is empty
-            }
-
-            // Upload and transfer the program
-            await ble.uploadProgramFile(
-                "program.py",
-                0,
-                Buffer.from(code, "utf-8"),
-            );
-
-            // Start the program
-            await ble.startProgram(0);
-
-            // Dispatch run program event for mission tracking
-            if (isMissionMode) {
-                if (DEBUG_RUN_MENU) {
-                    console.log("RunMenu: Dispatching RUN_PROGRAM event", {
-                        slots: slotData.length,
-                        currentSlot: currSlotNumber,
-                        isMissionMode,
-                        currentMission: currentMission,
-                    });
-                }
-
-                dispatchTaskEvent("RUN_PROGRAM", {
-                    slots: slotData.length,
-                    currentSlot: currSlotNumber,
-                    type: "RUN_PROGRAM", // Explicitly set the event type
-                });
-            }
-        } catch (error) {
-            console.error("RunMenu: Error running program:", error);
-        }
-    };
-
-    /**
-     * Stop the currently running program
-     */
-    const handleStopProgram = async () => {
-        try {
-            if (DEBUG_RUN_MENU) {
-                console.log("RunMenu: Stop button clicked");
-            }
-
-            const success = await stopRunningProgram();
-
-            if (!success) {
-                console.warn(
-                    "RunMenu: Stop command may have failed, but will wait for program flow notification",
-                );
-            }
-        } catch (error) {
-            console.error("RunMenu: Error stopping program:", error);
         }
     };
 

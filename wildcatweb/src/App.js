@@ -285,7 +285,8 @@ function AppContent() {
     const { stepCount: missionSteps } = useCustomization();
 
     // Get BLE context for error detection and execution state
-    const { portStates, isRunning, currentlyExecutingStep } = useBLE();
+    const { portStates, isRunning, currentlyExecutingStep, isConnected } =
+        useBLE();
 
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
@@ -611,6 +612,14 @@ function AppContent() {
      */
     const proceedWithPlayExecution = () => {
         console.log("App.js: Proceeding with play execution");
+
+        // Check if robot is connected before proceeding
+        if (!isConnected) {
+            console.warn(
+                "App.js: Cannot execute - robot not connected. Please connect via Bluetooth first.",
+            );
+            return;
+        }
 
         // Trigger the actual execution via RunMenu
         // This is handled by passing the execution trigger to RunMenu
