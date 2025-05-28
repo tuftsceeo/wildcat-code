@@ -4,6 +4,7 @@
  * connection state and port data for connected devices including motors and sensors.
  * Updated to properly handle all motor types (Medium, Large, Small) as interchangeable.
  * Enhanced with program execution state tracking and debug logging controls.
+ * Added currently executing step tracking for visual feedback during program execution.
  */
 
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -154,6 +155,7 @@ export const BLEProvider = ({ children }) => {
     const [ble] = useState(() => newSpikeBLE());
     const [isConnected, setIsConnected] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
+    const [currentlyExecutingStep, setCurrentlyExecutingStep] = useState(null);
     const [portStates, setPortStates] = useState({
         A: null,
         B: null,
@@ -267,6 +269,64 @@ export const BLEProvider = ({ children }) => {
                 handleProgramFlowNotification,
             );
         };
+    }, [isRunning]);
+
+    // Handle console notification events for step tracking
+    useEffect(() => {
+        const handleConsoleNotification = (event) => {
+            const message = event.detail;
+
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(
+                    "BLEContext: Console notification received:",
+                    message,
+                );
+            }
+
+            // Check if this is an ORBITSlot message
+            if (message.text && message.text.startsWith("ORBITSlot_")) {
+                // Extract step number (convert from 1-based to 0-based)
+                const stepNumberStr = message.text.replace("ORBITSlot_", "");
+                const stepNumber = parseInt(stepNumberStr, 10) - 1; // Convert to 0-based
+
+                if (!isNaN(stepNumber) && stepNumber >= 0) {
+                    if (DEBUG_PROGRAM_FLOW) {
+                        console.log(
+                            `BLEContext: Executing step ${stepNumber} (was ${stepNumberStr} in message)`,
+                        );
+                    }
+                    setCurrentlyExecutingStep(stepNumber);
+                } else {
+                    console.warn(
+                        `BLEContext: Invalid step number in console message: ${message.text}`,
+                    );
+                }
+            }
+        };
+
+        window.addEventListener(
+            "spikeConsoleNotification",
+            handleConsoleNotification,
+        );
+
+        return () => {
+            window.removeEventListener(
+                "spikeConsoleNotification",
+                handleConsoleNotification,
+            );
+        };
+    }, []);
+
+    // Reset executing step when program stops
+    useEffect(() => {
+        if (!isRunning) {
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(
+                    "BLEContext: Program stopped, resetting currently executing step",
+                );
+            }
+            setCurrentlyExecutingStep(null);
+        }
     }, [isRunning]);
 
     // Handle device notification events
@@ -452,6 +512,7 @@ export const BLEProvider = ({ children }) => {
                 F: null,
             });
             setIsRunning(false);
+            setCurrentlyExecutingStep(null);
         } else {
             // Send stop command when newly connected to ensure clean state
             ensureStoppedState();
@@ -532,6 +593,7 @@ export const BLEProvider = ({ children }) => {
         isConnected,
         setIsConnected,
         isRunning,
+        currentlyExecutingStep,
         stopRunningProgram,
         portStates,
         DEVICE_TYPES,

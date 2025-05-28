@@ -261,6 +261,30 @@
     }
 }
 
+/* Executing step overlay - simple and temporary */
+.executingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(var(--color-primary-main-rgb), 0.2);
+    border: 2px solid var(--color-primary-main);
+    border-radius: var(--radius-md);
+    z-index: 10;
+    pointer-events: none; /* Allow clicks to pass through */
+}
+
+.executingIndicator {
+    color: var(--color-primary-main);
+    font-size: calc(var(--font-size-lg) * 1.5);
+    font-weight: var(--font-weight-bold);
+    text-shadow: 0 0 4px var(--color-background);
+}
+
 /* Command icon styling - now on the right side */
 .commandIcon {
     color: var(--button-default-text);

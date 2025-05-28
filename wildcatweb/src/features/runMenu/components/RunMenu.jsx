@@ -6,6 +6,7 @@
  * Updated for Option B: Stop step is real in slotData.
  * Fixed motor type detection to properly handle all motor variants without false warnings.
  * Enhanced with program execution control including stop functionality.
+ * Added executing step overlay for visual feedback during program execution.
  */
 
 import React, { useEffect, useState, useRef } from "react";
@@ -137,6 +138,7 @@ export const RunMenu = ({
         ble,
         isConnected,
         isRunning,
+        currentlyExecutingStep,
         stopRunningProgram,
         portStates,
         DEVICE_TYPES,
@@ -816,12 +818,20 @@ export const RunMenu = ({
                         visualState === "editing" ? " (editing)" : ""
                     }${visualState === "viewing" ? " (viewing)" : ""}`}
                     aria-current={i === currSlotNumber ? "step" : false}
+                    style={{ position: "relative" }}
                 >
                     <span className={styles.stepName}>{name}</span>
                     {icon && (
                         <span className={styles.iconContainer}>{icon}</span>
                     )}
                     {cornerBadge}
+
+                    {/* Executing step overlay */}
+                    {currentlyExecutingStep === i && (
+                        <div className={styles.executingOverlay}>
+                            <div className={styles.executingIndicator}>▶</div>
+                        </div>
+                    )}
                 </button>
             );
 
