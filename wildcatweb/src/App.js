@@ -1,8 +1,8 @@
 /**
  * @file App.js
  * @description Main application component with support for reading level, step count, missions,
- * and editing mode functionality. Updated to include unsaved changes modal protection.
- * Enhanced with unsaved changes detection and protection during navigation.
+ * and editing mode functionality. Enhanced with Phase 2 execution coordination including
+ * execution state tracking, modal coordination, and automatic mode switching.
  * @author Jennifer Cross with support from Claude
  * @updated February 2025
  */
@@ -276,7 +276,7 @@ function AppWithCustomizationContext() {
 }
 
 /**
- * Main application content
+ * Main application content with execution coordination
  *
  * @returns {JSX.Element} Application UI components
  */
@@ -284,8 +284,8 @@ function AppContent() {
     // Get step count directly from CustomizationContext
     const { stepCount: missionSteps } = useCustomization();
 
-    // Get BLE context for error detection
-    const { portStates } = useBLE();
+    // Get BLE context for error detection and execution state
+    const { portStates, isRunning, currentlyExecutingStep } = useBLE();
 
     const [pyCode, setPyCode] = useState("");
     const [canRun, setCanRun] = useState(false);
@@ -299,6 +299,12 @@ function AppContent() {
     // Local state for non-mission mode
     const [localCurrSlotNumber, setLocalCurrSlotNumber] = useState(0);
     const [isEditingMode, setIsEditingMode] = useState(true); // Start in editing mode
+
+    // Phase 2: Execution State Tracking
+    const [lastSelectedStepBeforeRun, setLastSelectedStepBeforeRun] =
+        useState(null);
+    const [wasEditingBeforeRun, setWasEditingBeforeRun] = useState(false);
+    const [executionModalType, setExecutionModalType] = useState(null); // 'play', 'navigate', 'edit'
 
     // Unsaved Changes Modal State
     const [showUnsavedChangesModal, setShowUnsavedChangesModal] =
@@ -344,6 +350,89 @@ function AppContent() {
         slots.push(createStopInstruction());
         return slots;
     });
+
+    /**
+     * Phase 2: Handle execution state changes for automatic mode switching
+     * When execution starts, remember current state and switch to viewing mode
+     * When execution stops, optionally return to previous state
+     */
+    useEffect(() => {
+        if (isRunning && lastSelectedStepBeforeRun === null) {
+            // Execution just started - remember current state
+            console.log(
+                "App.js: Execution started, remembering current state",
+                {
+                    currSlotNumber,
+                    isEditingMode,
+                },
+            );
+
+            setLastSelectedStepBeforeRun(currSlotNumber);
+            setWasEditingBeforeRun(isEditingMode);
+
+            // Switch to viewing mode if currently editing
+            if (isEditingMode) {
+                setIsEditingMode(false);
+            }
+        } else if (!isRunning && lastSelectedStepBeforeRun !== null) {
+            // Execution just stopped - return to previous state
+            console.log(
+                "App.js: Execution stopped, returning to previous state",
+                {
+                    lastSelectedStepBeforeRun,
+                    wasEditingBeforeRun,
+                },
+            );
+
+            // Return to the last selected step
+            setCurrSlotNumber(lastSelectedStepBeforeRun);
+
+            // Return to editing mode if user was editing before
+            if (wasEditingBeforeRun) {
+                setIsEditingMode(true);
+            }
+
+            // Clear execution state tracking
+            setLastSelectedStepBeforeRun(null);
+            setWasEditingBeforeRun(false);
+        }
+    }, [
+        isRunning,
+        currSlotNumber,
+        isEditingMode,
+        lastSelectedStepBeforeRun,
+        wasEditingBeforeRun,
+        setCurrSlotNumber,
+    ]);
+
+    /**
+     * Phase 2: Follow executing step for automatic navigation
+     * Switch to viewing mode and follow the currently executing step
+     */
+    useEffect(() => {
+        if (
+            isRunning &&
+            currentlyExecutingStep !== null &&
+            currentlyExecutingStep !== currSlotNumber
+        ) {
+            console.log("App.js: Following executing step", {
+                from: currSlotNumber,
+                to: currentlyExecutingStep,
+            });
+
+            // Switch to the executing step and ensure we're in viewing mode
+            setCurrSlotNumber(currentlyExecutingStep);
+            if (isEditingMode) {
+                setIsEditingMode(false);
+            }
+        }
+    }, [
+        isRunning,
+        currentlyExecutingStep,
+        currSlotNumber,
+        isEditingMode,
+        setCurrSlotNumber,
+    ]);
 
     // Synchronize slotData with missionSteps changes
     useEffect(() => {
@@ -497,12 +586,74 @@ function AppContent() {
     };
 
     /**
-     * Handle step clicks from RunMenu with unsaved changes protection
-     * Implements the five-state logic for step button behavior
+     * Phase 2: Handle play button click with unsaved changes protection
+     * This replaces direct execution with modal coordination
+     */
+    const handlePlayButtonClick = () => {
+        console.log("App.js: Play button clicked");
+
+        // Check if we have unsaved changes in editing mode
+        if (isEditingMode && hasUnsavedChanges) {
+            console.log(
+                "App.js: Unsaved changes detected, showing Save & Play modal",
+            );
+            setExecutionModalType("play");
+            setShowUnsavedChangesModal(true);
+            return;
+        }
+
+        // No unsaved changes, proceed with execution
+        proceedWithPlayExecution();
+    };
+
+    /**
+     * Phase 2: Proceed with program execution (after unsaved changes check)
+     */
+    const proceedWithPlayExecution = () => {
+        console.log("App.js: Proceeding with play execution");
+
+        // Trigger the actual execution via RunMenu
+        // This is handled by passing the execution trigger to RunMenu
+        window.dispatchEvent(new CustomEvent("executeProgram"));
+    };
+
+    /**
+     * Phase 2: Handle step clicks during execution with stop modal
+     * @param {number} stepIndex - Index of clicked step during execution
+     */
+    const handleStepClickDuringExecution = (stepIndex) => {
+        console.log(`App.js: Step ${stepIndex} clicked during execution`);
+
+        // Show "stop code to navigate" modal
+        setExecutionModalType("navigate");
+        setPendingSlotNumber(stepIndex);
+        setShowUnsavedChangesModal(true);
+    };
+
+    /**
+     * Phase 2: Handle attempt to enter editing mode during execution
+     */
+    const handleEditDuringExecution = () => {
+        console.log("App.js: Edit attempted during execution");
+
+        // Show "stop code to edit" modal
+        setExecutionModalType("edit");
+        setShowUnsavedChangesModal(true);
+    };
+
+    /**
+     * Handle step clicks from RunMenu with unsaved changes protection and execution coordination
+     * Enhanced for Phase 2 with execution state awareness
      * @param {number} stepIndex - Index of clicked step
      */
     const handleStepClick = (stepIndex) => {
         console.log(`App.js: Step ${stepIndex} clicked`);
+
+        // Phase 2: If execution is running, handle differently
+        if (isRunning) {
+            handleStepClickDuringExecution(stepIndex);
+            return;
+        }
 
         // Check if we're currently in editing mode with unsaved changes
         if (
@@ -512,6 +663,7 @@ function AppContent() {
         ) {
             console.log(`App.js: Unsaved changes detected, showing modal`);
             setPendingSlotNumber(stepIndex);
+            setExecutionModalType("navigate");
             setShowUnsavedChangesModal(true);
             return;
         }
@@ -562,11 +714,19 @@ function AppContent() {
 
     /**
      * Handle entering editing mode from CommandPanel "Edit Step" button
+     * Enhanced for Phase 2 with execution state awareness
      */
     const handleEnterEditingMode = () => {
         console.log(
             `App.js: Entering editing mode for current slot ${currSlotNumber}`,
         );
+
+        // Phase 2: Check if execution is running
+        if (isRunning) {
+            handleEditDuringExecution();
+            return;
+        }
+
         setIsEditingMode(true);
     };
 
@@ -619,8 +779,49 @@ function AppContent() {
     };
 
     /**
+     * Phase 2: Handle saving changes and continuing with play execution
+     * Called from unsaved changes modal when context is 'play'
+     */
+    const handleSaveAndPlay = () => {
+        console.log("App.js: Saving changes and starting play execution");
+
+        // Close the modal
+        setShowUnsavedChangesModal(false);
+        setExecutionModalType(null);
+
+        // Trigger save in CommandPanel
+        setTriggerSave(true);
+
+        // Proceed with play execution after save completes
+        setTimeout(() => {
+            proceedWithPlayExecution();
+            setTriggerSave(false);
+        }, 100); // Small delay to ensure save completes
+    };
+
+    /**
+     * Phase 2: Handle discarding changes and continuing with play execution
+     * Called from unsaved changes modal when context is 'play'
+     */
+    const handleDiscardAndPlay = () => {
+        console.log("App.js: Discarding changes and starting play execution");
+
+        // Close the modal
+        setShowUnsavedChangesModal(false);
+        setExecutionModalType(null);
+
+        // Trigger discard in CommandPanel
+        window.dispatchEvent(new CustomEvent("discardChanges"));
+
+        // Proceed with play execution
+        setTimeout(() => {
+            proceedWithPlayExecution();
+        }, 100); // Small delay to ensure discard completes
+    };
+
+    /**
      * Handle saving changes and continuing to target step
-     * Called from unsaved changes modal
+     * Called from unsaved changes modal when context is 'navigate'
      */
     const handleSaveAndContinue = () => {
         console.log(
@@ -629,6 +830,7 @@ function AppContent() {
 
         // Close the modal
         setShowUnsavedChangesModal(false);
+        setExecutionModalType(null);
 
         // Trigger save in CommandPanel
         setTriggerSave(true);
@@ -636,15 +838,17 @@ function AppContent() {
         // Navigate to target step after save completes
         // Use setTimeout to ensure save completes first
         setTimeout(() => {
-            proceedToStep(pendingSlotNumber);
+            if (pendingSlotNumber !== null) {
+                proceedToStep(pendingSlotNumber);
+            }
             setPendingSlotNumber(null);
             setTriggerSave(false);
-        }, 0);
+        }, 100);
     };
 
     /**
      * Handle discarding changes and continuing to target step
-     * Called from unsaved changes modal
+     * Called from unsaved changes modal when context is 'navigate'
      */
     const handleDiscardChanges = () => {
         console.log(
@@ -653,12 +857,50 @@ function AppContent() {
 
         // Close the modal
         setShowUnsavedChangesModal(false);
+        setExecutionModalType(null);
+
+        // Trigger discard in CommandPanel
+        window.dispatchEvent(new CustomEvent("discardChanges"));
 
         // Navigate to target step (this will reset the editing state)
-        proceedToStep(pendingSlotNumber);
+        setTimeout(() => {
+            if (pendingSlotNumber !== null) {
+                proceedToStep(pendingSlotNumber);
+            }
+            setPendingSlotNumber(null);
+        }, 100);
+    };
 
-        // Clear pending navigation
-        setPendingSlotNumber(null);
+    /**
+     * Phase 2: Handle stopping execution to proceed with action
+     * Called from modal when execution is running
+     */
+    const handleStopAndProceed = async () => {
+        console.log("App.js: Stopping execution to proceed with action");
+
+        // Close the modal
+        setShowUnsavedChangesModal(false);
+
+        try {
+            // Stop the program
+            window.dispatchEvent(new CustomEvent("stopProgram"));
+
+            // Wait a bit for stop to complete, then proceed based on modal type
+            setTimeout(() => {
+                if (
+                    executionModalType === "navigate" &&
+                    pendingSlotNumber !== null
+                ) {
+                    proceedToStep(pendingSlotNumber);
+                    setPendingSlotNumber(null);
+                } else if (executionModalType === "edit") {
+                    setIsEditingMode(true);
+                }
+                setExecutionModalType(null);
+            }, 500); // Give time for stop to complete
+        } catch (error) {
+            console.error("App.js: Error stopping program:", error);
+        }
     };
 
     /**
@@ -666,15 +908,16 @@ function AppContent() {
      * Called from unsaved changes modal
      */
     const handleCancelNavigation = () => {
-        console.log(`App.js: Canceling navigation, staying in editing mode`);
+        console.log(`App.js: Canceling navigation, staying in current state`);
 
         // Close the modal
         setShowUnsavedChangesModal(false);
+        setExecutionModalType(null);
 
         // Clear pending navigation
         setPendingSlotNumber(null);
 
-        // Stay in current editing mode (no other action needed)
+        // Stay in current state (no other action needed)
     };
 
     // Generate Python code from slot configurations
@@ -733,6 +976,9 @@ function AppContent() {
                     slotData={slotData}
                     isEditingMode={isEditingMode}
                     onStepClick={handleStepClick}
+                    onPlayButtonClick={handlePlayButtonClick}
+                    isRunning={isRunning}
+                    currentlyExecutingStep={currentlyExecutingStep}
                 />
             </div>
 
@@ -770,6 +1016,7 @@ function AppContent() {
                     onEnterEditingMode={handleEnterEditingMode}
                     onUnsavedChangesUpdate={handleUnsavedChangesUpdate}
                     triggerSave={triggerSave}
+                    isRunning={isRunning}
                 />
             </div>
 
@@ -787,13 +1034,24 @@ function AppContent() {
                 />
             )}
 
-            {/* Unsaved Changes Modal */}
+            {/* Phase 2: Enhanced Unsaved Changes Modal with execution context */}
             <UnsavedChangesModal
                 isOpen={showUnsavedChangesModal}
-                onSaveAndContinue={handleSaveAndContinue}
-                onDiscardChanges={handleDiscardChanges}
+                onSaveAndContinue={
+                    executionModalType === "play"
+                        ? handleSaveAndPlay
+                        : handleSaveAndContinue
+                }
+                onDiscardChanges={
+                    executionModalType === "play"
+                        ? handleDiscardAndPlay
+                        : handleDiscardChanges
+                }
                 onCancel={handleCancelNavigation}
+                onStopAndProceed={isRunning ? handleStopAndProceed : null}
                 targetStepNumber={pendingSlotNumber}
+                actionContext={executionModalType}
+                isExecutionRunning={isRunning}
             />
 
             {/* First launch mission selector - only if missions enabled */}

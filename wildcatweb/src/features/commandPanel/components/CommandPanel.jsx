@@ -2,10 +2,8 @@
  * @file CommandPanel.jsx
  * @description Primary interface for creating and configuring code actions,
  * providing action type selection and parameter configuration.
- * Updated to work with the Task Registry Mission System and dispatch events.
- * Enhanced with confirmation workflow to prevent accidental overwrites,
- * Edit button support for viewing mode, and unsaved changes communication.
- * Added test button functionality and improved Done button logic.
+ * Enhanced with Phase 2 configuration management including discard functionality
+ * and execution state awareness for modal coordination.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -69,16 +67,6 @@ const CONTROL_TYPES = {
             component: MotorDash,
             icon: <RotateCw className={styles.commandIcon} />,
         },
-        // hub: {
-        //     name: "Hub",
-        //     component: null, // Will be implemented later
-        //     icon: <Lightbulb size={20} />,
-        // },
-        // sound: {
-        //     name: "Sound",
-        //     component: null, // Will be implemented later
-        //     icon: <Volume size={20} />,
-        // },
     },
     input: {
         time: {
@@ -87,14 +75,13 @@ const CONTROL_TYPES = {
             icon: <Timer className={styles.commandIcon} />,
         },
         button: {
-            // Updated - Kept subtype name but changed display name
-            name: "Button", // Changed from "Force Sensor" to "Button"
+            name: "Button",
             component: ButtonDash,
             icon: (
                 <ArchiveRestore
                     className={`${styles.commandIcon} ${styles.flippedVertically}`}
                 />
-            ), // Using Disc icon for button
+            ),
         },
         color: {
             name: "Color",
@@ -112,7 +99,7 @@ const CONTROL_TYPES = {
 };
 
 /**
- * CommandPanel provides the interface for creating code actions
+ * CommandPanel provides the interface for creating code actions with Phase 2 enhancements
  *
  * @component
  * @param {Object} props - Component props
@@ -125,6 +112,7 @@ const CONTROL_TYPES = {
  * @param {Function} props.onEnterEditingMode - Callback to enter editing mode from viewing mode
  * @param {Function} props.onUnsavedChangesUpdate - Callback to communicate unsaved changes status
  * @param {boolean} props.triggerSave - External trigger to force save operation
+ * @param {boolean} props.isRunning - Whether program is currently running (Phase 2)
  * @returns {JSX.Element} Complete command panel interface
  */
 export const CommandPanel = ({
@@ -137,6 +125,7 @@ export const CommandPanel = ({
     onEnterEditingMode,
     onUnsavedChangesUpdate,
     triggerSave = false,
+    isRunning = false,
 }) => {
     const [selectedType, setSelectedType] = useState(null);
     const [selectedSubtype, setSelectedSubtype] = useState(null);
@@ -206,6 +195,58 @@ export const CommandPanel = ({
             JSON.stringify(dashboardConfig) !== JSON.stringify(lastSavedConfig)
         );
     })();
+
+    /**
+     * Phase 2: Handle discarding changes to revert to saved slot configuration
+     * This restores the control panel to the last saved state
+     */
+    const handleDiscardChanges = useCallback(() => {
+        console.log(
+            "CommandPanel: Discarding changes and reverting to saved state",
+        );
+
+        const currentSlotData = slotData?.[currSlotNumber];
+
+        if (currentSlotData && currentSlotData.type) {
+            // Revert to saved slot configuration
+            console.log(
+                "CommandPanel: Reverting to saved slot data:",
+                currentSlotData,
+            );
+
+            setSelectedType(currentSlotData.type);
+            setSelectedSubtype(currentSlotData.subtype);
+            setDashboardConfig(currentSlotData.configuration);
+            setLastSavedConfig(currentSlotData.configuration);
+            setCurrentInstruction(currentSlotData);
+        } else {
+            // No saved configuration, clear everything
+            console.log(
+                "CommandPanel: No saved configuration, clearing all fields",
+            );
+
+            setSelectedType(null);
+            setSelectedSubtype(null);
+            setDashboardConfig(null);
+            setLastSavedConfig(null);
+            setCurrentInstruction(null);
+        }
+    }, [slotData, currSlotNumber]);
+
+    /**
+     * Phase 2: Listen for discard events from App.js
+     */
+    useEffect(() => {
+        const handleDiscardEvent = () => {
+            handleDiscardChanges();
+        };
+
+        window.addEventListener("discardChanges", handleDiscardEvent);
+
+        return () => {
+            window.removeEventListener("discardChanges", handleDiscardEvent);
+        };
+    }, [handleDiscardChanges]);
 
     /**
      * Check if the current configuration has device connectivity issues
@@ -321,7 +362,10 @@ export const CommandPanel = ({
             );
 
             // In mission mode, validate the instruction against mission requirements
-            if (shouldApplyMissionConstraints && currentTask?.targetSlot === currSlotNumber) {
+            if (
+                shouldApplyMissionConstraints &&
+                currentTask?.targetSlot === currSlotNumber
+            ) {
                 const validation = validateStepConfiguration(tempInstruction);
                 if (!validation.isValid) {
                     console.warn(
@@ -756,26 +800,41 @@ export const CommandPanel = ({
                     )
                 ))}
 
-            {/* Edit button - positioned where confirmation button would be - only show in viewing mode */}
-            {!isEditingMode && hasValidConfiguration && !isStopStep && (
+            {/* Phase 2: Edit button - positioned where confirmation button would be - only show in viewing mode and not during execution */}
+            {!isEditingMode &&
+                hasValidConfiguration &&
+                !isStopStep &&
+                !isRunning && (
+                    <div className={styles.confirmationContainer}>
+                        <button
+                            className={`${styles.confirmButton} ${styles.editButton}`}
+                            onClick={handleEditStep}
+                            aria-label="Edit current step configuration"
+                        >
+                            <Edit3 className={styles.buttonIcon} />
+                            Edit Step
+                        </button>
+                    </div>
+                )}
+
+            {/* Phase 2: Execution state message during program execution */}
+            {isRunning && !isEditingMode && (
                 <div className={styles.confirmationContainer}>
-                    <button
-                        className={`${styles.confirmButton} ${styles.editButton}`}
-                        onClick={handleEditStep}
-                        aria-label="Edit current step configuration"
-                    >
-                        <Edit3 className={styles.buttonIcon} />
-                        Edit Step
-                    </button>
+                    <div className={styles.executionStateMessage}>
+                        <Play className={styles.buttonIcon} />
+                        Program Running
+                    </div>
                 </div>
             )}
 
-            {/* Button container - only show in editing mode with valid configuration */}
-            {isEditingMode && hasValidConfiguration && (
+            {/* Button container - only show in editing mode with valid configuration and not during execution */}
+            {isEditingMode && hasValidConfiguration && !isRunning && (
                 <div className={styles.confirmationContainer}>
                     {/* Test button - left side */}
                     <button
-                        className={`${styles.testButton} ${hasDeviceWarnings() ? styles.testButtonWarning : ""}`}
+                        className={`${styles.testButton} ${
+                            hasDeviceWarnings() ? styles.testButtonWarning : ""
+                        }`}
                         onClick={handleTestCurrentConfig}
                         disabled={!isConnected || !hasValidConfiguration}
                         aria-label="Test current configuration"
@@ -784,7 +843,9 @@ export const CommandPanel = ({
                         Test
                         {/* Warning corner badge when device is disconnected */}
                         {hasDeviceWarnings() && (
-                            <div className={`${styles.cornerBadge} ${styles.warning}`}>
+                            <div
+                                className={`${styles.cornerBadge} ${styles.warning}`}
+                            >
                                 <CircleAlert
                                     className={`${styles.cornerIcon} ${styles.warning}`}
                                     strokeWidth={2}
@@ -798,11 +859,16 @@ export const CommandPanel = ({
                         className={`${styles.confirmButton} ${styles.confirmButtonEnabled}`}
                         onClick={handleConfirmAndSave}
                         disabled={!hasValidConfiguration}
-                        aria-label={`${getButtonText()} - ${hasUnsavedChanges ? 'Save changes and' : ''} ${getButtonText() === 'Next' ? 'continue to next step' : 'exit editing mode'}`}
+                        aria-label={`${getButtonText()} - ${
+                            hasUnsavedChanges ? "Save changes and" : ""
+                        } ${
+                            getButtonText() === "Next"
+                                ? "continue to next step"
+                                : "exit editing mode"
+                        }`}
                     >
                         {getButtonText() === "Next" ? (
-                                <LaptopMinimalCheck className={styles.buttonIcon} />
-
+                            <LaptopMinimalCheck className={styles.buttonIcon} />
                         ) : (
                             <CheckCircle className={styles.buttonIcon} />
                         )}

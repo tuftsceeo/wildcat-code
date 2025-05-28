@@ -1,12 +1,9 @@
 /**
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
- * running individual slots or the complete program. Enhanced with five visual states
- * for step buttons to prevent mode confusion and accidental overwrites.
- * Updated for Option B: Stop step is real in slotData.
- * Fixed motor type detection to properly handle all motor variants without false warnings.
- * Enhanced with program execution control including stop functionality.
- * Added executing step overlay for visual feedback during program execution.
+ * running individual slots or the complete program. Enhanced with Phase 2 progress
+ * visualization including vertical progress channel and execution state coordination.
+ * Updated to delegate execution control to App.js for modal coordination.
  */
 
 import React, { useEffect, useState, useRef } from "react";
@@ -106,7 +103,7 @@ const INSTRUCTION_DISPLAY = {
 };
 
 /**
- * RunMenu component for navigating and executing code with editing mode support
+ * RunMenu component for navigating and executing code with Phase 2 progress visualization
  *
  * @component
  * @param {Object} props - Component props
@@ -118,6 +115,9 @@ const INSTRUCTION_DISPLAY = {
  * @param {Array} props.slotData - Data for all coding slots
  * @param {boolean} props.isEditingMode - Whether currently in editing mode
  * @param {Function} props.onStepClick - Handler for step button clicks
+ * @param {Function} props.onPlayButtonClick - Handler for play button clicks (Phase 2)
+ * @param {boolean} props.isRunning - Whether program is currently running (Phase 2)
+ * @param {number|null} props.currentlyExecutingStep - Currently executing step index (Phase 2)
  * @returns {JSX.Element} RunMenu component
  */
 export const RunMenu = ({
@@ -129,6 +129,9 @@ export const RunMenu = ({
     slotData,
     isEditingMode = false,
     onStepClick,
+    onPlayButtonClick,
+    isRunning = false,
+    currentlyExecutingStep = null,
 }) => {
     if (DEBUG_RUN_MENU) {
         console.log("RunMenu: Rendering with missionSteps =", missionSteps);
@@ -137,8 +140,6 @@ export const RunMenu = ({
     const {
         ble,
         isConnected,
-        isRunning,
-        currentlyExecutingStep,
         stopRunningProgram,
         portStates,
         DEVICE_TYPES,
@@ -166,6 +167,25 @@ export const RunMenu = ({
     const [isReordering, setIsReordering] = useState(false);
     const [isScrollable, setIsScrollable] = useState(false);
     const [isAtBottom, setIsAtBottom] = useState(false);
+
+    // Phase 2: Listen for execution events from App.js
+    useEffect(() => {
+        const handleExecuteProgram = () => {
+            handleRunAllSlots();
+        };
+
+        const handleStopProgram = () => {
+            handleStopProgram();
+        };
+
+        window.addEventListener("executeProgram", handleExecuteProgram);
+        window.addEventListener("stopProgram", handleStopProgram);
+
+        return () => {
+            window.removeEventListener("executeProgram", handleExecuteProgram);
+            window.removeEventListener("stopProgram", handleStopProgram);
+        };
+    }, []);
 
     // Verify slotData consistency - should now match missionSteps exactly with Option B
     useEffect(() => {
@@ -227,6 +247,41 @@ export const RunMenu = ({
                 menuElement.removeEventListener("scroll", handleScroll);
         }
     }, []);
+
+    /**
+     * Phase 2: Get progress state for a step based on execution status
+     * @param {number} stepIndex - Index of the step to check
+     * @returns {string} Progress state: 'completed', 'current', 'upcoming', 'none'
+     */
+    const getProgressState = (stepIndex) => {
+        const slot = slotData[stepIndex];
+        const isStopStep = slot?.type === "special";
+
+        // Stop step doesn't have progress visualization
+        if (isStopStep) return "none";
+
+        // Not running - no progress state
+        if (!isRunning) return "none";
+
+        // Currently executing
+        if (currentlyExecutingStep === stepIndex) return "current";
+
+        // Completed (executed before current)
+        if (
+            currentlyExecutingStep !== null &&
+            stepIndex < currentlyExecutingStep
+        )
+            return "completed";
+
+        // Upcoming (will execute after current)
+        if (
+            currentlyExecutingStep !== null &&
+            stepIndex > currentlyExecutingStep
+        )
+            return "upcoming";
+
+        return "none";
+    };
 
     /**
      * Determine the visual state of a step button for styling and badges
@@ -507,7 +562,7 @@ export const RunMenu = ({
     };
 
     /**
-     * Run all slots sequentially
+     * Run all slots sequentially - now delegates to RunMenu for actual execution
      */
     const handleRunAllSlots = async () => {
         try {
@@ -591,7 +646,7 @@ export const RunMenu = ({
     };
 
     /**
-     * Handle clicking on a step button - uses new onStepClick prop
+     * Phase 2: Handle clicking on a step button - now uses onStepClick prop for coordination
      *
      * @param {number} stepIndex - Index of the clicked step
      */
@@ -774,7 +829,38 @@ export const RunMenu = ({
     };
 
     /**
-     * Generate buttons for each step - now simplified with Option B
+     * Phase 2: Render progress channel for a step
+     * @param {number} stepIndex - Index of the step
+     * @returns {JSX.Element|null} Progress channel element or null
+     */
+    const renderProgressChannel = (stepIndex) => {
+        const progressState = getProgressState(stepIndex);
+        const slot = slotData[stepIndex];
+        const isStopStep = slot?.type === "special";
+
+        // No progress channel for stop step
+        if (isStopStep || progressState === "none") {
+            return null;
+        }
+
+        return (
+            <div
+                className={`${styles.progressChannel} ${
+                    styles[
+                        `progress${
+                            progressState.charAt(0).toUpperCase() +
+                            progressState.slice(1)
+                        }`
+                    ]
+                }`}
+            >
+                <div className={styles.progressIndicator} />
+            </div>
+        );
+    };
+
+    /**
+     * Generate buttons for each step - Phase 2 enhanced with progress visualization
      *
      * @returns {Array} Array of step button elements
      */
@@ -800,39 +886,48 @@ export const RunMenu = ({
             );
 
             const stepButton = (
-                <button
+                <div
                     key={i}
-                    className={`${styles.stepButton}
-                            ${hasDeviceWarning ? styles.warning : ""} 
-                            ${styles[visualState]} 
-                            ${isStopStep ? styles.stopStep : ""}
-                            
-                            ${completed ? styles.completed : ""}
-                            ${slot?.type ? styles.configured : ""} 
-                            ${i === currSlotNumber ? styles.current : ""}`}
-                    onClick={() => handleStepClick(i)}
-                    disabled={!accessible}
-                    aria-label={`${name}${
-                        i === currSlotNumber ? " (current)" : ""
-                    }${completed ? " (completed)" : ""}${
-                        visualState === "editing" ? " (editing)" : ""
-                    }${visualState === "viewing" ? " (viewing)" : ""}`}
-                    aria-current={i === currSlotNumber ? "step" : false}
-                    style={{ position: "relative" }}
+                    className={styles.stepButtonContainer}
                 >
-                    <span className={styles.stepName}>{name}</span>
-                    {icon && (
-                        <span className={styles.iconContainer}>{icon}</span>
-                    )}
-                    {cornerBadge}
+                    {/* Phase 2: Progress channel */}
+                    {renderProgressChannel(i)}
 
-                    {/* Executing step overlay */}
-                    {currentlyExecutingStep === i && (
-                        <div className={styles.executingOverlay}>
-                            <div className={styles.executingIndicator}>▶</div>
-                        </div>
-                    )}
-                </button>
+                    <button
+                        className={`${styles.stepButton}
+                                ${hasDeviceWarning ? styles.warning : ""} 
+                                ${styles[visualState]} 
+                                ${isStopStep ? styles.stopStep : ""}
+                                
+                                ${completed ? styles.completed : ""}
+                                ${slot?.type ? styles.configured : ""} 
+                                ${i === currSlotNumber ? styles.current : ""}`}
+                        onClick={() => handleStepClick(i)}
+                        disabled={!accessible}
+                        aria-label={`${name}${
+                            i === currSlotNumber ? " (current)" : ""
+                        }${completed ? " (completed)" : ""}${
+                            visualState === "editing" ? " (editing)" : ""
+                        }${visualState === "viewing" ? " (viewing)" : ""}`}
+                        aria-current={i === currSlotNumber ? "step" : false}
+                        style={{ position: "relative" }}
+                    >
+                        <span className={styles.stepName}>{name}</span>
+                        {icon && (
+                            <span className={styles.iconContainer}>{icon}</span>
+                        )}
+                        {cornerBadge}
+
+                        {/* Executing step overlay */}
+                        {currentlyExecutingStep === i && (
+                            <div className={styles.executingOverlay}>
+                                <div className={styles.executingIndicator}>
+                                    ▶
+                                </div>
+                            </div>
+                        )}
+                    </button>
+                </div>
             );
 
             // Wrap the button in DraggableStepButton if not in mission mode and not a special step
@@ -896,7 +991,7 @@ export const RunMenu = ({
                 />
             </div>
 
-            {/* Control buttons container - Adaptive side-by-side layout */}
+            {/* Control buttons container - Phase 2: Delegate to App.js */}
             <div className={styles.controlButtonsContainer}>
                 {/* Play button - Large when stopped, small when running */}
                 <button
@@ -905,7 +1000,7 @@ export const RunMenu = ({
                             ? styles.playButtonRunning
                             : styles.playButtonStopped
                     }`}
-                    onClick={handleRunAllSlots}
+                    onClick={onPlayButtonClick || handleRunAllSlots}
                     disabled={!canRun || !isConnected}
                     aria-label={
                         isRunning ? "Program is running" : "Run all steps"

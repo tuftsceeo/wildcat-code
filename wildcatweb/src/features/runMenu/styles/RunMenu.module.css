@@ -1,4 +1,4 @@
-/* RunMenu.module.css - Updated with stop button support and control buttons container */
+/* RunMenu.module.css - Updated with Phase 2 progress channel visualization and execution state support */
 
 .menuBackground {
     height: 100%;
@@ -125,7 +125,89 @@
     ); /* Increased padding to prevent scaled borders from being cut off */
 }
 
-/* Step buttons styled with theme tokens */
+/* Phase 2: Step button container to accommodate progress channel */
+.stepButtonContainer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    width: 100%;
+    position: relative;
+}
+
+/* Phase 2: Progress channel styles */
+.progressChannel {
+    width: var(--spacing-2);
+    height: calc(
+        var(--font-size-lg) + var(--spacing-6)
+    ); /* Match button height */
+    border-radius: var(--radius-full);
+    background-color: var(--color-gray-subtle);
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+}
+
+.progressIndicator {
+    width: calc(var(--spacing-2) - var(--border-width-thin));
+    height: calc(var(--spacing-2) - var(--border-width-thin));
+    border-radius: var(--radius-full);
+    background-color: var(--color-gray-medium);
+    transition: all var(--transition-normal);
+}
+
+/* Progress channel states */
+.progressCompleted {
+    background-color: var(--color-secondary-low);
+}
+
+.progressCompleted .progressIndicator {
+    background-color: var(--color-secondary-main);
+    transform: scale(1.2);
+}
+
+.progressCurrent {
+    background-color: var(--color-secondary-main);
+    box-shadow: 0 0 var(--spacing-2) rgba(var(--color-secondary-main-rgb), 0.4);
+}
+
+.progressCurrent .progressIndicator {
+    background-color: var(--color-secondary-high);
+    transform: scale(1.4);
+    animation: progressPulse 2s ease-in-out infinite;
+}
+
+.progressUpcoming {
+    background-color: var(--color-gray-subtle);
+}
+
+.progressUpcoming .progressIndicator {
+    background-color: var(--color-gray-medium);
+}
+
+/* Progress pulse animation */
+@keyframes progressPulse {
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: scale(1.4);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.6);
+    }
+}
+
+/* Respect motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .progressCurrent .progressIndicator {
+        animation: none;
+    }
+}
+
+/* Step buttons styled with theme tokens - Updated for progress channel layout */
 .stepButton {
     background-color: var(--color-background);
     border: var(--border-width-standard) solid var(--button-default-border);
@@ -138,6 +220,7 @@
     cursor: pointer;
     width: 100%;
     position: relative;
+    flex: 1; /* Take remaining space after progress channel */
 
     /* Layout for content */
     display: flex;
