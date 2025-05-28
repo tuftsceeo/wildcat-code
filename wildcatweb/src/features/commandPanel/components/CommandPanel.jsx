@@ -4,31 +4,20 @@
  * providing action type selection and parameter configuration.
  * Enhanced with Phase 2 configuration management including discard functionality
  * and execution state awareness for modal coordination.
+ * FIXED: Edit button now accessible during playback with proper modal integration.
  */
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
-    Check,
-    RefreshCcwDot,
     LaptopMinimalCheck,
-    ArrowBigDown,
-    Plus,
-    Zap,
-    Disc,
     StepForward,
-    Lightbulb,
     RotateCw,
-    Volume,
     Timer,
-    Clock9,
     CircleStop,
     ArchiveRestore,
     Droplet,
     Edit3,
-    ChevronRight,
-    CircleArrowRight,
     CheckCircle,
-    Play,
     CircleAlert,
 } from "lucide-react";
 
@@ -800,35 +789,23 @@ export const CommandPanel = ({
                     )
                 ))}
 
-            {/* Phase 2: Edit button - positioned where confirmation button would be - only show in viewing mode and not during execution */}
-            {!isEditingMode &&
-                hasValidConfiguration &&
-                !isStopStep &&
-                !isRunning && (
-                    <div className={styles.confirmationContainer}>
-                        <button
-                            className={`${styles.confirmButton} ${styles.editButton}`}
-                            onClick={handleEditStep}
-                            aria-label="Edit current step configuration"
-                        >
-                            <Edit3 className={styles.buttonIcon} />
-                            Edit Step
-                        </button>
-                    </div>
-                )}
-
-            {/* Phase 2: Execution state message during program execution */}
-            {isRunning && !isEditingMode && (
+            {/* FIXED: Edit button - now accessible during playback, will trigger modal */}
+            {!isEditingMode && hasValidConfiguration && !isStopStep && (
                 <div className={styles.confirmationContainer}>
-                    <div className={styles.executionStateMessage}>
-                        <Play className={styles.buttonIcon} />
-                        Program Running
-                    </div>
+                    <button
+                        className={`${styles.confirmButton} ${styles.editButton}`}
+                        onClick={handleEditStep}
+                        aria-label="Edit current step configuration"
+                        disabled={false} // Always enabled - modal will handle execution state
+                    >
+                        <Edit3 className={styles.buttonIcon} />
+                        Edit Step
+                    </button>
                 </div>
             )}
 
-            {/* Button container - only show in editing mode with valid configuration and not during execution */}
-            {isEditingMode && hasValidConfiguration && !isRunning && (
+            {/* Button container - only show in editing mode with valid configuration */}
+            {isEditingMode && hasValidConfiguration && (
                 <div className={styles.confirmationContainer}>
                     {/* Test button - left side */}
                     <button

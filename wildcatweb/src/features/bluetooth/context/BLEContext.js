@@ -9,7 +9,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { newSpikeBLE } from "../ble_resources/spike_ble";
-import { ProgramFlowRequest } from "../ble_resources/messages";
 
 const BLEContext = createContext();
 

@@ -4,6 +4,7 @@
  * running individual slots or the complete program. Enhanced with Phase 2 progress
  * visualization including vertical progress channel and execution state coordination.
  * Updated to delegate execution control to App.js for modal coordination.
+ * FIXED: Continuous progress channel, smaller step buttons, internal drag handles, removed executing overlay.
  */
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
@@ -19,27 +20,22 @@ import {
     ClearSlotResponse,
 } from "../../../features/bluetooth/ble_resources/messages";
 import {
-    AlertTriangle,
-    AlertCircleStop,
     CircleCheckBig,
     CircleStop,
     CircleAlert,
     RotateCw,
-    Clock9,
-    Disc,
     ArchiveRestore,
     ArchiveX,
     Timer,
     Plus,
-    Lock,
     ChevronDown,
     Droplet,
     Snail,
     Turtle,
     Rabbit,
-    Check,
     Pencil,
     Square,
+    GripVertical,
 } from "lucide-react";
 import DraggableStepButton from "./DraggableStepButton";
 
@@ -353,8 +349,8 @@ export const RunMenu = ({
         // Stop step doesn't have progress visualization
         if (isStopStep) return "none";
 
-        // Not running - no progress state
-        if (!isRunning) return "none";
+        // Always show progress channel (persistent), but different states during execution
+        if (!isRunning) return "idle";
 
         // Currently executing
         if (currentlyExecutingStep === stepIndex) return "current";
@@ -373,7 +369,7 @@ export const RunMenu = ({
         )
             return "upcoming";
 
-        return "none";
+        return "idle";
     };
 
     /**
@@ -838,7 +834,7 @@ export const RunMenu = ({
     };
 
     /**
-     * Phase 2: Render progress channel for a step
+     * Phase 2: Render progress channel for a step - FIXED: Now persistent and continuous
      * @param {number} stepIndex - Index of the step
      * @returns {JSX.Element|null} Progress channel element or null
      */
@@ -848,10 +844,11 @@ export const RunMenu = ({
         const isStopStep = slot?.type === "special";
 
         // No progress channel for stop step
-        if (isStopStep || progressState === "none") {
+        if (isStopStep) {
             return null;
         }
 
+        // Always render progress channel (persistent)
         return (
             <div
                 className={`${styles.progressChannel} ${
@@ -870,6 +867,7 @@ export const RunMenu = ({
 
     /**
      * Generate buttons for each step - Phase 2 enhanced with progress visualization
+     * FIXED: Removed executing overlay, smaller buttons, internal drag handles
      *
      * @returns {Array} Array of step button elements
      */
@@ -899,7 +897,7 @@ export const RunMenu = ({
                     key={i}
                     className={styles.stepButtonContainer}
                 >
-                    {/* Phase 2: Progress channel */}
+                    {/* Phase 2: Progress channel - always present for non-stop steps */}
                     {renderProgressChannel(i)}
 
                     <button
@@ -907,7 +905,6 @@ export const RunMenu = ({
                                 ${hasDeviceWarning ? styles.warning : ""} 
                                 ${styles[visualState]} 
                                 ${isStopStep ? styles.stopStep : ""}
-                                
                                 ${completed ? styles.completed : ""}
                                 ${slot?.type ? styles.configured : ""} 
                                 ${i === currSlotNumber ? styles.current : ""}`}
@@ -921,20 +918,20 @@ export const RunMenu = ({
                         aria-current={i === currSlotNumber ? "step" : false}
                         style={{ position: "relative" }}
                     >
+                        {/* FIXED: Drag handle moved inside button for non-mission, non-special steps */}
+                        {!isMissionMode && !isStopStep && (
+                            <div className={styles.dragHandle}>
+                                <GripVertical className={styles.dragIcon} />
+                            </div>
+                        )}
+
                         <span className={styles.stepName}>{name}</span>
                         {icon && (
                             <span className={styles.iconContainer}>{icon}</span>
                         )}
                         {cornerBadge}
 
-                        {/* Executing step overlay */}
-                        {currentlyExecutingStep === i && (
-                            <div className={styles.executingOverlay}>
-                                <div className={styles.executingIndicator}>
-                                    ▶
-                                </div>
-                            </div>
-                        )}
+                        {/* REMOVED: executingOverlay - progress channel handles this now */}
                     </button>
                 </div>
             );

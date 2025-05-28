@@ -2,16 +2,18 @@
  * @file DraggableStepButton.jsx
  * @description Component that wraps a step button with drag-and-drop functionality.
  * Only enabled in sandbox mode.
+ * FIXED: Updated to work with internal drag handles (no external drag handle rendering).
  */
 
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 import styles from "../styles/RunMenu.module.css";
-import { GripVertical } from "lucide-react";
+
 const ITEM_TYPE = "STEP";
 
 /**
  * DraggableStepButton component that wraps a step button with drag-and-drop functionality
+ * FIXED: Simplified to work with internal drag handles
  *
  * @component
  * @param {Object} props - Component props
@@ -20,8 +22,6 @@ const ITEM_TYPE = "STEP";
  * @param {boolean} props.isMissionMode - Whether we're in mission mode
  * @param {React.ReactNode} props.children - The step button to wrap
  * @returns {JSX.Element} Draggable step button
- *
- *
  */
 const DraggableStepButton = ({ index, moveStep, isMissionMode, children }) => {
     // Only enable drag-and-drop in sandbox mode
@@ -64,7 +64,9 @@ const DraggableStepButton = ({ index, moveStep, isMissionMode, children }) => {
     const childrenWithProps = React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
             return React.cloneElement(child, {
-                className: `${child.props.className || ""} ${isDragging ? styles.dragging : ""}`,
+                className: `${child.props.className || ""} ${
+                    isDragging ? styles.dragging : ""
+                }`,
             });
         }
         return child;
@@ -73,21 +75,16 @@ const DraggableStepButton = ({ index, moveStep, isMissionMode, children }) => {
     return (
         <div
             ref={ref}
-            className={`${styles.draggableContainer} ${isDragging ? styles.dragging : ""} ${isOver ? styles.dropTarget : ""}`}
+            className={`${styles.draggableContainer} ${
+                isDragging ? styles.dragging : ""
+            } ${isOver ? styles.dropTarget : ""}`}
             style={{
                 // Disable transitions during drag
                 transition: isDragging ? "none" : undefined,
                 transform: isDragging ? "scale(1.02)" : undefined,
             }}
         >
-            {!isMissionMode && (
-                <div
-                    className={styles.dragHandle}
-                    aria-hidden="true"
-                >
-                    <GripVertical className={styles.commandIcon} />
-                </div>
-            )}
+            {/* REMOVED: External drag handle - now handled internally by the button */}
             {childrenWithProps}
         </div>
     );
