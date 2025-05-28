@@ -3,22 +3,28 @@
  * @description Context provider for Bluetooth Low Energy functionality, managing
  * connection state and port data for connected devices including motors and sensors.
  * Updated to properly handle all motor types (Medium, Large, Small) as interchangeable.
+ * Enhanced with program execution state tracking and debug logging controls.
  */
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { newSpikeBLE } from "../ble_resources/spike_ble";
+import { ProgramFlowRequest } from "../ble_resources/messages";
 
 const BLEContext = createContext();
+
+// Debug logging toggles - set to false to reduce console noise
+const DEBUG_DEVICE_NOTIFICATIONS = false;
+const DEBUG_PROGRAM_FLOW = true;
 
 // Device type constants - Updated to include all motor types
 export const DEVICE_TYPES = {
     MOTOR_MEDIUM: 0x30, // Medium Motor
-    MOTOR_LARGE: 0x31,  // Large Motor
-    MOTOR_SMALL: 0x41,  // Small Motor
+    MOTOR_LARGE: 0x31, // Large Motor
+    MOTOR_SMALL: 0x41, // Small Motor
     FORCE_SENSOR: 0x3c, // Force sensor device type
     COLOR_SENSOR: 0x3d, // Color sensor device type
     DISTANCE_SENSOR: 0x3e, // Distance sensor device type
-    
+
     // Legacy compatibility - keep MOTOR as Medium for backward compatibility
     MOTOR: 0x30,
 };
@@ -29,9 +35,11 @@ export const DEVICE_TYPES = {
  * @returns {boolean} True if the device type is any motor variant
  */
 export const isMotorType = (deviceType) => {
-    return deviceType === DEVICE_TYPES.MOTOR_MEDIUM || 
-           deviceType === DEVICE_TYPES.MOTOR_LARGE || 
-           deviceType === DEVICE_TYPES.MOTOR_SMALL;
+    return (
+        deviceType === DEVICE_TYPES.MOTOR_MEDIUM ||
+        deviceType === DEVICE_TYPES.MOTOR_LARGE ||
+        deviceType === DEVICE_TYPES.MOTOR_SMALL
+    );
 };
 
 /**
@@ -98,13 +106,25 @@ export const isDeviceTypeCompatible = (expectedType, actualType) => {
 
     // Check if both are motors - if so, they're compatible regardless of specific type
     if (isMotorType(expectedType) && isMotorType(actualType)) {
-        console.log(`Motor compatibility check: Expected ${getMotorTypeName(expectedType)}, Got ${getMotorTypeName(actualType)} - Compatible`);
+        if (DEBUG_DEVICE_NOTIFICATIONS) {
+            console.log(
+                `Motor compatibility check: Expected ${getMotorTypeName(
+                    expectedType,
+                )}, Got ${getMotorTypeName(actualType)} - Compatible`,
+            );
+        }
         return true;
     }
 
     // For non-motor devices, require exact match
     const isExactMatch = expectedType === actualType;
-    console.log(`Device type check: Expected ${expectedType}, Got ${actualType} - ${isExactMatch ? 'Compatible' : 'Incompatible'}`);
+    if (DEBUG_DEVICE_NOTIFICATIONS) {
+        console.log(
+            `Device type check: Expected ${expectedType}, Got ${actualType} - ${
+                isExactMatch ? "Compatible" : "Incompatible"
+            }`,
+        );
+    }
     return isExactMatch;
 };
 
@@ -133,6 +153,7 @@ export const useBLE = () => {
 export const BLEProvider = ({ children }) => {
     const [ble] = useState(() => newSpikeBLE());
     const [isConnected, setIsConnected] = useState(false);
+    const [isRunning, setIsRunning] = useState(false);
     const [portStates, setPortStates] = useState({
         A: null,
         B: null,
@@ -142,11 +163,63 @@ export const BLEProvider = ({ children }) => {
         F: null,
     });
 
+    /**
+     * Stop any currently running program on the robot
+     * @param {number} slot - Program slot to stop (defaults to 0)
+     * @returns {Promise<boolean>} Success status
+     */
+    const stopRunningProgram = async (slot = 0) => {
+        try {
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(
+                    `BLEContext: Attempting to stop program in slot ${slot}`,
+                );
+            }
+
+            if (!isConnected) {
+                console.warn(
+                    "BLEContext: Cannot stop program - not connected to robot",
+                );
+                return false;
+            }
+
+            // Send stop command to robot
+            await ble.stopProgram(slot);
+
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(`BLEContext: Stop command sent for slot ${slot}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.error("BLEContext: Error stopping program:", error);
+            // Don't change isRunning state on error - wait for actual notification
+            return false;
+        }
+    };
+
+    /**
+     * Send initial stop command to ensure clean state on connection
+     */
+    const ensureStoppedState = async () => {
+        try {
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(
+                    "BLEContext: Sending initial stop command to ensure clean state",
+                );
+            }
+            await stopRunningProgram(0);
+        } catch (error) {
+            console.warn("BLEContext: Initial stop command failed:", error);
+        }
+    };
+
     // Handle device disconnections
     useEffect(() => {
         const handleDisconnect = () => {
             console.log("BLEContext: Handling unexpected disconnection");
             setIsConnected(false);
+            setIsRunning(false); // Reset running state on disconnect
         };
 
         window.addEventListener("spikeDisconnected", handleDisconnect);
@@ -156,11 +229,57 @@ export const BLEProvider = ({ children }) => {
         };
     }, []);
 
+    // Handle program flow notification events
+    useEffect(() => {
+        const handleProgramFlowNotification = (event) => {
+            const message = event.detail;
+
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(
+                    "BLEContext: Program flow notification received:",
+                    message,
+                );
+            }
+
+            // Update running state based on the stop flag
+            const wasRunning = isRunning;
+            const nowRunning = !message.stop; // stop: false means running, stop: true means stopped
+
+            setIsRunning(nowRunning);
+
+            if (DEBUG_PROGRAM_FLOW) {
+                console.log(
+                    `BLEContext: Program state changed from ${
+                        wasRunning ? "running" : "stopped"
+                    } to ${nowRunning ? "running" : "stopped"}`,
+                );
+            }
+        };
+
+        window.addEventListener(
+            "spikeProgramFlowNotification",
+            handleProgramFlowNotification,
+        );
+
+        return () => {
+            window.removeEventListener(
+                "spikeProgramFlowNotification",
+                handleProgramFlowNotification,
+            );
+        };
+    }, [isRunning]);
+
     // Handle device notification events
     useEffect(() => {
         const handleDeviceNotification = (event) => {
             const message = event.detail;
-            console.log("Processing device notification:", message);
+
+            if (DEBUG_DEVICE_NOTIFICATIONS) {
+                console.log(
+                    "BLEContext: Processing device notification:",
+                    message,
+                );
+            }
 
             // Reset port states for new notification
             const newPortStates = {
@@ -179,10 +298,11 @@ export const BLEProvider = ({ children }) => {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
                     );
-                    
+
                     // Store the actual device type but also provide normalized type
-                    const actualDeviceType = msg.values.deviceType || DEVICE_TYPES.MOTOR_MEDIUM;
-                    
+                    const actualDeviceType =
+                        msg.values.deviceType || DEVICE_TYPES.MOTOR_MEDIUM;
+
                     newPortStates[portLetter] = {
                         // Store actual device type for accurate reporting
                         deviceType: actualDeviceType,
@@ -195,10 +315,15 @@ export const BLEProvider = ({ children }) => {
                         isMotor: true,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected ${getMotorTypeName(actualDeviceType)} on port ${portLetter}`,
-                        msg.values,
-                    );
+
+                    if (DEBUG_DEVICE_NOTIFICATIONS) {
+                        console.log(
+                            `BLEContext: Detected ${getMotorTypeName(
+                                actualDeviceType,
+                            )} on port ${portLetter}`,
+                            msg.values,
+                        );
+                    }
                 } else if (msg.name === "Force") {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
@@ -212,10 +337,13 @@ export const BLEProvider = ({ children }) => {
                         isMotor: false,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Force Sensor on port ${portLetter}`,
-                        msg.values,
-                    );
+
+                    if (DEBUG_DEVICE_NOTIFICATIONS) {
+                        console.log(
+                            `BLEContext: Detected Force Sensor on port ${portLetter}`,
+                            msg.values,
+                        );
+                    }
                 } else if (msg.name === "Color") {
                     const portLetter = String.fromCharCode(
                         65 + msg.values.port,
@@ -284,10 +412,13 @@ export const BLEProvider = ({ children }) => {
                         isMotor: false,
                         ...msg.values,
                     };
-                    console.log(
-                        `BLEContext: Detected Color Sensor on port ${portLetter}`,
-                        msg.values,
-                    );
+
+                    if (DEBUG_DEVICE_NOTIFICATIONS) {
+                        console.log(
+                            `BLEContext: Detected Color Sensor on port ${portLetter}`,
+                            msg.values,
+                        );
+                    }
                 }
                 // Handle other device types as needed...
             });
@@ -309,7 +440,7 @@ export const BLEProvider = ({ children }) => {
         };
     }, []);
 
-    // Reset when disconnected
+    // Reset states when disconnected
     useEffect(() => {
         if (!isConnected) {
             setPortStates({
@@ -320,6 +451,10 @@ export const BLEProvider = ({ children }) => {
                 E: null,
                 F: null,
             });
+            setIsRunning(false);
+        } else {
+            // Send stop command when newly connected to ensure clean state
+            ensureStoppedState();
         }
     }, [isConnected]);
 
@@ -362,7 +497,12 @@ export const BLEProvider = ({ children }) => {
                 const actualDeviceType = portState.deviceType || portState.type;
 
                 // Use centralized device compatibility checking
-                if (!isDeviceTypeCompatible(expectedDeviceType, actualDeviceType)) {
+                if (
+                    !isDeviceTypeCompatible(
+                        expectedDeviceType,
+                        actualDeviceType,
+                    )
+                ) {
                     disconnectedDevices.push({
                         slot: index + 1,
                         port: config.port,
@@ -373,11 +513,11 @@ export const BLEProvider = ({ children }) => {
                         expected: expectedDeviceType,
                         actual: actualDeviceType,
                         // Add helpful info for motor mismatches
-                        expectedMotorName: isMotorType(expectedDeviceType) 
-                            ? getMotorTypeName(expectedDeviceType) 
+                        expectedMotorName: isMotorType(expectedDeviceType)
+                            ? getMotorTypeName(expectedDeviceType)
                             : null,
-                        actualMotorName: isMotorType(actualDeviceType) 
-                            ? getMotorTypeName(actualDeviceType) 
+                        actualMotorName: isMotorType(actualDeviceType)
+                            ? getMotorTypeName(actualDeviceType)
                             : null,
                     });
                 }
@@ -391,6 +531,8 @@ export const BLEProvider = ({ children }) => {
         ble,
         isConnected,
         setIsConnected,
+        isRunning,
+        stopRunningProgram,
         portStates,
         DEVICE_TYPES,
         // Export helper functions for use by other components

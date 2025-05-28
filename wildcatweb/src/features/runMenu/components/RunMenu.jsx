@@ -5,14 +5,13 @@
  * for step buttons to prevent mode confusion and accidental overwrites.
  * Updated for Option B: Stop step is real in slotData.
  * Fixed motor type detection to properly handle all motor variants without false warnings.
+ * Enhanced with program execution control including stop functionality.
  */
 
 import React, { useEffect, useState, useRef } from "react";
 import styles from "../styles/RunMenu.module.css";
 import { generatePythonCode } from "../../../code-generation/codeGenerator.js";
-import { 
-    useBLE
-} from "../../bluetooth/context/BLEContext";
+import { useBLE } from "../../bluetooth/context/BLEContext";
 import { useCustomization } from "../../../context/CustomizationContext";
 import { useMission } from "../../../context/MissionContext.js";
 import { Buffer } from "buffer";
@@ -42,8 +41,12 @@ import {
     Rabbit,
     Check,
     Pencil,
+    Square,
 } from "lucide-react";
 import DraggableStepButton from "./DraggableStepButton";
+
+// Debug logging toggle - set to false to reduce console noise
+const DEBUG_RUN_MENU = false;
 
 const FilledCircleStop = (props) => {
     return React.cloneElement(<CircleStop />, {
@@ -126,12 +129,16 @@ export const RunMenu = ({
     isEditingMode = false,
     onStepClick,
 }) => {
-    console.log("RunMenu: Rendering with missionSteps =", missionSteps);
+    if (DEBUG_RUN_MENU) {
+        console.log("RunMenu: Rendering with missionSteps =", missionSteps);
+    }
 
-    const { 
-        ble, 
-        isConnected, 
-        portStates, 
+    const {
+        ble,
+        isConnected,
+        isRunning,
+        stopRunningProgram,
+        portStates,
         DEVICE_TYPES,
         checkDisconnectedDevices,
     } = useBLE();
@@ -161,10 +168,12 @@ export const RunMenu = ({
     // Verify slotData consistency - should now match missionSteps exactly with Option B
     useEffect(() => {
         if (slotData && slotData.length !== missionSteps) {
-            console.warn(
-                "RunMenu: Inconsistency detected - slotData length doesn't match missionSteps",
-                { slotDataLength: slotData.length, missionSteps },
-            );
+            if (DEBUG_RUN_MENU) {
+                console.warn(
+                    "RunMenu: Inconsistency detected - slotData length doesn't match missionSteps",
+                    { slotDataLength: slotData.length, missionSteps },
+                );
+            }
         }
     }, [missionSteps, slotData]);
 
@@ -508,7 +517,13 @@ export const RunMenu = ({
             }
 
             const code = generatePythonCode(slotData, portStates);
-            console.log("Generated Python Code for all slots:", code);
+
+            if (DEBUG_RUN_MENU) {
+                console.log(
+                    "RunMenu: Generated Python Code for all slots:",
+                    code,
+                );
+            }
 
             // Clear the program slot
             const clearResponse = await ble.sendRequest(
@@ -517,7 +532,7 @@ export const RunMenu = ({
             );
 
             if (!clearResponse.success) {
-                console.warn("Failed to clear program slot"); // Warning ok, sometimes the program slot is empty
+                console.warn("RunMenu: Failed to clear program slot"); // Warning ok, sometimes the program slot is empty
             }
 
             // Upload and transfer the program
@@ -532,12 +547,14 @@ export const RunMenu = ({
 
             // Dispatch run program event for mission tracking
             if (isMissionMode) {
-                console.log("RunMenu: Dispatching RUN_PROGRAM event", {
-                    slots: slotData.length,
-                    currentSlot: currSlotNumber,
-                    isMissionMode,
-                    currentMission: currentMission,
-                });
+                if (DEBUG_RUN_MENU) {
+                    console.log("RunMenu: Dispatching RUN_PROGRAM event", {
+                        slots: slotData.length,
+                        currentSlot: currSlotNumber,
+                        isMissionMode,
+                        currentMission: currentMission,
+                    });
+                }
 
                 dispatchTaskEvent("RUN_PROGRAM", {
                     slots: slotData.length,
@@ -546,7 +563,28 @@ export const RunMenu = ({
                 });
             }
         } catch (error) {
-            console.error("Error running program:", error);
+            console.error("RunMenu: Error running program:", error);
+        }
+    };
+
+    /**
+     * Stop the currently running program
+     */
+    const handleStopProgram = async () => {
+        try {
+            if (DEBUG_RUN_MENU) {
+                console.log("RunMenu: Stop button clicked");
+            }
+
+            const success = await stopRunningProgram();
+
+            if (!success) {
+                console.warn(
+                    "RunMenu: Stop command may have failed, but will wait for program flow notification",
+                );
+            }
+        } catch (error) {
+            console.error("RunMenu: Error stopping program:", error);
         }
     };
 
@@ -565,7 +603,10 @@ export const RunMenu = ({
                 const slot = slotData?.[stepIndex];
                 const stepName =
                     slot?.type === "special" ? "Stop" : `${stepIndex + 1}`;
-                console.log(`RunMenu: Clicked on step ${stepName}`);
+
+                if (DEBUG_RUN_MENU) {
+                    console.log(`RunMenu: Clicked on step ${stepName}`);
+                }
 
                 // Dispatch navigation event for mission tracking
                 if (isMissionMode) {
@@ -586,8 +627,10 @@ export const RunMenu = ({
 
     // Check for any disconnected devices in the current configuration using centralized function
     const hasDeviceWarnings = (slotIndex) => {
-        return isConnected && 
-               checkDisconnectedDevices([slotData?.[slotIndex]]).length > 0;
+        return (
+            isConnected &&
+            checkDisconnectedDevices([slotData?.[slotIndex]]).length > 0
+        );
     };
 
     /**
@@ -642,20 +685,28 @@ export const RunMenu = ({
 
         // Don't allow moving special steps (like stop)
         if (fromSlot?.type === "special") {
-            console.log("RunMenu: Cannot move special step (stop)");
+            if (DEBUG_RUN_MENU) {
+                console.log("RunMenu: Cannot move special step (stop)");
+            }
             return;
         }
 
         // Don't allow moving TO a special step position (would displace stop)
         if (toSlot?.type === "special") {
-            console.log("RunMenu: Cannot move to special step position");
+            if (DEBUG_RUN_MENU) {
+                console.log("RunMenu: Cannot move to special step position");
+            }
             return;
         }
 
         // Don't allow moving past the stop step (toIndex should be < last configurable slot)
         const lastConfigurableIndex = slotData.length - 1 - 1; // -1 for array index, -1 for stop step
         if (toIndex > lastConfigurableIndex) {
-            console.log("RunMenu: Cannot move past the last configurable slot");
+            if (DEBUG_RUN_MENU) {
+                console.log(
+                    "RunMenu: Cannot move past the last configurable slot",
+                );
+            }
             return;
         }
 
@@ -694,7 +745,7 @@ export const RunMenu = ({
 
         // Check if we can add more steps
         if (stepCount >= MAX_STEPS) {
-            console.warn("Cannot add more steps - maximum reached");
+            console.warn("RunMenu: Cannot add more steps - maximum reached");
             return;
         }
 
@@ -726,7 +777,9 @@ export const RunMenu = ({
      * @returns {Array} Array of step button elements
      */
     const renderStepButtons = () => {
-        console.log("RunMenu: Rendering", slotData.length, "step buttons");
+        if (DEBUG_RUN_MENU) {
+            console.log("RunMenu: Rendering", slotData.length, "step buttons");
+        }
 
         return slotData.map((slot, i) => {
             const completed = isMissionMode
@@ -737,7 +790,7 @@ export const RunMenu = ({
             const { name, icon } = getStepDisplayInfo(i);
             const isStopStep = slot?.type === "special";
 
-        const hasDeviceWarning = hasDeviceWarnings(i);
+            const hasDeviceWarning = hasDeviceWarnings(i);
             const cornerBadge = getCornerBadge(
                 visualState,
                 isStopStep,
@@ -750,7 +803,7 @@ export const RunMenu = ({
                     className={`${styles.stepButton}
                             ${hasDeviceWarning ? styles.warning : ""} 
                             ${styles[visualState]} 
-                            ${isStopStep ? styles.stopButton : ""}
+                            ${isStopStep ? styles.stopStep : ""}
                             
                             ${completed ? styles.completed : ""}
                             ${slot?.type ? styles.configured : ""} 
@@ -833,15 +886,87 @@ export const RunMenu = ({
                 />
             </div>
 
-            {/* Play button */}
-            <div className={styles.playButtonContainer}>
+            {/* Control buttons container - Adaptive side-by-side layout */}
+            <div className={styles.controlButtonsContainer}>
+                {/* Play button - Large when stopped, small when running */}
                 <button
-                    className={styles.playButton}
+                    className={`${styles.playButton} ${
+                        isRunning
+                            ? styles.playButtonRunning
+                            : styles.playButtonStopped
+                    }`}
                     onClick={handleRunAllSlots}
                     disabled={!canRun || !isConnected}
-                    aria-label="Run all steps"
+                    aria-label={
+                        isRunning ? "Program is running" : "Run all steps"
+                    }
                 >
-                    Play
+                    {/* Progress circle animation when running */}
+                    {isRunning && (
+                        <div
+                            className={styles.progressCircle}
+                            aria-hidden="true"
+                        >
+                            <svg
+                                className={styles.progressSvg}
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className={styles.progressTrack}
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                    fill="none"
+                                    strokeWidth="2"
+                                />
+                                <circle
+                                    className={styles.progressBar}
+                                    cx="12"
+                                    cy="12"
+                                    r="9"
+                                    fill="none"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+                        </div>
+                    )}
+
+                    {/* Button text - only show when stopped */}
+                    <span
+                        className={`${styles.buttonText} ${
+                            isRunning
+                                ? styles.buttonTextHidden
+                                : styles.buttonTextVisible
+                        }`}
+                    >
+                        Play
+                    </span>
+                </button>
+
+                {/* Stop button - Small when stopped, large when running */}
+                <button
+                    className={`${styles.stopButton} ${
+                        isRunning
+                            ? styles.stopButtonRunning
+                            : styles.stopButtonStopped
+                    }`}
+                    onClick={handleStopProgram}
+                    disabled={!isConnected}
+                    aria-label="Stop running program"
+                >
+                    <Square className={styles.stopIcon} />
+
+                    {/* Button text - only show when running */}
+                    <span
+                        className={`${styles.buttonText} ${
+                            isRunning
+                                ? styles.buttonTextVisible
+                                : styles.buttonTextHidden
+                        }`}
+                    >
+                        Stop
+                    </span>
                 </button>
             </div>
         </div>

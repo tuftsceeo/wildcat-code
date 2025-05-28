@@ -1,4 +1,4 @@
-/* RunMenu.module.css - Original styling with corner badges added */
+/* RunMenu.module.css - Updated with stop button support and control buttons container */
 
 .menuBackground {
     height: 100%;
@@ -304,34 +304,57 @@
     transform: var(--button-scale-default);
 }
 
-/* Play button - uses blue accent color */
-.playButton {
-    background-color: var(--button-contained-default-bg);
-    border: none;
-    border-radius: var(--radius-md);
-    color: var(--button-contained-default-text);
-    font-family: var(--font-family-active);
-    font-size: var(--font-size-base);
-    padding: var(--spacing-2) var(--spacing-4);
-    width: 100%;
-    max-width: 300px; /* Match step button width */
-    cursor: pointer;
-    margin: var(--spacing-4) auto; /* Match other button margins */
-    text-transform: uppercase;
-    align-self: center;
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-    transform-origin: center;
-    box-sizing: border-box; /* Ensure padding is included in width calculation */
-}
-
-/* Add a container for the play button to match stepsContainer */
-.playButtonContainer {
+/* Control buttons container - Updated for adaptive side-by-side layout */
+.controlButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-2);
     width: 100%;
     max-width: 300px;
     margin: 0 auto;
-    padding: 12px;
+    padding: var(--spacing-3);
     box-sizing: border-box;
+}
+
+/* Base button styles shared by both Play and Stop */
+.playButton,
+.stopButton {
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    transform-origin: center;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 48px; /* Maintain minimum touch target */
+    overflow: hidden; /* For smooth text transitions */
+}
+
+/* Play button states */
+.playButton {
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+}
+
+.playButtonStopped {
+    flex: 2; /* Takes 2/3 of space when stopped */
+    gap: var(--spacing-2); /* Normal gap when showing text */
+}
+
+.playButtonRunning {
+    flex: 1; /* Takes 1/3 of space when running */
+    padding: var(--spacing-2); /* Reduced padding when small */
+    justify-content: center; /* Center the progress circle */
+    align-items: center; /* Ensure vertical centering */
+    gap: 0; /* No gap when only showing progress circle */
 }
 
 .playButton:hover:not(:disabled) {
@@ -348,6 +371,147 @@
 
 .playButton:active {
     transform: var(--button-scale-active);
+}
+
+/* Stop button states */
+.stopButton {
+    color: var(--color-text);
+}
+
+.stopButtonStopped {
+    flex: 1; /* Takes 1/3 of space when stopped */
+    padding: var(--spacing-2); /* Reduced padding when small */
+    justify-content: center; /* Ensure icon is centered when small */
+    align-items: center; /* Ensure vertical centering */
+    gap: 0; /* No gap when only showing icon */
+    background-color: var(--color-gray-medium); /* Subtle gray when secondary */
+}
+
+/* Ensure perfect centering for the stop icon when button is small */
+.stopButtonStopped .stopIcon {
+    margin: 0 auto; /* Extra centering insurance */
+}
+
+.stopButtonRunning {
+    flex: 2; /* Takes 2/3 of space when running */
+    gap: var(--spacing-2); /* Normal gap when showing text + icon */
+    background-color: var(--color-error-low); /* Dark red when primary action */
+    color: var(
+        --color-error-contrast
+    ); /* Ensure good contrast on dark background */
+}
+
+.stopButton:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: var(--button-scale-hover);
+}
+
+.stopButtonStopped:hover:not(:disabled) {
+    background-color: var(--color-gray-bold);
+}
+
+.stopButtonRunning:hover:not(:disabled) {
+    background-color: var(
+        --color-error-main
+    ); /* Brighter red on hover when running */
+}
+
+.stopButton:disabled {
+    background-color: var(--color-gray-subtle);
+    color: var(--color-gray-medium);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.stopButton:active {
+    transform: var(--button-scale-active);
+}
+
+/* Button text visibility states */
+.buttonText {
+    transition: opacity var(--transition-normal);
+    white-space: nowrap;
+}
+
+.buttonTextVisible {
+    opacity: 1;
+    position: static;
+    visibility: visible;
+}
+
+.buttonTextHidden {
+    opacity: 0;
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Progress circle animation */
+.progressCircle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* No absolute positioning needed since button centers it */
+}
+
+.progressSvg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* Start from top */
+}
+
+.progressTrack {
+    stroke: var(--color-gray-medium);
+    opacity: 0.5;
+}
+
+.progressBar {
+    stroke: var(--button-contained-default-text);
+    stroke-dasharray: 56.5; /* Circumference of r=9 circle */
+    stroke-dashoffset: 14; /* 25% visible */
+    animation: progressSpin var(--animation-duration-long) linear infinite;
+}
+
+/* Progress circle animation keyframes */
+@keyframes progressSpin {
+    0% {
+        stroke-dashoffset: 56.5;
+    }
+    50% {
+        stroke-dashoffset: 14;
+    }
+    100% {
+        stroke-dashoffset: 56.5;
+    }
+}
+
+/* Respect motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .progressBar {
+        animation: progressPulse 2s ease-in-out infinite;
+    }
+}
+
+@keyframes progressPulse {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Icon sizing and styling */
+.stopIcon {
+    width: calc(var(--font-size-base) * 1.2);
+    height: calc(var(--font-size-base) * 1.2);
+    flex-shrink: 0;
+    stroke: var(--color-background); /* White outline/stroke */
+    fill: var(--color-error-main); /* Red fill - matches stop step button */
+    stroke-width: 2;
 }
 
 .errorIcon,
@@ -371,8 +535,8 @@
     }
 }
 
-/* In RunMenu.module.css */
-.stopButton {
+/* Stop step button - for the special "stop" step in the program sequence */
+.stepButton.stopStep {
     background-color: var(--button-default-bg);
     border: var(--border-width-standard) solid var(--color-error-low);
     color: var(--color-error-low);
@@ -381,12 +545,13 @@
     justify-content: space-between;
 }
 
-.stopButton.current {
+.stepButton.stopStep.current {
     border-color: var(--color-error-main);
     color: var(--color-error-main);
 }
 
-.stopIcon {
+/* Step icon styling */
+.stepIcon {
     color: currentColor;
 }
 
