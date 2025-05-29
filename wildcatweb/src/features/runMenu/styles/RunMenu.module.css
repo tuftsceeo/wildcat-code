@@ -139,7 +139,7 @@
 /* FIXED: Progress segment - static, continuous vertical bar segments */
 .progressSegment {
     width: var(--spacing-2);
-    background-color: var(--color-gray-subtle);
+    background-color: var(--color-gray-bold);
     flex-shrink: 0;
     /* No border-radius by default - added by modifiers */
     /* No transitions, animations, or interactive states */
@@ -170,11 +170,15 @@
 }
 
 .progressUpcoming {
-    background-color: var(--color-gray-medium);
+    background-color: var(--color-gray-bold);
 }
 
 .progressIdle {
-    background-color: var(--color-gray-subtle);
+    background-color: var(--color-gray-medium);
+}
+
+.progressUnconfigured {
+    opacity: 0.4;
 }
 
 /* FIXED: Step button container - now only contains the step button, no progress visualization */
@@ -408,27 +412,37 @@
     overflow: hidden; /* For smooth text transitions */
 }
 
-/* Play button states */
 .playButton {
     background-color: var(--button-contained-default-bg);
     color: var(--button-contained-default-text);
 }
 
 .playButtonStopped {
-    flex: 2; /* Takes 2/3 of space when stopped */
+    flex: 3; /* Takes 2/3 of space when stopped */
     gap: var(--spacing-2); /* Normal gap when showing text */
 }
 
 .playButtonRunning {
     flex: 1; /* Takes 1/3 of space when running */
     padding: var(--spacing-2); /* Reduced padding when small */
-    justify-content: center; /* Center the progress circle */
+    justify-content: center; /* Center the play icon */
     align-items: center; /* Ensure vertical centering */
-    gap: 0; /* No gap when only showing progress circle */
+    gap: 0; /* No gap when only showing icon */
+    background-color: var(--color-gray-medium); /* Subtle gray when secondary */
+    color: white; /* White text/icon color */
 }
 
 .playButton:hover:not(:disabled) {
     opacity: 0.9;
+    transform: var(--button-scale-hover);
+}
+
+/* Override hover state for running button to maintain green color */
+.playButtonRunning:hover:not(:disabled) {
+    background-color: var(
+        --color-secondary-main
+    ); /* Slightly brighter green on hover */
+    opacity: 1; /* Full opacity on hover */
     transform: var(--button-scale-hover);
 }
 
@@ -463,7 +477,7 @@
 }
 
 .stopButtonRunning {
-    flex: 2; /* Takes 2/3 of space when running */
+    flex: 3; /* Takes 2/3 of space when running */
     gap: var(--spacing-2); /* Normal gap when showing text + icon */
     background-color: var(--color-error-low); /* Dark red when primary action */
     color: var(
@@ -516,61 +530,42 @@
     pointer-events: none;
 }
 
-/* Progress circle animation */
-.progressCircle {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* No absolute positioning needed since button centers it */
+/* Pulsing play icon animation when running */
+.playIconRunning {
+    width: calc(var(--font-size-lg) * 1);
+    height: calc(var(--font-size-lg) * 1);
+    animation: playIconPulse 3s ease-in-out infinite;
+    color: var(--button-contained-default-text); /* Green fill when stopped */
+    fill: var(--color-secondary-main); /* Ensure the icon is filled */
 }
 
-.progressSvg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg); /* Start from top */
+.playIconStopped {
+    width: calc(var(--font-size-lg) * 1);
+    height: calc(var(--font-size-lg) * 1);
+
+    color: var(--button-contained-default-text); /* Green fill when stopped */
+    fill: var(--color-secondary-main); /* Ensure the icon is filled */
+    flex-shrink: 0;
 }
 
-.progressTrack {
-    stroke: var(--color-gray-medium);
-    opacity: 0.5;
-}
-
-.progressBar {
-    stroke: var(--button-contained-default-text);
-    stroke-dasharray: 56.5; /* Circumference of r=9 circle */
-    stroke-dashoffset: 14; /* 25% visible */
-    animation: progressSpin var(--animation-duration-long) linear infinite;
-}
-
-/* Progress circle animation keyframes */
-@keyframes progressSpin {
-    0% {
-        stroke-dashoffset: 56.5;
-    }
-    50% {
-        stroke-dashoffset: 14;
-    }
-    100% {
-        stroke-dashoffset: 56.5;
-    }
-}
-
-/* Respect motion preferences */
-@media (prefers-reduced-motion: reduce) {
-    .progressBar {
-        animation: progressPulse 2s ease-in-out infinite;
-    }
-}
-
-@keyframes progressPulse {
+/* Pulsing animation keyframes */
+@keyframes playIconPulse {
     0%,
     100% {
-        opacity: 0.5;
+        opacity: 1;
+        scale: 1;
     }
     50% {
+        scale: 1.2;
+    }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .playIconRunning {
+        animation: none;
         opacity: 1;
+        scale: 1;
     }
 }
 

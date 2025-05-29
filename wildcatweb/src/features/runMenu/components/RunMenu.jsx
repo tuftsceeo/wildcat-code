@@ -29,6 +29,7 @@ import {
     Timer,
     Plus,
     ChevronDown,
+    Play,
     Droplet,
     Snail,
     Turtle,
@@ -848,6 +849,9 @@ export const RunMenu = ({
             return null;
         }
 
+        // Check if step is configured for opacity styling
+        const isConfigured = isStepCompleted(stepIndex);
+
         // Determine if this is the first or last configurable step for border radius
         const isFirstStep = stepIndex === 0;
         const lastConfigurableIndex = slotData.length - 2; // -1 for zero-based, -1 for stop step
@@ -864,7 +868,7 @@ export const RunMenu = ({
                     ]
                 } ${isFirstStep ? styles.progressFirst : ""} ${
                     isLastConfigurableStep ? styles.progressLast : ""
-                }`}
+                } ${!isConfigured ? styles.progressUnconfigured : ""}`}
             />
         );
     };
@@ -939,10 +943,9 @@ export const RunMenu = ({
                     {renderProgressSegment(i)}
 
                     {/* Right side: Step button container */}
-
-                    {/* Wrap in DraggableStepButton if not in mission mode and not a special step */}
-                    {!isMissionMode && !isStopStep ? (
-                        <div className={styles.stepButtonContainer}>
+                    <div className={styles.stepButtonContainer}>
+                        {/* Wrap in DraggableStepButton if not in mission mode and not a special step */}
+                        {!isMissionMode && !isStopStep ? (
                             <DraggableStepButton
                                 index={i}
                                 moveStep={moveStep}
@@ -950,12 +953,10 @@ export const RunMenu = ({
                             >
                                 {stepButton}
                             </DraggableStepButton>
-                        </div>
-                    ) : (
-                        <div className={styles.stepButtonContainerStop}>
-                            {stepButton}
-                        </div>
-                    )}
+                        ) : (
+                            stepButton
+                        )}
+                    </div>
                 </div>
             );
 
@@ -1020,36 +1021,15 @@ export const RunMenu = ({
                         isRunning ? "Program is running" : "Run all steps"
                     }
                 >
-                    {/* Progress circle animation when running */}
-                    {isRunning && (
-                        <div
-                            className={styles.progressCircle}
-                            aria-hidden="true"
-                        >
-                            <svg
-                                className={styles.progressSvg}
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className={styles.progressTrack}
-                                    cx="12"
-                                    cy="12"
-                                    r="9"
-                                    fill="none"
-                                    strokeWidth="2"
-                                />
-                                <circle
-                                    className={styles.progressBar}
-                                    cx="12"
-                                    cy="12"
-                                    r="9"
-                                    fill="none"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-                        </div>
-                    )}
+                    {/* Play icon - different styles for running vs stopped */}
+                    <Play
+                        className={
+                            isRunning
+                                ? styles.playIconRunning
+                                : styles.playIconStopped
+                        }
+                        aria-hidden="true"
+                    />
 
                     {/* Button text - only show when stopped */}
                     <span
