@@ -410,9 +410,6 @@
     position: relative;
     min-height: 48px; /* Maintain minimum touch target */
     overflow: hidden; /* For smooth text transitions */
-}
-
-.playButton {
     background-color: var(--button-contained-default-bg);
     color: var(--button-contained-default-text);
 }
@@ -458,10 +455,6 @@
 }
 
 /* Stop button states */
-.stopButton {
-    color: var(--color-text);
-}
-
 .stopButtonStopped {
     flex: 1; /* Takes 1/3 of space when stopped */
     padding: var(--spacing-2); /* Reduced padding when small */
@@ -479,10 +472,6 @@
 .stopButtonRunning {
     flex: 3; /* Takes 2/3 of space when running */
     gap: var(--spacing-2); /* Normal gap when showing text + icon */
-    background-color: var(--color-error-low); /* Dark red when primary action */
-    color: var(
-        --color-error-contrast
-    ); /* Ensure good contrast on dark background */
 }
 
 .stopButton:hover:not(:disabled) {
