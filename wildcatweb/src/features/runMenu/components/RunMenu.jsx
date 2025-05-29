@@ -924,11 +924,11 @@ export const RunMenu = ({
                             <GripVertical className={styles.dragIcon} />
                         </div>
                     )}
-
-                    <span className={styles.stepName}>{name}</span>
                     {icon && (
                         <span className={styles.iconContainer}>{icon}</span>
                     )}
+                    <span className={styles.stepName}>{name}</span>
+
                     {cornerBadge}
                 </button>
             );

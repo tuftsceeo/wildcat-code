@@ -210,8 +210,8 @@
     border-radius: var(--radius-md);
     color: var(--button-default-text);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-lg);
-    padding: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-2);
     padding-left: 0;
     text-align: center;
     cursor: pointer;
@@ -221,7 +221,7 @@
     /* Layout for content */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: right;
 }
 
 .stepButton.active,
@@ -344,8 +344,8 @@
 /* Command icon styling - now on the right side */
 .commandIcon {
     color: var(--button-default-text);
-    width: calc(var(--font-size-lg) * 1.5);
-    height: calc(var(--font-size-lg) * 1.5);
+    width: calc(var(--font-size-lg) * 1.8);
+    height: calc(var(--font-size-lg) * 1.8);
 }
 
 .stepButton.current .commandIcon,
@@ -356,16 +356,21 @@
 /* Container for the command icon */
 .iconContainer {
     display: flex;
+    flex: 0;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    margin-left: var(--spacing-1);
+    /* padding-left: calc(var(--font-size-lg) * 1.8); */
 }
 
 /* Step name text */
 .stepName {
+    text-align: right;
     flex: 1;
-    text-align: center;
-    padding-left: 32px;
-    padding-right: var(--spacing-2);
+    align-self: flex-end;
+    margin-left: var(--spacing-2);
+    /* padding-left: 32px;
+    padding-right: var(--spacing-2); */
 }
 
 /* Disabled step styling */
@@ -521,16 +526,16 @@
 
 /* Pulsing play icon animation when running */
 .playIconRunning {
-    width: calc(var(--font-size-lg) * 1);
-    height: calc(var(--font-size-lg) * 1);
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
     animation: playIconPulse 3s ease-in-out infinite;
     color: var(--button-contained-default-text); /* Green fill when stopped */
     fill: var(--color-secondary-main); /* Ensure the icon is filled */
 }
 
 .playIconStopped {
-    width: calc(var(--font-size-lg) * 1);
-    height: calc(var(--font-size-lg) * 1);
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
 
     color: var(--button-contained-default-text); /* Green fill when stopped */
     fill: var(--color-secondary-main); /* Ensure the icon is filled */
@@ -560,8 +565,8 @@
 
 /* Icon sizing and styling */
 .stopIcon {
-    width: calc(var(--font-size-base) * 1.2);
-    height: calc(var(--font-size-base) * 1.2);
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
     flex-shrink: 0;
     stroke: var(--color-background); /* White outline/stroke */
     fill: var(--color-error-main); /* Red fill - matches stop step button */
@@ -647,17 +652,18 @@
 
 /* Drag handle styles */
 .dragHandle {
-    position: absolute;
     left: 0px;
-    top: 50%;
-    transform: translateY(-50%);
+    /* top: 50%;
+    transform: translateY(-50%); */
     display: flex;
     flex-direction: column;
     gap: 4px;
     opacity: 0.4;
     transition: opacity var(--transition-normal);
     cursor: grab;
-    z-index: 1;
+    position: relative;
+    margin: var(--spacing-1);
+    /* z-index: 1; */
 }
 
 .draggableContainer:hover .dragHandle {
@@ -670,10 +676,8 @@
 
 /* Drag icon styling */
 .dragIcon {
-    width: calc(
-        var(--font-size-base) * 1.5
-    ); /* Or use font-size-lg for larger */
-    height: calc(var(--font-size-base) * 1.5);
+    width: calc(var(--font-size-lg) * 1); /* Or use font-size-lg for larger */
+    height: calc(var(--font-size-lg) * 1);
     color: var(--button-default-text);
 }
 
