@@ -1,4 +1,5 @@
 /* RunMenu.module.css - Updated with Phase 2 progress channel visualization and execution state support */
+/* FIXED: Continuous progress channel with static segments separated from draggable step buttons */
 
 .menuBackground {
     height: 100%;
@@ -114,10 +115,11 @@
     display: none;
 }
 
+/* FIXED: Steps container - removed gap to make progress segments continuous */
 .stepsContainer {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: 0; /* Removed gap for continuous progress bar */
     width: 100%;
     margin: var(--spacing-1);
     padding: calc(
@@ -125,86 +127,76 @@
     ); /* Increased padding to prevent scaled borders from being cut off */
 }
 
-/* Phase 2: Step button container to accommodate progress channel */
-.stepButtonContainer {
+/* FIXED: Step wrapper - contains both progress segment and step button container */
+.stepWrapper {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
+    align-items: stretch; /* Stretch to match height */
     width: 100%;
     position: relative;
+    /* No margin, padding, transitions, or animations */
 }
 
-/* Phase 2: Progress channel styles */
-.progressChannel {
+/* FIXED: Progress segment - static, continuous vertical bar segments */
+.progressSegment {
     width: var(--spacing-2);
-    height: calc(
-        var(--font-size-lg) + var(--spacing-6)
-    ); /* Match button height */
-    border-radius: var(--radius-full);
     background-color: var(--color-gray-subtle);
-    position: relative;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-normal);
+    /* No border-radius by default - added by modifiers */
+    /* No transitions, animations, or interactive states */
+    /* Height will be determined by the step button height */
 }
 
-.progressIndicator {
-    width: calc(var(--spacing-2) - var(--border-width-thin));
-    height: calc(var(--spacing-2) - var(--border-width-thin));
-    border-radius: var(--radius-full);
-    background-color: var(--color-gray-medium);
-    transition: all var(--transition-normal);
+/* FIXED: Progress segment modifiers for continuous bar effect */
+.progressFirst {
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
 }
 
-/* Progress channel states */
+.progressLast {
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+}
+
+/* FIXED: Progress segment states - simplified, no inner indicators */
 .progressCompleted {
-    background-color: var(--color-secondary-low);
-}
-
-.progressCompleted .progressIndicator {
     background-color: var(--color-secondary-main);
-    transform: scale(1.2);
 }
 
 .progressCurrent {
-    background-color: var(--color-secondary-main);
-    box-shadow: 0 0 var(--spacing-2) rgba(var(--color-secondary-main-rgb), 0.4);
-}
-
-.progressCurrent .progressIndicator {
     background-color: var(--color-secondary-high);
-    transform: scale(1.4);
-    animation: progressPulse 2s ease-in-out infinite;
+    /* Subtle glow effect for current step */
+    box-shadow: -2px 0 var(--spacing-1)
+        rgba(var(--color-secondary-main-rgb), 0.3);
 }
 
 .progressUpcoming {
-    background-color: var(--color-gray-subtle);
-}
-
-.progressUpcoming .progressIndicator {
     background-color: var(--color-gray-medium);
 }
 
-/* Progress pulse animation */
-@keyframes progressPulse {
-    0%,
-    100% {
-        opacity: 0.8;
-        transform: scale(1.4);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.6);
-    }
+.progressIdle {
+    background-color: var(--color-gray-subtle);
 }
 
-/* Respect motion preferences */
-@media (prefers-reduced-motion: reduce) {
-    .progressCurrent .progressIndicator {
-        animation: none;
-    }
+/* FIXED: Step button container - now only contains the step button, no progress visualization */
+.stepButtonContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    padding: var(--spacing-1);
+    margin-left: var(
+        --spacing-2
+    ); /* Space between progress segment and button */
+}
+
+.stepButtonContainerStop {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    padding: var(--spacing-1);
+
+    padding-left: 0;
 }
 
 /* Step buttons styled with theme tokens - Updated for progress channel layout */
@@ -216,11 +208,11 @@
     font-family: var(--font-family-active);
     font-size: var(--font-size-lg);
     padding: var(--spacing-3);
+    padding-left: 0;
     text-align: center;
     cursor: pointer;
     width: 100%;
     position: relative;
-    flex: 1; /* Take remaining space after progress channel */
 
     /* Layout for content */
     display: flex;
@@ -265,6 +257,7 @@
     border-color: var(--button-default-border);
     color: var(--button-default-text);
 }
+
 /* === CORNER BADGE SYSTEM === */
 .cornerBadge {
     position: absolute;
@@ -344,30 +337,6 @@
     }
 }
 
-/* Executing step overlay - simple and temporary */
-.executingOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(var(--color-primary-main-rgb), 0.2);
-    border: 2px solid var(--color-primary-main);
-    border-radius: var(--radius-md);
-    z-index: 10;
-    pointer-events: none; /* Allow clicks to pass through */
-}
-
-.executingIndicator {
-    color: var(--color-primary-main);
-    font-size: calc(var(--font-size-lg) * 1.5);
-    font-weight: var(--font-weight-bold);
-    text-shadow: 0 0 4px var(--color-background);
-}
-
 /* Command icon styling - now on the right side */
 .commandIcon {
     color: var(--button-default-text);
@@ -394,12 +363,6 @@
     padding-left: 32px;
     padding-right: var(--spacing-2);
 }
-
-/* Inactive steps */
-/* .stepButton.configured:not(.current) {
-      border-color: var(--button-default-border);
-    color: var(--button-default-text);
-} */
 
 /* Disabled step styling */
 .stepButton:disabled {
@@ -701,7 +664,7 @@
 /* Drag handle styles */
 .dragHandle {
     position: absolute;
-    left: 8px;
+    left: 0px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
@@ -721,14 +684,23 @@
     cursor: grabbing;
 }
 
-/* Ensure the drag handle is visible in all button states */
-.stepButton.current .dragHandle .dot,
-.stepButton.active .dragHandle .dot {
-    background-color: var(--button-selected-text);
+/* Drag icon styling */
+.dragIcon {
+    width: calc(
+        var(--font-size-base) * 1.5
+    ); /* Or use font-size-lg for larger */
+    height: calc(var(--font-size-base) * 1.5);
+    color: var(--button-default-text);
 }
 
-.stepButton:disabled .dragHandle .dot {
-    background-color: var(--button-disabled-text);
+/* Ensure the drag handle is visible in all button states */
+.stepButton.current .dragHandle .dragIcon,
+.stepButton.active .dragHandle .dragIcon {
+    color: var(--button-selected-text);
+}
+
+.stepButton:disabled .dragHandle .dragIcon {
+    color: var(--button-disabled-text);
 }
 
 /* Add step button styles */

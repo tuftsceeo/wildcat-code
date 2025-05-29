@@ -2,9 +2,9 @@
  * @file RunMenu.jsx
  * @description Side panel for navigating and executing code, with support for
  * running individual slots or the complete program. Enhanced with Phase 2 progress
- * visualization including vertical progress channel and execution state coordination.
+ * visualization including continuous vertical progress channel and execution state coordination.
  * Updated to delegate execution control to App.js for modal coordination.
- * FIXED: Continuous progress channel, smaller step buttons, internal drag handles, removed executing overlay.
+ * FIXED: Continuous progress channel with static segments, separated from draggable step buttons.
  */
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
@@ -340,7 +340,7 @@ export const RunMenu = ({
     /**
      * Phase 2: Get progress state for a step based on execution status
      * @param {number} stepIndex - Index of the step to check
-     * @returns {string} Progress state: 'completed', 'current', 'upcoming', 'none'
+     * @returns {string} Progress state: 'completed', 'current', 'upcoming', 'idle'
      */
     const getProgressState = (stepIndex) => {
         const slot = slotData[stepIndex];
@@ -636,7 +636,7 @@ export const RunMenu = ({
                         />
                     </div>
                 );
-            case "viewing": // ADD THIS LINE
+            case "viewing":
                 return (
                     <div className={`${styles.cornerBadge} ${styles.viewing}`}>
                         <CircleCheckBig
@@ -834,42 +834,45 @@ export const RunMenu = ({
     };
 
     /**
-     * Phase 2: Render progress channel for a step - FIXED: Now persistent and continuous
+     * FIXED: Render progress segment for a step - continuous, static segments
      * @param {number} stepIndex - Index of the step
-     * @returns {JSX.Element|null} Progress channel element or null
+     * @returns {JSX.Element|null} Progress segment element or null
      */
-    const renderProgressChannel = (stepIndex) => {
+    const renderProgressSegment = (stepIndex) => {
         const progressState = getProgressState(stepIndex);
         const slot = slotData[stepIndex];
         const isStopStep = slot?.type === "special";
 
-        // No progress channel for stop step
+        // No progress segment for stop step
         if (isStopStep) {
             return null;
         }
 
-        // Always render progress channel (persistent)
+        // Determine if this is the first or last configurable step for border radius
+        const isFirstStep = stepIndex === 0;
+        const lastConfigurableIndex = slotData.length - 2; // -1 for zero-based, -1 for stop step
+        const isLastConfigurableStep = stepIndex === lastConfigurableIndex;
+
         return (
             <div
-                className={`${styles.progressChannel} ${
+                className={`${styles.progressSegment} ${
                     styles[
                         `progress${
                             progressState.charAt(0).toUpperCase() +
                             progressState.slice(1)
                         }`
                     ]
+                } ${isFirstStep ? styles.progressFirst : ""} ${
+                    isLastConfigurableStep ? styles.progressLast : ""
                 }`}
-            >
-                <div className={styles.progressIndicator} />
-            </div>
+            />
         );
     };
 
     /**
-     * Generate buttons for each step - Phase 2 enhanced with progress visualization
-     * FIXED: Removed executing overlay, smaller buttons, internal drag handles
+     * FIXED: Generate buttons for each step - now with separated progress segments and step containers
      *
-     * @returns {Array} Array of step button elements
+     * @returns {Array} Array of step wrapper elements
      */
     const renderStepButtons = () => {
         if (DEBUG_RUN_MENU) {
@@ -893,65 +896,70 @@ export const RunMenu = ({
             );
 
             const stepButton = (
+                <button
+                    className={`${styles.stepButton}
+                            ${hasDeviceWarning ? styles.warning : ""} 
+                            ${styles[visualState]} 
+                            ${isStopStep ? styles.stopStep : ""}
+                            ${completed ? styles.completed : ""}
+                            ${slot?.type ? styles.configured : ""} 
+                            ${i === currSlotNumber ? styles.current : ""}`}
+                    onClick={() => handleStepClick(i)}
+                    disabled={!accessible}
+                    aria-label={`${name}${
+                        i === currSlotNumber ? " (current)" : ""
+                    }${completed ? " (completed)" : ""}${
+                        visualState === "editing" ? " (editing)" : ""
+                    }${visualState === "viewing" ? " (viewing)" : ""}`}
+                    aria-current={i === currSlotNumber ? "step" : false}
+                    style={{ position: "relative" }}
+                >
+                    {/* Drag handle moved inside button for non-mission, non-special steps */}
+                    {!isMissionMode && !isStopStep && (
+                        <div className={styles.dragHandle}>
+                            <GripVertical className={styles.dragIcon} />
+                        </div>
+                    )}
+
+                    <span className={styles.stepName}>{name}</span>
+                    {icon && (
+                        <span className={styles.iconContainer}>{icon}</span>
+                    )}
+                    {cornerBadge}
+                </button>
+            );
+
+            // FIXED: New wrapper structure - progress segment + step container
+            const stepWrapper = (
                 <div
                     key={i}
-                    className={styles.stepButtonContainer}
+                    className={styles.stepWrapper}
                 >
-                    {/* Phase 2: Progress channel - always present for non-stop steps */}
-                    {renderProgressChannel(i)}
+                    {/* Left side: Static progress segment */}
+                    {renderProgressSegment(i)}
 
-                    <button
-                        className={`${styles.stepButton}
-                                ${hasDeviceWarning ? styles.warning : ""} 
-                                ${styles[visualState]} 
-                                ${isStopStep ? styles.stopStep : ""}
-                                ${completed ? styles.completed : ""}
-                                ${slot?.type ? styles.configured : ""} 
-                                ${i === currSlotNumber ? styles.current : ""}`}
-                        onClick={() => handleStepClick(i)}
-                        disabled={!accessible}
-                        aria-label={`${name}${
-                            i === currSlotNumber ? " (current)" : ""
-                        }${completed ? " (completed)" : ""}${
-                            visualState === "editing" ? " (editing)" : ""
-                        }${visualState === "viewing" ? " (viewing)" : ""}`}
-                        aria-current={i === currSlotNumber ? "step" : false}
-                        style={{ position: "relative" }}
-                    >
-                        {/* FIXED: Drag handle moved inside button for non-mission, non-special steps */}
-                        {!isMissionMode && !isStopStep && (
-                            <div className={styles.dragHandle}>
-                                <GripVertical className={styles.dragIcon} />
-                            </div>
-                        )}
+                    {/* Right side: Step button container */}
 
-                        <span className={styles.stepName}>{name}</span>
-                        {icon && (
-                            <span className={styles.iconContainer}>{icon}</span>
-                        )}
-                        {cornerBadge}
-
-                        {/* REMOVED: executingOverlay - progress channel handles this now */}
-                    </button>
+                    {/* Wrap in DraggableStepButton if not in mission mode and not a special step */}
+                    {!isMissionMode && !isStopStep ? (
+                        <div className={styles.stepButtonContainer}>
+                            <DraggableStepButton
+                                index={i}
+                                moveStep={moveStep}
+                                isMissionMode={isMissionMode}
+                            >
+                                {stepButton}
+                            </DraggableStepButton>
+                        </div>
+                    ) : (
+                        <div className={styles.stepButtonContainerStop}>
+                            {stepButton}
+                        </div>
+                    )}
                 </div>
             );
 
-            // Wrap the button in DraggableStepButton if not in mission mode and not a special step
-            if (!isMissionMode && !isStopStep) {
-                return (
-                    <DraggableStepButton
-                        key={i}
-                        index={i}
-                        moveStep={moveStep}
-                        isMissionMode={isMissionMode}
-                    >
-                        {stepButton}
-                    </DraggableStepButton>
-                );
-            } else {
-                // Non-draggable button (special steps or mission mode)
-                return stepButton;
-            }
+            return stepWrapper;
         });
     };
 

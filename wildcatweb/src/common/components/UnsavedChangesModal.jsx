@@ -10,10 +10,6 @@
 import React from "react";
 import Portal from "./Portal";
 import {
-    Save,
-    X,
-    Ban,
-    Edit3,
     Trash2,
     CircleArrowLeft,
     Pencil,
@@ -46,14 +42,14 @@ const getModalContent = (
                     targetStepNumber + 1
                 }?`,
                 primaryAction: {
-                    text: "Stop & Go",
+                    text: "Stop & View",
                     icon: <Square />,
                     description:
                         "Stop the program and navigate to the selected step",
                 },
                 secondaryActions: {
                     back: {
-                        text: "Back",
+                        text: "Cancel",
                         icon: <CircleArrowLeft />,
                         description: "Cancel and stay with current step",
                     },
@@ -70,7 +66,7 @@ const getModalContent = (
                 },
                 secondaryActions: {
                     back: {
-                        text: "Back",
+                        text: "Cancel",
                         icon: <CircleArrowLeft />,
                         description: "Cancel and continue watching program",
                     },
@@ -92,7 +88,7 @@ const getModalContent = (
                 },
                 secondaryActions: {
                     back: {
-                        text: "Back",
+                        text: "Cancel",
                         icon: <CircleArrowLeft />,
                         description: "Cancel and continue editing",
                     },
@@ -121,7 +117,7 @@ const getModalContent = (
                 },
                 secondaryActions: {
                     back: {
-                        text: "Back",
+                        text: "Cancel",
                         icon: <CircleArrowLeft />,
                         description: "Cancel and continue editing",
                     },
