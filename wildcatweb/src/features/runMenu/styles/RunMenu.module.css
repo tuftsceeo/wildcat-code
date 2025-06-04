@@ -1,4 +1,5 @@
-/* RunMenu.module.css - Revised with icons instead of checkmarks */
+/* RunMenu.module.css - Updated with Phase 2 progress channel visualization and execution state support */
+/* FIXED: Continuous progress channel with static segments separated from draggable step buttons */
 
 .menuBackground {
     height: 100%;
@@ -114,24 +115,104 @@
     display: none;
 }
 
+/* FIXED: Steps container - removed gap to make progress segments continuous */
 .stepsContainer {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: 0; /* Removed gap for continuous progress bar */
     width: 100%;
     margin: var(--spacing-1);
-    padding: 12px; /* Increased padding to prevent scaled borders from being cut off */
+    padding: calc(
+        1.25 * var(--spacing-4)
+    ); /* Increased padding to prevent scaled borders from being cut off */
 }
 
-/* Step buttons styled with theme tokens */
+/* FIXED: Step wrapper - contains both progress segment and step button container */
+.stepWrapper {
+    display: flex;
+    align-items: stretch; /* Stretch to match height */
+    width: 100%;
+    position: relative;
+    /* No margin, padding, transitions, or animations */
+}
+
+/* FIXED: Progress segment - static, continuous vertical bar segments */
+.progressSegment {
+    width: var(--spacing-2);
+    background-color: var(--color-gray-bold);
+    flex-shrink: 0;
+    /* No border-radius by default - added by modifiers */
+    /* No transitions, animations, or interactive states */
+    /* Height will be determined by the step button height */
+}
+
+/* FIXED: Progress segment modifiers for continuous bar effect */
+.progressFirst {
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+}
+
+.progressLast {
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+}
+
+/* FIXED: Progress segment states - simplified, no inner indicators */
+.progressCompleted {
+    background-color: var(--color-secondary-main);
+}
+
+.progressCurrent {
+    background-color: var(--color-secondary-high);
+    /* Subtle glow effect for current step */
+    box-shadow: -2px 0 var(--spacing-1)
+        rgba(var(--color-secondary-main-rgb), 0.3);
+}
+
+.progressUpcoming {
+    background-color: var(--color-gray-bold);
+}
+
+.progressIdle {
+    background-color: var(--color-gray-medium);
+}
+
+.progressUnconfigured {
+    opacity: 0.4;
+}
+
+/* FIXED: Step button container - now only contains the step button, no progress visualization */
+.stepButtonContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    padding: var(--spacing-1);
+    margin-left: var(
+        --spacing-2
+    ); /* Space between progress segment and button */
+}
+
+.stepButtonContainerStop {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    padding: var(--spacing-1);
+
+    padding-left: 0;
+}
+
+/* Step buttons styled with theme tokens - Updated for progress channel layout */
 .stepButton {
-    background-color: var(--button-default-bg);
+    background-color: var(--color-background);
     border: var(--border-width-standard) solid var(--button-default-border);
     border-radius: var(--radius-md);
     color: var(--button-default-text);
     font-family: var(--font-family-active);
-    font-size: var(--font-size-lg);
-    padding: var(--spacing-3);
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-2);
+    padding-left: 0;
     text-align: center;
     cursor: pointer;
     width: 100%;
@@ -140,7 +221,7 @@
     /* Layout for content */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: right;
 }
 
 .stepButton.active,
@@ -150,11 +231,121 @@
     background-color: var(--button-selected-bg);
 }
 
+/* Visual state styling for corner badges - minimal changes to border colors only */
+/* Empty state - uses default button styling (no additional rules needed) */
+
+/* Viewing state - secondary (green) border for current slot in view mode */
+.stepButton.viewing {
+    border-color: var(--button-selected-border);
+    color: var(--button-selected-text);
+    background-color: var(--color-background);
+}
+
+/* Editing state - secondary (green) border and secondary-low fill for current slot in edit mode */
+/* Warning styling when needed */
+.stepButton.warning {
+    /* border-color: var(--color-warning-main); */
+    background-color: rgba(var(--color-warning-main-rgb), 0.2);
+    /* color: var(--color-warning-high); */
+}
+
+.stepButton.editing {
+    border-color: var(--button-selected-border);
+    background-color: rgba(var(--color-secondary-main-rgb), 0.5);
+    color: var(--button-default-text);
+}
+
+/* Configured state - blue border for completed steps */
+/* .stepButton.configured:not(.current):not(.viewing):not(.editing):not(.warning) { */
+.stepButton.configured:not(.current):not(.viewing):not(.editing) {
+    border-color: var(--button-default-border);
+    color: var(--button-default-text);
+}
+
+/* === CORNER BADGE SYSTEM === */
+.cornerBadge {
+    position: absolute;
+    top: calc(-1 * var(--spacing-3));
+    right: calc(-1 * var(--spacing-3));
+    width: calc(1 * var(--spacing-8));
+    height: calc(1 * var(--spacing-8));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-width-standard) solid var(--color-background);
+    z-index: var(--z-index-raised);
+    pointer-events: none;
+}
+
+.cornerIcon {
+    color: var(--color-primary-contrast); /*var(--button-default-text);*/
+    width: calc(0.6 * var(--spacing-8));
+    height: calc(0.6 * var(--spacing-8));
+}
+
+.cornerBadge.editing {
+    background-color: var(--color-secondary-high);
+    color: var(--color-text);
+}
+
+.cornerBadge.configured {
+    background-color: var(--panel-bg);
+    color: var(--color-primary-high);
+}
+
+.cornerIcon.configured {
+    color: var(--color-primary-high);
+    width: calc(0.9 * var(--spacing-8));
+    height: calc(0.9 * var(--spacing-8));
+}
+
+.cornerBadge.viewing {
+    background-color: var(--panel-bg);
+    color: var(--color-secondary-high);
+}
+
+.cornerIcon.viewing {
+    color: var(--color-secondary-high);
+    width: calc(0.9 * var(--spacing-8));
+    height: calc(0.9 * var(--spacing-8));
+}
+
+.cornerBadge.warning {
+    background-color: var(--panel-bg);
+    color: var(--color-warning-high);
+    animation: error-shake 2s var(--transition-easing-accelerate) 5;
+}
+
+.cornerIcon.warning {
+    color: var(--color-warning-high);
+    width: calc(0.9 * var(--spacing-8));
+    height: calc(0.9 * var(--spacing-8));
+}
+
+@keyframes error-shake {
+    0% {
+        transform: translateX(0);
+    }
+    1% {
+        transform: translateX(-3px);
+    }
+    2% {
+        transform: translateX(3px);
+    }
+    3% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
 /* Command icon styling - now on the right side */
 .commandIcon {
     color: var(--button-default-text);
-    width: calc(var(--font-size-lg) * 1.5);
-    height: calc(var(--font-size-lg) * 1.5);
+    width: calc(var(--font-size-lg) * 1.8);
+    height: calc(var(--font-size-lg) * 1.8);
 }
 
 .stepButton.current .commandIcon,
@@ -165,27 +356,21 @@
 /* Container for the command icon */
 .iconContainer {
     display: flex;
+    flex: 0;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    margin-left: var(--spacing-1);
+    /* padding-left: calc(var(--font-size-lg) * 1.8); */
 }
 
 /* Step name text */
 .stepName {
+    text-align: right;
     flex: 1;
-    text-align: center;
-    padding-left: 32px;
-    padding-right: var(--spacing-2);
-}
-
-/* Inactive steps */
-.stepButton.configured:not(.current) {
-    border-color: var(--button-default-border);
-    color: var(--button-default-text);
-}
-
-/* Warning styling when needed */
-.stepButton.warning {
-    border-color: var(--color-warning-main);
+    align-self: flex-end;
+    margin-left: var(--spacing-2);
+    /* padding-left: 32px;
+    padding-right: var(--spacing-2); */
 }
 
 /* Disabled step styling */
@@ -198,38 +383,68 @@
     transform: var(--button-scale-default);
 }
 
-/* Play button - uses blue accent color */
-.playButton {
-    background-color: var(--button-contained-default-bg);
-    border: none;
-    border-radius: var(--radius-md);
-    color: var(--button-contained-default-text);
-    font-family: var(--font-family-active);
-    font-size: var(--font-size-base);
-    padding: var(--spacing-2) var(--spacing-4);
-    width: 100%;
-    max-width: 300px; /* Match step button width */
-    cursor: pointer;
-    margin: var(--spacing-4) auto; /* Match other button margins */
-    text-transform: uppercase;
-    align-self: center;
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-    transform-origin: center;
-    box-sizing: border-box; /* Ensure padding is included in width calculation */
-}
-
-/* Add a container for the play button to match stepsContainer */
-.playButtonContainer {
+/* Control buttons container - Updated for adaptive side-by-side layout */
+.controlButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-2);
     width: 100%;
     max-width: 300px;
     margin: 0 auto;
-    padding: 12px;
+    padding: var(--spacing-3);
     box-sizing: border-box;
+}
+
+/* Base button styles shared by both Play and Stop */
+.playButton,
+.stopButton {
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    transform-origin: center;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 48px; /* Maintain minimum touch target */
+    overflow: hidden; /* For smooth text transitions */
+    background-color: var(--button-contained-default-bg);
+    color: var(--button-contained-default-text);
+}
+
+.playButtonStopped {
+    flex: 3; /* Takes 2/3 of space when stopped */
+    gap: var(--spacing-2); /* Normal gap when showing text */
+}
+
+.playButtonRunning {
+    flex: 1; /* Takes 1/3 of space when running */
+    padding: var(--spacing-2); /* Reduced padding when small */
+    justify-content: center; /* Center the play icon */
+    align-items: center; /* Ensure vertical centering */
+    gap: 0; /* No gap when only showing icon */
+    background-color: var(--color-gray-medium); /* Subtle gray when secondary */
+    color: white; /* White text/icon color */
 }
 
 .playButton:hover:not(:disabled) {
     opacity: 0.9;
+    transform: var(--button-scale-hover);
+}
+
+/* Override hover state for running button to maintain green color */
+.playButtonRunning:hover:not(:disabled) {
+    background-color: var(
+        --color-secondary-main
+    ); /* Slightly brighter green on hover */
+    opacity: 1; /* Full opacity on hover */
     transform: var(--button-scale-hover);
 }
 
@@ -242,6 +457,120 @@
 
 .playButton:active {
     transform: var(--button-scale-active);
+}
+
+/* Stop button states */
+.stopButtonStopped {
+    flex: 1; /* Takes 1/3 of space when stopped */
+    padding: var(--spacing-2); /* Reduced padding when small */
+    justify-content: center; /* Ensure icon is centered when small */
+    align-items: center; /* Ensure vertical centering */
+    gap: 0; /* No gap when only showing icon */
+    background-color: var(--color-gray-medium); /* Subtle gray when secondary */
+}
+
+/* Ensure perfect centering for the stop icon when button is small */
+.stopButtonStopped .stopIcon {
+    margin: 0 auto; /* Extra centering insurance */
+}
+
+.stopButtonRunning {
+    flex: 3; /* Takes 2/3 of space when running */
+    gap: var(--spacing-2); /* Normal gap when showing text + icon */
+}
+
+.stopButton:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: var(--button-scale-hover);
+}
+
+.stopButtonStopped:hover:not(:disabled) {
+    background-color: var(--color-gray-bold);
+}
+
+.stopButtonRunning:hover:not(:disabled) {
+    background-color: var(
+        --color-error-main
+    ); /* Brighter red on hover when running */
+}
+
+.stopButton:disabled {
+    background-color: var(--color-gray-subtle);
+    color: var(--color-gray-medium);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.stopButton:active {
+    transform: var(--button-scale-active);
+}
+
+/* Button text visibility states */
+.buttonText {
+    transition: opacity var(--transition-normal);
+    white-space: nowrap;
+}
+
+.buttonTextVisible {
+    opacity: 1;
+    position: static;
+    visibility: visible;
+}
+
+.buttonTextHidden {
+    opacity: 0;
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Pulsing play icon animation when running */
+.playIconRunning {
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
+    animation: playIconPulse 3s ease-in-out infinite;
+    color: var(--button-contained-default-text); /* Green fill when stopped */
+    fill: var(--color-secondary-main); /* Ensure the icon is filled */
+}
+
+.playIconStopped {
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
+
+    color: var(--button-contained-default-text); /* Green fill when stopped */
+    fill: var(--color-secondary-main); /* Ensure the icon is filled */
+    flex-shrink: 0;
+}
+
+/* Pulsing animation keyframes */
+@keyframes playIconPulse {
+    0%,
+    100% {
+        opacity: 1;
+        scale: 1;
+    }
+    50% {
+        scale: 1.2;
+    }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .playIconRunning {
+        animation: none;
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+/* Icon sizing and styling */
+.stopIcon {
+    width: calc(var(--font-size-lg) * 1.5);
+    height: calc(var(--font-size-lg) * 1.5);
+    flex-shrink: 0;
+    stroke: var(--color-background); /* White outline/stroke */
+    fill: var(--color-error-main); /* Red fill - matches stop step button */
+    stroke-width: 2;
 }
 
 .errorIcon,
@@ -265,8 +594,8 @@
     }
 }
 
-/* In RunMenu.module.css */
-.stopButton {
+/* Stop step button - for the special "stop" step in the program sequence */
+.stepButton.stopStep {
     background-color: var(--button-default-bg);
     border: var(--border-width-standard) solid var(--color-error-low);
     color: var(--color-error-low);
@@ -275,12 +604,13 @@
     justify-content: space-between;
 }
 
-.stopButton.current {
+.stepButton.stopStep.current {
     border-color: var(--color-error-main);
     color: var(--color-error-main);
 }
 
-.stopIcon {
+/* Step icon styling */
+.stepIcon {
     color: currentColor;
 }
 
@@ -320,42 +650,20 @@
     transition: none; /* Remove transition during drop */
 }
 
-/* Only apply transitions and transforms when not being dragged
-.stepButton:not(.dragging) {
-    transition: transform var(--transition-normal);
-    transform: var(--button-scale-default);
-    transform-origin: center;
-}
-
-.stepButton:not(.dragging):hover:not(:disabled) {
-    transform: var(--button-scale-hover);
-}
-
-.stepButton:not(.dragging):active:not(:disabled) {
-    transform: var(--button-scale-active);
-}
-
-/* When dragging, disable all hover and active states */
-/* .stepButton.dragging,
-.stepButton.dragging:hover,
-.stepButton.dragging:active {
-    transform: none;
-    transition: none;
-}  */
-
 /* Drag handle styles */
 .dragHandle {
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 0px;
+    /* top: 50%;
+    transform: translateY(-50%); */
     display: flex;
     flex-direction: column;
     gap: 4px;
     opacity: 0.4;
     transition: opacity var(--transition-normal);
     cursor: grab;
-    z-index: 1;
+    position: relative;
+    margin: var(--spacing-1);
+    /* z-index: 1; */
 }
 
 .draggableContainer:hover .dragHandle {
@@ -366,14 +674,21 @@
     cursor: grabbing;
 }
 
-/* Ensure the drag handle is visible in all button states */
-.stepButton.current .dragHandle .dot,
-.stepButton.active .dragHandle .dot {
-    background-color: var(--button-selected-text);
+/* Drag icon styling */
+.dragIcon {
+    width: calc(var(--font-size-lg) * 1); /* Or use font-size-lg for larger */
+    height: calc(var(--font-size-lg) * 1);
+    color: var(--button-default-text);
 }
 
-.stepButton:disabled .dragHandle .dot {
-    background-color: var(--button-disabled-text);
+/* Ensure the drag handle is visible in all button states */
+.stepButton.current .dragHandle .dragIcon,
+.stepButton.active .dragHandle .dragIcon {
+    color: var(--button-selected-text);
+}
+
+.stepButton:disabled .dragHandle .dragIcon {
+    color: var(--button-disabled-text);
 }
 
 /* Add step button styles */

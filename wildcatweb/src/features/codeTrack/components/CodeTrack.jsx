@@ -11,7 +11,7 @@ import NavigationControls from "./NavigationControls";
 import InstructionVisualizer from "./InstructionVisualizer";
 import { generateDescription } from "../../../code-generation/InstructionDescriptionGenerator";
 import { useBLE } from "../../bluetooth/context/BLEContext";
-import { useMission } from '../../../context/MissionContext.js';
+import { useMission } from "../../../context/MissionContext.js";
 import {
     ClearSlotRequest,
     ClearSlotResponse,
@@ -47,7 +47,7 @@ const CodeTrack = ({
         dispatchTaskEvent,
         validateStepConfiguration,
         getCurrentTask,
-        currentMission
+        currentMission,
     } = useMission();
 
     // Get current task if we're in mission mode
@@ -64,7 +64,7 @@ const CodeTrack = ({
     const currentInstruction = slotData?.[currSlotNumber];
 
     // Check if current slot is the stop step
-    const isStopStep = currSlotNumber === missionSteps - 1;
+    const isStopStep = slotData[currSlotNumber]?.type === "special";
 
     const { ble, isConnected, portStates } = useBLE();
 
@@ -197,7 +197,9 @@ const CodeTrack = ({
 
             // Only complete the test execution task after successful BLE communication
             if (isMissionMode && currentTask?.type === "TEST_EXECUTION") {
-                console.log("CodeTrack: Test execution successful, completing task");
+                console.log(
+                    "CodeTrack: Test execution successful, completing task",
+                );
                 dispatchTaskEvent("TEST_EXECUTION", {
                     slotIndex: currSlotNumber,
                     instruction: currentInstruction,

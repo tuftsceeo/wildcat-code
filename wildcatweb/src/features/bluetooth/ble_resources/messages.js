@@ -515,7 +515,7 @@ class DeviceNotification {
                     values.deviceName = name;
 
                     this.messages.push({ name, values });
-                    console.log(`${name} : `, values);
+                    //console.log(`${name} : `, values);
                 } catch (e) {
                     console.error(`Failed to parse message ID: ${id}`, e);
                     break;

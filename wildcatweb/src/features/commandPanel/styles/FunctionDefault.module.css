@@ -1,4 +1,4 @@
-/* FunctionDefault.module.css - Refactored with design tokens */
+/* FunctionDefault.module.css - Refactored with design tokens and test button support */
 
 .hubTopBackground {
     position: relative;
@@ -334,4 +334,195 @@
     letter-spacing: var(--letter-spacing-wider);
     flex: 0.75;
     align-content: flex-start;
+}
+
+/* Confirmation system styles - Updated to support side-by-side buttons */
+.confirmationContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-4);
+    margin-top: var(--spacing-2);
+    gap: var(--spacing-3);
+}
+
+/* Base button styling for both test and confirm buttons */
+.confirmButton,
+.testButton {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    transition: all var(--transition-normal);
+    transform: var(--button-scale-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    position: relative; /* For corner badge positioning */
+}
+
+/* Confirm button (Done/Next) - primary action, takes more space */
+.confirmButton {
+    flex: 2;
+    min-width: calc(var(--spacing-20) * 1.5);
+}
+
+.confirmButtonEnabled {
+    background-color: var(--color-secondary-main);
+    color: var(--color-secondary-contrast);
+}
+
+.confirmButtonEnabled:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-secondary-high);
+}
+
+.confirmButtonEnabled:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.confirmButtonDisabled {
+    background-color: var(--color-gray-medium);
+    color: var(--color-background);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Test button - secondary action, smaller */
+.testButton {
+    flex: 1;
+    min-width: calc(var(--spacing-20));
+    background-color: var(--color-primary-high);
+    color: var(--color-primary-contrast);
+}
+
+.testButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-primary-high);
+}
+
+.testButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.testButton:disabled {
+    background-color: var(--color-gray-medium);
+    color: var(--color-background);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Test button with warning state */
+.testButtonWarning {
+    background-color: var(--color-primary-high);
+    color: var(--color-primary-contrast);
+    /* Keep normal coloring, warning is shown via corner badge */
+}
+
+/* Corner badge system - borrowed from RunMenu */
+.cornerBadge {
+    position: absolute;
+    top: calc(-1 * var(--spacing-2));
+    right: calc(-1 * var(--spacing-2));
+    width: calc(0.75 * var(--spacing-8));
+    height: calc(0.75 * var(--spacing-8));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-width-thin) solid var(--color-background);
+    z-index: var(--z-index-raised);
+    pointer-events: none;
+}
+
+.cornerIcon {
+    color: var(--color-primary-contrast);
+    width: calc(0.5 * var(--spacing-8));
+    height: calc(0.5 * var(--spacing-8));
+}
+
+.cornerBadge.warning {
+    background-color: var(--color-warning-main);
+    color: var(--color-warning-contrast);
+    animation: error-shake 2s var(--transition-easing-accelerate) 3;
+}
+
+.cornerIcon.warning {
+    color: var(--color-warning-contrast);
+    width: calc(0.6 * var(--spacing-8));
+    height: calc(0.6 * var(--spacing-8));
+}
+
+@keyframes error-shake {
+    0% {
+        transform: translateX(0);
+    }
+    2% {
+        transform: translateX(-2px);
+    }
+    4% {
+        transform: translateX(2px);
+    }
+    6% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Edit button styling - uses secondary (green) colors to match editing theme */
+.editButton {
+    background-color: var(--color-secondary-high);
+    color: var(--color-secondary-contrast);
+    border: var(--border-width-standard) solid var(--color-secondary-high);
+    flex: 1; /* Take full width when alone */
+}
+
+.editButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+    background-color: var(--color-secondary-high);
+    border-color: var(--color-secondary-high);
+    box-shadow: var(--glow-secondary);
+}
+
+.editButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.editButton:focus {
+    outline: var(--border-width-standard) solid var(--color-secondary-high);
+    outline-offset: var(--spacing-1);
+}
+
+/* Button icon styling - consistent with RunMenu pattern */
+.buttonIcon {
+    width: calc(var(--font-size-base) * 1.2);
+    height: calc(var(--font-size-base) * 1.2);
+    flex-shrink: 0;
+}
+
+/* Spacer elements to maintain layout when selectors are hidden in viewing mode */
+.typeSelectorSpacer {
+    /* Match the height and spacing of the actionSenseButtonGroup */
+    height: calc(
+        var(--font-size-base) + calc(var(--spacing-3) * 2) + 16px
+    ); /* padding + button height + container padding */
+    width: 100%;
+    margin-bottom: 0;
+    visibility: hidden; /* Takes up space but invisible */
+}
+
+.contentSpacer {
+    /* Match the typical height of the content container */
+    height: calc(var(--spacing-16) * 4); /* Approximate content area height */
+    width: 100%;
+    flex: 1;
+    visibility: hidden; /* Takes up space but invisible */
 }
