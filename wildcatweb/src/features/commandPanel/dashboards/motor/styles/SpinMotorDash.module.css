@@ -1,0 +1,398 @@
+/* SpinMotorDash.module.css - Shared styles for motor spin dashboard components */
+
+/* Main dashboard container */
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: var(--panel-bg);
+    border: var(--border-width-standard) solid var(--panel-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+}
+
+/* Dashboard title */
+.dashboardTitle {
+    text-align: center;
+    font-size: var(--font-size-base);
+    color: var(--color-secondary-high);
+    margin-bottom: var(--spacing-4);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    font-family: var(--font-family-active);
+}
+
+/* Prompt text */
+.promptText {
+    text-align: center;
+    font-size: var(--font-size-base);
+    color: var(--panel-text);
+    margin-bottom: var(--spacing-4);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-family-active);
+}
+
+/* Motors container */
+.motorsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+/* Individual motor dash */
+.motorDash {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-gray-faint);
+    border: var(--border-width-standard) solid var(--button-default-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-3);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    position: relative;
+    transform: var(--button-scale-default);
+}
+
+.motorDash:hover:not(.disconnected) {
+    transform: var(--button-scale-hover);
+}
+
+.motorDash:active:not(.disconnected) {
+    transform: var(--button-scale-active);
+}
+
+.motorDash.selected {
+    border-color: var(--button-selected-border);
+    background-color: rgba(0, 159, 24, 0.1);
+}
+
+.motorDash.disconnected {
+    border-color: rgba(var(--color-error-main-rgb), 0.15);
+    background-color: rgba(var(--color-error-main-rgb), 0.1);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.motorDash.disconnected:hover {
+    transform: var(--button-scale-default);
+}
+
+/* Selection toggle (checkbox-like circle) */
+.selectionToggle {
+    width: 24px;
+    height: 24px;
+    border: var(--border-width-thin) solid var(--color-gray-medium);
+    border-radius: 50%;
+    background-color: transparent;
+    margin-right: var(--spacing-3);
+    position: relative;
+    transition: all var(--transition-normal);
+    flex-shrink: 0;
+}
+
+.selectionToggle.selected {
+    background-color: var(--color-secondary-main);
+    border-color: var(--color-secondary-main);
+}
+
+.checkMark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-background);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+}
+
+/* Port label */
+.portLabel {
+    font-size: var(--font-size-base);
+    color: var(--panel-text);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    min-width: 80px;
+    margin-right: var(--spacing-3);
+    font-family: var(--font-family-active);
+    flex-shrink: 0;
+}
+
+/* Disconnected warning */
+.disconnectedWarning {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-error-main);
+    background-color: rgba(var(--color-error-main-rgb), 0.2);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-sm);
+    margin-right: var(--spacing-3);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-family-active);
+    flex-shrink: 0;
+}
+
+/* Speed controls container */
+.speedControls {
+    display: flex;
+    gap: var(--spacing-1);
+    margin-right: var(--spacing-4);
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+/* Speed buttons */
+.speedButton {
+    background-color: var(--color-gray-bold);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: var(--spacing-1);
+    min-width: 40px;
+    transform: var(--button-scale-default);
+}
+
+.speedButton:hover:not(:disabled) {
+    transform: var(--button-scale-hover);
+}
+
+.speedButton:active:not(:disabled) {
+    transform: var(--button-scale-active);
+}
+
+.speedButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.speedButton.selectedSpeed {
+    background-color: var(--color-secondary-main);
+    box-shadow: var(--glow-secondary);
+}
+
+/* Speed button heights */
+.speedButton.slow {
+    height: 30px;
+}
+
+.speedButton.medium {
+    height: 45px;
+}
+
+.speedButton.fast {
+    height: 60px;
+}
+
+/* Speed button content */
+.speedIconContainer {
+    margin-bottom: var(--spacing-1);
+}
+
+.speedIcon {
+    color: var(--color-background);
+    width: calc(var(--font-size-xs) * 1.2);
+    height: calc(var(--font-size-xs) * 1.2);
+}
+
+.speedLabel {
+    color: var(--color-background);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-family-active);
+}
+
+/* Stop indicator (for StopMotorDash) */
+.stopIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-1);
+    margin-right: var(--spacing-4);
+    flex-shrink: 0;
+}
+
+.stopIcon {
+    width: calc(var(--font-size-base) * 1.5);
+    height: calc(var(--font-size-base) * 1.5);
+}
+
+.stopLabel {
+    font-size: var(--font-size-xs);
+    color: var(--panel-text);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-family: var(--font-family-active);
+}
+
+/* Motor animation */
+.motorAnimation {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--color-gray-faint);
+    border: 3px solid var(--color-secondary-main);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.motorAnimation.unknown {
+    border-color: var(--color-gray-medium);
+    opacity: 0.6;
+}
+
+.motorAnimation.unknown .patternDot {
+    background-color: var(--color-gray-medium);
+}
+
+/* Motor rotor (spinning part) */
+.motorRotor {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+}
+
+/* Motor pattern container */
+.motorPattern {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* Pattern dots */
+.patternDot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-secondary-main);
+    border-radius: 50%;
+}
+
+.patternDot.top {
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.patternDot.right {
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+}
+
+.patternDot.bottom {
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.patternDot.left {
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+}
+
+.patternDot.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+}
+
+/* Spinning animations */
+.spinning {
+    animation: spin 2s linear infinite;
+}
+
+.spinningCounterclockwise {
+    animation: spinCounterclockwise 2s linear infinite;
+}
+
+@keyframes spin {
+    from { 
+        transform: rotate(0deg); 
+    }
+    to { 
+        transform: rotate(360deg); 
+    }
+}
+
+@keyframes spinCounterclockwise {
+    from { 
+        transform: rotate(0deg); 
+    }
+    to { 
+        transform: rotate(-360deg); 
+    }
+}
+
+/* Question mark overlay for unknown motor states */
+.questionMarkOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--panel-text);
+    font-weight: bold;
+    font-family: var(--font-family-active);
+    border-radius: 50%;
+}
+
+/* No connection/no motors states */
+.noConnection,
+.noMotors {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    justify-content: center;
+    padding: var(--spacing-4);
+    font-family: var(--font-family-active);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.noConnection {
+    background-color: rgba(var(--color-error-main-rgb), 0.1);
+    color: var(--color-error-main);
+    border: var(--border-width-standard) solid var(--color-error-main);
+}
+
+.noMotors {
+    background-color: rgba(var(--color-warning-main-rgb), 0.1);
+    color: var(--color-warning-main);
+    border: var(--border-width-standard) solid var(--color-warning-main);
+}
+
+/* Utility classes */
+.flippedHorizontally {
+    transform: scaleX(-1);
+}
+
+/* Hidden class for progressive disclosure */
+.hidden {
+    display: none;
+}
