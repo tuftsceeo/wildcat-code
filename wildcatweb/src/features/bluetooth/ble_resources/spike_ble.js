@@ -20,8 +20,6 @@
  * Author:  J.Cross Tufts CEEO
  */
 
-// THIS IS A WORK IN PROGRESS - UNTESTED
-
 // Import necessary modules from messages.js, crc.js, and cobs.js
 import * as messages from "./messages"; // Assuming you have implemented messages.js with message classes
 import { crc } from "./crc";
