@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#e5e5e5;}
+  input[type=number]{font-family:'Kode Mono',monospace;}
+  /* One-shot rejection cue: a flat solid ring (no blur = no glow) plus a brief
+     shake, reusing the existing app's error-shake pattern. No color-cycling ink,
+     no animated dashes - just a momentary shake and a solid outline. */
+  @keyframes reject-shake {
+    0%   { transform:translateX(0); box-shadow:0 0 0 0 rgba(0,0,0,0); }
+    15%  { transform:translateX(-4px); }
+    30%  { transform:translateX(4px); box-shadow:0 0 0 3px rgba(217,72,58,.55); }
+    45%  { transform:translateX(-3px); }
+    60%  { transform:translateX(3px); box-shadow:0 0 0 3px rgba(217,72,58,.32); }
+    75%  { transform:translateX(-1px); }
+    100% { transform:translateX(0); box-shadow:0 0 0 0 rgba(0,0,0,0); }
+  }
+</style>
+</helmet>
+<div style="width:100%;min-height:100vh;background:#e5e5e5;display:flex;align-items:flex-start;justify-content:center;padding:20px;box-sizing:border-box;font-family:'Kode Mono',monospace;">
+<sc-if value="{{ready}}" hint-placeholder-val="{{false}}">
+<div style="position:relative;width:1280px;height:1068.23px;flex:none;{{scaleStyle}}">
+  <div style="position:absolute;inset:0;background:#fff;overflow:visible;">
+    <div style="position:absolute;left:0;top:0;width:1280px;height:56.99px;background:#4d4d4d;"></div>
+    <sc-for list="{{boardPieces}}" as="p" hint-placeholder-count="40">
+      <div style="{{p.style}}" draggable="{{p.draggable}}" onDragStart="{{p.onDragStart}}" onDragEnd="{{p.onDragEnd}}" onClick="{{p.onClick}}">
+        <sc-if value="{{p.isText}}"><div style="{{p.textStyle}}">{{p.textContent}}</div></sc-if>
+        <sc-for list="{{p.layers}}" as="ly">
+          <div style="{{ly.style}}">
+            <sc-if value="{{ly.isPlaceholder}}"><div style="{{ly.phStyle}}">{{ly.label}}</div></sc-if>
+            <sc-if value="{{ly.isSvg}}"><div style="width:100%;height:100%" dangerouslySetInnerHTML="{{ly.html}}"></div></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <sc-for list="{{steps}}" as="st" hint-placeholder-count="6">
+      <div style="{{st.style}}" onDragOver="{{st.onDragOver}}" onDrop="{{st.onDrop}}">
+        <sc-if value="{{st.isEmpty}}"><div style="{{st.emptyStyle}}"></div></sc-if>
+        <sc-for list="{{st.layers}}" as="ly">
+          <div style="{{ly.style}}">
+            <sc-if value="{{ly.isPlaceholder}}"><div style="{{ly.phStyle}}">{{ly.label}}</div></sc-if>
+            <sc-if value="{{ly.isSvg}}"><div style="width:100%;height:100%" dangerouslySetInnerHTML="{{ly.html}}"></div></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{st.hasNumber}}"><input type="number" min="1" max="99" value="{{st.numberValue}}" onChange="{{st.onNumberChange}}" style="{{st.numberStyle}}"/></sc-if>
+        <sc-if value="{{st.hasContent}}"><div draggable="{{true}}" onDragStart="{{st.onDragStartRemove}}" onDragEnd="{{st.onDragEndRemove}}" style="{{st.overlayStyle}}"></div></sc-if>
+      </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{isBluetoothOpen}}">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;">
+      <div style="width:360px;background:#fff;border-radius:16px;border:3px solid #4d4d4d;padding:28px;box-sizing:border-box;position:relative;">
+        <div onClick="{{closeBluetooth}}" style="position:absolute;top:10px;right:16px;cursor:pointer;font-size:22px;color:#4d4d4d;">×</div>
+        <div style="font-weight:700;font-size:20px;letter-spacing:.05em;margin-bottom:20px;">BLUETOOTH</div>
+        <sc-if value="{{bt.isIdle}}">
+          <div style="font-size:14px;color:#555;margin-bottom:20px;font-family:system-ui,sans-serif;">Not connected.</div>
+          <div onClick="{{bt.onSearch}}" style="{{btnStyle}}">Search</div>
+        </sc-if>
+        <sc-if value="{{bt.isSearching}}"><div style="font-size:14px;color:#555;font-family:system-ui,sans-serif;">Searching…</div></sc-if>
+        <sc-if value="{{bt.isList}}">
+          <sc-for list="{{bt.devices}}" as="d" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;">
+              <span style="font-size:14px;font-family:system-ui,sans-serif;">{{d.name}}</span>
+              <div onClick="{{d.onConnect}}" style="{{btnStyleSmall}}">Connect</div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{bt.isConnecting}}"><div style="font-size:14px;color:#555;font-family:system-ui,sans-serif;">Connecting to {{bt.connectedName}}…</div></sc-if>
+        <sc-if value="{{bt.isConnected}}">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:#4ba450;flex:none;"></div>
+            <div style="font-size:14px;font-family:system-ui,sans-serif;">Connected to {{bt.connectedName}}</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{isSettingsOpen}}">
+  <div style="position:fixed;inset:0;background:#fff;overflow:auto;font-family:'Kode Mono',monospace;z-index:1000;">
+    <div style="max-width:1100px;margin:0 auto;padding:32px 32px 80px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-weight:700;font-size:24px;letter-spacing:.06em;">TEACHER SETTINGS</div>
+        <div onClick="{{closeSettings}}" style="cursor:pointer;font-size:15px;color:#4d4d4d;border:2px solid #4d4d4d;border-radius:8px;padding:6px 14px;font-family:system-ui,sans-serif;">Done</div>
+      </div>
+      <div style="font-size:13px;color:#777;margin-bottom:28px;font-family:system-ui,sans-serif;">Photo, AAC and App have no artwork yet — shown disabled below.</div>
+      <sc-for list="{{settingsRows}}" as="row" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;gap:28px;padding:20px 0;border-bottom:1px solid #eee;">
+          <div style="width:150px;flex:none;font-size:15px;font-weight:700;font-family:system-ui,sans-serif;">{{row.label}}</div>
+          <div style="position:relative;width:{{row.previewW}}px;height:{{row.previewH}}px;flex:none;">
+            <sc-for list="{{row.previewLayers}}" as="ly">
+              <div style="{{ly.style}}">
+                <sc-if value="{{ly.isPlaceholder}}"><div style="{{ly.phStyle}}">{{ly.label}}</div></sc-if>
+                <sc-if value="{{ly.isSvg}}"><div style="width:100%;height:100%" dangerouslySetInnerHTML="{{ly.html}}"></div></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:6px;flex:none;">
+            <sc-for list="{{row.options}}" as="opt">
+              <div onClick="{{opt.onClick}}" style="{{opt.style}}">{{opt.label}}</div>
+            </sc-for>
+          </div>
+          <div style="flex:1;"></div>
+          <sc-if value="{{row.hasHide}}">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-family:system-ui,sans-serif;cursor:pointer;flex:none;">
+              <input type="checkbox" checked="{{row.hidden}}" onChange="{{row.onToggleHide}}"/>
+              Hidden
+            </label>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      screen: 'board',
+      levels: { direction:'paper', speed:'paper', color:'paper', button:'paper', time:'paper', 'sensor-identity':'paper', controls:'paper' },
+      hidden: { direction:false, speed:false, color:false, button:false, time:false, 'sensor-identity':false },
+      steps: [null,null,null,null,null,null],
+      running:false,
+      activeIndex:-1,
+      dragging:null,
+      rejectIndex:null,
+      justPlaced:null,
+      bt: { state:'idle', devices:[], connectedName:null },
+      scale: 1,
+      assets: null
+    };
+    this.dragPayload = null;
+    this.G = {
+      BT:{x:1185.65,y:7.52,w:19.60,h:40.07},
+      GEAR:{x:1231.02,y:8.58,w:34.31,h:37.90},
+      DIV_X:[348.53,714.32], DIV_Y:152, DIV_W:27.68, DIV_H:735.69,
+      STEP_X:75.15, STEP_Y0:159.78, STEP_DY:133.4,
+      GO:{x:61.34,y:954.03,w:179.53,h:96.83},
+      STOP:{x:255.70,y:954.03,w:100.33,h:96.83},
+      ACTDIR_X:421.31, ACTDIR_Y0:151.76, ACTDIR_DY:136.6,
+      ACTSPD_X:425.45, ACTSPD_Y0:581.07, ACTSPD_DY:109.6, ACT_GAP:32.24,
+      SENSE_X:776.09, SENSE_SHIFT:100,
+      COLOR_Y0:144.95, COLOR_DY:117.81, COLOR_DX:150,
+      SENSE_GAP1:94.9, SENSE_GAP2:97.85,
+      WIDE_W:248.10, WIDE_H:123.87, SQ_W:113.62, SQ_H:97.23
+    };
+    this.openSettings = () => this.setState({ screen:'settings' });
+    this.closeSettings = () => this.setState({ screen:'board' });
+    this.openBluetooth = () => this.setState({ screen:'bluetooth', bt:{ state:'idle', devices:[], connectedName:null } });
+    this.closeBluetooth = () => this.setState({ screen:'board' });
+    this.handleGo = () => {
+      if (this.state.running) return;
+      const order = [];
+      this.state.steps.forEach((s,i)=>{ if(s) order.push(i); });
+      if (!order.length) return;
+      this.setState({ running:true });
+      let k = 0;
+      const step = () => {
+        if (k >= order.length) { this.setState({ running:false, activeIndex:-1 }); return; }
+        this.setState({ activeIndex: order[k] });
+        this._goTimer = setTimeout(()=>{ k++; step(); }, 1000);
+      };
+      step();
+    };
+    this.handleStop = () => {
+      clearTimeout(this._goTimer);
+      this.setState({ running:false, activeIndex:-1 });
+    };
+    this.flashPlaced = (index) => {
+      this.setState({ justPlaced: index });
+      clearTimeout(this._placedTimer);
+      this._placedTimer = setTimeout(() => this.setState({ justPlaced: null }), 180);
+    };
+    this.flashReject = (index) => {
+      this.setState({ rejectIndex: index });
+      clearTimeout(this._rejectTimer);
+      this._rejectTimer = setTimeout(() => this.setState({ rejectIndex: null }), 320);
+    };
+    this.handleDropOnStep = (index) => {
+      const p = this.dragPayload;
+      this.dragPayload = null;
+      this.setState({ dragging: null });
+      if (!p) return;
+      const steps = this.state.steps.slice();
+      if (p.kind === 'slot') {
+        if (p.fromIndex !== index) {
+          steps[index] = steps[p.fromIndex]; steps[p.fromIndex] = null;
+          this.setState({ steps });
+          this.flashPlaced(index);
+        }
+        return;
+      }
+      const existing = steps[index];
+      if (p.cls === 'direction') {
+        steps[index] = p.role === 'stop-motor' ? { type:'stop' } : { type:'motor', direction:p.role, speed:null };
+      } else if (p.cls === 'speed') {
+        if (existing && existing.type === 'motor') {
+          steps[index] = { ...existing, speed: p.role };
+        } else {
+          this.flashReject(index);
+          return;
+        }
+      } else if (p.cls === 'time') {
+        steps[index] = { type:'time', value: 1 };
+      } else if (p.cls === 'color' || p.cls === 'button') {
+        steps[index] = { type:'sensor', sensor: p.cls, role: p.role };
+      }
+      this.setState({ steps });
+      this.flashPlaced(index);
+    };
+  }
+
+  componentDidMount(){
+    import('./assets.js').then(m => this.setState({ assets: m }));
+    this.updateScale = () => {
+      const availW = window.innerWidth - 40, availH = window.innerHeight - 40;
+      const s = Math.min(availW/1280, availH/1068.23, 1);
+      this.setState({ scale: s });
+    };
+    this.updateScale();
+    window.addEventListener('resize', this.updateScale);
+  }
+  componentWillUnmount(){
+    window.removeEventListener('resize', this.updateScale);
+    clearTimeout(this._goTimer);
+    clearTimeout(this._placedTimer);
+    clearTimeout(this._rejectTimer);
+  }
+
+  // --- Physicality: lift/shadow/tilt drag image, valid-target and origin cues ---
+  beginDrag(e, payload, effect){
+    this.dragPayload = payload;
+    this.setState({ dragging: payload });
+    e.dataTransfer.setData('text/plain', 'x');
+    e.dataTransfer.effectAllowed = effect;
+    const src = e.currentTarget;
+    const rect = src.getBoundingClientRect();
+    const clone = src.cloneNode(true);
+    clone.style.position = 'fixed';
+    clone.style.top = '-3000px';
+    clone.style.left = '-3000px';
+    clone.style.margin = '0';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    // Lifted-off-the-board look: slight cant, slight size increase, a real shadow.
+    // At rest, tiles are flat (no shadow) - the shadow only appears once picked up.
+    clone.style.transform = 'rotate(-3deg) scale(1.06)';
+    clone.style.boxShadow = '0 14px 22px rgba(0,0,0,.28)';
+    clone.style.pointerEvents = 'none';
+    document.body.appendChild(clone);
+    const offX = e.clientX - rect.left, offY = e.clientY - rect.top;
+    e.dataTransfer.setDragImage(clone, offX, offY);
+    setTimeout(() => { if (clone.parentNode) clone.parentNode.removeChild(clone); }, 0);
+  }
+  endDrag(){
+    this.setState({ dragging: null });
+  }
+  isValidTarget(index){
+    const d = this.state.dragging;
+    if (!d) return false;
+    if (d.kind === 'slot') return d.fromIndex !== index;
+    if (d.cls === 'speed') { const s = this.state.steps[index]; return !!(s && s.type === 'motor'); }
+    return true;
+  }
+  isOriginDimmed(index){
+    const d = this.state.dragging;
+    return !!(d && d.kind === 'slot' && d.fromIndex === index);
+  }
+
+  getGlyph(cls, role, level){
+    const A = this.state.assets;
+    const entry = A.GLYPHS[cls][role];
+    if (cls === 'direction') {
+      if (level === 'paper' || level === 'paper-color') return { w:entry[level].w, h:entry[level].h, svg:entry[level].svg };
+      return { w:entry.paper.w, h:entry.paper.h, svg:null };
+    }
+    if (level === 'paper' || level === 'paper-color') return { w:entry.w, h:entry.h, svg:entry.svg };
+    return { w:entry.w, h:entry.h, svg:null };
+  }
+  anchorFor(cls, role, gw, gh, cw, ch){
+    if (cls === 'direction') return { left:8.5, top:(ch-gh)/2 };
+    if (cls === 'speed') { const nudge = role === 'medium' ? 4.13 : 0; return { left:(cw-gw)/2+nudge, top: ch-4.5-gh }; }
+    return { left:(cw-gw)/2, top:(ch-gh)/2 };
+  }
+  ls(dx,dy,w,h){ return `position:absolute;left:${dx}px;top:${dy}px;width:${w}px;height:${h}px;`; }
+  placeholder(isDark){
+    return `width:100%;height:100%;box-sizing:border-box;border:2px solid ${isDark?'#f2f2f2':'#999'};border-radius:8px;background:${isDark?'transparent':'#fafafa'};display:flex;align-items:center;justify-content:center;font:11px/1.2 monospace;color:${isDark?'#f2f2f2':'#777'};text-align:center;padding:4px;`;
+  }
+  cardLayer(kind, dx=0, dy=0){
+    const A = this.state.assets;
+    if (kind === 'wide') return { style:this.ls(dx-1.5,dy-1.5,251.1,126.87), isSvg:true, isPlaceholder:false, html:{__html:A.CARD_WIDE} };
+    return { style:this.ls(dx-1.5,dy-1.5,116.62,100.23), isSvg:true, isPlaceholder:false, html:{__html:A.CARD_SQUARE} };
+  }
+  glyphLayer(cls, role, level, cw, ch, dx=0, dy=0, isDark=false){
+    const g = this.getGlyph(cls, role, level);
+    const a = this.anchorFor(cls, role, g.w, g.h, cw, ch);
+    if (g.svg) return { style:this.ls(dx+a.left, dy+a.top, g.w, g.h), isSvg:true, isPlaceholder:false, html:{__html:g.svg} };
+    return { style:this.ls(dx+a.left, dy+a.top, g.w, g.h), isSvg:false, isPlaceholder:true, label:level, phStyle:this.placeholder(isDark) };
+  }
+  squareTile(cls, role, level, dx=0, dy=0){
+    return [ this.cardLayer('square', dx, dy), this.glyphLayer(cls, role, level, this.G.SQ_W, this.G.SQ_H, dx, dy) ];
+  }
+  bareGlyph(cls, role, level, dx=0, dy=0){
+    return this.glyphLayer(cls, role, level, this.G.WIDE_W, this.G.WIDE_H, dx, dy);
+  }
+  standaloneLayers(key, level, dx=0, dy=0){
+    const A = this.state.assets; const std = A.STANDALONE[key];
+    if (key === 'go' || key === 'stop' || key === 'bluetooth' || key === 'settings') {
+      const dark = key === 'bluetooth' || key === 'settings';
+      if (level === 'paper' || level === 'paper-color') return [{ style:this.ls(dx,dy,std.w,std.h), isSvg:true, isPlaceholder:false, html:{__html:std.svg} }];
+      return [{ style:this.ls(dx,dy,std.w,std.h), isSvg:false, isPlaceholder:true, label:level, phStyle:this.placeholder(dark) }];
+    }
+    if (level === 'paper') return [];
+    if (level === 'paper-color') return [{ style:this.ls(dx,dy,std.w,std.h), isSvg:true, isPlaceholder:false, html:{__html:std.svg} }];
+    return [{ style:this.ls(dx,dy,std.w,std.h), isSvg:false, isPlaceholder:true, label:level, phStyle:this.placeholder(false) }];
+  }
+
+  piece(x,y,w,h,layers,opts={}){
+    // A card only reads as "grabbable" while at rest if the cursor says so - static
+    // pieces (dividers, header text, empty slots) get no cursor hint at all.
+    const cursor = opts.draggable ? 'cursor:grab;' : '';
+    return { style:this.ls(x,y,w,h)+cursor, layers, isText:false, textContent:'', textStyle:'', draggable:!!opts.draggable, onDragStart:opts.onDragStart||null, onDragEnd:opts.onDragEnd||null, onClick:opts.onClick||null };
+  }
+  textPiece(x,y,w,h,content,extra){
+    return { style:this.ls(x,y,w,h)+'display:flex;align-items:center;justify-content:center;', layers:[], isText:true, textContent:content, textStyle:`font-family:'Kode Mono',monospace;font-weight:700;color:#000;white-space:nowrap;${extra}`, draggable:false, onDragStart:null, onClick:null };
+  }
+
+  buildStep(step, index){
+    const G = this.G;
+    const x = G.STEP_X, y = G.STEP_Y0 + index*G.STEP_DY;
+    const isActive = this.state.activeIndex === index;
+    const isValid = this.isValidTarget(index);
+    const isDimmed = this.isOriginDimmed(index);
+    const isRejecting = this.state.rejectIndex === index;
+    const isJustPlaced = this.state.justPlaced === index;
+    // Always-present transition so a state change (e.g. justPlaced -> normal) eases
+    // out instead of snapping - this is the "settle" cue, deliberately NOT a bounce.
+    let extra = 'transition:box-shadow .15s ease-out, transform .15s ease-out, opacity .12s ease-out;';
+    if (isActive) extra += 'box-shadow:0 0 0 4px #4ba450;border-radius:12px;';
+    else if (isJustPlaced) extra += 'box-shadow:0 8px 14px rgba(0,0,0,.18);transform:scale(1.02);border-radius:12px;';
+    else if (isValid && step) extra += 'box-shadow:0 0 0 3px rgba(77,77,77,.28);border-radius:12px;';
+    if (isDimmed) extra += 'opacity:.35;';
+    if (isRejecting) extra += 'animation:reject-shake .32s ease;';
+    const baseStyle = this.ls(x,y,G.WIDE_W,G.WIDE_H) + extra;
+    const onDragOver = (e)=>e.preventDefault();
+    const onDrop = (e)=>{ e.preventDefault(); this.handleDropOnStep(index); };
+    if (!step) {
+      // Static fill change only - no motion, no color cycling, no dashes. The
+      // background itself looks selectable; the ink (there is none here yet) never moves.
+      const emptyBg = isValid ? '#e6e6e6' : '#f2f2f2';
+      const emptyBorder = isValid ? '#c9c9c9' : '#e0e0e0';
+      return { style:baseStyle, isEmpty:true, hasContent:false, layers:[], hasNumber:false,
+        emptyStyle:`width:100%;height:100%;background:${emptyBg};border:1px solid ${emptyBorder};border-radius:12px;box-sizing:border-box;transition:background-color .12s ease-out,border-color .12s ease-out;`,
+        onDragOver, onDrop };
+    }
+    const lvl = (cls)=>this.state.levels[cls];
+    let layers = [ this.cardLayer('wide') ];
+    let hasNumber=false, numberValue=null, hasRight=false;
+    if (step.type === 'motor') {
+      layers.push(this.bareGlyph('direction', step.direction, lvl('direction')));
+      if (step.speed) { layers = layers.concat(this.squareTile('speed', step.speed, lvl('speed'), G.WIDE_W-13-G.SQ_W, (G.WIDE_H-G.SQ_H)/2)); hasRight=true; }
+    } else if (step.type === 'stop') {
+      layers.push(this.bareGlyph('direction', 'stop-motor', lvl('direction')));
+    } else if (step.type === 'time') {
+      layers = layers.concat(this.squareTile('time', 'timer', lvl('time'), 13, (G.WIDE_H-G.SQ_H)/2));
+      hasNumber = true; numberValue = step.value; hasRight = true;
+    } else if (step.type === 'sensor') {
+      const idKey = step.sensor === 'color' ? 'colorSensor' : 'buttonDevice';
+      const idSize = idKey === 'colorSensor' ? {w:85.52,h:85.52} : {w:76.43,h:76.42};
+      layers = layers.concat(this.standaloneLayers(idKey, lvl('sensor-identity'), 13, (G.WIDE_H-idSize.h)/2));
+      layers = layers.concat(this.squareTile(step.sensor, step.role, lvl(step.sensor), G.WIDE_W-13-G.SQ_W, (G.WIDE_H-G.SQ_H)/2));
+      hasRight = true;
+    }
+    const numberStyle = `position:absolute;left:139.62px;top:${(G.WIDE_H-48)/2}px;width:95.48px;height:48px;font-size:26px;text-align:center;border:2px solid #4d4d4d;border-radius:8px;box-sizing:border-box;`;
+    const onNumberChange = (e)=>{ const steps=this.state.steps.slice(); steps[index] = { ...steps[index], value:e.target.value }; this.setState({ steps }); };
+    const overlayW = hasRight ? 115 : G.WIDE_W;
+    const overlayStyle = `position:absolute;left:0;top:0;width:${overlayW}px;height:${G.WIDE_H}px;cursor:grab;`;
+    const onDragStartRemove = (e)=> this.beginDrag(e, { kind:'slot', fromIndex:index }, 'move');
+    const onDragEndRemove = (e)=>{
+      if (e.dataTransfer.dropEffect === 'none') { const steps=this.state.steps.slice(); steps[index]=null; this.setState({ steps }); }
+      this.dragPayload=null;
+      this.setState({ dragging:null });
+    };
+    return { style:baseStyle, isEmpty:false, hasContent:true, layers, hasNumber, numberValue, numberStyle, onNumberChange, overlayStyle, onDragStartRemove, onDragEndRemove, onDragOver, onDrop };
+  }
+
+  buildBoardPieces(){
+    const G = this.G, A = this.state.assets, lv = this.state.levels, hid = this.state.hidden;
+    const pieces = [];
+    G.DIV_X.forEach((dx,i)=> pieces.push(this.piece(dx, G.DIV_Y, G.DIV_W, G.DIV_H, [{ style:this.ls(0,0,G.DIV_W,G.DIV_H), isSvg:true, isPlaceholder:false, html:{__html:A.DIVIDER.svg} }])));
+    pieces.push(this.piece(G.BT.x,G.BT.y,G.BT.w,G.BT.h, this.standaloneLayers('bluetooth', lv.controls), { onClick:this.openBluetooth }));
+    pieces.push(this.piece(G.GEAR.x,G.GEAR.y,G.GEAR.w,G.GEAR.h, this.standaloneLayers('settings', lv.controls), { onClick:this.openSettings }));
+    pieces.push(this.piece(G.GO.x,G.GO.y,G.GO.w,G.GO.h, this.standaloneLayers('go', lv.controls), { onClick:this.handleGo }));
+    pieces.push(this.piece(G.STOP.x,G.STOP.y,G.STOP.w,G.STOP.h, this.standaloneLayers('stop', lv.controls), { onClick:this.handleStop }));
+
+    let ay = G.ACTDIR_Y0;
+    if (!hid.direction) {
+      ['forward','backward','stop-motor'].forEach((role,i)=>{
+        const y = ay + i*G.ACTDIR_DY;
+        pieces.push(this.piece(G.ACTDIR_X, y, G.WIDE_W, G.WIDE_H, [this.cardLayer('wide'), this.glyphLayer('direction',role,lv.direction,G.WIDE_W,G.WIDE_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'direction',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
+      });
+      ay += 2*G.ACTDIR_DY + G.WIDE_H + G.ACT_GAP;
+    }
+    if (!hid.speed) {
+      ['fast','medium','slow'].forEach((role,i)=>{
+        const y = ay + i*G.ACTSPD_DY;
+        pieces.push(this.piece(G.ACTSPD_X, y, G.SQ_W, G.SQ_H, [this.cardLayer('square'), this.glyphLayer('speed',role,lv.speed,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'speed',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
+      });
+    }
+
+    const shiftActive = !hid['sensor-identity'] && lv['sensor-identity'] !== 'paper';
+    const senseX = G.SENSE_X + (shiftActive ? G.SENSE_SHIFT : 0);
+    let sy = G.COLOR_Y0;
+    let colorGroupTop = null, buttonRowTop = null;
+    if (!hid.color) {
+      colorGroupTop = sy;
+      const roles = ['red','yellow','blue','purple','green','pink','black','white','no-color'];
+      roles.forEach((role,i)=>{
+        const row = Math.floor(i/3), col = i%3;
+        const x = senseX + col*G.COLOR_DX, y = sy + row*G.COLOR_DY;
+        pieces.push(this.piece(x,y,G.SQ_W,G.SQ_H,[this.cardLayer('square'), this.glyphLayer('color',role,lv.color,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'color',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
+      });
+      sy += 2*G.COLOR_DY + G.SQ_H + G.SENSE_GAP1;
+    }
+    if (!hid.button) {
+      buttonRowTop = sy;
+      ['press','not-pressed'].forEach((role,i)=>{
+        const x = senseX + i*G.COLOR_DX, y = sy;
+        pieces.push(this.piece(x,y,G.SQ_W,G.SQ_H,[this.cardLayer('square'), this.glyphLayer('button',role,lv.button,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'button',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
+      });
+      sy += G.SQ_H + G.SENSE_GAP2;
+    }
+    if (!hid.time) {
+      const x = senseX, y = sy;
+      pieces.push(this.piece(x,y,G.SQ_W,G.SQ_H,[this.cardLayer('square'), this.glyphLayer('time','timer',lv.time,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'time',role:'timer'},'copy'), onDragEnd:(e)=>this.endDrag() }));
+    }
+    if (shiftActive && colorGroupTop !== null) {
+      const groupH = 2*G.COLOR_DY + G.SQ_H;
+      pieces.push(this.piece(G.SENSE_X+10, colorGroupTop+(groupH-85.52)/2, 85.52, 85.52, this.standaloneLayers('colorSensor', lv['sensor-identity'])));
+    }
+    if (shiftActive && buttonRowTop !== null) {
+      pieces.push(this.piece(G.SENSE_X+10, buttonRowTop+(G.SQ_H-76.42)/2, 76.43, 76.42, this.standaloneLayers('buttonDevice', lv['sensor-identity'])));
+    }
+
+    pieces.push(this.textPiece(G.STEP_X, 76, G.WIDE_W, 40, 'STEP', 'font-size:26px;letter-spacing:.18em;'));
+    pieces.push(this.textPiece(G.ACTDIR_X, 76, G.WIDE_W, 40, 'ACTION', 'font-size:26px;letter-spacing:.18em;'));
+    const senseCenter = senseX + (2*G.COLOR_DX+G.SQ_W)/2;
+    pieces.push(this.textPiece(senseCenter-124.05, 76, 248.1, 40, 'SENSE', 'font-size:26px;letter-spacing:.18em;'));
+    for (let i=0;i<6;i++) pieces.push(this.textPiece(G.STEP_X-58, G.STEP_Y0+i*G.STEP_DY, 40, G.WIDE_H, String(i+1), 'font-size:32px;'));
+
+    return pieces;
+  }
+
+  buildSettingsRows(){
+    const A = this.state.assets, lv = this.state.levels, hid = this.state.hidden;
+    const optDefs = [ ['photo','Photo'], ['aac','AAC'], ['paper','Paper'], ['paper-color','Paper+Color'], ['app','App'] ];
+    const enabledSet = new Set(['paper','paper-color']);
+    const rowDefs = [
+      { cls:'direction', label:'Direction', kind:'card', cardKind:'wide', role:'forward' },
+      { cls:'speed', label:'Speed', kind:'card', cardKind:'square', role:'fast' },
+      { cls:'color', label:'Color', kind:'card', cardKind:'square', role:'red' },
+      { cls:'button', label:'Button', kind:'card', cardKind:'square', role:'press' },
+      { cls:'time', label:'Timer', kind:'card', cardKind:'square', role:'timer' },
+      { cls:'sensor-identity', label:'Sensor identity', kind:'standalone', standaloneKey:'colorSensor', natW:85.52, natH:85.52 },
+      { cls:'controls', label:'Controls', kind:'panel', standaloneKey:'go', natW:179.53, natH:96.83, noHide:true }
+    ];
+    return rowDefs.map(rd => {
+      const level = lv[rd.cls];
+      let previewLayers, previewW, previewH;
+      if (rd.kind === 'card') {
+        previewW = rd.cardKind === 'wide' ? 251.1 : 116.62;
+        previewH = rd.cardKind === 'wide' ? 126.87 : 100.23;
+        previewLayers = [ this.cardLayer(rd.cardKind, 1.5, 1.5), this.glyphLayer(rd.cls, rd.role, level, rd.cardKind==='wide'?this.G.WIDE_W:this.G.SQ_W, rd.cardKind==='wide'?this.G.WIDE_H:this.G.SQ_H, 1.5, 1.5) ];
+      } else {
+        previewW = rd.natW; previewH = rd.natH;
+        previewLayers = this.standaloneLayers(rd.standaloneKey, level);
+      }
+      const options = optDefs.map(([key,label]) => {
+        const enabled = enabledSet.has(key);
+        const active = level === key;
+        return {
+          label, key,
+          onClick: enabled ? (()=>this.setState({ levels:{...this.state.levels, [rd.cls]:key} })) : null,
+          style: `padding:6px 10px;font-size:11px;border-radius:6px;border:2px solid ${active?'#4d4d4d':'#ddd'};background:${active?'#4d4d4d':(enabled?'#fff':'#f5f5f5')};color:${active?'#fff':(enabled?'#333':'#bbb')};cursor:${enabled?'pointer':'not-allowed'};font-family:system-ui,sans-serif;white-space:nowrap;`
+        };
+      });
+      return {
+        label: rd.label, previewW, previewH, previewLayers, options,
+        hasHide: !rd.noHide, hidden: !!hid[rd.cls],
+        onToggleHide: () => {
+          const hidden = { ...this.state.hidden, [rd.cls]: !this.state.hidden[rd.cls] };
+          let steps = this.state.steps;
+          if (!hid[rd.cls]) {
+            steps = steps.map(s => {
+              if (!s) return s;
+              if (rd.cls === 'direction' && (s.type === 'motor' || s.type === 'stop')) return null;
+              if (rd.cls === 'speed' && s.type === 'motor' && s.speed) return { ...s, speed:null };
+              if (rd.cls === 'color' && s.type === 'sensor' && s.sensor === 'color') return null;
+              if (rd.cls === 'button' && s.type === 'sensor' && s.sensor === 'button') return null;
+              if (rd.cls === 'time' && s.type === 'time') return null;
+              return s;
+            });
+          }
+          this.setState({ hidden, steps });
+        }
+      };
+    });
+  }
+
+  buildBluetooth(){
+    const bt = this.state.bt;
+    const setBt = (patch)=>this.setState({ bt:{...this.state.bt, ...patch} });
+    return {
+      isIdle: bt.state==='idle', isSearching: bt.state==='searching', isList: bt.state==='list', isConnecting: bt.state==='connecting', isConnected: bt.state==='connected',
+      connectedName: bt.connectedName,
+      onSearch: () => { setBt({ state:'searching' }); setTimeout(()=>{ if (this.state.screen==='bluetooth') this.setState({ bt:{ state:'list', devices:['Robot A','Robot B'], connectedName:null } }); }, 1000); },
+      devices: (bt.devices||[]).map(name => ({ name, onConnect: () => { setBt({ state:'connecting' }); setTimeout(()=>{ if (this.state.screen==='bluetooth') setBt({ state:'connected', connectedName:name }); }, 900); } }))
+    };
+  }
+
+  renderVals(){
+    const ready = !!this.state.assets;
+    if (!ready) return { ready:false, isSettingsOpen:false, isBluetoothOpen:false, scaleStyle:'', boardPieces:[], steps:[] };
+    return {
+      ready: true,
+      scaleStyle: `transform:scale(${this.state.scale});transform-origin:top center;`,
+      isSettingsOpen: this.state.screen === 'settings',
+      isBluetoothOpen: this.state.screen === 'bluetooth',
+      boardPieces: this.buildBoardPieces(),
+      steps: this.state.steps.map((s,i)=>this.buildStep(s,i)),
+      settingsRows: this.buildSettingsRows(),
+      closeSettings: this.closeSettings,
+      closeBluetooth: this.closeBluetooth,
+      bt: this.buildBluetooth(),
+      btnStyle: 'display:inline-block;padding:10px 20px;border-radius:8px;background:#4d4d4d;color:#fff;font-size:14px;cursor:pointer;font-family:system-ui,sans-serif;',
+      btnStyleSmall: 'padding:6px 14px;border-radius:6px;background:#4d4d4d;color:#fff;font-size:12px;cursor:pointer;font-family:system-ui,sans-serif;'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
