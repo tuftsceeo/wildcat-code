@@ -44,7 +44,7 @@
       </div>
     </sc-for>
     <sc-for list="{{steps}}" as="st" hint-placeholder-count="6">
-      <div style="{{st.style}}" onDragOver="{{st.onDragOver}}" onDrop="{{st.onDrop}}">
+      <div style="{{st.style}}" onDragOver="{{st.onDragOver}}" onDragLeave="{{st.onDragLeave}}" onDrop="{{st.onDrop}}">
         <sc-if value="{{st.isEmpty}}"><div style="{{st.emptyStyle}}"></div></sc-if>
         <sc-for list="{{st.layers}}" as="ly">
           <div style="{{ly.style}}">
@@ -138,6 +138,7 @@ class Component extends DCLogic {
       running:false,
       activeIndex:-1,
       dragging:null,
+      hoverIndex:null,
       rejectIndex:null,
       justPlaced:null,
       bt: { state:'idle', devices:[], connectedName:null },
@@ -194,31 +195,43 @@ class Component extends DCLogic {
     this.handleDropOnStep = (index) => {
       const p = this.dragPayload;
       this.dragPayload = null;
-      this.setState({ dragging: null });
+      this.setState({ dragging: null, hoverIndex: null });
       if (!p) return;
       const steps = this.state.steps.slice();
       if (p.kind === 'slot') {
         if (p.fromIndex !== index) {
-          steps[index] = steps[p.fromIndex]; steps[p.fromIndex] = null;
+          // A true swap, not a destructive overwrite - dropping a filled step onto
+          // another filled step exchanges them rather than silently discarding
+          // whatever was already at the destination.
+          const tmp = steps[index];
+          steps[index] = steps[p.fromIndex];
+          steps[p.fromIndex] = tmp;
           this.setState({ steps });
           this.flashPlaced(index);
         }
         return;
       }
       const existing = steps[index];
-      if (p.cls === 'direction') {
-        steps[index] = p.role === 'stop-motor' ? { type:'stop' } : { type:'motor', direction:p.role, speed:null };
-      } else if (p.cls === 'speed') {
+      const existingFamily = this.familyOf(existing);
+      if (p.cls === 'speed') {
         if (existing && existing.type === 'motor') {
           steps[index] = { ...existing, speed: p.role };
         } else {
           this.flashReject(index);
           return;
         }
+      } else if (p.cls === 'direction') {
+        if (existingFamily === null || existingFamily === 'motor') {
+          steps[index] = p.role === 'stop-motor' ? { type:'stop' } : { type:'motor', direction:p.role, speed:null };
+        } else { this.flashReject(index); return; }
       } else if (p.cls === 'time') {
-        steps[index] = { type:'time', value: 1 };
+        if (existingFamily === null || existingFamily === 'time') {
+          steps[index] = { type:'time', value: (existing && existing.value) || 1 };
+        } else { this.flashReject(index); return; }
       } else if (p.cls === 'color' || p.cls === 'button') {
-        steps[index] = { type:'sensor', sensor: p.cls, role: p.role };
+        if (existingFamily === null || existingFamily === 'sensor') {
+          steps[index] = { type:'sensor', sensor: p.cls, role: p.role };
+        } else { this.flashReject(index); return; }
       }
       this.setState({ steps });
       this.flashPlaced(index);
@@ -250,32 +263,63 @@ class Component extends DCLogic {
     e.dataTransfer.effectAllowed = effect;
     const src = e.currentTarget;
     const rect = src.getBoundingClientRect();
-    const clone = src.cloneNode(true);
-    clone.style.position = 'fixed';
-    clone.style.top = '-3000px';
-    clone.style.left = '-3000px';
-    clone.style.margin = '0';
-    clone.style.width = rect.width + 'px';
-    clone.style.height = rect.height + 'px';
-    // Lifted-off-the-board look: slight cant, slight size increase, a real shadow.
-    // At rest, tiles are flat (no shadow) - the shadow only appears once picked up.
-    clone.style.transform = 'rotate(-3deg) scale(1.06)';
-    clone.style.boxShadow = '0 14px 22px rgba(0,0,0,.28)';
-    clone.style.pointerEvents = 'none';
-    document.body.appendChild(clone);
+    // Two nested elements, not one. A real light source doesn't tilt when the card
+    // does, so the shadow lives on an UNROTATED outer wrapper (same SE direction as
+    // the resting-card shadow, just bigger/softer - "further off the board, same
+    // light"), while the rotation/scale ("picked up, canted slightly") is isolated
+    // to the inner clone.
+    const outer = document.createElement('div');
+    outer.style.position = 'fixed';
+    outer.style.top = '-4000px';
+    outer.style.left = '-4000px';
+    outer.style.width = rect.width + 'px';
+    outer.style.height = rect.height + 'px';
+    outer.style.filter = 'drop-shadow(7px 10px 9px rgba(0,0,0,.38))';
+    outer.style.pointerEvents = 'none';
+    const inner = src.cloneNode(true);
+    inner.style.position = 'absolute';
+    inner.style.top = '0';
+    inner.style.left = '0';
+    inner.style.margin = '0';
+    inner.style.width = rect.width + 'px';
+    inner.style.height = rect.height + 'px';
+    inner.style.transform = 'rotate(-3deg) scale(1.06)';
+    inner.style.transformOrigin = 'center center';
+    outer.appendChild(inner);
+    document.body.appendChild(outer);
+    // Force a synchronous layout pass before the browser snapshots this node for the
+    // drag image. Without this, some engines snapshot before the transform has been
+    // painted (layout properties like width/height apply immediately; transform is a
+    // paint-stage property) - which reads as "only got bigger, never rotated."
+    void outer.offsetWidth;
     const offX = e.clientX - rect.left, offY = e.clientY - rect.top;
-    e.dataTransfer.setDragImage(clone, offX, offY);
-    setTimeout(() => { if (clone.parentNode) clone.parentNode.removeChild(clone); }, 0);
+    e.dataTransfer.setDragImage(outer, offX, offY);
+    setTimeout(() => { if (outer.parentNode) outer.parentNode.removeChild(outer); }, 0);
   }
   endDrag(){
-    this.setState({ dragging: null });
+    this.setState({ dragging: null, hoverIndex: null });
+  }
+  // A step holds one coherent instruction family. Only a same-family drop (or an
+  // empty slot) is a valid replace; speed is the one deliberate exception, a
+  // modifier that only ever applies on top of an existing motor step. Anything
+  // else - color onto a motor step, direction onto a sensor step, etc. - is a
+  // mismatch and should be rejected, the same way real velcro would need the old
+  // card peeled off before a different one goes on.
+  familyOf(step){
+    if (!step) return null;
+    if (step.type === 'motor' || step.type === 'stop') return 'motor';
+    if (step.type === 'time') return 'time';
+    if (step.type === 'sensor') return 'sensor';
+    return null;
   }
   isValidTarget(index){
     const d = this.state.dragging;
     if (!d) return false;
     if (d.kind === 'slot') return d.fromIndex !== index;
-    if (d.cls === 'speed') { const s = this.state.steps[index]; return !!(s && s.type === 'motor'); }
-    return true;
+    const existingFamily = this.familyOf(this.state.steps[index]);
+    if (d.cls === 'speed') return existingFamily === 'motor';
+    const incomingFamily = d.cls === 'direction' ? 'motor' : (d.cls === 'time' ? 'time' : 'sensor');
+    return existingFamily === null || existingFamily === incomingFamily;
   }
   isOriginDimmed(index){
     const d = this.state.dragging;
@@ -303,8 +347,13 @@ class Component extends DCLogic {
   }
   cardLayer(kind, dx=0, dy=0){
     const A = this.state.assets;
-    if (kind === 'wide') return { style:this.ls(dx-1.5,dy-1.5,251.1,126.87), isSvg:true, isPlaceholder:false, html:{__html:A.CARD_WIDE} };
-    return { style:this.ls(dx-1.5,dy-1.5,116.62,100.23), isSvg:true, isPlaceholder:false, html:{__html:A.CARD_SQUARE} };
+    // A card on velcro sits slightly proud of the paper - the velcro's own thickness
+    // gives it a small, constant drop shadow even at rest. This is deliberately much
+    // smaller than the shadow used while a card is actively being lifted/dragged
+    // (that one signals "further off the board"; this one signals "resting, but raised").
+    const REST_SHADOW = 'filter:drop-shadow(3px 4px 2px rgba(0,0,0,.4));';
+    if (kind === 'wide') return { style:this.ls(dx-1.5,dy-1.5,251.1,126.87)+REST_SHADOW, isSvg:true, isPlaceholder:false, html:{__html:A.CARD_WIDE} };
+    return { style:this.ls(dx-1.5,dy-1.5,116.62,100.23)+REST_SHADOW, isSvg:true, isPlaceholder:false, html:{__html:A.CARD_SQUARE} };
   }
   glyphLayer(cls, role, level, cw, ch, dx=0, dy=0, isDark=false){
     const g = this.getGlyph(cls, role, level);
@@ -314,6 +363,38 @@ class Component extends DCLogic {
   }
   squareTile(cls, role, level, dx=0, dy=0){
     return [ this.cardLayer('square', dx, dy), this.glyphLayer(cls, role, level, this.G.SQ_W, this.G.SQ_H, dx, dy) ];
+  }
+  // Verified empirically (isolated test page, not guessed): a bare <svg viewBox="…">
+  // with no width/height attribute DOES stretch to fill whatever CSS size its
+  // container is given - that's the normal, well-defined way SVGs scale. Stretching
+  // scales stroke-width right along with the geometry though, same as any other
+  // scaling technique (confirmed CSS transform + vector-effect="non-scaling-stroke"
+  // does NOT survive an ancestor/element transform in this browser - measured, not
+  // assumed). So: leave geometry untouched, and pre-divide every stroke-width value
+  // by the same factor the container is about to be enlarged by. After the stretch,
+  // the effective stroke returns to its original absolute thickness - bigger paper,
+  // same pen - while every filled (non-stroked) shape scales normally either way.
+  preDivideStroke(svg, factor){
+    return svg.replace(/stroke-width="([\d.]+)"/g, (m, w) => `stroke-width="${parseFloat(w) / factor}"`);
+  }
+  // A uniformly-scaled square tile (card + glyph together): the SAME card, just a
+  // bigger physical size, at constant line weight. Card and glyph both stretch by
+  // `factor` via container resize (not CSS transform), so every position/size below
+  // is plain arithmetic - no transform-origin trickery needed, unlike the
+  // CSS-transform approach this replaced.
+  scaledSquareTile(cls, role, level, dx, dy, factor){
+    const G = this.G, A = this.state.assets;
+    const REST_SHADOW = `filter:drop-shadow(${3*factor}px ${4*factor}px ${2*factor}px rgba(0,0,0,.4));`;
+    const cardW = G.SQ_W*factor, cardH = G.SQ_H*factor;
+    const card = { style:this.ls(dx-1.5*factor, dy-1.5*factor, cardW, cardH)+REST_SHADOW,
+      isSvg:true, isPlaceholder:false, html:{ __html: this.preDivideStroke(A.CARD_SQUARE, factor) } };
+    const g = this.getGlyph(cls, role, level);
+    const a = this.anchorFor(cls, role, g.w, g.h, G.SQ_W, G.SQ_H);
+    const gx = dx + a.left*factor, gy = dy + a.top*factor, gw = g.w*factor, gh = g.h*factor;
+    const glyph = g.svg
+      ? { style:this.ls(gx, gy, gw, gh), isSvg:true, isPlaceholder:false, html:{ __html: this.preDivideStroke(g.svg, factor) } }
+      : { style:this.ls(gx, gy, gw, gh), isSvg:false, isPlaceholder:true, label:level, phStyle:this.placeholder(false) };
+    return [card, glyph];
   }
   bareGlyph(cls, role, level, dx=0, dy=0){
     return this.glyphLayer(cls, role, level, this.G.WIDE_W, this.G.WIDE_H, dx, dy);
@@ -345,28 +426,41 @@ class Component extends DCLogic {
     const x = G.STEP_X, y = G.STEP_Y0 + index*G.STEP_DY;
     const isActive = this.state.activeIndex === index;
     const isValid = this.isValidTarget(index);
+    const isHovered = isValid && this.state.hoverIndex === index;
     const isDimmed = this.isOriginDimmed(index);
     const isRejecting = this.state.rejectIndex === index;
     const isJustPlaced = this.state.justPlaced === index;
+    // A speed drag lands in a small sub-region of the wide card, not the whole
+    // thing - ringing the entire card would point at the wrong target. It gets its
+    // own precise landing pad (built below) instead of this whole-card ring.
+    const isSpeedDrag = this.state.dragging && this.state.dragging.cls === 'speed';
     // Always-present transition so a state change (e.g. justPlaced -> normal) eases
     // out instead of snapping - this is the "settle" cue, deliberately NOT a bounce.
     let extra = 'transition:box-shadow .15s ease-out, transform .15s ease-out, opacity .12s ease-out;';
     if (isActive) extra += 'box-shadow:0 0 0 4px #4ba450;border-radius:12px;';
     else if (isJustPlaced) extra += 'box-shadow:0 8px 14px rgba(0,0,0,.18);transform:scale(1.02);border-radius:12px;';
-    else if (isValid && step) extra += 'box-shadow:0 0 0 3px rgba(77,77,77,.28);border-radius:12px;';
+    // Two tiers: ANY compatible slot gets a faint ring (shows the whole set of
+    // options), but the ONE slot actually under the pointer gets a visibly
+    // stronger ring - "this is specifically where it will land."
+    else if (isHovered && step && !isSpeedDrag) extra += 'box-shadow:0 0 0 4px rgba(77,77,77,.6);border-radius:12px;';
+    else if (isValid && step && !isSpeedDrag) extra += 'box-shadow:0 0 0 3px rgba(77,77,77,.28);border-radius:12px;';
     if (isDimmed) extra += 'opacity:.35;';
     if (isRejecting) extra += 'animation:reject-shake .32s ease;';
     const baseStyle = this.ls(x,y,G.WIDE_W,G.WIDE_H) + extra;
-    const onDragOver = (e)=>e.preventDefault();
+    const onDragOver = (e)=>{ e.preventDefault(); if (this.state.hoverIndex !== index) this.setState({ hoverIndex:index }); };
+    const onDragLeave = (e)=>{ if (this.state.hoverIndex === index) this.setState({ hoverIndex:null }); };
     const onDrop = (e)=>{ e.preventDefault(); this.handleDropOnStep(index); };
     if (!step) {
       // Static fill change only - no motion, no color cycling, no dashes. The
       // background itself looks selectable; the ink (there is none here yet) never moves.
-      const emptyBg = isValid ? '#e6e6e6' : '#f2f2f2';
-      const emptyBorder = isValid ? '#c9c9c9' : '#e0e0e0';
+      // Same two-tier logic as above: hovered-and-valid gets a visibly darker/thicker
+      // treatment than merely-valid, so the exact landing spot is unambiguous.
+      const emptyBg = isHovered ? '#dcdcdc' : (isValid ? '#e6e6e6' : '#f2f2f2');
+      const emptyBorder = isHovered ? '#4d4d4d' : (isValid ? '#c9c9c9' : '#e0e0e0');
+      const emptyBorderW = isHovered ? '2px' : '1px';
       return { style:baseStyle, isEmpty:true, hasContent:false, layers:[], hasNumber:false,
-        emptyStyle:`width:100%;height:100%;background:${emptyBg};border:1px solid ${emptyBorder};border-radius:12px;box-sizing:border-box;transition:background-color .12s ease-out,border-color .12s ease-out;`,
-        onDragOver, onDrop };
+        emptyStyle:`width:100%;height:100%;background:${emptyBg};border:${emptyBorderW} solid ${emptyBorder};border-radius:12px;box-sizing:border-box;transition:background-color .12s ease-out,border-color .12s ease-out;`,
+        onDragOver, onDragLeave, onDrop };
     }
     const lvl = (cls)=>this.state.levels[cls];
     let layers = [ this.cardLayer('wide') ];
@@ -382,9 +476,32 @@ class Component extends DCLogic {
     } else if (step.type === 'sensor') {
       const idKey = step.sensor === 'color' ? 'colorSensor' : 'buttonDevice';
       const idSize = idKey === 'colorSensor' ? {w:85.52,h:85.52} : {w:76.43,h:76.42};
-      layers = layers.concat(this.standaloneLayers(idKey, lvl('sensor-identity'), 13, (G.WIDE_H-idSize.h)/2));
-      layers = layers.concat(this.squareTile(step.sensor, step.role, lvl(step.sensor), G.WIDE_W-13-G.SQ_W, (G.WIDE_H-G.SQ_H)/2));
-      hasRight = true;
+      const hasIdentity = lvl('sensor-identity') !== 'paper';
+      if (hasIdentity) {
+        // Two-slot grammar once identity exists: glyph left, state tile pinned right -
+        // this is the format for the level where the sensor concept is introduced.
+        layers = layers.concat(this.standaloneLayers(idKey, lvl('sensor-identity'), 13, (G.WIDE_H-idSize.h)/2));
+        layers = layers.concat(this.squareTile(step.sensor, step.role, lvl(step.sensor), G.WIDE_W-13-G.SQ_W, (G.WIDE_H-G.SQ_H)/2));
+        hasRight = true;
+      } else {
+        // At paper level, a colour/button reading is a complete standalone
+        // instruction (like a direction card), not a modifier on something else -
+        // so instead of a small square adrift in a mostly-empty wide card, the card
+        // itself is taller (matching the direction card's height, aspect ratio
+        // preserved - a card never changes shape when moved) and left-justified,
+        // the same as every other left-anchored piece.
+        const factor = G.WIDE_H / G.SQ_H;
+        layers = layers.concat(this.scaledSquareTile(step.sensor, step.role, lvl(step.sensor), 13, 0, factor));
+      }
+    }
+    // Precise landing pad for a speed drag - shows exactly where the sub-card will
+    // sit, rather than ringing the whole wide card (which would be misleading since
+    // only this small region is actually the drop target).
+    if (isSpeedDrag && isValid) {
+      const padStyle = isHovered
+        ? 'background:rgba(77,77,77,.2);border:2px solid rgba(77,77,77,.7);border-radius:8px;box-sizing:border-box;'
+        : 'background:rgba(77,77,77,.08);border:1px solid rgba(77,77,77,.4);border-radius:8px;box-sizing:border-box;';
+      layers = layers.concat([{ style:this.ls(G.WIDE_W-13-G.SQ_W,(G.WIDE_H-G.SQ_H)/2,G.SQ_W,G.SQ_H)+padStyle, isSvg:false, isPlaceholder:false }]);
     }
     const numberStyle = `position:absolute;left:139.62px;top:${(G.WIDE_H-48)/2}px;width:95.48px;height:48px;font-size:26px;text-align:center;border:2px solid #4d4d4d;border-radius:8px;box-sizing:border-box;`;
     const onNumberChange = (e)=>{ const steps=this.state.steps.slice(); steps[index] = { ...steps[index], value:e.target.value }; this.setState({ steps }); };
@@ -394,9 +511,9 @@ class Component extends DCLogic {
     const onDragEndRemove = (e)=>{
       if (e.dataTransfer.dropEffect === 'none') { const steps=this.state.steps.slice(); steps[index]=null; this.setState({ steps }); }
       this.dragPayload=null;
-      this.setState({ dragging:null });
+      this.setState({ dragging:null, hoverIndex:null });
     };
-    return { style:baseStyle, isEmpty:false, hasContent:true, layers, hasNumber, numberValue, numberStyle, onNumberChange, overlayStyle, onDragStartRemove, onDragEndRemove, onDragOver, onDrop };
+    return { style:baseStyle, isEmpty:false, hasContent:true, layers, hasNumber, numberValue, numberStyle, onNumberChange, overlayStyle, onDragStartRemove, onDragEndRemove, onDragOver, onDragLeave, onDrop };
   }
 
   buildBoardPieces(){
@@ -423,8 +540,27 @@ class Component extends DCLogic {
       });
     }
 
-    const shiftActive = !hid['sensor-identity'] && lv['sensor-identity'] !== 'paper';
+    // Before sensor-identity is introduced, a colour/button reading is a complete
+    // standalone instruction (like a direction card) - shown big, matching the
+    // direction card's height, everywhere it appears (tray AND placed), per your
+    // "paper doesn't change shape when moved" rule. Once identity is introduced,
+    // it becomes a small state tile living next to an identity glyph, and the tray
+    // reverts to the original small-square grid.
+    const hasIdentity = lv['sensor-identity'] !== 'paper';
+    const shiftActive = !hid['sensor-identity'] && hasIdentity;
     const senseX = G.SENSE_X + (shiftActive ? G.SENSE_SHIFT : 0);
+    const enlargedFactor = G.WIDE_H / G.SQ_H;
+    const enlargedW = G.SQ_W * enlargedFactor, enlargedH = G.WIDE_H;
+    // Widened pitches so the enlarged 3x3 grid doesn't overlap itself - derived from
+    // the enlarged tile's own size plus a fixed gap, not an arbitrary magic number.
+    const enlargedDX = enlargedW + 27, enlargedDY = enlargedH + 20;
+    const colorDX = hasIdentity ? G.COLOR_DX : enlargedDX;
+    const colorDY = hasIdentity ? G.COLOR_DY : enlargedDY;
+    const tileW = hasIdentity ? G.SQ_W : enlargedW;
+    const tileH = hasIdentity ? G.SQ_H : enlargedH;
+    const sensorTileLayers = (cls, role, level) => hasIdentity
+      ? [this.cardLayer('square'), this.glyphLayer(cls, role, level, G.SQ_W, G.SQ_H)]
+      : this.scaledSquareTile(cls, role, level, 0, 0, enlargedFactor);
     let sy = G.COLOR_Y0;
     let colorGroupTop = null, buttonRowTop = null;
     if (!hid.color) {
@@ -432,34 +568,34 @@ class Component extends DCLogic {
       const roles = ['red','yellow','blue','purple','green','pink','black','white','no-color'];
       roles.forEach((role,i)=>{
         const row = Math.floor(i/3), col = i%3;
-        const x = senseX + col*G.COLOR_DX, y = sy + row*G.COLOR_DY;
-        pieces.push(this.piece(x,y,G.SQ_W,G.SQ_H,[this.cardLayer('square'), this.glyphLayer('color',role,lv.color,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'color',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
+        const x = senseX + col*colorDX, y = sy + row*colorDY;
+        pieces.push(this.piece(x,y,tileW,tileH,sensorTileLayers('color',role,lv.color), { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'color',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
       });
-      sy += 2*G.COLOR_DY + G.SQ_H + G.SENSE_GAP1;
+      sy += 2*colorDY + tileH + G.SENSE_GAP1;
     }
     if (!hid.button) {
       buttonRowTop = sy;
       ['press','not-pressed'].forEach((role,i)=>{
-        const x = senseX + i*G.COLOR_DX, y = sy;
-        pieces.push(this.piece(x,y,G.SQ_W,G.SQ_H,[this.cardLayer('square'), this.glyphLayer('button',role,lv.button,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'button',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
+        const x = senseX + i*colorDX, y = sy;
+        pieces.push(this.piece(x,y,tileW,tileH,sensorTileLayers('button',role,lv.button), { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'button',role},'copy'), onDragEnd:(e)=>this.endDrag() }));
       });
-      sy += G.SQ_H + G.SENSE_GAP2;
+      sy += tileH + G.SENSE_GAP2;
     }
     if (!hid.time) {
       const x = senseX, y = sy;
       pieces.push(this.piece(x,y,G.SQ_W,G.SQ_H,[this.cardLayer('square'), this.glyphLayer('time','timer',lv.time,G.SQ_W,G.SQ_H)], { draggable:true, onDragStart:(e)=>this.beginDrag(e,{kind:'tray',cls:'time',role:'timer'},'copy'), onDragEnd:(e)=>this.endDrag() }));
     }
     if (shiftActive && colorGroupTop !== null) {
-      const groupH = 2*G.COLOR_DY + G.SQ_H;
+      const groupH = 2*colorDY + tileH;
       pieces.push(this.piece(G.SENSE_X+10, colorGroupTop+(groupH-85.52)/2, 85.52, 85.52, this.standaloneLayers('colorSensor', lv['sensor-identity'])));
     }
     if (shiftActive && buttonRowTop !== null) {
-      pieces.push(this.piece(G.SENSE_X+10, buttonRowTop+(G.SQ_H-76.42)/2, 76.43, 76.42, this.standaloneLayers('buttonDevice', lv['sensor-identity'])));
+      pieces.push(this.piece(G.SENSE_X+10, buttonRowTop+(tileH-76.42)/2, 76.43, 76.42, this.standaloneLayers('buttonDevice', lv['sensor-identity'])));
     }
 
     pieces.push(this.textPiece(G.STEP_X, 76, G.WIDE_W, 40, 'STEP', 'font-size:26px;letter-spacing:.18em;'));
     pieces.push(this.textPiece(G.ACTDIR_X, 76, G.WIDE_W, 40, 'ACTION', 'font-size:26px;letter-spacing:.18em;'));
-    const senseCenter = senseX + (2*G.COLOR_DX+G.SQ_W)/2;
+    const senseCenter = senseX + (2*colorDX+tileW)/2;
     pieces.push(this.textPiece(senseCenter-124.05, 76, 248.1, 40, 'SENSE', 'font-size:26px;letter-spacing:.18em;'));
     for (let i=0;i<6;i++) pieces.push(this.textPiece(G.STEP_X-58, G.STEP_Y0+i*G.STEP_DY, 40, G.WIDE_H, String(i+1), 'font-size:32px;'));
 
